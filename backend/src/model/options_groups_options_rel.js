@@ -1,11 +1,12 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
  * Define modelo (tabela) de relação entre produtos e filiais / empresas
  */
 
-const OptionsGroupsOptionsRel = conn.define('options_groups_options_rel', {
+class OptionsGroupsOptionsRel extends Sequelize.Model {};
+OptionsGroupsOptionsRel.init({
 	id: {
 		type: Sequelize.INTEGER.UNSIGNED,
 		primaryKey:true,
@@ -19,6 +20,6 @@ const OptionsGroupsOptionsRel = conn.define('options_groups_options_rel', {
 		defaultValue: 1,
 	},
 	order: Sequelize.INTEGER
-});
+}, {modelName:'options_groups_options_rel', underscored:true, sequelize});
 
 module.exports = OptionsGroupsOptionsRel;

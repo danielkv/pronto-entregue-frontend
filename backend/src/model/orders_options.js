@@ -1,11 +1,12 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
  * Define modelo (tabela) de opções de produtos de pedidos
  */
 
-const OrdersOptions = conn.define('orders_options', {
+class OrdersOptions extends Sequelize.Model {};
+OrdersOptions.init({
 	id: {
 		type: Sequelize.INTEGER.UNSIGNED,
 		primaryKey:true,
@@ -13,6 +14,6 @@ const OrdersOptions = conn.define('orders_options', {
 	},
 	name: Sequelize.STRING,
 	amount: Sequelize.DECIMAL(10,2),
-});
+}, {modelName:'orders_options', underscored:true, sequelize});
 
 module.exports = OrdersOptions;

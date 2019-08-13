@@ -1,11 +1,12 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
  * Define modelo (tabela) de categorias de produtos
  */
 
-const ProductsCategories = conn.define('products_categories', {
+class ProductsCategories extends Sequelize.Model {};
+ProductsCategories.init({
 	name: Sequelize.STRING,
 	image: Sequelize.STRING,
 	active: {
@@ -13,6 +14,6 @@ const ProductsCategories = conn.define('products_categories', {
 		defaultValue: 1,
 	},
 	order: Sequelize.INTEGER,
-});
+}, {modelName:'products_categories', underscored:true, sequelize});
 
 module.exports = ProductsCategories;

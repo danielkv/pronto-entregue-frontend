@@ -1,4 +1,5 @@
 const Companies = require('../model/companies');
+const CompaniesMeta = require('../model/companies_meta');
 const Users = require('../model/users');
 
 /*
@@ -9,26 +10,31 @@ function create (req, res) {
 	const data = req.body;
 	
 	const user_data = {
-		name:			data.user_name,
-		email:			data.user_email,
-		password:		data.user_password,
-		role_id:		1,
+		
 	}
 
 	const company_data = {
 		name:			data.company_name,
 		display_name:	data.company_name,
-		document:		data.company_document,
-		phone:			data.company_phone,
-		email:			data.company_email,
-		contact:		data.company_contact,
-		contact_phone:	data.company_contact_phone,
-		contact_email:	data.company_contact_email,
-		users:			[user_data]
+		users:			[{
+			first_name:		data.user_first_name,
+			last_name:		data.user_last_name,
+			email:			data.user_email,
+			password:		data.user_password,
+			role_id:		2, // adm
+		}],
+		companies_meta:	[
+			{meta_type: 'document', meta_value: data.company_document},
+			{meta_type: 'phone', meta_value: data.company_phone},
+			{meta_type: 'email', meta_value: data.company_phone},
+			{meta_type: 'contact', meta_value: data.company_contact},
+			{meta_type: 'contact_phone', meta_value: data.company_contact_phone},
+			{meta_type: 'contact_email', meta_value: data.company_contact_email},
+		]
 	}
 
 	Companies
-	.create(company_data, {include:[Users]})
+	.create(company_data, {include:[Users, CompaniesMeta]})
 	.then((result)=> {
 		res.send(result);
 	})

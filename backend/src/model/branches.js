@@ -1,12 +1,13 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
  * Define modelo (tabela) de filiais
  */
 
-const Branches = conn.define('branches', {
+class Branches extends Sequelize.Model {};
+Branches.init({
 	display_name: Sequelize.STRING,
-});
+}, {modelName:'branches', underscored:true, sequelize});
 
 module.exports = Branches;

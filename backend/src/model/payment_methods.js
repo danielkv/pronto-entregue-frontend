@@ -8,7 +8,7 @@ const Sequelize = require('sequelize');
 const PaymentMethods = conn.define('payment_methods', {
 	name: Sequelize.STRING,
 	display_name: Sequelize.STRING,
-	fee: Sequelize.DECIMAL(10,2),
+	meta: Sequelize.TEXT,
 });
 
 module.exports = PaymentMethods;

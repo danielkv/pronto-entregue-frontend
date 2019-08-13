@@ -1,11 +1,12 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
  * Define modelo (tabela) de pedidos
  */
 
-const Orders = conn.define('orders', {
+class Orders extends Sequelize.Model {};
+Orders.init({
 	//branch_id => criado em 'relations'
 	//user_id => criado em 'relations'
 	//payment_method_id => criado em 'relations'
@@ -26,6 +27,6 @@ const Orders = conn.define('orders', {
 	state: Sequelize.STRING,
 	district: Sequelize.STRING,
 	zipcode: Sequelize.STRING,
-});
+}, {modelName:'orders', underscored:true, sequelize});
 
 module.exports = Orders;

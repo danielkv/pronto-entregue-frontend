@@ -1,13 +1,40 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
-const crypto = require('crypto');
-//const jwt = require('jsonwebtoken');
+const {salt} = require('../utilities');
+const jwt = require('jsonwebtoken');
 
 /*
  * Define modelo (tabela) de usuários
  */
 
-const Users = conn.define('users', {
+class Users extends Sequelize.Model {
+	/*
+	* Autoriza usuário retornando o token com dados,
+	* caso autenticação falhe, 'arremessa' um erro
+	*/
+	
+	authorize (password) {
+		const salted = salt(password, this.salt);
+		if (this.password != salted.password) throw new Error('Senha incorreta');
+		
+		const token = jwt.sign({
+			id: this.id,
+			email: this.email,
+		}, process.env.SECRET);
+		
+		const authorized = this.get();
+		delete authorized.password;
+		delete authorized.salt;
+		delete authorized.role_id;
+
+		return {
+			token,
+			...authorized,
+		};
+	}
+}
+
+Users.init({
 	first_name: Sequelize.STRING,
 	last_name: Sequelize.STRING,
 	email: Sequelize.STRING,
@@ -17,17 +44,18 @@ const Users = conn.define('users', {
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-	//role: Sequelize.TEXT,
+	//role_id: Sequelize.TEXT, -> Criado em 'relations'
 },{
-	indexes : [
+	modelName : 'users', //nome da tabela
+	underscored:true,
+	indexes : [ //Evita criação de 2 emails para mesma empresa
 		{
 			unique : true,
 			fields : ['company_id', 'email'],
 		}
-	]
+	],
+	sequelize,
 });
-
-//Users.sync({force:true});
 
 /*
  * Adiciona o salt para senha do usuário
@@ -40,52 +68,6 @@ Users.addHook('beforeCreate', 'saltPassword', (user, options)=> {
 	user.salt = salted.salt;
 	user.password = salted.password;
 });
-
-/*
- * Cria o salt para ser adicionado/verificar senha do usuário
- *
- */
-
-function salt(password, salt=null) {
-	const _salt = salt || crypto.randomBytes(16).toString('hex');
-	var hash = crypto.createHmac('sha512', _salt);
-	hash.update(password);
-	let _password = hash.digest('hex');
-	return {
-		password:_password,
-		salt:_salt,
-	}
-}
-
-/* async function exists (user) {
-	const user_exists = await get({email : user.email});
-	if (user_exists.length) throw {code: 'user_exists', message:`Esse email (${user.email}) já foi cadastrado no banco de dados`};
-	return user;
-} */
-
-/* async function authorize (email, password) {
-	let user_exists = await get({email : email}, ['salt']);
-	if (user_exists.length != 1) throw {code: 'user_not_found', message:`Usuário não encontrado`};
-
-	user_exists = user_exists[0];
-	if (user_exists.active != true) throw {code: 'inactive_user', message:'Usuário inativo'};
-
-	const salted = salt(password, user_exists.salt);
-
-	let user = await get({email : email, password:salted.password});
-	if (user.length != 1) throw {code: 'password_incorrect', message:`Senha incorreta`};
-	user = user[0];
-	
-	const token = await jwt.sign({
-		id:user.id,
-		email:user.email,
-	});
-
-	return {
-		token,
-		...user,
-	};
-} */
 
 /* async function authenticate (token) {
 

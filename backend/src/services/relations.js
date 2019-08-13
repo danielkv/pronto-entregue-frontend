@@ -8,7 +8,9 @@
 const Companies = require('../model/companies');
 const CompaniesMeta = require('../model/companies_meta');
 const Branches = require('../model/branches');
+const BranchesPaymentMethods = require('../model/branches_payment_methods');
 const BranchesMeta = require('../model/branches_meta');
+const PaymentMethods = require('../model/payment_methods');
 const ShippingAreas = require('../model/shipping_areas');
 
 const Users = require('../model/users');
@@ -28,36 +30,38 @@ const Orders = require('../model/orders');
 const OrdersProducts = require('../model/orders_products');
 const OrdersOptionsGroups = require('../model/orders_options_groups');
 const OrdersOptions = require('../model/orders_options');
-const PaymentMethods = require('../model/payment_methods');
 
 //Companies Relations
-Companies.hasMany(Users, {foreignKey:'company_id'});
-Companies.hasMany(Branches, {foreignKey:'company_id'});
-Companies.hasMany(CompaniesMeta, {foreignKey:'company_id'});
+Companies.hasMany(Users);
+Companies.hasMany(Branches);
+Companies.hasMany(CompaniesMeta);
 
 //Branches Relations
-Branches.hasMany(BranchesMeta, {foreignKey:'branch_id'});
-Branches.hasMany(Orders, {foreignKey:'branch_id'});
-Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
+Branches.hasMany(BranchesMeta);
+Branches.hasMany(Orders);
+Branches.hasMany(ShippingAreas);
+
+//PaymentMethods
+PaymentMethods.belongsToMany(Branches, {through:BranchesPaymentMethods});
 
 //Users relations
-Users.belongsTo(Roles, {foreignKey:'role_id'});
-Users.hasMany(UsersMeta, {foreignKey:'user_id'});
-Users.hasMany(Orders, {foreignKey:'user_id'});
+Users.belongsTo(Roles);
+Users.hasMany(UsersMeta);
+Users.hasMany(Orders);
 
 //Products relations
-Products.belongsTo(ProductsCategories, {foreignKey:'category_id'});
-Products.hasOne(Companies, {foreignKey:'company_id'});
-Products.belongsToMany(Branches, {through: ProductsBranchesRel, foreignKey:'product_id', otherKey:'branch_id'});
-Products.belongsToMany(Orders, {through: {model: OrdersProducts, unique:false}, foreignKey:'product_id', otherKey:'order_id'}); //order
+Products.belongsTo(ProductsCategories);
+Products.belongsTo(Companies);
+Products.belongsToMany(Branches, {through: ProductsBranchesRel});
+Products.belongsToMany(Orders, {through: {model: OrdersProducts, unique:false}}); //order
 
 //OptionsGroups relations
-OptionsGroups.belongsToMany(Options, {through:OptionsGroupsOptionsRel, foreignKey:'option_group_id', otherKey:'option_id'});
-OptionsGroups.belongsToMany(Products, {through:ProductsOptionsGroupsRel, foreignKey:'option_group_id', otherKey:'product_id'});
-OptionsGroups.belongsToMany(OrdersProducts, {through:{model:OrdersOptionsGroups, unique:false}, foreignKey:'option_group_id', otherKey:'order_product_id'});  //order
+OptionsGroups.belongsToMany(Options, {through:OptionsGroupsOptionsRel});
+OptionsGroups.belongsToMany(Products, {through:ProductsOptionsGroupsRel});
+OptionsGroups.belongsToMany(OrdersProducts, {through:{model:OrdersOptionsGroups, unique:false}});  //order
 
 //Options relations
-Options.belongsToMany(OrdersOptionsGroups, {through:{model:OrdersOptions, unique:false}, foreignKey:'options_id', otherKey:'order_option_id', unique:false});  //order
+Options.belongsToMany(OrdersOptionsGroups, {through:{model:OrdersOptions, unique:false}});  //order
 
 //Orders relations
-Orders.belongsTo(PaymentMethods, {foreignKey:'payment_method_id'});  //order
+Orders.belongsTo(BranchesPaymentMethods);  //order
