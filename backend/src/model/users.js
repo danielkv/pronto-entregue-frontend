@@ -1,50 +1,36 @@
 const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 const {salt} = require('../utilities');
-const jwt = require('jsonwebtoken');
 
 /*
  * Define modelo (tabela) de usuários
  */
 
 class Users extends Sequelize.Model {
-	/*
-	* Autoriza usuário retornando o token com dados,
-	* caso autenticação falhe, 'arremessa' um erro
-	*/
-	
-	authorize (password) {
-		const salted = salt(password, this.salt);
-		if (this.password != salted.password) throw new Error('Senha incorreta');
-		
-		const token = jwt.sign({
-			id: this.id,
-			email: this.email,
-		}, process.env.SECRET);
-		
-		const authorized = this.get();
-		delete authorized.password;
-		delete authorized.salt;
-		delete authorized.role_id;
-
-		return {
-			token,
-			...authorized,
-		};
+	get fullName() {
+		return `${this.first_name} ${this.last_name}`;
 	}
 }
-
 Users.init({
 	first_name: Sequelize.STRING,
 	last_name: Sequelize.STRING,
 	email: Sequelize.STRING,
-	password: Sequelize.STRING,
+	password: {
+		type: Sequelize.STRING,
+		allowNull:false,
+		set(val) {
+			//Adiciona o salt para salvar a senha do usuário
+			const salted = salt(val);
+			this.setDataValue('password', salted.password);
+			this.setDataValue('salt', salted.salt);
+		}
+	},
 	salt: Sequelize.STRING,
 	active: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-	//role_id: Sequelize.TEXT, -> Criado em 'relations'
+	//role_id: => Criado em 'relations'
 },{
 	modelName : 'users', //nome da tabela
 	underscored:true,
@@ -56,31 +42,5 @@ Users.init({
 	],
 	sequelize,
 });
-
-/*
- * Adiciona o salt para senha do usuário
- *
- */
-
-Users.addHook('beforeCreate', 'saltPassword', (user, options)=> {
-	const salted = salt(user.password);
-	
-	user.salt = salted.salt;
-	user.password = salted.password;
-});
-
-/* async function authenticate (token) {
-
-	let user = await jwt.verify(token);
-	if (!user.id || !user.email) throw {code:'incorrect_token', message:'Não foi possível autenticar o token'};
-
-	let user_exists = await get({id: user.id, email : user.email});
-	if (user_exists.length != 1) throw {code: 'user_not_found', message:`Usuário não encontrado`};
-
-	user_exists = user_exists[0];
-	if (user_exists.active != true) throw {code: 'inactive_user', message:'Usuário inativo'};
-
-	return user_exists;
-} */
 
 module.exports = Users;

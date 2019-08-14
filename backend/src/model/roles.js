@@ -12,7 +12,6 @@ Roles.init({
 	permissions: {
 		type: Sequelize.TEXT,
 		get () {
-			console.log(this.getDataValue('permissions'));
 			return JSON.parse(this.getDataValue('permissions'));
 		}
 	},

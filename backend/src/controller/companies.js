@@ -44,11 +44,9 @@ function update(req, res) {
 	const {company_id} = req.query;
 	
 	Companies.findByPk(company_id)
-	.then((company)=> {
-		company.update(req.body)
-		.then((result)=>{
-			res.send(result);
-		})
+	.then(company=>company.update(req.body))
+	.then((result)=>{
+		res.send(result);
 	})
 	.catch((err)=> {
 		res.status(403).send(err);

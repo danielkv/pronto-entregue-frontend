@@ -7,6 +7,11 @@ const Sequelize = require('sequelize');
 
 class BranchesPaymentMethods extends Sequelize.Model {};
 BranchesPaymentMethods.init({
+	id: {
+		type: Sequelize.INTEGER.UNSIGNED,
+		primaryKey:true,
+		autoIncrement:true
+	},
 	fee: Sequelize.DECIMAL(10,2),
 }, {modelName:'branches_payment_methods', underscored:true, sequelize});
 
