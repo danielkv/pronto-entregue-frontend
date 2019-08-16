@@ -1,7 +1,6 @@
-const Companies = require('../model/companies');
-const CompaniesMeta = require('../model/companies_meta');
+const Branches = require('../model/branches');
+const BranchesMeta = require('../model/branches_meta');
 const Users = require('../model/users');
-const UsersMeta = require('../model/users_meta');
 
 /*
  * Retorna informações de uma empresa a partir do id
@@ -10,10 +9,10 @@ const UsersMeta = require('../model/users_meta');
 function read (req, res, next) {
 	const {id} = req.params;
 
-	Companies
+	Branches
 	.findOne({
 		where : {id},
-		include : [CompaniesMeta],
+		include : [BranchesMeta],
 	})
 	.then((company)=> {
 		if (!company) throw new Error('Empresa não encontrada');
@@ -33,8 +32,8 @@ function create (req, res, next) {
 	company_data.active = false;
 	company_data.users.role_id = 2; //adm
 
-	Companies
-	.create(company_data, {CompaniesMeta, include:[{model:Users, include:[UsersMeta]}]})
+	Branches
+	.create(company_data, {include:[Users, BranchesMeta]})
 	.then((result)=> {
 		res.send(result);
 	})
@@ -50,7 +49,7 @@ function update(req, res, next) {
 	const company_data = req.body;
 	const update_data = {};
 	
-	Companies.findByPk(id)
+	Branches.findByPk(id)
 	.then(company=>{
 		if (!company) throw new ReferenceError('Empresa não encontrada');
 		update_data.before_update = Object.assign({}, company.get());
@@ -62,7 +61,7 @@ function update(req, res, next) {
 		const return_data = company_updated.get();
 
 		if (company_data.metas) {
-			const metas = await CompaniesMeta.updateAll(company_data.metas, company_updated);
+			const metas = await BranchesMeta.updateAll(company_data.metas, company_updated);
 			update_data.after_update.metas = metas;
 			return_data.metas = metas;
 		}
@@ -75,39 +74,13 @@ function update(req, res, next) {
 	.catch(next);
 }
 
-/**
- * Faz a seleção da empresa para os próximos middlewares
- * e insere no object de requisição
- * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- */
-
-function select (req, res, next) {
-	if (!req.user) throw new Error('Usuário não autenticado');
-	if (!req.query.company_id) throw new Error('Empresa não selecionada');
-
-	const user = req.user;
-	const {company_id} = req.query;
-
-	Companies.findOne({where:{id:company_id}})
-	.then((company_found)=>{
-		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
-		//if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
-
-		req.company = company_found;
-		next();
-	}).catch(next);
-}
-
 /*
  * Função para habilitar/desabilitar usuário
  * 
  */
 
 function toggleActive (req, res, next) {
-	Companies
+	Branches
 	.findByPk(req.params.id)
 	.then(company=>{
 		if (!company) throw new ReferenceError('Empresa não encontrada');
@@ -125,6 +98,4 @@ module.exports = {
 	create,
 	update,
 	toggleActive,
-
-	select,
 }

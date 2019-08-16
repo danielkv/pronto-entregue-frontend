@@ -7,6 +7,5 @@ Routes.post('/companies', usersController.permit('master'), companiesController.
 Routes.put('/companies/:id', usersController.permit('companies_edit'), companiesController.update);
 Routes.put('/companies/toggleActive/:id', usersController.permit('companies_edit'), companiesController.toggleActive);
 
-Routes.post('/companies/select', companiesController.select, (req, res)=>{res.send(req.company)});
 
 module.exports = Routes;

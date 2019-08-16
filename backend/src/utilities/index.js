@@ -1,5 +1,16 @@
 const crypto = require('crypto');
 
+
+/*
+ * Adiciona ao prototype Object a função filter
+ *
+ */
+
+Object.filter = (obj, predicate) => 
+    Object.keys(obj)
+          .filter( key => predicate(obj[key], key) )
+          .reduce( (res, key) => (res[key] = obj[key], res), {} );
+
 /*
  * Cria o salt para ser adicionado/verificar senha do usuário
  *

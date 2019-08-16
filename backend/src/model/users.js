@@ -6,9 +6,25 @@ const {salt} = require('../utilities');
  * Define modelo (tabela) de usuários
  */
 
-class Users extends Sequelize.Model {
-	get fullName() {
-		return `${this.first_name} ${this.last_name}`;
+class Users extends Sequelize.Model {	
+	/**
+	 * Verifica as permissões de um usuário
+	 */
+
+	 can(perms, every=true, company_id) {
+		if (!Array.isArray(perms)) perms = [perms];
+		if (!this.permissions) throw new Error('As permissões não foram definidas');
+
+		const user_permissions = this.permissions;
+		if (user_permissions.includes('master')) return true;
+		
+		if (every) {
+			if (perms.every(r => user_permissions.includes(r))) return true;
+		} else {
+			if (user_permissions.some(r => perms.includes(r))) return true;
+		}
+
+		return false;
 	}
 }
 Users.init({
@@ -30,14 +46,19 @@ Users.init({
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-	//role_id: => Criado em 'relations'
+	role: {
+		type: Sequelize.STRING,
+		defaultValue: 'default',
+		allowNull: false,
+		comment: 'master | default'
+	}
 },{
 	modelName : 'users', //nome da tabela
 	underscored:true,
-	indexes : [ //Evita criação de 2 emails para mesma empresa
+	indexes : [ //Evita criação de 2 emails iguais
 		{
 			unique : true,
-			fields : ['company_id', 'email'],
+			fields : ['email'],
 		}
 	],
 	sequelize,

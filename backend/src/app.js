@@ -4,6 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 
+const {errorHandler} = require('./controller/errorsHandler');
 const usersConstroller = require('./controller/users');
 
 const companiesRoutes = require('./routes/companies');
@@ -24,6 +25,9 @@ app.use(usersConstroller.authenticate);
 //Rotas
 app.use(companiesRoutes);
 app.use(usersRoutes);
+
+//Maniupulação de erros
+app.use(errorHandler);
 
 app.listen(port, ()=> {
 	console.log(`Listening port ${port}`);

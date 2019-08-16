@@ -1,16 +1,12 @@
 const Roles = require('../model/roles');
 const PaymentMethods = require('../model/payment_methods');
+const Users = require('../model/users');
 
 Roles.bulkCreate([
 	{
-		name: 'master',
-		display_name: 'Master',
-		permissions: '["master","adm","companies_read","companies_edit","branches_read","branches_edit","products_read","products_edit","options_read","options_edit","orders_read","orders_edit","shipping_areas_read","shipping_areas_edit","users_read","users_edit","payment_methods_read","payment_methods_edit","roles_read","roles_edit","customer"]'
-	},
-	{
 		name: 'adm',
 		display_name: 'Administração',
-		permissions: '["companies_edit","branches_read","branches_edit","products_read","products_edit","options_read","options_edit","orders_read","orders_edit","shipping_areas_read","shipping_areas_edit","users_read","users_edit","payment_methods_read","payment_methods_edit","roles_read","roles_edit","customer"]'
+		permissions: '["adm","companies_edit","branches_read","branches_edit","products_read","products_edit","options_read","options_edit","orders_read","orders_edit","shipping_areas_read","shipping_areas_edit","users_read","users_edit","payment_methods_read","payment_methods_edit","roles_read","roles_edit","customer"]'
 	},
 	{
 		name: 'branches_manager',
@@ -44,3 +40,17 @@ PaymentMethods.bulkCreate([
 		display_name: 'Dinheiro',
 	},
 ]);
+
+
+//DEVELPOMENT
+if (process.env.NODE_ENV != 'production') {
+	Users.bulkCreate([
+		{
+			first_name: 'Daniel',
+			last_name : 'Guolo',
+			email: 'daniel_kv@hotmail.com',
+			password: '123456',
+			role: 'master'
+		},
+	])
+}
