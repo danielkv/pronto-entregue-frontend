@@ -16,6 +16,6 @@ CompaniesUsers.init({
 		type: Sequelize.BOOLEAN,
 		defaultValue: 0,
 	},
-}, {modelName:'companies_users', underscored:true, sequelize});
+}, {modelName:'companies_users', underscored:true, sequelize, name:{singular:'CompanyUser', plural:'CompaniesUsers'}});
 
 module.exports = CompaniesUsers;

@@ -42,9 +42,6 @@ Branches.hasMany(BranchesMeta, {foreignKey:'branch_id'});
 Branches.hasMany(Orders, {foreignKey:'branch_id'});
 Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
 
-//CompaniesUsers relations
-//CompaniesUsers.belongsTo(Roles, {foreignKey:'role_id'});
-
 //PaymentMethods
 PaymentMethods.belongsToMany(Branches, {through:BranchesPaymentMethods, foreignKey:'payment_method_id', otherKey:'branch_id'});
 
@@ -56,9 +53,6 @@ Users.belongsToMany(Roles, {through:CompaniesUsers, foreignKey:'user_id', otherK
 
 //UsersMeta
 UsersMeta.belongsTo(Users, {foreignKey:'user_id'});
-
-//Roles
-//Roles.belo(CompaniesUsers, {foreignKey:'role_id'});
 
 //Products relations
 Products.belongsTo(ProductsCategories, {foreignKey:'products_category_id'});

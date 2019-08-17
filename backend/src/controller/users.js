@@ -120,14 +120,10 @@ async function authorize (req, res, next) {
 	//Procura usuário {email}
 	Users.findOne({
 		where : {email},
-		include : [Companies]
 	})
 	.then ((user_found)=>{
 		//Verifica se encontrou usuário
 		if (!user_found) throw new Error('Usuário não encotrado');
-
-		//Verifica se usuário tem empresa relacionada
-		if (user_found.companies.length && user_found.role != 'master') throw new Error('Usuário não tem nenhuma empresa relacionada');
 
 		//gera token com senha recebidos e salt encontrado e verifica se token salvo é igual
 		const salted = salt(password, user_found.salt);
@@ -175,9 +171,6 @@ function authenticate (req, res, next) {
 	.then(async (user_found)=>{
 		if (!user_found) throw new Error('Usuário não encontrado');
 		if (user_found.active != true) throw new Error('Usuário inativo');
-
-		const countCompanies = await user_found.countCompanies();
-		if (countCompanies && user_found.role != 'master') throw new Error('Usuário não tem nenhuma empresa relacionada');
 
 		user_found.permissions = [user_found.role];
 

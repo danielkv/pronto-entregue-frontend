@@ -1,6 +1,7 @@
 const Companies = require('../model/companies');
 const CompaniesMeta = require('../model/companies_meta');
 const Users = require('../model/users');
+const Roles = require('../model/roles');
 const UsersMeta = require('../model/users_meta');
 
 /*
@@ -31,10 +32,16 @@ function create (req, res, next) {
 	const company_data = req.body;
 
 	company_data.active = false;
-	company_data.users.role_id = 2; //adm
 
-	Companies
-	.create(company_data, {CompaniesMeta, include:[{model:Users, include:[UsersMeta]}]})
+	Promise.all([
+		Companies.create(company_data, {include:[CompaniesMeta]}),
+		Users.create(company_data.users, {include:[UsersMeta]}),
+	])
+	
+	.then (([company, user])=>{
+		company.addUser(user, {through:{role_id:2}});
+		return {company, user};
+	})
 	.then((result)=> {
 		res.send(result);
 	})
@@ -76,8 +83,8 @@ function update(req, res, next) {
 }
 
 /**
- * Faz a seleção da empresa para os próximos middlewares
- * e insere no object de requisição
+ * Faz a seleção da empresa e das permissões para empresa
+ * para os próximos middlewares e insere no object de requisição
  * 
  * @param {*} req 
  * @param {*} res 
@@ -91,10 +98,20 @@ function select (req, res, next) {
 	const user = req.user;
 	const {company_id} = req.query;
 
-	Companies.findOne({where:{id:company_id}})
-	.then((company_found)=>{
+	Companies.findOne({where:{id:company_id}/* , include:[{model: Users, include:[Roles]}] */})
+	.then(async (company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
-		//if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
+		if (!company_found.active) throw new Error('Essa empresa não está ativa');
+
+		if (!user.can('master')) {
+			const company_users = await company_found.getUsers({where:{id:user.id, active:true}});
+			if (!company_users || !company_users[0].companies_users.active) throw new Error('Esse usuário não tem permissões para acessar essa empresa');
+
+			const company_user = company_users[0];
+			const user_role = (await company_user.getRoles())[0];
+			if (!user_role) throw new Error('Ocorreu um erro ao inserir permissões');
+			req.user.permissions = [...req.user.permissions, ...user_role.permissions];
+		}
 
 		req.company = company_found;
 		next();
