@@ -1,5 +1,6 @@
 const Companies = require('../model/companies');
 const CompaniesMeta = require('../model/companies_meta');
+const CompaniesUsers = require('../model/companies_users');
 const Users = require('../model/users');
 const Roles = require('../model/roles');
 const UsersMeta = require('../model/users_meta');
@@ -98,7 +99,7 @@ function select (req, res, next) {
 	const user = req.user;
 	const {company_id} = req.query;
 
-	Companies.findOne({where:{id:company_id}/* , include:[{model: Users, include:[Roles]}] */})
+	Companies.findOne({where:{id:company_id}})
 	.then(async (company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
 		if (!company_found.active) throw new Error('Essa empresa não está ativa');
@@ -107,10 +108,8 @@ function select (req, res, next) {
 			const company_users = await company_found.getUsers({where:{id:user.id, active:true}});
 			if (!company_users || !company_users[0].companies_users.active) throw new Error('Esse usuário não tem permissões para acessar essa empresa');
 
-			const company_user = company_users[0];
-			const user_role = (await company_user.getRoles())[0];
-			if (!user_role) throw new Error('Ocorreu um erro ao inserir permissões');
-			req.user.permissions = [...req.user.permissions, ...user_role.permissions];
+			const role = await company_users[0].companies_users.getRole();
+			req.user.permissions = [...req.user.permissions, ...role.permissions];
 		}
 
 		req.company = company_found;
