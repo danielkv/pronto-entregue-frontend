@@ -1,29 +1,7 @@
 const Companies = require('../model/companies');
 const CompaniesMeta = require('../model/companies_meta');
-const CompaniesUsers = require('../model/companies_users');
 const Users = require('../model/users');
-const Roles = require('../model/roles');
 const UsersMeta = require('../model/users_meta');
-
-/*
- * Retorna informações de uma empresa a partir do id
- */
-
-function read (req, res, next) {
-	const {id} = req.params;
-
-	Companies
-	.findOne({
-		where : {id},
-		include : [CompaniesMeta],
-	})
-	.then((company)=> {
-		if (!company) throw new Error('Empresa não encontrada');
-
-		res.send(company);
-	})
-	.catch(next);
-}
 
 /*
  * Cria empresa e usuário ADM
@@ -94,19 +72,19 @@ function update(req, res, next) {
 
 function select (req, res, next) {
 	if (!req.user) throw new Error('Usuário não autenticado');
-	if (!req.query.company_id) throw new Error('Empresa não selecionada');
-
+	if (!req.query.company_id && !req.params.id) throw new Error('Empresa não selecionada');
+	
 	const user = req.user;
-	const {company_id} = req.query;
+	const company_id = req.params.id || req.query.company_id;
 
-	Companies.findOne({where:{id:company_id}})
+	Companies.findOne({where:{id:company_id}, include:[CompaniesMeta]})
 	.then(async (company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
 		if (!company_found.active) throw new Error('Essa empresa não está ativa');
 
 		if (!user.can('master')) {
 			const company_users = await company_found.getUsers({where:{id:user.id, active:true}});
-			if (!company_users || !company_users[0].companies_users.active) throw new Error('Esse usuário não tem permissões para acessar essa empresa');
+			if (!company_users || !company_users[0].companies_users.active) throw new Error('Você não tem as permissões para acessar essa empresa');
 
 			const role = await company_users[0].companies_users.getRole();
 			req.user.permissions = [...req.user.permissions, ...role.permissions];
@@ -137,7 +115,7 @@ function toggleActive (req, res, next) {
 }
 
 module.exports = {
-	read,
+	//read,
 	create,
 	update,
 	toggleActive,

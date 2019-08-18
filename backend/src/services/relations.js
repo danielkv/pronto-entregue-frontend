@@ -35,7 +35,7 @@ const OrdersOptions = require('../model/orders_options');
 //Companies Relations
 Companies.hasMany(Branches, {foreignKey:'company_id'});
 Companies.hasMany(CompaniesMeta, {foreignKey:'company_id'});
-Companies.Users = Companies.belongsToMany(Users, {through:CompaniesUsers, foreignKey:'company_id', otherKey:'user_id'});
+Companies.belongsToMany(Users, {through:CompaniesUsers, foreignKey:'company_id', otherKey:'user_id'});
 
 //CompaniesUsers relations
 CompaniesUsers.belongsTo(Roles, {foreignKey:'role_id'});
@@ -54,7 +54,7 @@ PaymentMethods.belongsToMany(Branches, {through:BranchesPaymentMethods, foreignK
 //Users relations
 Users.hasMany(UsersMeta, {foreignKey:'user_id'});
 Users.hasMany(Orders, {foreignKey:'user_id'});
-Users.Companies = Users.belongsToMany(Companies, {through:CompaniesUsers, foreignKey:'user_id', otherKey:'company_id'});
+Users.belongsToMany(Companies, {through:CompaniesUsers, foreignKey:'user_id', otherKey:'company_id'});
 
 //UsersMeta
 UsersMeta.belongsTo(Users, {foreignKey:'user_id'});
