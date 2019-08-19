@@ -38,11 +38,7 @@ Companies.hasMany(Branches, {foreignKey:'company_id'});
 Companies.hasMany(CompaniesMeta, {foreignKey:'company_id'});
 Companies.belongsToMany(Users, {through:CompaniesUsers, foreignKey:'company_id', otherKey:'user_id'});
 
-//CompaniesUsers relations
-//CompaniesUsers.belongsTo(Roles, {foreignKey:'role_id'});
-
 //Roles relations
-//Roles.hasMany(CompaniesUsers, {foreignKey:'role_id'});
 Roles.hasMany(BranchesUsers, {foreignKey:'role_id'});
 
 //Branches Relations
