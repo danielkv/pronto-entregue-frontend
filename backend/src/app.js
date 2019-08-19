@@ -9,6 +9,7 @@ const usersConstroller = require('./controller/users');
 
 const companiesRoutes = require('./routes/companies');
 const usersRoutes = require('./routes/users');
+const branchesRoutes = require('./routes/branches');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.use(usersConstroller.authenticate);
 //Rotas
 app.use(companiesRoutes);
 app.use(usersRoutes);
+app.use(branchesRoutes);
 
 //Maniupulação de erros
 app.use(errorHandler);

@@ -11,6 +11,7 @@ const CompaniesUsers = require('../model/companies_users');
 const Branches = require('../model/branches');
 const BranchesPaymentMethods = require('../model/branches_payment_methods');
 const BranchesMeta = require('../model/branches_meta');
+const BranchesUsers = require('../model/branches_users');
 const PaymentMethods = require('../model/payment_methods');
 const ShippingAreas = require('../model/shipping_areas');
 
@@ -38,15 +39,20 @@ Companies.hasMany(CompaniesMeta, {foreignKey:'company_id'});
 Companies.belongsToMany(Users, {through:CompaniesUsers, foreignKey:'company_id', otherKey:'user_id'});
 
 //CompaniesUsers relations
-CompaniesUsers.belongsTo(Roles, {foreignKey:'role_id'});
+//CompaniesUsers.belongsTo(Roles, {foreignKey:'role_id'});
 
 //Roles relations
-Roles.hasMany(CompaniesUsers, {foreignKey:'role_id'});
+//Roles.hasMany(CompaniesUsers, {foreignKey:'role_id'});
+Roles.hasMany(BranchesUsers, {foreignKey:'role_id'});
 
 //Branches Relations
 Branches.hasMany(BranchesMeta, {foreignKey:'branch_id'});
 Branches.hasMany(Orders, {foreignKey:'branch_id'});
 Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
+Branches.belongsToMany(Users, {through:BranchesUsers, foreignKey:'branch_id', otherKey:'user_id'});
+
+//BranchesUsers relations
+BranchesUsers.belongsTo(Roles, {foreignKey:'role_id'});
 
 //PaymentMethods
 PaymentMethods.belongsToMany(Branches, {through:BranchesPaymentMethods, foreignKey:'payment_method_id', otherKey:'branch_id'});
@@ -55,6 +61,7 @@ PaymentMethods.belongsToMany(Branches, {through:BranchesPaymentMethods, foreignK
 Users.hasMany(UsersMeta, {foreignKey:'user_id'});
 Users.hasMany(Orders, {foreignKey:'user_id'});
 Users.belongsToMany(Companies, {through:CompaniesUsers, foreignKey:'user_id', otherKey:'company_id'});
+Users.belongsToMany(Branches, {through:BranchesUsers, foreignKey:'user_id', otherKey:'branch_id'});
 
 //UsersMeta
 UsersMeta.belongsTo(Users, {foreignKey:'user_id'});

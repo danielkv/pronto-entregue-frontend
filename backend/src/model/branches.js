@@ -7,7 +7,7 @@ const Sequelize = require('sequelize');
 
 class Branches extends Sequelize.Model {};
 Branches.init({
-	display_name: Sequelize.STRING,
+	name: Sequelize.STRING,
 	active: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: 0,

@@ -11,12 +11,16 @@ class Users extends Sequelize.Model {
 	 * Verifica as permissões de um usuário
 	 */
 
-	 can(perms, every=true, company_id) {
+	can(perms, options={}) {
 		if (!Array.isArray(perms)) perms = [perms];
 		if (!this.permissions) throw new Error('As permissões não foram definidas');
-
+		
+		const every = options.every || true;
+		const scope = options.scope || 'master';
 		const user_permissions = this.permissions;
+
 		if (user_permissions.includes('master')) return true;
+		if (scope && user_permissions.includes(scope)) return true;
 		
 		if (every) {
 			if (perms.every(r => user_permissions.includes(r))) return true;
@@ -50,7 +54,7 @@ Users.init({
 		type: Sequelize.STRING,
 		defaultValue: 'default',
 		allowNull: false,
-		comment: 'master | default'
+		comment: 'master | adm | default'
 	}
 },{
 	modelName : 'users', //nome da tabela

@@ -170,7 +170,7 @@ function authenticate (req, res, next) {
 	})
 	.then(async (user_found)=>{
 		if (!user_found) throw new Error('Usuário não encontrado');
-		if (user_found.active != true) throw new Error('Usuário inativo');
+		if (user_found.active != true) throw new Error('Usuário está inativo');
 
 		user_found.permissions = [user_found.role];
 
@@ -229,12 +229,12 @@ function usersEditPermission(req, res, next) {
  * 
  */
 
-function permit(perms, every=true) {
+function permit(perms, options) {
 	return (req, res, next) => {
 		if (!req.user) throw new Error('Usuário não autenticado');
 
 		const {user} = req;
-		if (!user.can(perms, every)) throw new Error('Você não tem permissões para esta ação');
+		if (!user.can(perms, options)) throw new Error('Você não tem permissões para esta ação');
 
 		next();
 		return null;

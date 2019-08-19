@@ -4,6 +4,22 @@ const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
 
 /*
+ * Retrona as informações da filial
+ */
+
+function read (req, res, next) {
+	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
+
+	const {company} = req;
+	
+	company.getMetas()
+	.then((metas)=> {
+		res.send({...company.get(), metas});
+	})
+	.catch(next);
+}
+
+/*
  * Cria empresa e usuário ADM
  */
 
@@ -11,6 +27,8 @@ function create (req, res, next) {
 	const company_data = req.body;
 
 	company_data.active = false;
+	company_data.users.role = 'adm';
+	company_data.users.active = 1;
 
 	Promise.all([
 		Companies.create(company_data, {include:[CompaniesMeta]}),
@@ -18,7 +36,7 @@ function create (req, res, next) {
 	])
 	
 	.then (([company, user])=>{
-		company.addUser(user, {through:{role_id:2}});
+		company.addUser(user, {through:{active:true}});
 		return {company, user};
 	})
 	.then((result)=> {
@@ -71,28 +89,44 @@ function update(req, res, next) {
  */
 
 function select (req, res, next) {
-	if (!req.user) throw new Error('Usuário não autenticado');
-	if (!req.query.company_id && !req.params.id) throw new Error('Empresa não selecionada');
+	if (!(req.user instanceof Users)) throw new Error('Usuário não autenticado');
+	if (!req.headers.company_id) throw new Error('Empresa não selecionada');
 	
-	const user = req.user;
-	const company_id = req.params.id || req.query.company_id;
+	const {company_id} = req.headers;
 
-	Companies.findOne({where:{id:company_id}, include:[CompaniesMeta]})
+	Companies.findOne({where:{id:company_id}})
 	.then(async (company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
 		if (!company_found.active) throw new Error('Essa empresa não está ativa');
 
-		if (!user.can('master')) {
-			const company_users = await company_found.getUsers({where:{id:user.id, active:true}});
-			if (!company_users || !company_users[0].companies_users.active) throw new Error('Você não tem as permissões para acessar essa empresa');
-
-			const role = await company_users[0].companies_users.getRole();
-			req.user.permissions = [...req.user.permissions, ...role.permissions];
-		}
-
 		req.company = company_found;
-		next();
+		return next();
 	}).catch(next);
+}
+
+/**
+ * Procura o vinculo entre usuário e empresa e insere 
+ * as permissões na requisição
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+
+async function permissions (req, res, next) {
+	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
+	
+	const {user, company} = req;
+
+	if (!user.can('master')) {
+		const assigned_user = await company.getUsers({where:{id:user.id}});
+		if (!assigned_user.length || !assigned_user[0].companies_users.active) throw new Error('Você não tem as permissões para acessar essa empresa');
+
+		//Até aqui permissões são MASTER, ADM ou DEFAULT, definidas na autenticação
+	}
+
+	next();
+	return null;
 }
 
 /*
@@ -115,10 +149,11 @@ function toggleActive (req, res, next) {
 }
 
 module.exports = {
-	//read,
+	read,
 	create,
 	update,
 	toggleActive,
 
 	select,
+	permissions,
 }

@@ -4,14 +4,9 @@ const Users = require('../model/users');
 
 Roles.bulkCreate([
 	{
-		name: 'adm',
-		display_name: 'Administração',
-		permissions: '["adm","companies_edit","branches_read","branches_edit","products_read","products_edit","options_read","options_edit","orders_read","orders_edit","shipping_areas_read","shipping_areas_edit","users_read","users_edit","payment_methods_read","payment_methods_edit","roles_read","roles_edit","customer"]'
-	},
-	{
 		name: 'branches_manager',
 		display_name: 'Gerente de Filial',
-		permissions: '["branches_read","branches_edit","products_read","products_edit","options_read","options_edit","orders_read","orders_edit","shipping_areas_read","shipping_areas_edit","users_read","users_edit","payment_methods_read","payment_methods_edit","roles_read","roles_edit","customer"]'
+		permissions: '["companies_read","branches_read","branches_edit","products_read","products_edit","options_read","options_edit","orders_read","orders_edit","shipping_areas_read","shipping_areas_edit","users_read","users_edit","payment_methods_read","payment_methods_edit","roles_read","roles_edit","customer"]'
 	},
 	{
 		name: 'manager',
