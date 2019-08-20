@@ -6,8 +6,9 @@ const usersController = require('../controller/users');
 Routes.get('/branches',
 	companiesController.select,
 	companiesController.permissions,
-	usersController.permit(['companies_read'], {scope:'adm'}),
 	branchesController.select,
+	branchesController.permissions,
+	usersController.permit(['companies_read'], {scope:'adm'}),
 	branchesController.read);
 
 Routes.post('/branches',
@@ -15,14 +16,7 @@ Routes.post('/branches',
 	usersController.permit('adm'), 
 	branchesController.create);
 
-Routes.put('/branches/bind_user/:user_id', 
-	companiesController.select,
-	companiesController.permissions,
-	usersController.permit(['branches_edit', 'users_edit'], {scope:'adm'}),
-	branchesController.select,
-	branchesController.bind_user);
-
-Routes.put('/branches/', 
+	Routes.put('/branches/', 
 	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
@@ -30,11 +24,21 @@ Routes.put('/branches/',
 	usersController.permit('branches_edit', {scope:'adm'}),
 	branchesController.update);
 
-/*Routes.put('/branches/toggleActive/',
+Routes.put('/branches/bind_user/:user_id', 
 	companiesController.select,
+	companiesController.permissions,
 	branchesController.select,
-	usersController.permit('branches_edit'),
-	branchesController.toggleActive); */
+	branchesController.permissions,
+	usersController.permit(['branches_edit', 'users_edit'], {scope:'adm'}),
+	branchesController.bind_user);
+
+Routes.put('/branches/toggle_active/',
+	companiesController.select,
+	companiesController.permissions,
+	branchesController.select,
+	branchesController.permissions,
+	usersController.permit('branches_edit', {scope:'adm'}),
+	branchesController.toggle_active);
 
 
 module.exports = Routes;

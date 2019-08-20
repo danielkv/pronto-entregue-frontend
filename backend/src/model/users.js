@@ -54,7 +54,7 @@ Users.init({
 		type: Sequelize.STRING,
 		defaultValue: 'default',
 		allowNull: false,
-		comment: 'master | adm | default'
+		comment: 'master | adm | customer | default'
 	}
 },{
 	modelName : 'users', //nome da tabela

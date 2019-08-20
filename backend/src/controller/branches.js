@@ -2,6 +2,7 @@ const Companies = require('../model/companies');
 const Branches = require('../model/branches');
 const BranchesMeta = require('../model/branches_meta');
 const Users = require('../model/users');
+const PaymentMethods = require('../model/payment_methods');
 const sequelize = require('../services/connection');
 
 /*
@@ -75,6 +76,23 @@ function update(req, res, next) {
 	.catch(next);
 }
 
+/*
+ * Função para habilitar/desabilitar usuário
+ * 
+ */
+
+function toggle_active (req, res, next) {
+	if (!(req.branch instanceof Branches)) new Error('Filial não encontrada');
+
+	const {branch} = req;
+
+	branch.update({active:req.body.active})
+	.then((branch_updated)=>{
+		res.send(branch_updated.get());
+	})
+	.catch(next);
+}
+
 /**
  * Vincula/Desvincula usuário (params) à filial (headers)
  * 
@@ -85,7 +103,6 @@ function update(req, res, next) {
 
 async function bind_user(req, res, next) {
 	try {
-		if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
 		if (!(req.branch instanceof Branches)) throw new Error('Filial não encontrada');
 
 		const action = req.body.action == 'bind' ? 'bind' : 'unbind';
@@ -149,47 +166,38 @@ function select (req, res, next) {
  */
 
 async function permissions (req, res, next) {
-	if (!(req.branch instanceof Branches)) throw new Error('Filial não encontrada');
-	if (!(req.user instanceof Users)) throw new Error('Usuário não encontrado');
-	
-	const {user, branch} = req;
+	try {
+		if (!(req.branch instanceof Branches)) throw new Error('Filial não encontrada');
+		if (!(req.user instanceof Users)) throw new Error('Usuário não encontrado');
+		
+		const {user, branch} = req;
 
-	if (!user.can('master')) {
-		const assigned_user = await branch.getUsers({where:{id:user.id}});
-		if (!assigned_user.length || !assigned_user[0].branches_users.active) throw new Error('Você não tem as permissões para acessar essa filial');
+		if (!user.can(['master', 'adm'])) {
+			const [assigned_user] = await branch.getUsers({where:{id:user.id}});
+			if (!assigned_user || !assigned_userbranches_users.active) throw new Error('Você não tem as permissões para acessar essa filial');
 
-		const role = await assigned_user[0].branches_users.getRole();
-		req.user.branch_permissions = role.permissions;
+			const role = await assigned_user.branches_users.getRole();
+			req.user.branch_permissions = role.permissions;
+		}
+
+		next();
+		return null;
+	} catch (err) {
+		next(err);
 	}
-
-	next();
-}
-
-/*
- * Função para habilitar/desabilitar usuário
- * 
- */
-
-function toggleActive (req, res, next) {
-	if (!(req.branch instanceof Branches)) new Error('Filial não encontrada');
-
-	const {branch} = req;
-
-	branch.update({active:req.body.active})
-	.then((branch_updated)=>{
-		res.send(branch_updated.get());
-	})
-	.catch(next);
 }
 
 module.exports = {
+	//default
 	read,
 	create,
 	update,
-	toggleActive,
 
+	//settings
+	toggle_active,
+	bind_user,
+
+	//select, permissions
 	select,
 	permissions,
-
-	bind_user,
 }

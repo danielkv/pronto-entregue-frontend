@@ -12,7 +12,15 @@ BranchesPaymentMethods.init({
 		primaryKey:true,
 		autoIncrement:true
 	},
-	fee: Sequelize.DECIMAL(10,2),
-}, {modelName:'branches_payment_methods', underscored:true, sequelize});
+	settings: {
+		type: Sequelize.TEXT,
+		set(val) {
+			this.setDataValue('settings', JSON.stringify(val));
+		},
+		get () {
+			return JSON.parse(this.getDataValue('settings'));
+		}
+	},
+}, {modelName:'branches_payment_methods', underscored:true, sequelize, name:{singular:'PaymentMethod', plural:'PaymentMethods'}});
 
 module.exports = BranchesPaymentMethods;

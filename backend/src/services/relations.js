@@ -45,6 +45,7 @@ Roles.hasMany(BranchesUsers, {foreignKey:'role_id'});
 Branches.hasMany(BranchesMeta, {foreignKey:'branch_id'});
 Branches.hasMany(Orders, {foreignKey:'branch_id'});
 Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
+Branches.belongsToMany(PaymentMethods, {through:BranchesPaymentMethods, foreignKey:'branch_id', otherKey:'payment_method_id'});
 Branches.belongsToMany(Users, {through:BranchesUsers, foreignKey:'branch_id', otherKey:'user_id'});
 
 //BranchesUsers relations

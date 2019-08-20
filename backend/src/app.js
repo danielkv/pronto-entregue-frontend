@@ -10,6 +10,8 @@ const usersConstroller = require('./controller/users');
 const companiesRoutes = require('./routes/companies');
 const usersRoutes = require('./routes/users');
 const branchesRoutes = require('./routes/branches');
+const shippingAreasRoutes = require('./routes/shipping_areas');
+const paymentMethodsRoutes = require('./routes/payment_methods');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,6 +29,8 @@ app.use(usersConstroller.authenticate);
 app.use(companiesRoutes);
 app.use(usersRoutes);
 app.use(branchesRoutes);
+app.use(shippingAreasRoutes);
+app.use(paymentMethodsRoutes);
 
 //Maniupulação de erros
 app.use(errorHandler);

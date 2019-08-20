@@ -36,8 +36,8 @@ function create (req, res, next) {
 			Companies.create(company_data, {include:[CompaniesMeta], transaction}),
 			Users.create(company_data.users, {include:[UsersMeta], transaction}),
 		])
-		.then (([company, user])=>{
-			company.addUser(user, {through:{active:true}, transaction});
+		.then (async ([company, user])=>{
+			await company.addUser(user, {through:{active:true}, transaction});
 			return {company, user};
 		});
 	})
@@ -78,6 +78,25 @@ function update(req, res, next) {
 	.catch(next);
 }
 
+/*
+ * Função para habilitar/desabilitar usuário
+ * 
+ */
+
+function toggle_active (req, res, next) {
+	Companies
+	.findByPk(req.params.id)
+	.then(company=>{
+		if (!company) throw new ReferenceError('Empresa não encontrada');
+
+		return company.update({active:req.body.active});
+	})
+	.then((company_updated)=>{
+		res.send(company_updated.get());
+	})
+	.catch(next);
+}
+
 /**
  * Vincula/Desvincula usuário (params) à empresa (headers)
  * 
@@ -93,8 +112,8 @@ async function bind_user(req, res, next) {
 		const action = req.body.action == 'bind' ? 'bind' : 'unbind';
 		
 		const {company} = req;
-		const [bind_user] = await Users.getUsers({where:{id:req.params.user_id}});
-		if (!bind_user) throw new Error('O usuário selecionado não existe ou não está vinculado a essa empresa');
+		const bind_user = await Users.findOne({where:{id:req.params.user_id}});
+		if (!bind_user) throw new Error('O usuário selecionado não foi encontrado');
 
 		if (action == 'bind') {
 			company.addUser(bind_user, {through:{active:true}})
@@ -112,6 +131,8 @@ async function bind_user(req, res, next) {
 		next(err);
 	}
 }
+
+
 
 /**
  * Faz a seleção da empresa e das permissões para empresa
@@ -133,9 +154,11 @@ function select (req, res, next) {
 		if (!company_found.active) throw new Error('Essa empresa não está ativa');
 
 		req.company = company_found;
-		return next();
+		next();
+		return null
 	}).catch(next);
 }
+
 
 /**
  * Procura o vinculo entre usuário e empresa e insere 
@@ -147,49 +170,37 @@ function select (req, res, next) {
  */
 
 async function permissions (req, res, next) {
-	if (!(req.user instanceof Users)) throw new Error('Usuário não autenticado');
-	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
-	
-	const {user, company} = req;
+	try {
+		if (!(req.user instanceof Users)) throw new ReferenceError('Usuário não autenticado');
+		if (!(req.company instanceof Companies)) throw new ReferenceError('Empresa não encontrada');
+		
+		const {user, company} = req;
 
-	if (!user.can('master')) {
-		const assigned_user = await company.getUsers({where:{id:user.id}});
-		if (!assigned_user.length || !assigned_user[0].companies_users.active) throw new Error('Você não tem as permissões para acessar essa empresa');
+		if (!user.can('master')) {
+			const assigned_user = await company.getUsers({where:{id:user.id}});
+			if (!assigned_user.length || !assigned_user[0].companies_users.active) throw new Error('Você não tem as permissões para acessar essa empresa');
 
-		//Até aqui permissões são MASTER, ADM ou DEFAULT, definidas na autenticação
+			//Até aqui permissões são MASTER, ADM ou DEFAULT, definidas na autenticação
+		}
+
+		next();
+		return null;
+	} catch (err) {
+		next(err);
 	}
-
-	next();
-	return null;
-}
-
-/*
- * Função para habilitar/desabilitar usuário
- * 
- */
-
-function toggleActive (req, res, next) {
-	Companies
-	.findByPk(req.params.id)
-	.then(company=>{
-		if (!company) throw new ReferenceError('Empresa não encontrada');
-
-		return company.update({active:req.body.active});
-	})
-	.then((company_updated)=>{
-		res.send(company_updated.get());
-	})
-	.catch(next);
 }
 
 module.exports = {
+	//default
 	read,
 	create,
 	update,
-	toggleActive,
 
+	//settings
+	toggle_active,
+	bind_user,
+
+	//permissions
 	select,
 	permissions,
-
-	bind_user,
 }

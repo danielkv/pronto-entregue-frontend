@@ -10,7 +10,7 @@ Branches.init({
 	name: Sequelize.STRING,
 	active: {
 		type: Sequelize.BOOLEAN,
-		defaultValue: 0,
+		defaultValue: 1,
 	},
 }, {modelName:'branches', underscored:true, sequelize});
 

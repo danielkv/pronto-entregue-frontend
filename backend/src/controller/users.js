@@ -32,8 +32,6 @@ function read (req, res, next) {
  */
 
 function create (req, res, next) {
-	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
-
 	const {company} = req;
 	const user_data = req.body;
 	
@@ -54,8 +52,6 @@ function create (req, res, next) {
  */
 
 function update (req, res, next) {
-	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
-
 	const {company} = req;
 	const user_data = req.body;
 	const {user_id} = req.params;
@@ -95,14 +91,61 @@ function update (req, res, next) {
 	.catch(next);
 }
 
+/**
+ * Altera a função geral do usuário dentro da empresa
+ */
+
+function update_scope_role (req, res, next) {
+	const {user} = req;
+	const {user_id} = req.params;
+	const {role} = req.body;
+
+	if ((role == 'master' && !user.can('master'))) throw new Error('Você não tem permissão para definir essa função');
+
+	Users.findByPk(user_id)
+	.then(user_found => {
+		if (!user_found) throw new Error('Usuário não encontrado');
+
+		return user_found.update({role});
+	})
+	.then((result)=>{
+		res.send(result);
+	})
+	.catch(next);
+}
+
+/**
+ * Altera a função de usuário dentro da filial
+ * 
+ */
+
+function update_branch_role (req, res, next) {
+	const {branch} = req;
+	const {user_id} = req.params;
+	const {role_id} = req.body;
+
+	Promise.all([
+		branch.getUsers({where:{id:user_id}}),
+		Roles.findByPk(role_id)
+	])
+	.then(([[user_found], role])=>{
+		if (!user_found) throw new Error ('Usuário não encontrado');
+		if (!role) throw new Error ('Função não encontrada');
+
+		return user_found.branches_users.setRole(role);
+	})
+	.then((result)=>{
+		res.send(result);
+	})
+	.catch(next);
+}
+
 /*
  * Função para habilitar/desabilitar usuário
  * 
  */
 
-function toggleActive (req, res, next) {
-	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
-	
+function toggle_active (req, res, next) {
 	const {company} = req;
 	const {user_id} = req.params;
 
@@ -222,7 +265,7 @@ function permit(perms, options) {
 		if (!req.user) throw new Error('Usuário não autenticado');
 
 		const {user} = req;
-		if (typeof options.function == 'function' && options.function(req)){next(); return null;}
+		if (options && typeof options.function == 'function' && options.function(req)){next(); return null;}
 		if (!user.can(perms, options)) throw new Error('Você não tem permissões para esta ação');
 
 		next();
@@ -231,14 +274,21 @@ function permit(perms, options) {
 }
 
 module.exports = {
+	//default
 	read,
-	create, //cria usuário
+	create,
 	update,
-	toggleActive,
 
-	authorize, //gera token
-	authenticate, //verifica token
+	//settings
+	toggle_active,
+	update_branch_role,
+	update_scope_role,
 
+	//authorization
+	authorize,
+	authenticate,
+	
+	//permissions
 	permit,
 	usersEditPermission,
 }

@@ -18,16 +18,16 @@ Routes.put('/companies',
 	usersController.permit('companies_edit', {scope:'adm'}),
 	companiesController.update);
 
-Routes.put('/branches/bind_user/:user_id', 
+Routes.put('/companies/bind_user/:user_id', 
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit(['users_read', 'users_edit'], {scope:'adm'}),
 	companiesController.bind_user);
 
-Routes.put('/companies/toggleActive',
+Routes.put('/companies/toggle_active',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit('companies_edit', {scope:'adm'}),
-	companiesController.toggleActive);
+	companiesController.toggle_active);
 
 module.exports = Routes;

@@ -1,14 +1,14 @@
-const conn = require('../services/connection');
+const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
  * Define modelo (tabela) de pedidos
  */
 
-const PaymentMethods = conn.define('payment_methods', {
+class PaymentMethods extends Sequelize.Model {};
+PaymentMethods.init({
 	name: Sequelize.STRING,
 	display_name: Sequelize.STRING,
-	meta: Sequelize.TEXT,
-});
+}, {modelName:'payment_methods', underscored:true, sequelize, name:{singular:'PaymentMethod', plural:'PaymentMethods'}});
 
 module.exports = PaymentMethods;
