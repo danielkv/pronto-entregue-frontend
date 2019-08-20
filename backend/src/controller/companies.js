@@ -79,6 +79,41 @@ function update(req, res, next) {
 }
 
 /**
+ * Vincula/Desvincula usuário (params) à empresa (headers)
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+
+async function bind_user(req, res, next) {
+	try {
+		if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
+
+		const action = req.body.action == 'bind' ? 'bind' : 'unbind';
+		
+		const {company} = req;
+		const [bind_user] = await Users.getUsers({where:{id:req.params.user_id}});
+		if (!bind_user) throw new Error('O usuário selecionado não existe ou não está vinculado a essa empresa');
+
+		if (action == 'bind') {
+			company.addUser(bind_user, {through:{active:true}})
+			.then(([result])=>{
+				if (result == 1) return res.send({message: 'Usuário já está vinculado a esta empresa'});
+				res.send({...bind_user.get(), branches_users:result});
+			});
+		} else {
+			company.removeUsers(bind_user)
+			.then((result)=>{
+				res.send({message:'Usuário desvinculado'});
+			});
+		}
+	} catch (err) {
+		next(err);
+	}
+}
+
+/**
  * Faz a seleção da empresa e das permissões para empresa
  * para os próximos middlewares e insere no object de requisição
  * 
@@ -155,4 +190,6 @@ module.exports = {
 
 	select,
 	permissions,
+
+	bind_user,
 }

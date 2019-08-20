@@ -173,7 +173,9 @@ async function permissions (req, res, next) {
 function toggleActive (req, res, next) {
 	if (!(req.branch instanceof Branches)) new Error('Filial não encontrada');
 
-	req.branch.update({active:req.body.active})
+	const {branch} = req;
+
+	branch.update({active:req.body.active})
 	.then((branch_updated)=>{
 		res.send(branch_updated.get());
 	})
