@@ -15,13 +15,13 @@ Routes.post('/companies',
 Routes.put('/companies',
 	companiesController.select,
 	companiesController.permissions,
-	usersController.permit('companies_edit'),
+	usersController.permit('companies_edit', {scope:'adm'}),
 	companiesController.update);
 
 Routes.put('/companies/toggleActive',
 	companiesController.select,
 	companiesController.permissions,
-	usersController.permit('companies_edit'),
+	usersController.permit('companies_edit', {scope:'adm'}),
 	companiesController.toggleActive);
 
 module.exports = Routes;

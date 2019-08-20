@@ -2,6 +2,7 @@ const Companies = require('../model/companies');
 const Branches = require('../model/branches');
 const BranchesMeta = require('../model/branches_meta');
 const Users = require('../model/users');
+const sequelize = require('../services/connection');
 
 /*
  * Retrona as informações da filial
@@ -31,7 +32,9 @@ function create (req, res, next) {
 
 	branch_data.active = true;
 	
-	company.createBranch(branch_data, {include:[BranchesMeta]})
+	sequelize.transaction(transaction => {
+		return company.createBranch(branch_data, {include:[BranchesMeta], transaction})
+	})
 	.then((branch)=> {
 		res.send(branch);
 	})
@@ -45,24 +48,26 @@ function create (req, res, next) {
 function update(req, res, next) {
 	if (!(req.branch instanceof Branches)) throw new Error('Filial não encontrada');
 
+	const {branch} = req;
 	const branch_data = req.body;
 	const update_data = {};
-	const branch = req.branch;
 
 	update_data.before_update = Object.assign({}, branch.get());
 	update_data.after_update = Object.filter(branch_data, (new_value, key) => branch.get(key) && branch.get(key) != new_value);
 
-	branch.update(branch_data, {fields:['name']})
-	.then(async (branch_updated)=>{
-		const return_data = branch_updated.get();
+	sequelize.transaction(transaction => {
+		return branch.update(branch_data, {fields:['name'], transaction})
+		.then(async (branch_updated)=>{
+			const return_data = branch_updated.get();
 
-		if (branch_data.metas) {
-			const metas = await BranchesMeta.updateAll(branch_data.metas, branch_updated);
-			update_data.after_update.metas = metas;
-			return_data.metas = metas;
-		}
+			if (branch_data.metas) {
+				const metas = await BranchesMeta.updateAll(branch_data.metas, branch_updated, transaction);
+				update_data.after_update.metas = metas;
+				return_data.metas = metas;
+			}
 
-		return return_data;
+			return return_data;
+		})
 	})
 	.then((result)=>{
 		res.send(result);

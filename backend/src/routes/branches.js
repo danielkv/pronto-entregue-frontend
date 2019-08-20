@@ -22,13 +22,15 @@ Routes.put('/branches/bind_user/:user_id',
 	branchesController.select,
 	branchesController.bind_user);
 
-/* Routes.put('/branches/', 
+Routes.put('/branches/', 
 	companiesController.select,
+	companiesController.permissions,
 	branchesController.select,
-	usersController.permit('branches_edit'),
+	branchesController.permissions,
+	usersController.permit('branches_edit', {scope:'adm'}),
 	branchesController.update);
 
-Routes.put('/branches/toggleActive/',
+/*Routes.put('/branches/toggleActive/',
 	companiesController.select,
 	branchesController.select,
 	usersController.permit('branches_edit'),

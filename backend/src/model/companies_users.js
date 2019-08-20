@@ -14,7 +14,7 @@ CompaniesUsers.init({
 	},
 	active: {
 		type: Sequelize.BOOLEAN,
-		defaultValue: 0,
+		defaultValue: 1,
 	},
 }, {modelName:'companies_users', underscored:true, sequelize, name:{singular:'CompanyUser', plural:'CompaniesUsers'}});
 

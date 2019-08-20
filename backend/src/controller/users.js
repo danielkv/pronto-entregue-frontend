@@ -6,7 +6,7 @@ const Roles = require('../model/roles');
 const Companies = require('../model/companies');
 const {salt} = require('../utilities');
 const Notifications = require('../notifications');
-require('../utilities');
+const sequelize = require('../services/connection');
 
 /*
  * Retorna informações de um usuário a partir do id
@@ -27,15 +27,21 @@ function read (req, res, next) {
 }
 
 /*
- * Cria novo usuário a partir do id da empresa
+ * Cria novo usuário a partir da empresa
  * 
  */
 
-async function create (req, res, next) {
-	const user_data = req.body;
-	const user_role = await get_allowed_role_creation(req.user || null, user_data.role_id || null);
+function create (req, res, next) {
+	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
 
-	user_role.createUser(user_data)
+	const {company} = req;
+	const user_data = req.body;
+	
+	sequelize.transaction(async (transaction) => {
+		const user_created = await Users.create(user_data, {include: UsersMeta, transaction})
+		await company.addUser(user_created, {transaction});
+		return user_created;
+	})
 	.then((user)=>{
 		res.send(user);
 	})
@@ -48,35 +54,39 @@ async function create (req, res, next) {
  */
 
 function update (req, res, next) {
+	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
+
+	const {company} = req;
 	const user_data = req.body;
-	const {id} = req.params;
+	const {user_id} = req.params;
 	const update_data = {}
 
 	if (user_data.password === '') delete user_data.password;
-	if (user_data.company_id && !req.user.can('master')) throw new Error('Esse usuário não tem permissões para alterar a empresa')
-	if (user_data.role_id && !req.user.can('users_edit')) throw new Error('Esse usuário não tem permissão para alterar a função');
+	
+	sequelize.transaction(transaction => {
+		return company.getUsers({where:{id:user_id}})
+		.then(users=>{
+			if (!users.length) throw new ReferenceError('Usuário não encontrado');
+			const user = users[0];
 
-	Users
-	.findByPk(id)
-	.then(user=>{
-		if (!user) throw new ReferenceError('Usuário não encontrado');
-		update_data.before_update = Object.assign({}, user.get());
-		update_data.after_update = Object.filter(user_data, (new_value, key) => user.get(key) && user.get(key) != new_value);
+			update_data.before_update = Object.assign({}, user.get());
+			update_data.after_update = Object.filter(user_data, (new_value, key) => user.get(key) && user.get(key) != new_value);
 
-		return user.update(update_data.after_update, {fields:['first_name', 'last_name', 'email', 'password', 'company_id', 'role_id']});
-	})
-	.then(async (user_updated)=>{
-		const return_data = user_updated.get();
-		delete return_data.salt;
-		delete return_data.password;
+			return user.update(update_data.after_update, {fields:['first_name', 'last_name', 'email', 'password'], transaction});
+		})
+		.then(async (user_updated)=>{
+			const return_data = user_updated.get();
+			delete return_data.salt;
+			delete return_data.password;
 
-		if (user_data.metas) {
-			const metas = await UsersMeta.updateAll(user_data.metas, user_updated);
-			update_data.after_update.metas = metas;
-			return_data.metas = metas;
-		}
+			if (user_data.metas) {
+				const metas = await UsersMeta.updateAll(user_data.metas, user_updated, transaction);
+				update_data.after_update.metas = metas;
+				return_data.metas = metas;
+			}
 
-		return return_data;
+			return return_data;
+		})
 	})
 	.then((result)=>{
 		if (Object.keys(update_data.after_update).length) Notifications.send('update-user', update_data);
@@ -91,12 +101,16 @@ function update (req, res, next) {
  */
 
 function toggleActive (req, res, next) {
-	Users
-	.findByPk(req.params.id)
-	.then(user=>{
-		if (!user) throw new ReferenceError('Usuário não encontrado');
+	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
+	
+	const {company} = req;
+	const {user_id} = req.params;
 
-		return user.update({active:req.body.active});
+	company.getUsers({where:{id:user_id}})
+	.then(user=>{
+		if (!user.length) throw new ReferenceError('Usuário não encontrado');
+
+		return user[0].update({active:req.body.active});
 	})
 	.then((user_updated)=>{
 		const user_return = user_updated.get();
@@ -181,32 +195,6 @@ function authenticate (req, res, next) {
 	}).catch(next);
 }
 
-/**
- * Verifica usuário autenticado e retorna qual função ele pode criar,
- * caso usuário não esteja autenticado retorna a função cliente (customer)
- * 
- * @param {Users} user 
- * @param {string} role_attempt qual função está tentando definir
- */
-
-async function get_allowed_role_creation(user, role_attempt) {
-	let user_role;
-	if (user) {
-		if (!role_attempt) {
-			user_role = await Roles.findOne({where:{name:'customer'}});
-		} else {
-			user_role = await Roles.findByPk(role_attempt);
-		}
-
-		if (user_role.name == 'master' && !user.can('master')) throw new Error('Esse usuário não tem permissões para criar outro usuário com função Master');
-		if (user_role.name == 'adm' && !user.can(['adm', 'master'])) throw new Error('Esse usuário não tem permissões para criar outro usuário com função Administrador');
-		if (user_role.name != 'customer' && !user.can('users_edit')) throw new Error('Esse usuário não tem permissões para criar outro usuário');
-	} else {
-		user_role = await Roles.findOne({where:{name:'customer'}});
-	}
-	return user_role
-}
-
 /*
  * Middleware para verificar permissão de editar usuário
  * 
@@ -234,6 +222,7 @@ function permit(perms, options) {
 		if (!req.user) throw new Error('Usuário não autenticado');
 
 		const {user} = req;
+		if (typeof options.function == 'function' && options.function(req)){next(); return null;}
 		if (!user.can(perms, options)) throw new Error('Você não tem permissões para esta ação');
 
 		next();

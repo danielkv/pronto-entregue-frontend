@@ -6,15 +6,15 @@ const Sequelize = require('sequelize');
  */
 
 class BranchesMeta extends Sequelize.Model {
-	static async updateAll(metas, model_instance) {
+	static async updateAll(metas, model_instance, transaction=null) {
 		const metas_remove = metas.filter(row=>row.id && row.remove===true);
 		const metas_create = metas.filter(row=>!row.id && !row.remove);
 		const metas_update = metas.filter(row=>row.id && !row.remove);
 		
 		const [removed, created, updated] = await Promise.all([
-			BranchesMeta.destroy({ where: { id: metas_remove.map(r => r.id) } }).then(() => metas_remove),
-			Promise.all(metas_create.map(row => model_instance.createMeta(row))),
-			Promise.all(metas_update.map(row => BranchesMeta.findByPk(row.id).then((meta) => meta.update(row, {fields:['meta_value']}))))
+			BranchesMeta.destroy({ where: { id: metas_remove.map(r => r.id) }, transaction }).then(() => metas_remove),
+			Promise.all(metas_create.map(row => model_instance.createMeta(row, {transaction}))),
+			Promise.all(metas_update.map(row => BranchesMeta.findByPk(row.id).then((meta) => meta.update(row, {fields:['meta_value'], transaction}))))
 		]);
 
 		return {

@@ -2,6 +2,7 @@ const Companies = require('../model/companies');
 const CompaniesMeta = require('../model/companies_meta');
 const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
+const sequelize = require('../services/connection');
 
 /*
  * Retrona as informações da filial
@@ -30,14 +31,15 @@ function create (req, res, next) {
 	company_data.users.role = 'adm';
 	company_data.users.active = 1;
 
-	Promise.all([
-		Companies.create(company_data, {include:[CompaniesMeta]}),
-		Users.create(company_data.users, {include:[UsersMeta]}),
-	])
-	
-	.then (([company, user])=>{
-		company.addUser(user, {through:{active:true}});
-		return {company, user};
+	sequelize.transaction(transaction => {
+		return Promise.all([
+			Companies.create(company_data, {include:[CompaniesMeta], transaction}),
+			Users.create(company_data.users, {include:[UsersMeta], transaction}),
+		])
+		.then (([company, user])=>{
+			company.addUser(user, {through:{active:true}, transaction});
+			return {company, user};
+		});
 	})
 	.then((result)=> {
 		res.send(result);
@@ -50,27 +52,24 @@ function create (req, res, next) {
  */
 
 function update(req, res, next) {
-	const {id} = req.params;
+	if (!(req.company instanceof Companies)) throw new ReferenceError('Empresa não encontrada');
+
+	const {company} = req;
 	const company_data = req.body;
 	const update_data = {};
 	
-	Companies.findByPk(id)
-	.then(company=>{
-		if (!company) throw new ReferenceError('Empresa não encontrada');
+	sequelize.transaction(async transaction => {
 		update_data.before_update = Object.assign({}, company.get());
 		update_data.after_update = Object.filter(company_data, (new_value, key) => company.get(key) && company.get(key) != new_value);
 
-		return company.update(company_data, {fields:['name', 'display_name']})
-	})
-	.then(async (company_updated)=>{
+		const company_updated = await company.update(company_data, { fields: ['name', 'display_name'], transaction });
 		const return_data = company_updated.get();
 
 		if (company_data.metas) {
-			const metas = await CompaniesMeta.updateAll(company_data.metas, company_updated);
+			const metas = await CompaniesMeta.updateAll(company_data.metas, company_updated, transaction);
 			update_data.after_update.metas = metas;
 			return_data.metas = metas;
 		}
-
 		return return_data;
 	})
 	.then((result)=>{
@@ -89,7 +88,6 @@ function update(req, res, next) {
  */
 
 function select (req, res, next) {
-	if (!(req.user instanceof Users)) throw new Error('Usuário não autenticado');
 	if (!req.headers.company_id) throw new Error('Empresa não selecionada');
 	
 	const {company_id} = req.headers;
@@ -114,6 +112,7 @@ function select (req, res, next) {
  */
 
 async function permissions (req, res, next) {
+	if (!(req.user instanceof Users)) throw new Error('Usuário não autenticado');
 	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
 	
 	const {user, company} = req;

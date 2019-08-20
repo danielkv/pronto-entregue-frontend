@@ -14,7 +14,7 @@ BranchesUsers.init({
 	},
 	active: {
 		type: Sequelize.BOOLEAN,
-		defaultValue: 0,
+		defaultValue: 1,
 	},
 }, {modelName:'branches_users', underscored:true, sequelize, name:{singular:'BranchUser', plural:'BranchesUsers'}});
 
