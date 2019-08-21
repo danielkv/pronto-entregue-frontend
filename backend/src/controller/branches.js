@@ -108,14 +108,14 @@ async function bind_user(req, res, next) {
 		const action = req.body.action == 'bind' ? 'bind' : 'unbind';
 		
 		const {branch} = req;
-		const bind_user = await req.company.getUsers({where:{id:req.params.user_id}});
+		const bind_user = await req.company.getUsers({where:{id:req.body.user_id}});
 		if (!bind_user.length) throw new Error('O usuário selecionado não existe ou não está vinculado a essa empresa');
 
 		if (action == 'bind') {
 			branch.addUser(bind_user[0], {through:{active:true}})
 			.then(([result])=>{
 				if (result == 1) return res.send({message: 'Usuário já está vinculado a esta filial'});
-				res.send({...bind_user[0].get(), branches_users:result});
+				res.send({...bind_user[0].get(), branch_relation:result});
 			});
 		} else {
 			branch.removeUsers(bind_user)
@@ -174,9 +174,9 @@ async function permissions (req, res, next) {
 
 		if (!user.can(['master', 'adm'])) {
 			const [assigned_user] = await branch.getUsers({where:{id:user.id}});
-			if (!assigned_user || !assigned_userbranches_users.active) throw new Error('Você não tem as permissões para acessar essa filial');
+			if (!assigned_user || !assigned_user.branch_relation.active) throw new Error('Você não tem as permissões para acessar essa filial');
 
-			const role = await assigned_user.branches_users.getRole();
+			const role = await assigned_user.branch_relation.getRole();
 			req.user.branch_permissions = role.permissions;
 		}
 

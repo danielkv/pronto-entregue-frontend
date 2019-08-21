@@ -3,6 +3,8 @@ const CompaniesMeta = require('../model/companies_meta');
 const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
 const BranchesMeta = require('../model/branches_meta');
+const Products = require('../model/products');
+const ProductsCategories = require('../model/products_categories');
 
 const company = {
 	name:"Copeiro hamburge1r",
@@ -62,6 +64,48 @@ const branch = {
 	]
 }
 
+const products = [
+	{
+		name:'Hambúrguer com Calabresa',
+		type:'multiple',
+		amount: 16.98,
+		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		company_id:1,
+	},
+	{
+		name:'Suco',
+		type:'multiple',
+		amount: 4.8,
+		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		company_id:1,
+	},
+	{
+		name:'Pizza',
+		type:'multiple',
+		amount: 55.90,
+		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		company_id:1,
+	},
+];
+
+const categories = [
+	{
+		name: 'Hambúrguer',
+		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		branch_id : 1,
+	},
+	{
+		name: 'Sucos',
+		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		branch_id : 1,
+	},
+	{
+		name: 'Lanches',
+		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		branch_id : 1,
+	}
+];
+
 Promise.all([
 	Companies.create(company, {include:[CompaniesMeta]}),
 	Users.create(user, {include:[UsersMeta]}),
@@ -79,5 +123,10 @@ Promise.all([
 	const new_user = await Users.create(user1, {include:[UsersMeta]});
 	await result.company.addUser(new_user);
 	await result.branch.addUser(new_user, {through:{role_id:2}});
+	return result;
+})
+.then (async (result)=>{
+	await Products.bulkCreate(products);
+	await ProductsCategories.bulkCreate(categories);
 	return result;
 })

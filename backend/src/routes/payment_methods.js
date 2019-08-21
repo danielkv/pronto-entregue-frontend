@@ -5,18 +5,19 @@ const companiesController = require('../controller/companies');
 const branchesController = require('../controller/branches');
 
 //DEFAULT MIDDLESWARES
-Routes.use(companiesController.select,
+Routes.use('/',
+	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
 	branchesController.permissions,
 	usersController.permit(['branches_edit', 'payment_methods_edit'], {scope:'adm'}));
 	
-Routes.get('/branches/payment_methods/', paymentMethodsController.read);
+Routes.get('/', paymentMethodsController.read);
 
-Routes.post('/branches/payment_methods', paymentMethodsController.add);
+Routes.post('/', paymentMethodsController.bind);
 
-Routes.put('/branches/payment_methods/:payment_method_id', paymentMethodsController.update);
+Routes.put('/:payment_method_id', paymentMethodsController.update);
 
-Routes.delete('/branches/payment_methods/:payment_method_id', paymentMethodsController.remove);
+Routes.delete('/:payment_method_id', paymentMethodsController.remove);
 
 module.exports = Routes;

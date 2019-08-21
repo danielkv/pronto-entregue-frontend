@@ -5,18 +5,19 @@ const companiesController = require('../controller/companies');
 const branchesController = require('../controller/branches');
 
 //DEFAULT MIDDLESWARES
-Routes.use(companiesController.select,
+Routes.use('/',
+	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
 	branchesController.permissions,
 	usersController.permit(['branches_edit', 'shipping_areas_edit'], {scope:'adm'}));
 
-Routes.post('/branches/shipping_areas', shippingAreasController.create);
+Routes.post('/', shippingAreasController.create);
 
-Routes.put('/branches/shipping_areas/:shipping_area_id', shippingAreasController.update);
+Routes.put('/:shipping_area_id', shippingAreasController.update);
 
-Routes.delete('/branches/shipping_areas/:shipping_area_id', shippingAreasController.remove);
+Routes.delete('/:shipping_area_id', shippingAreasController.remove);
 
-Routes.get('/branches/shipping_areas/',	shippingAreasController.read);
+Routes.get('/', shippingAreasController.read);
 
 module.exports = Routes;

@@ -2,29 +2,29 @@ const Routes = require('express').Router();
 const companiesController = require('../controller/companies');
 const usersController = require('../controller/users');
 
-Routes.get('/companies',
+Routes.get('/',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit(['companies_read'], {scope:'adm'}),
 	companiesController.read);
 
-Routes.post('/companies',
+Routes.post('/',
 	usersController.permit('master'),
 	companiesController.create);
 
-Routes.put('/companies',
+Routes.put('/',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit('companies_edit', {scope:'adm'}),
 	companiesController.update);
 
-Routes.put('/companies/bind_user/:user_id', 
+Routes.put('bind_user/:user_id',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit(['users_read', 'users_edit'], {scope:'adm'}),
 	companiesController.bind_user);
 
-Routes.put('/companies/toggle_active',
+Routes.put('toggle_active',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit('companies_edit', {scope:'adm'}),

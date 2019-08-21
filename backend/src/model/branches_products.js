@@ -2,29 +2,18 @@ const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
 
 /*
- * Define modelo (tabela) de produtos
+ * Define modelo (tabela) de relação entre produtos e filiais / empresas
  */
 
-class Products extends Sequelize.Model {};
-Products.init({
+class BranchesProducts extends Sequelize.Model {};
+BranchesProducts.init({
 	active: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-	name: Sequelize.STRING,
-	image: Sequelize.TEXT,
-	type: {
-		type: Sequelize.STRING,
-		comment: 'single | multiple',
-		validate: {
-			isIn : {
-				args : [['single', 'multiple']],
-				msg: 'Tipo de produto inválido'
-			}
-		}
-	},
 	amount: {
 		type: Sequelize.DECIMAL(10, 2),
+		defaultValue: 0,
 		set (val) {
 			if (typeof val == 'string')
 				this.setDataValue('amount', parseFloat(val.replace(/\,/g, '.')));
@@ -35,6 +24,10 @@ Products.init({
 			return parseFloat(this.getDataValue('amount'));
 		}
 	},
-}, {modelName:'products', underscored:true, sequelize});
+	order: {
+		type: Sequelize.INTEGER,
+		defaultValue : 0,
+	},
+}, {modelName:'branch_relation', tableName:'branches_products', underscored:true, sequelize});
 
-module.exports = Products;
+module.exports = BranchesProducts;

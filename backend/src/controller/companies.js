@@ -119,7 +119,7 @@ async function bind_user(req, res, next) {
 			company.addUser(bind_user, {through:{active:true}})
 			.then(([result])=>{
 				if (result == 1) return res.send({message: 'Usuário já está vinculado a esta empresa'});
-				res.send({...bind_user.get(), branches_users:result});
+				res.send({...bind_user.get(), branch_relation:result});
 			});
 		} else {
 			company.removeUsers(bind_user)
@@ -178,7 +178,7 @@ async function permissions (req, res, next) {
 
 		if (!user.can('master')) {
 			const assigned_user = await company.getUsers({where:{id:user.id}});
-			if (!assigned_user.length || !assigned_user[0].companies_users.active) throw new Error('Você não tem as permissões para acessar essa empresa');
+			if (!assigned_user.length || !assigned_user[0].company_relation.active) throw new Error('Você não tem as permissões para acessar essa empresa');
 
 			//Até aqui permissões são MASTER, ADM ou DEFAULT, definidas na autenticação
 		}

@@ -4,7 +4,7 @@ const PaymentMethods = require('../model/payment_methods');
  * Vincula método de pagamento
  */
 
-function add (req, res, next) {
+function bind (req, res, next) {
 	const {branch} = req;
 	const {payment_method_id, settings} = req.body;
 	
@@ -82,7 +82,7 @@ function remove (req, res, next) {
 
 module.exports = {
 	//default
-	add,
+	bind,
 	read,
 	update,
 	remove,

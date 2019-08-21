@@ -3,7 +3,7 @@ const branchesController = require('../controller/branches');
 const companiesController = require('../controller/companies');
 const usersController = require('../controller/users');
 
-Routes.get('/branches',
+Routes.get('/',
 	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
@@ -11,12 +11,12 @@ Routes.get('/branches',
 	usersController.permit(['companies_read'], {scope:'adm'}),
 	branchesController.read);
 
-Routes.post('/branches',
+Routes.post('/',
 	companiesController.select,
 	usersController.permit('adm'), 
 	branchesController.create);
 
-	Routes.put('/branches/', 
+Routes.put('/',
 	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
@@ -24,7 +24,7 @@ Routes.post('/branches',
 	usersController.permit('branches_edit', {scope:'adm'}),
 	branchesController.update);
 
-Routes.put('/branches/bind_user/:user_id', 
+Routes.put('/user/bind/',
 	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
@@ -32,7 +32,7 @@ Routes.put('/branches/bind_user/:user_id',
 	usersController.permit(['branches_edit', 'users_edit'], {scope:'adm'}),
 	branchesController.bind_user);
 
-Routes.put('/branches/toggle_active/',
+Routes.put('/toggle_active/',
 	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,

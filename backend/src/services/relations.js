@@ -24,7 +24,7 @@ const Products = require('../model/products');
 const OptionsGroups = require('../model/options_groups');
 const Options = require('../model/options');
 
-const ProductsBranches = require('../model/products_branches');
+const BranchesProducts = require('../model/branches_products');
 const ProductsOptionsGroups = require('../model/products_options_groups');
 const OptionsGroupsOptions = require('../model/options_groups_options');
 
@@ -49,7 +49,7 @@ Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
 Branches.hasMany(ProductsCategories, {foreignKey:'branch_id'});
 Branches.belongsToMany(PaymentMethods, {through:BranchesPaymentMethods, foreignKey:'branch_id', otherKey:'payment_method_id'});
 Branches.belongsToMany(Users, {through:BranchesUsers, foreignKey:'branch_id', otherKey:'user_id'});
-Branches.belongsToMany(Products, {through: ProductsBranches, foreignKey:'branch_id', otherKey:'product_id'});
+Branches.belongsToMany(Products, {through: BranchesProducts, foreignKey:'branch_id', otherKey:'product_id'});
 
 //BranchesUsers relations
 BranchesUsers.belongsTo(Roles, {foreignKey:'role_id'});
@@ -67,16 +67,16 @@ Users.belongsToMany(Branches, {through:BranchesUsers, foreignKey:'user_id', othe
 UsersMeta.belongsTo(Users, {foreignKey:'user_id'});
 
 //ProductsCategories relations
-ProductsCategories.hasMany(ProductsBranches, {foreignKey:'products_category_id'});
+ProductsCategories.hasMany(BranchesProducts, {foreignKey:'products_category_id'});
 ProductsCategories.belongsTo(Branches, {foreignKey:'branch_id'});
 
 //Products relations
-Products.belongsToMany(Branches, {through: ProductsBranches, foreignKey:'product_id', otherKey:'branch_id'});
 Products.belongsTo(Companies, {foreignKey:'company_id'});
+//Products.belongsToMany(Branches, {through: BranchesProducts, foreignKey:'product_id', otherKey:'branch_id'}); 
 Products.belongsToMany(Orders, {through: {model: OrdersProducts, unique:false}, foreignKey:'product_id', otherKey:'order_id'}); //order
 
-//ProductsBranches relations
-ProductsBranches.belongsTo(ProductsCategories, {foreignKey:'products_category_id', as:'category'});//<--------------------
+//BranchesProducts relations
+BranchesProducts.belongsTo(ProductsCategories, {foreignKey:'products_category_id'});
 
 //OptionsGroups relations
 OptionsGroups.belongsToMany(Options, {through:OptionsGroupsOptions, foreignKey:'options_group_id', otherKey:'option_id'});

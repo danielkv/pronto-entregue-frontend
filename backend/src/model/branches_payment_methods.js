@@ -21,6 +21,6 @@ BranchesPaymentMethods.init({
 			return JSON.parse(this.getDataValue('settings'));
 		}
 	},
-}, {modelName:'branches_payment_methods', underscored:true, sequelize, name:{singular:'PaymentMethod', plural:'PaymentMethods'}});
+}, {modelName:'association', tableName:'branches_payment_methods', underscored:true, sequelize, name:{singular:'PaymentMethod', plural:'PaymentMethods'}});
 
 module.exports = BranchesPaymentMethods;

@@ -14,12 +14,14 @@ const sequelize = require('../services/connection');
  */
 
 function read (req, res, next) {
-	Users.findOne({
-		where: {id: req.params.id},
-		include:[UsersMeta, Roles],
+	const {company} = req;
+	
+	company.getUsers({
+		where: {id: req.params.user_id},
+		include:[UsersMeta],
 		attributes:{exclude:['password', 'salt']}
 	})
-	.then((user)=>{
+	.then(([user])=>{
 		if (!user) throw new Error('Usuários não encontrado');
 		res.send(user);
 	})
@@ -132,7 +134,7 @@ function update_branch_role (req, res, next) {
 		if (!user_found) throw new Error ('Usuário não encontrado');
 		if (!role) throw new Error ('Função não encontrada');
 
-		return user_found.branches_users.setRole(role);
+		return user_found.branch_relation.setRole(role);
 	})
 	.then((result)=>{
 		res.send(result);

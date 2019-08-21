@@ -3,27 +3,26 @@ const usersController = require('../controller/users');
 const companiesController = require('../controller/companies');
 const branchesController = require('../controller/branches');
 
-Routes.get('/users/:user_id',
+Routes.get('/:user_id',
 	companiesController.select,
 	usersController.permit('users_read', {scope:'adm'}),
 	usersController.read);
 
-Routes.post('/users',
-	companiesController.select,
+Routes.post(companiesController.select,
 	usersController.create);
 
-Routes.put('/users/:user_id',
+Routes.put('/:user_id',
 	companiesController.select,
 	usersController.permit('users_edit', {function:(req)=>(req.user.get('id')==req.params.user_id), scope:'adm'}),
 	usersController.update);
 
-Routes.put('/users/toggle_active/:user_id',
+Routes.put('/toggle_active/:user_id',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit('users_edit', {scope:'adm'}),
 	usersController.toggle_active);
 
-Routes.put('/users/update_branch_role/:user_id',
+Routes.put('/branch_role/:user_id',
 	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
@@ -31,18 +30,18 @@ Routes.put('/users/update_branch_role/:user_id',
 	usersController.permit(['users_edit', 'roles_edit'], {scope:'adm'}),
 	usersController.update_branch_role);
 
-Routes.put('/users/update_branch_role/:user_id',
+Routes.put('/scope_role/:user_id',
 	companiesController.select,
 	companiesController.permissions,
 	usersController.permit('adm'),
-	usersController.update_branch_role);
+	usersController.update_scope_role);
 
 //--------------Authorizations----------------
 
-Routes.post('/users/authorize',
+Routes.post('/authorize',
 	usersController.authorize);
 
-Routes.post('/users/authenticate',
+Routes.post('/authenticate',
 	(req, res)=>{res.send(req.user)});
 
 module.exports = Routes;
