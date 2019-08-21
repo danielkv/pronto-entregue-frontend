@@ -5,8 +5,8 @@ const Sequelize = require('sequelize');
  * Define modelo (tabela) de relação entre produtos e filiais / empresas
  */
 
-class ProductsOptionsGroupsRel extends Sequelize.Model {};
-ProductsOptionsGroupsRel.init({
+class ProductsOptionsGroups extends Sequelize.Model {};
+ProductsOptionsGroups.init({
 	type: Sequelize.STRING(50),
 	min_select: Sequelize.INTEGER,
 	max_select: Sequelize.INTEGER,
@@ -16,6 +16,6 @@ ProductsOptionsGroupsRel.init({
 		defaultValue: 1,
 	},
 	order: Sequelize.INTEGER
-}, {modelName:'products_options_groups_rel', underscored:true, sequelize});
+}, {modelName:'products_options_groups', underscored:true, sequelize});
 
-module.exports = ProductsOptionsGroupsRel;
+module.exports = ProductsOptionsGroups;

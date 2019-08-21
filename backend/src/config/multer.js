@@ -14,11 +14,8 @@ const destination = (req) => {
 
 	const company_path = path.resolve(__dirname, '..', '..', 'uploads', company_folder);
 	if (!fs.existsSync(company_path)) fs.mkdirSync(company_path);
-	
-	const branch_path = path.resolve(__dirname, '..', '..', 'uploads', company_folder, branch_folder);
-	if (!fs.existsSync(branch_path)) fs.mkdirSync(branch_path);
 
-	return branch_path;
+	return company_path;
 }
 
 module.exports = {

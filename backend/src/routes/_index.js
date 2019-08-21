@@ -8,7 +8,9 @@ const usersRoutes = require('../routes/users');
 const branchesRoutes = require('../routes/branches');
 const shippingAreasRoutes = require('../routes/shipping_areas');
 const paymentMethodsRoutes = require('../routes/payment_methods');
-const productsCategoriesRoutes = require('../routes/product_categories');
+
+const productsCategoriesRoutes = require('../routes/products_categories');
+const productsRoutes = require('../routes/products');
 
 //Rota de autenticação Autenticação
 Routes.use(usersConstroller.authenticate);
@@ -20,6 +22,7 @@ Routes.use(branchesRoutes);
 Routes.use(shippingAreasRoutes);
 Routes.use(paymentMethodsRoutes);
 Routes.use(productsCategoriesRoutes);
+Routes.use(productsRoutes);
 
 //Maniupulação de erros
 Routes.use(errorHandler);
