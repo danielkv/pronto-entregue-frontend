@@ -1,12 +1,8 @@
-//const ShippingAreas = require('../model/shipping_areas');
-//const sequelize = require('../services/connection');
+const fs = require('fs');
 
 /**
  * Cria categoria a partir de filial
  * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
  */
 
 function create (req, res, next) {
@@ -39,9 +35,6 @@ function read (req, res, next) {
 /**
  * Atualiza/altera categoria
  * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
  */
 
 function update (req, res, next) {
@@ -72,15 +65,17 @@ function update (req, res, next) {
 function remove (req, res, next) {
 	const {branch} = req;
 	const {category_id} = req.params;
-	const category_data = req.body;
+	//let image;
 
 	branch.getCategories({where:{id:category_id}})
 	.then(([category_found]) => {
 		if (!category_found) throw new Error('Categoria não encontrado');
+		//image = category_found.get('image');
 
 		return category_found.destroy();
 	})
 	.then((removed)=>{
+		fs.unlinkSync(removed.image);
 		return res.send(removed);
 	})
 	.catch(next);

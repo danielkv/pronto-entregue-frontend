@@ -22,6 +22,6 @@ Routes.put('/branches/products_categories/toggle_active/:category_id', productCa
 
 Routes.delete('/branches/products_categories/:category_id', productCategoriesController.remove);
 
-Routes.get('/branches/products_categories/',	productCategoriesController.read);
+Routes.get('/branches/products_categories/', productCategoriesController.read);
 
 module.exports = Routes;
