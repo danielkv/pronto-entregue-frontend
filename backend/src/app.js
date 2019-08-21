@@ -4,14 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 
-const {errorHandler} = require('./controller/errorsHandler');
-const usersConstroller = require('./controller/users');
-
-const companiesRoutes = require('./routes/companies');
-const usersRoutes = require('./routes/users');
-const branchesRoutes = require('./routes/branches');
-const shippingAreasRoutes = require('./routes/shipping_areas');
-const paymentMethodsRoutes = require('./routes/payment_methods');
+const Routes = require('./routes/_index');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,19 +15,10 @@ app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 app.use(morgan('tiny'));
 
-//Autenticação
-app.use(usersConstroller.authenticate);
-
 //Rotas
-app.use(companiesRoutes);
-app.use(usersRoutes);
-app.use(branchesRoutes);
-app.use(shippingAreasRoutes);
-app.use(paymentMethodsRoutes);
+app.use(Routes);
 
-//Maniupulação de erros
-app.use(errorHandler);
-
+//Atender porta
 app.listen(port, ()=> {
 	console.log(`Listening port ${port}`);
 });

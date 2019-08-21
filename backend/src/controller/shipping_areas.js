@@ -36,7 +36,6 @@ function read (req, res, next) {
 
 /**
  * Atualiza/altera local de entrega
- * => remove o registro do banco de dados
  * 
  * @param {*} req 
  * @param {*} res 

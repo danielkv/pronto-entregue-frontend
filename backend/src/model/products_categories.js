@@ -14,6 +14,6 @@ ProductsCategories.init({
 		defaultValue: 1,
 	},
 	order: Sequelize.INTEGER,
-}, {modelName:'products_categories', underscored:true, sequelize});
+}, {modelName:'products_categories', underscored:true, sequelize, name:{singular:'category', plural:'categories'}});
 
 module.exports = ProductsCategories;

@@ -45,6 +45,7 @@ Roles.hasMany(BranchesUsers, {foreignKey:'role_id'});
 Branches.hasMany(BranchesMeta, {foreignKey:'branch_id'});
 Branches.hasMany(Orders, {foreignKey:'branch_id'});
 Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
+Branches.hasMany(ProductsCategories, {foreignKey:'branch_id'});
 Branches.belongsToMany(PaymentMethods, {through:BranchesPaymentMethods, foreignKey:'branch_id', otherKey:'payment_method_id'});
 Branches.belongsToMany(Users, {through:BranchesUsers, foreignKey:'branch_id', otherKey:'user_id'});
 
@@ -62,6 +63,11 @@ Users.belongsToMany(Branches, {through:BranchesUsers, foreignKey:'user_id', othe
 
 //UsersMeta
 UsersMeta.belongsTo(Users, {foreignKey:'user_id'});
+
+//ProductsCategories relations
+ProductsCategories.hasMany(Products, {foreignKey:'products_category_id'});
+ProductsCategories.belongsTo(Branches, {foreignKey:'branch_id'});
+
 
 //Products relations
 Products.belongsTo(ProductsCategories, {foreignKey:'products_category_id'});
