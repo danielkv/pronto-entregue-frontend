@@ -64,17 +64,17 @@ const branch = {
 	]
 }
 
-const products = [
+const products_create = [
 	{
 		name:'Hambúrguer com Calabresa',
-		type:'multiple',
+		type:'single',
 		amount: 16.98,
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		company_id:1,
 	},
 	{
-		name:'Suco',
-		type:'multiple',
+		name:'Suco de laranja',
+		type:'single',
 		amount: 4.8,
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		company_id:1,
@@ -88,14 +88,14 @@ const products = [
 	},
 ];
 
-const categories = [
+const categories_create = [
 	{
 		name: 'Hambúrguer',
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		branch_id : 1,
 	},
 	{
-		name: 'Sucos',
+		name: 'Bebidas',
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		branch_id : 1,
 	},
@@ -104,6 +104,12 @@ const categories = [
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		branch_id : 1,
 	}
+];
+
+const create_options_groups = [
+	{name:'Extras'},
+	{name:'Tamanho'},
+	{name:'Sabores'},
 ];
 
 Promise.all([
@@ -126,7 +132,14 @@ Promise.all([
 	return result;
 })
 .then (async (result)=>{
-	await Products.bulkCreate(products);
-	await ProductsCategories.bulkCreate(categories);
-	return result;
+	const products = await ProductsCategories.bulkCreate(categories_create);
+	const categories = await Products.bulkCreate(products_create);
+	return {...result, products, categories};
+})
+.then(async ({branch, products, categories})=> {
+	await branch.addProduct(products[0].id, {through:{category_id:categories[0].id}});
+	await branch.addProduct(products[1].id, {through:{category_id:categories[1].id}});
+	await branch.addProduct(products[2].id, {through:{category_id:categories[2].id}});
+
+	return null;
 })

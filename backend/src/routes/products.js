@@ -8,18 +8,17 @@ const companiesController = require('../controller/companies');
 const branchesController = require('../controller/branches');
 
 //DEFAULT MIDDLESWARES
-Routes.use(companiesController.select,
+Routes.use('/',
+	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
 	branchesController.permissions,
 	usersController.permit(['branches_edit', 'products_edit'], {scope:'adm'}));
 
-Routes.post(multer(multerConfig).single('image'), productsController.create);
+Routes.post('/', multer(multerConfig).single('image'), productsController.create);
 
 Routes.put('/:product_id', multer(multerConfig).single('image'), productsController.update);
 
-Routes.put('/toggle_active/:product_id', productsController.toggle_active);
-
-Routes.get(productsController.read);
+Routes.get('/', productsController.read);
 
 module.exports = Routes;

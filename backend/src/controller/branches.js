@@ -57,7 +57,7 @@ function update(req, res, next) {
 	update_data.after_update = Object.filter(branch_data, (new_value, key) => branch.get(key) && branch.get(key) != new_value);
 
 	sequelize.transaction(transaction => {
-		return branch.update(branch_data, {fields:['name'], transaction})
+		return branch.update(branch_data, {fields:['name', 'active'], transaction})
 		.then(async (branch_updated)=>{
 			const return_data = branch_updated.get();
 
@@ -72,23 +72,6 @@ function update(req, res, next) {
 	})
 	.then((result)=>{
 		res.send(result);
-	})
-	.catch(next);
-}
-
-/*
- * Função para habilitar/desabilitar usuário
- * 
- */
-
-function toggle_active (req, res, next) {
-	if (!(req.branch instanceof Branches)) new Error('Filial não encontrada');
-
-	const {branch} = req;
-
-	branch.update({active:req.body.active})
-	.then((branch_updated)=>{
-		res.send(branch_updated.get());
 	})
 	.catch(next);
 }
@@ -194,7 +177,6 @@ module.exports = {
 	update,
 
 	//settings
-	toggle_active,
 	bind_user,
 
 	//select, permissions

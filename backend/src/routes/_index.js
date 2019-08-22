@@ -7,11 +7,13 @@ const usersRoutes = require('../routes/users');
 
 const companiesRoutes = require('../routes/companies');
 const productsCategoriesRoutes = require('../routes/products_categories');
+const optionsGroupsRoutes = require('../routes/options_groups');
 
 const branchesRoutes = require('../routes/branches');
 const shippingAreasRoutes = require('../routes/shipping_areas');
 const paymentMethodsRoutes = require('../routes/payment_methods');
 const branchesProductsRoutes = require('../routes/branches_products');
+const branchesProductsOptionsGroupsRoutes = require('../routes/branches_products_options_groups');
 
 const productsRoutes = require('../routes/products');
 
@@ -23,12 +25,14 @@ Routes.use('/users', usersRoutes);
 
 Routes.use('/companies', companiesRoutes);
 Routes.use('/companies/products', productsRoutes);
+Routes.use('/companies/options_groups', optionsGroupsRoutes);
 	
 Routes.use('/branches', branchesRoutes);
 Routes.use('/branches/categories', productsCategoriesRoutes);
 Routes.use('/branches/shipping_areas', shippingAreasRoutes);
 Routes.use('/branches/payment_methods', paymentMethodsRoutes);
 Routes.use('/branches/products', branchesProductsRoutes);
+Routes.use('/branches/products/options_groups', branchesProductsOptionsGroupsRoutes);
 
 //Maniupulação de erros
 Routes.use(errorHandler);

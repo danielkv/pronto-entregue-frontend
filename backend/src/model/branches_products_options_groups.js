@@ -7,6 +7,7 @@ const Sequelize = require('sequelize');
 
 class ProductsOptionsGroups extends Sequelize.Model {};
 ProductsOptionsGroups.init({
+	name: Sequelize.STRING,
 	type: Sequelize.STRING(50),
 	min_select: Sequelize.INTEGER,
 	max_select: Sequelize.INTEGER,
@@ -16,6 +17,6 @@ ProductsOptionsGroups.init({
 		defaultValue: 1,
 	},
 	order: Sequelize.INTEGER
-}, {modelName:'products_options_groups', underscored:true, sequelize});
+}, {modelName:'product_ralation', tableName:'branches_products_options_groups', underscored:true, sequelize});
 
 module.exports = ProductsOptionsGroups;

@@ -18,8 +18,6 @@ Routes.post(multer(multerConfig).single('image'), productCategoriesController.cr
 
 Routes.put('/:category_id', multer(multerConfig).single('image'), productCategoriesController.update);
 
-Routes.put('/toggle_active/:category_id', productCategoriesController.toggle_active);
-
 Routes.delete('/:category_id', productCategoriesController.remove);
 
 Routes.get(productCategoriesController.read);

@@ -62,7 +62,7 @@ function update(req, res, next) {
 		update_data.before_update = Object.assign({}, company.get());
 		update_data.after_update = Object.filter(company_data, (new_value, key) => company.get(key) && company.get(key) != new_value);
 
-		const company_updated = await company.update(company_data, { fields: ['name', 'display_name'], transaction });
+		const company_updated = await company.update(company_data, { fields: ['name', 'display_name', 'active'], transaction });
 		const return_data = company_updated.get();
 
 		if (company_data.metas) {
@@ -74,25 +74,6 @@ function update(req, res, next) {
 	})
 	.then((result)=>{
 		res.send(result);
-	})
-	.catch(next);
-}
-
-/*
- * Função para habilitar/desabilitar usuário
- * 
- */
-
-function toggle_active (req, res, next) {
-	Companies
-	.findByPk(req.params.id)
-	.then(company=>{
-		if (!company) throw new ReferenceError('Empresa não encontrada');
-
-		return company.update({active:req.body.active});
-	})
-	.then((company_updated)=>{
-		res.send(company_updated.get());
 	})
 	.catch(next);
 }
@@ -197,7 +178,6 @@ module.exports = {
 	update,
 
 	//settings
-	toggle_active,
 	bind_user,
 
 	//permissions

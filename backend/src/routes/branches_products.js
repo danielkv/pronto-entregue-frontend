@@ -18,13 +18,9 @@ Routes.post('/', multer(multerConfig).single('image'), branchesProductsControlle
 
 Routes.put('/:product_id', branchesProductsController.update);
 
-Routes.put('/category/:product_id', branchesProductsController.update_category);
-
 Routes.put('/bind/:product_id', branchesProductsController.bind);
 
 Routes.put('/unbind/:product_id', branchesProductsController.unbind);
-
-Routes.put('/toggle_active/:product_id', branchesProductsController.toggle_active);
 
 Routes.get('/', branchesProductsController.read);
 

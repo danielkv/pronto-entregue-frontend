@@ -32,13 +32,5 @@ Routes.put('/user/bind/',
 	usersController.permit(['branches_edit', 'users_edit'], {scope:'adm'}),
 	branchesController.bind_user);
 
-Routes.put('/toggle_active/',
-	companiesController.select,
-	companiesController.permissions,
-	branchesController.select,
-	branchesController.permissions,
-	usersController.permit('branches_edit', {scope:'adm'}),
-	branchesController.toggle_active);
-
 
 module.exports = Routes;

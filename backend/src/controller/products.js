@@ -53,31 +53,7 @@ function update (req, res, next) {
 	.then(([product]) => {
 		if (!product) throw new Error('Produto não encontrado');
 
-		return product.update(product_data, {fields:['name', 'image', 'type', 'amount']});
-	})
-	.then((updated)=>{
-		return res.send(updated);
-	})
-	.catch(next);
-}
-
-/**
- * Ativa/Desativa produto
- * => não é possível remover produtos, apenas desativa-los
- * 
- */
-
-function toggle_active (req, res, next) {
-	const {company} = req;
-	const {product_id} = req.params;
-
-	const active = req.body.active;
-
-	company.getProducts({where:{id:product_id}})
-	.then(([product]) => {
-		if (!product) throw new Error('Produto não encontrado');
-
-		return product.update({active});
+		return product.update(product_data, {fields:['name', 'image', 'type', 'amount', 'active']});
 	})
 	.then((updated)=>{
 		return res.send(updated);
@@ -90,7 +66,4 @@ module.exports = {
 	create,
 	read,
 	update,
-
-	//settings
-	toggle_active,
 }

@@ -16,12 +16,6 @@ Routes.put('/:user_id',
 	usersController.permit('users_edit', {function:(req)=>(req.user.get('id')==req.params.user_id), scope:'adm'}),
 	usersController.update);
 
-Routes.put('/toggle_active/:user_id',
-	companiesController.select,
-	companiesController.permissions,
-	usersController.permit('users_edit', {scope:'adm'}),
-	usersController.toggle_active);
-
 Routes.put('/branch_role/:user_id',
 	companiesController.select,
 	companiesController.permissions,

@@ -18,7 +18,7 @@ function create (req, res, next) {
 			if (!category) throw new Error('Categoria não encontrada');
 
 			const created = await company.createProduct(product_data, {transaction});
-			const [branch_relation] = await branch.addProduct(created, {through:{category_id: category.id, amount: product_data.amount}, transaction});
+			const [branch_relation] = await branch.addProduct(created, {through: product_data, transaction});
 			return {...created.get(), branch_relation};
 		});
 	})
@@ -101,64 +101,22 @@ function update (req, res, next) {
 	const {product_id} = req.params;
 	const product_data = req.body;
 
-	branch.getProducts({where:{id:product_id}})
-	.then(async ([product]) => {
-		if (!product) throw new Error('Produto não encontrado');
+	sequelize.transaction(transaction => {
+		return branch.getProducts({where:{id:product_id}})
+		.then(async ([product]) => {
+			if (!product) throw new Error('Produto não encontrado');
+			let branch_relation;
+			
+			if (product_data.category_id) {
+				const [category] = await branch.getCategories({where:{id:category_id}});
+				if (category) branch_relation = await product.branch_relation.setCategory(category, {transaction});
+			}
 
-		const branch_relation = await product.branch_relation.update(product_data, {fields:['amount', 'order']});
-		return {...product.get(), branch_relation};
-	})
-	.then((updated)=>{
-		return res.send(updated);
-	})
-	.catch(next);
-}
-
-/**
- * Atualiza/altera categoria do produto da filial
- * 
- */
-
-function update_category (req, res, next) {
-	const {branch} = req;
-	const {product_id} = req.params;
-	const {category_id} = req.body;
-
-	Promise.all([
-		branch.getProducts({where:{id:product_id}}),
-		branch.getCategories({where:{id:category_id}}),
-	])
-	.then(async ([[product], [category]]) => {
-		if (!product) throw new Error('O Produto não existe ou não está vinculado à filial');
-		if (!category) throw new Error('Categoria não encontrada');
-
-		const branch_relation = await product.branch_relation.setCategory(category);
-		return {...product.get(), branch_relation};
-	})
-	.then((updated)=>{
-		return res.send(updated);
-	})
-	.catch(next);
-}
-
-/**
- * Ativa/Desativa produto
- * => não é possível remover produtos, apenas desativa-los
- * 
- */
-
-function toggle_active (req, res, next) {
-	const {branch} = req;
-	const {product_id} = req.params;
-
-	const active = req.body.active;
-
-	branch.getProducts({where:{id:product_id}})
-	.then(async ([product]) => {
-		if (!product) throw new Error('Produto não encontrado');
-
-		const branch_relation = await product.branch_relation.update({active});
-		return {...product.get(), branch_relation};
+			if (Object.keys(product_data).length > 1 || !product_data.category_id)
+				branch_relation = await product.branch_relation.update(product_data, {fields:['name', 'amount', 'order', 'active'], transaction});
+				
+			return {...product.get(), branch_relation};
+		});
 	})
 	.then((updated)=>{
 		return res.send(updated);
@@ -173,8 +131,6 @@ module.exports = {
 	update,
 
 	//settings
-	toggle_active,
-	update_category,
 	bind,
 	unbind,
 }

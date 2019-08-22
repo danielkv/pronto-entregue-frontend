@@ -70,7 +70,6 @@ function remove (req, res, next) {
 	branch.getCategories({where:{id:category_id}})
 	.then(([category_found]) => {
 		if (!category_found) throw new Error('Categoria não encontrado');
-		//image = category_found.get('image');
 
 		return category_found.destroy();
 	})
@@ -81,36 +80,10 @@ function remove (req, res, next) {
 	.catch(next);
 }
 
-/**
- * Ativa/Desativa categoria
- * 
- */
-
-function toggle_active (req, res, next) {
-	const {branch} = req;
-	const {category_id} = req.params;
-
-	const active = req.body.active;
-
-	branch.getCategories({where:{id:category_id}})
-	.then(([category]) => {
-		if (!category) throw new Error('Categoria não encontrado');
-
-		return category.update({active});
-	})
-	.then((updated)=>{
-		return res.send(updated);
-	})
-	.catch(next);
-}
-
 module.exports = {
 	//default
 	create,
 	read,
 	update,
 	remove,
-
-	//settings
-	toggle_active
 }

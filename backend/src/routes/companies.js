@@ -24,10 +24,4 @@ Routes.put('bind_user/:user_id',
 	usersController.permit(['users_read', 'users_edit'], {scope:'adm'}),
 	companiesController.bind_user);
 
-Routes.put('toggle_active',
-	companiesController.select,
-	companiesController.permissions,
-	usersController.permit('companies_edit', {scope:'adm'}),
-	companiesController.toggle_active);
-
 module.exports = Routes;

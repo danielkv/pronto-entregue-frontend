@@ -12,6 +12,6 @@ OptionsGroups.init({
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-}, {modelName:'options_groups', underscored:true, sequelize});
+}, {modelName:'options_groups', underscored:true, sequelize, name:{singular:'OptionsGroup', plural:'OptionsGroups'}});
 
 module.exports = OptionsGroups;

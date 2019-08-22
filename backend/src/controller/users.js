@@ -70,7 +70,7 @@ function update (req, res, next) {
 			update_data.before_update = Object.assign({}, user.get());
 			update_data.after_update = Object.filter(user_data, (new_value, key) => user.get(key) && user.get(key) != new_value);
 
-			return user.update(update_data.after_update, {fields:['first_name', 'last_name', 'email', 'password'], transaction});
+			return user.update(update_data.after_update, {fields:['first_name', 'last_name', 'email', 'password', 'active'], transaction});
 		})
 		.then(async (user_updated)=>{
 			const return_data = user_updated.get();
@@ -138,31 +138,6 @@ function update_branch_role (req, res, next) {
 	})
 	.then((result)=>{
 		res.send(result);
-	})
-	.catch(next);
-}
-
-/*
- * Função para habilitar/desabilitar usuário
- * 
- */
-
-function toggle_active (req, res, next) {
-	const {company} = req;
-	const {user_id} = req.params;
-
-	company.getUsers({where:{id:user_id}})
-	.then(user=>{
-		if (!user.length) throw new ReferenceError('Usuário não encontrado');
-
-		return user[0].update({active:req.body.active});
-	})
-	.then((user_updated)=>{
-		const user_return = user_updated.get();
-		delete user_return.salt;
-		delete user_return.password;
-
-		res.send(user_return);
 	})
 	.catch(next);
 }
@@ -282,7 +257,6 @@ module.exports = {
 	update,
 
 	//settings
-	toggle_active,
 	update_branch_role,
 	update_scope_role,
 
