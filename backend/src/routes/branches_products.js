@@ -8,7 +8,8 @@ const companiesController = require('../controller/companies');
 const branchesController = require('../controller/branches');
 
 //DEFAULT MIDDLESWARES
-Routes.use(companiesController.select,
+Routes.use('/',
+	companiesController.select,
 	companiesController.permissions,
 	branchesController.select,
 	branchesController.permissions,
@@ -22,6 +23,8 @@ Routes.put('/bind/:product_id', branchesProductsController.bind);
 
 Routes.put('/unbind/:product_id', branchesProductsController.unbind);
 
-Routes.get('/', branchesProductsController.read);
+Routes.get('/', branchesProductsController.list);
+
+Routes.get('/:product_id', branchesProductsController.read);
 
 module.exports = Routes;

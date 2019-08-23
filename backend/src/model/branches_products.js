@@ -6,8 +6,13 @@ const Sequelize = require('sequelize');
  */
 
 class BranchesProducts extends Sequelize.Model {};
+
 BranchesProducts.init({
-	name: Sequelize.STRING,
+	id: {
+		type: Sequelize.INTEGER.UNSIGNED,
+		primaryKey:true,
+		autoIncrement:true
+	},
 	active: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,

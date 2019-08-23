@@ -1,5 +1,6 @@
 const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
+const OptionsGroups = require('../model/options_groups');
 
 /**
  * Cria produto a partir da empresa e vincula à filial
@@ -19,7 +20,13 @@ function create (req, res, next) {
 
 			const created = await company.createProduct(product_data, {transaction});
 			const [branch_relation] = await branch.addProduct(created, {through: product_data, transaction});
-			return {...created.get(), branch_relation};
+			const branch_result = {...branch_relation.get()}
+
+			if (product_data.options_groups) {
+				branch_result.options_groups = await OptionsGroups.updateAll(product_data.options_groups, company, branch_relation, transaction);
+			}
+
+			return {...created.get(), branch_relation:branch_result};
 		});
 	})
 	.then((created)=>{
@@ -77,13 +84,52 @@ function unbind (req, res, next) {
 }
 
 /**
- * Retorna produtos vinculados a filial
+ * Retorna um array com produtos vinculados a filial
+ * 
+ * @query only_active {boolean} filtra apenas ativos. Default: true
+ */
+
+function list (req, res, next) {
+	const {branch} = req;
+	const only_active = req.query.only_active === false || req.query.only_active === 'false' ? req.query.only_active : true;
+
+	branch.getProducts({order:[[Sequelize.literal('branch_relation.order'), 'ASC']], where:{active:only_active}})
+	.then((result)=>{
+		res.send(result);
+	})
+	.catch(next);
+}
+
+/**
+ * Retorna produto, grupos de opções e opções vinculados a filial
+ * 
+ * @param product_id {int} ID do produto a ser retornado
+ * @query only_active {boolean} filtra apenas ativos. Default: true
  */
 
 function read (req, res, next) {
 	const {branch} = req;
+	const {product_id} = req.params;
+	const only_active = req.query.only_active === false || req.query.only_active === 'false' ? req.query.only_active : true;
 
-	branch.getProducts({order:[[Sequelize.literal('branch_relation.order'), 'ASC']]})
+	branch.getProducts({where:{id:product_id, active:only_active}})
+	.then(async ([product]) => {
+		if (!product) throw new Error('Produto não encontrado');
+
+		//busca apenas os grupos
+		const options_groups_search = await product.branch_relation.getOptionsGroups({where:{active:only_active}});
+
+		//insere opções dentro dos grupos
+		const options_groups = await Promise.all(
+			options_groups_search.map(group => {
+				return new Promise(async (resolve, reject) => {
+					const options = await group.options_group_relation.getOptions({where:{active:only_active}});
+					return resolve({...group.get(), options});
+				});
+			})
+		);
+		return {...product.get(), options_groups};
+	})
 	.then((result)=>{
 		res.send(result);
 	})
@@ -97,7 +143,7 @@ function read (req, res, next) {
  */
 
 function update (req, res, next) {
-	const {branch} = req;
+	const {branch, company} = req;
 	const {product_id} = req.params;
 	const product_data = req.body;
 
@@ -105,17 +151,24 @@ function update (req, res, next) {
 		return branch.getProducts({where:{id:product_id}})
 		.then(async ([product]) => {
 			if (!product) throw new Error('Produto não encontrado');
-			let branch_relation;
+			let branch_result = {};
 			
 			if (product_data.category_id) {
-				const [category] = await branch.getCategories({where:{id:category_id}});
+				const [category] = await branch.getCategories({where:{id:product_data.category_id}});
 				if (category) branch_relation = await product.branch_relation.setCategory(category, {transaction});
 			}
 
-			if (Object.keys(product_data).length > 1 || !product_data.category_id)
-				branch_relation = await product.branch_relation.update(product_data, {fields:['name', 'amount', 'order', 'active'], transaction});
+			if (Object.keys(product_data).length > 1 || !product_data.category_id) {
+				const branch_relation = await product.branch_relation.update(product_data, {fields:['amount', 'order', 'active'], transaction});
+
+				branch_result = {...branch_relation.get()};
 				
-			return {...product.get(), branch_relation};
+				if (product_data.options_groups) {
+					branch_result.options_groups = await OptionsGroups.updateAll(product_data.options_groups, company, branch_relation, transaction);
+				}
+			}
+			
+			return {...product.get(), branch_relation:branch_result};
 		});
 	})
 	.then((updated)=>{
@@ -127,6 +180,7 @@ function update (req, res, next) {
 module.exports = {
 	//default
 	create,
+	list, 
 	read,
 	update,
 

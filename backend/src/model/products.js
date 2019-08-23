@@ -14,7 +14,7 @@ Products.init({
 	name: Sequelize.STRING,
 	image: Sequelize.TEXT,
 	type: {
-		type: Sequelize.STRING,
+		type: Sequelize.STRING(50),
 		comment: 'single | multiple',
 		validate: {
 			isIn : {

@@ -53,7 +53,7 @@ function update (req, res, next) {
 	.then(([product]) => {
 		if (!product) throw new Error('Produto não encontrado');
 
-		return product.update(product_data, {fields:['name', 'image', 'type', 'amount', 'active']});
+		return product.update(product_data, {fields:['image', 'type', 'amount', 'active']});
 	})
 	.then((updated)=>{
 		return res.send(updated);

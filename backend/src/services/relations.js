@@ -26,7 +26,6 @@ const Options = require('../model/options');
 
 const BranchesProducts = require('../model/branches_products');
 const BranchesProductsOptionsGroups = require('../model/branches_products_options_groups');
-const OptionsGroupsOptions = require('../model/options_groups_options');
 
 const Orders = require('../model/orders');
 const OrdersProducts = require('../model/orders_products');
@@ -37,8 +36,9 @@ const OrdersOptions = require('../model/orders_options');
 Companies.hasMany(Products, {foreignKey:'company_id'});
 Companies.hasMany(Branches, {foreignKey:'company_id'});
 Companies.hasMany(CompaniesMeta, {foreignKey:'company_id'});
-Companies.hasMany(OptionsGroups, {foreignKey:'company_id'});
 Companies.belongsToMany(Users, {through:CompaniesUsers, foreignKey:'company_id', otherKey:'user_id'});
+Companies.hasMany(OptionsGroups, {foreignKey:'company_id'});
+Companies.hasMany(Options, {foreignKey:'company_id'});
 
 //Roles relations
 Roles.hasMany(BranchesUsers, {foreignKey:'role_id'});
@@ -77,15 +77,18 @@ Products.belongsToMany(Orders, {through: {model: OrdersProducts, unique:false}, 
 
 //BranchesProducts relations
 BranchesProducts.belongsTo(ProductsCategories, {foreignKey:'category_id'});
-BranchesProducts.belongsToMany(OptionsGroups, {through:BranchesProductsOptionsGroups, foreignKey:'branches_product_id', otherKey:'options_group_id'});
+BranchesProducts.belongsToMany(OptionsGroups, {through:BranchesProductsOptionsGroups, foreignKey:'branches_product_id', otherKey:'options_group_id', uniqueKey:'branches_products_relation'});
 
 //OptionsGroups relations
-OptionsGroups.hasOne(OptionsGroups, {foreignKey:'retrain_other_id', as:'restrainOtherGroup'});
-OptionsGroups.belongsToMany(Options, {through:OptionsGroupsOptions, foreignKey:'options_group_id', otherKey:'option_id'});
 OptionsGroups.belongsToMany(OrdersProducts, {through:{model:OrdersOptionsGroups, unique:false}, foreignKey:'options_group_id', otherKey:'orders_product_id'});  //order
-OptionsGroups.belongsToMany(BranchesProducts, {through:BranchesProductsOptionsGroups, foreignKey:'options_group_id', otherKey:'branches_product_id', as:{singular:'Branch', plural:'Branches'}});
+OptionsGroups.belongsToMany(BranchesProducts, {through:BranchesProductsOptionsGroups, foreignKey:'options_group_id', otherKey:'branches_product_id', uniqueKey:'branches_options_groups_relation'});
+
+//BranchesProductsOptionsGroups relations
+BranchesProductsOptionsGroups.hasMany(Options, {foreignKey:'branches_products_options_group_id'});
+BranchesProductsOptionsGroups.hasOne(BranchesProductsOptionsGroups, {foreignKey:'max_select_restrained_by', as:'maxSelectionRestriction'});
 
 //Options relations
+Options.belongsTo(BranchesProductsOptionsGroups, {foreignKey:'branches_products_options_group_id'});
 Options.belongsToMany(OrdersOptionsGroups, {through:{model:OrdersOptions, unique:false}, foreignKey:'option_id', otherKey:'orders_options_group_id'});  //order
 
 //Orders relations

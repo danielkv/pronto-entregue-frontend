@@ -107,9 +107,9 @@ const categories_create = [
 ];
 
 const create_options_groups = [
-	{name:'Extras'},
-	{name:'Tamanho'},
-	{name:'Sabores'},
+	{name:'Extras', min_select:0, max_select:3, type:'single'},
+	{name:'Tamanho', min_select:1, max_select:1, type:'single'},
+	{name:'Sabores', min_select:0, max_select:3, type:'single'},
 ];
 
 Promise.all([
@@ -136,10 +136,25 @@ Promise.all([
 	const categories = await Products.bulkCreate(products_create);
 	return {...result, products, categories};
 })
-.then(async ({branch, products, categories})=> {
-	await branch.addProduct(products[0].id, {through:{category_id:categories[0].id}});
-	await branch.addProduct(products[1].id, {through:{category_id:categories[1].id}});
-	await branch.addProduct(products[2].id, {through:{category_id:categories[2].id}});
+.then(async (result)=> {
+	const branch_products = await Promise.all([
+		result.branch.addProduct(result.products[0].id, {through:{category_id:result.categories[0].id}}),
+		result.branch.addProduct(result.products[1].id, {through:{category_id:result.categories[1].id}}),
+		result.branch.addProduct(result.products[2].id, {through:{category_id:result.categories[2].id}})
+	]);
 
-	return null;
+	return {...result, branch_products};
+})
+.then(async (result)=>{
+	const options_groups = await Promise.all([
+		result.branch_products[0][0].createOptionsGroup(create_options_groups[0]),
+		result.branch_products[1][0].createOptionsGroup(create_options_groups[1]),
+		result.branch_products[2][0].createOptionsGroup(create_options_groups[2], {through:{max_select_restrained_by:2}}),
+	]);
+
+	return options_groups;
+})
+
+.catch((err)=>{
+	console.error(err);
 })

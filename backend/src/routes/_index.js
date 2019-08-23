@@ -13,7 +13,6 @@ const branchesRoutes = require('../routes/branches');
 const shippingAreasRoutes = require('../routes/shipping_areas');
 const paymentMethodsRoutes = require('../routes/payment_methods');
 const branchesProductsRoutes = require('../routes/branches_products');
-const branchesProductsOptionsGroupsRoutes = require('../routes/branches_products_options_groups');
 
 const productsRoutes = require('../routes/products');
 
@@ -31,8 +30,8 @@ Routes.use('/branches', branchesRoutes);
 Routes.use('/branches/categories', productsCategoriesRoutes);
 Routes.use('/branches/shipping_areas', shippingAreasRoutes);
 Routes.use('/branches/payment_methods', paymentMethodsRoutes);
-Routes.use('/branches/products', branchesProductsRoutes);
-Routes.use('/branches/products/options_groups', branchesProductsOptionsGroupsRoutes);
+
+Routes.use('/products', branchesProductsRoutes);
 
 //Maniupulação de erros
 Routes.use(errorHandler);
