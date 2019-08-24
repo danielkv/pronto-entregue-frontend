@@ -149,7 +149,7 @@ Promise.all([
 	const options_groups = await Promise.all([
 		result.branch_products[0][0].createOptionsGroup(create_options_groups[0]),
 		result.branch_products[1][0].createOptionsGroup(create_options_groups[1]),
-		result.branch_products[2][0].createOptionsGroup(create_options_groups[2], {through:{max_select_restrained_by:2}}),
+		result.branch_products[2][0].createOptionsGroup(create_options_groups[2]),
 	]);
 
 	return options_groups;

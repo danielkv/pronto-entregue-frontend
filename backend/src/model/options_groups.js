@@ -18,7 +18,7 @@ class OptionsGroups extends Sequelize.Model {
 						
 						if (options_group) {
 							group_model = options_group.options_group_relation;
-							if (group.remove === true) await product.removeOptionsGroup(group_model, {transaction});
+							if (group.remove === true) await product.removeOptionsGroup(options_group, {transaction});
 							else await group_model.update(group, {fields:['min_select', 'max_select', 'order', 'max_select_restrained_by'], transaction});
 						} else {
 							let _group;

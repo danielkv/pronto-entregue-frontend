@@ -73,17 +73,17 @@ ProductsCategories.belongsTo(Branches, {foreignKey:'branch_id'});
 
 //Products relations
 Products.belongsTo(Companies, {foreignKey:'company_id'}); 
-Products.belongsToMany(Orders, {through: {model: OrdersProducts, unique:false}, foreignKey:'product_id', otherKey:'order_id'}); //order
 
 //BranchesProducts relations
+BranchesProducts.belongsToMany(Orders, {through: {model: OrdersProducts, unique:false}, foreignKey:'product_id', otherKey:'order_id'}); //order
 BranchesProducts.belongsTo(ProductsCategories, {foreignKey:'category_id'});
 BranchesProducts.belongsToMany(OptionsGroups, {through:BranchesProductsOptionsGroups, foreignKey:'branches_product_id', otherKey:'options_group_id', uniqueKey:'branches_products_relation'});
 
 //OptionsGroups relations
-OptionsGroups.belongsToMany(OrdersProducts, {through:{model:OrdersOptionsGroups, unique:false}, foreignKey:'options_group_id', otherKey:'orders_product_id'});  //order
 OptionsGroups.belongsToMany(BranchesProducts, {through:BranchesProductsOptionsGroups, foreignKey:'options_group_id', otherKey:'branches_product_id', uniqueKey:'branches_options_groups_relation'});
 
 //BranchesProductsOptionsGroups relations
+BranchesProductsOptionsGroups.belongsToMany(OrdersProducts, {through:{model:OrdersOptionsGroups, unique:false}, foreignKey:'options_group_id', otherKey:'orders_product_id'});  //order
 BranchesProductsOptionsGroups.hasMany(Options, {foreignKey:'branches_products_options_group_id'});
 BranchesProductsOptionsGroups.hasOne(BranchesProductsOptionsGroups, {foreignKey:'max_select_restrained_by', as:'maxSelectionRestriction'});
 
@@ -92,4 +92,6 @@ Options.belongsTo(BranchesProductsOptionsGroups, {foreignKey:'branches_products_
 Options.belongsToMany(OrdersOptionsGroups, {through:{model:OrdersOptions, unique:false}, foreignKey:'option_id', otherKey:'orders_options_group_id'});  //order
 
 //Orders relations
-Orders.belongsTo(BranchesPaymentMethods, {foreignKey:'branches_payment_method_id'});  //order
+Orders.belongsToMany(BranchesProducts, {through: {model: OrdersProducts, unique:false}, foreignKey:'order_id', otherKey:'product_id', as:'products'}); //order
+OrdersProducts.belongsToMany(BranchesProductsOptionsGroups, {through:{model:OrdersOptionsGroups, unique:false}, foreignKey:'orders_product_id', otherKey:'options_group_id', as:'ordersGroups'});  //order
+Orders.belongsTo(PaymentMethods, {foreignKey:'payment_method_id'});  //order
