@@ -7,28 +7,23 @@ const Options = require('../model/options');
  */
 
 class OptionsGroups extends Sequelize.Model {
-	static updateAll (groups, company, product, transaction=null) {
-		let group_model, options_group;
+	static updateAll (groups, product, transaction=null) {
+		let group_model;
 	
 		return Promise.all(
 			groups.map((group) => {
 				return new Promise(async (resolve, reject) => {
 					try {
-						if (group.id) [options_group] = await product.getOptionsGroups({where:{id:group.id}});
+						if (group.id) [group_model] = await product.getOptionsGroups({where:{id:group.id}});
 						
-						if (options_group) {
-							group_model = options_group.options_group_relation;
-							if (group.remove === true) await product.removeOptionsGroup(options_group, {transaction});
-							else await group_model.update(group, {fields:['min_select', 'max_select', 'order', 'max_select_restrained_by'], transaction});
+						if (group_model) {
+							if (group.remove === true) await product.removeOptionsGroup(group_model, {transaction});
+							else await group_model.update(group, {fields:['name', 'type', 'min_select', 'max_select', 'order', 'max_select_restrained_by'], transaction});
 						} else {
-							let _group;
-							if (group.id) [_group] = await company.getOptionsGroups({where:{id:group.id}});
-							if (!_group) _group = await company.createOptionsGroup(group, {transaction});
-
-							[group_model] = await product.addOptionsGroups(_group, {through:group, transaction});
+							group_model = await product.createOptionsGroup(group, {transaction});
 						}
 						
-						if (!group.remove && group.options) group.options = await Options.updateAll(group.options, group_model, company, transaction);
+						if (!group.remove && group.options) group.options = await Options.updateAll(group.options, group_model, transaction);
 						
 						return resolve({...group_model.get(), options: group.options});
 					} catch (err) {

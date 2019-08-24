@@ -6,7 +6,7 @@ const Sequelize = require('sequelize');
  */
 
 class Options extends Sequelize.Model {
-	static updateAll (options, group_model, company, transaction=null) {
+	static updateAll (options, group_model, transaction=null) {
 		let option_model;
 	
 		return Promise.all(
@@ -17,7 +17,7 @@ class Options extends Sequelize.Model {
 					if (option.remove === true) return group_model.removeOption(option_model, {transaction});
 					else return option_model.update(option, {fields:['name', 'amount', 'active', 'order', 'max_select_restrain_other'], transaction});
 				} else {
-					return group_model.createOption({...option, company_id: company.id}, {transaction});
+					return group_model.createOption({...option}, {transaction});
 				}
 			})
 		);
