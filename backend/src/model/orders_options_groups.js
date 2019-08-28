@@ -1,32 +1,31 @@
 const sequelize = require('../services/connection');
 const Sequelize = require('sequelize');
+const OrdersOptions = require('./orders_options');
 
 /*
  * Define modelo (tabela) de grupos de opções de produtos de pedidos
  */
 
 class OrdersOptionsGroups extends Sequelize.Model {
-	static updateAll (groups, product, order_product, transaction=null) {
-		groups = groups.filter(group => group.options.length);
+	static updateAll (groups, product, transaction=null) {
 		return Promise.all(
 			groups.map((group) => {
 				return new Promise(async (resolve, reject) => {
+					let group_model;
 					try {
-						let group_model, order_group_model;
-
-						if (group.id && group.options_group_relation && group.options_group_relation.id)
-							[group_model] = await product.getOptionsGroups({where:{id:group.id}});
-						if (!group_model) throw new Error('Esse grupo não existe ou não está vinculado a esse produto');
+						if (!group.id) throw new Error('Esse grupo de opções não existe');
 						
-						[order_group_model] = await order_product.getOptionsGroups({where:{id:group.options_group_relation.id}});
+						[group_model] = await product.getOptionsGroups({where:{id:group.id}});
 						
-						if (!order_group_model) {
-							[order_group_model] = await order_product.addOptionsGroups(group_model.options_group_relation, {through:group, transaction});
-						} else if (group.remove === true) {
-							await product.removeOptionsGroup(options_group, {transaction});
+						if (group_model) {
+							if (group.remove === true) await product.removeOptionsGroup(group_model, {transaction});
+						} else {
+							let options_group_id = group.id;
+							delete group.id;
+							group_model = await product.createOptionsGroup({...group, options_group_id}, {transaction});
 						}
 						
-						if (!group.remove && group.options) group.options = await Options.updateAll(group.options, group_model, company, transaction);
+						if (!group.remove && group.options) group.options = await OrdersOptions.updateAll(group.options, group_model, transaction);
 						
 						return resolve({...group_model.get(), options: group.options});
 					} catch (err) {
@@ -38,12 +37,17 @@ class OrdersOptionsGroups extends Sequelize.Model {
 	}
 };
 OrdersOptionsGroups.init({
-	id: {
-		type: Sequelize.INTEGER.UNSIGNED,
-		primaryKey:true,
-		autoIncrement:true
-	},
 	name: Sequelize.STRING,
+	type: {
+		type: Sequelize.STRING(50),
+		comment: 'single | multiple',
+		validate: {
+			isIn : {
+				args : [['single', 'multiple']],
+				msg: 'Tipo de grupo inválido'
+			}
+		}
+	},
 }, {modelName:'orders_options_groups', underscored:true, sequelize});
 
 module.exports = OrdersOptionsGroups;

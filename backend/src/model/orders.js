@@ -14,9 +14,39 @@ Orders.init({
 	//Dados principais
 	payment_fee: Sequelize.DECIMAL(10,2),
 	shipping_amount: Sequelize.STRING,
-	amount: Sequelize.DECIMAL(10,2),
-	discount: Sequelize.STRING,
-	status: Sequelize.STRING,
+	amount: {
+		type: Sequelize.DECIMAL(10, 2),
+		set (val) {
+			if (typeof val == 'string')
+				this.setDataValue('amount', parseFloat(val.replace(/\,/g, '.')));
+			else
+				this.setDataValue('amount', val);
+		},
+		get () {
+			return parseFloat(this.getDataValue('amount'));
+		}
+	},
+	discount: {
+		type: Sequelize.DECIMAL(10, 2),
+		set (val) {
+			if (typeof val == 'string')
+				this.setDataValue('amount', parseFloat(val.replace(/\,/g, '.')));
+			else
+				this.setDataValue('amount', val);
+		},
+		get () {
+			return parseFloat(this.getDataValue('amount'));
+		}
+	},
+	status: {
+		type: Sequelize.STRING,
+		comment: 'waiting | preparation | delivery | delivered | canceled',
+		defaultValue : 'waiting',
+		allowNull : false,
+		validate : {
+			isIn : [['waiting', 'preparation', 'delivery', 'delivered', 'canceled']],
+		}
+	},
 	message: Sequelize.TEXT,
 
 	//Endereço da entrega

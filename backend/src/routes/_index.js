@@ -15,6 +15,7 @@ const paymentMethodsRoutes = require('../routes/payment_methods');
 const branchesProductsRoutes = require('../routes/branches_products');
 
 const productsRoutes = require('../routes/products');
+const ordersRoutes = require('../routes/orders');
 
 //Rota de autenticação Autenticação
 Routes.use(usersConstroller.authenticate);
@@ -32,6 +33,7 @@ Routes.use('/branches/shipping_areas', shippingAreasRoutes);
 Routes.use('/branches/payment_methods', paymentMethodsRoutes);
 
 Routes.use('/products', branchesProductsRoutes);
+Routes.use('/orders', ordersRoutes);
 
 //Maniupulação de erros
 Routes.use(errorHandler);

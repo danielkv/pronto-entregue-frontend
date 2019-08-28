@@ -7,10 +7,9 @@ const Sequelize = require('sequelize');
 
 class Options extends Sequelize.Model {
 	static updateAll (options, group_model, transaction=null) {
-		let option_model;
-	
 		return Promise.all(
 			options.map(async (option) => {
+				let option_model;
 				if (option.id) [option_model] = await group_model.getOptions({where:{id:option.id}});
 	
 				if (option_model) {

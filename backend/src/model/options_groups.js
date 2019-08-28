@@ -8,10 +8,9 @@ const Options = require('../model/options');
 
 class OptionsGroups extends Sequelize.Model {
 	static updateAll (groups, product, transaction=null) {
-		let group_model;
-	
 		return Promise.all(
 			groups.map((group) => {
+				let group_model;
 				return new Promise(async (resolve, reject) => {
 					try {
 						if (group.id) [group_model] = await product.getOptionsGroups({where:{id:group.id}});
