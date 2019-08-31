@@ -47,3 +47,10 @@ export const BlockTitle = styled.h2`
 	color:#707070;
 	margin-top:5px;
 `
+
+export const NumberOfRows = styled.div`
+	font-size:14px;
+	font-weight:lighter;
+	color:#707070;
+	text-align:right;
+`

@@ -7,8 +7,8 @@ import {HeaderContainer, LogoContainer, SelectContainer} from './styles';
 import mainLogo from '../../assets/images/logo.png';
 
 export default function Header () {
-	const [company, setCompany] = useState(null);
-	const [branch, setBranch] = useState(null);
+	const [company, setCompany] = useState('');
+	const [branch, setBranch] = useState('');
 
 	function selectCompany(event) {	
 		setCompany(event.target.value);

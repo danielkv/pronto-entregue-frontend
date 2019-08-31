@@ -20,9 +20,10 @@ export const NavItem = styled(Link)`
 	align-items:center;
 	justify-content:center;
 	
-	transition:background-color .2s;
-	svg path {
-			transition:fill .5s;
+	transition: background-color .2s;
+
+	&.settings {
+		margin-top:30px
 	}
 
 	margin-bottom:5px;
@@ -30,14 +31,21 @@ export const NavItem = styled(Link)`
 		margin-bottom:0;
 	}
 
-	&:hover {
-		background-color:#D41450;
-		svg path {
-			fill:white !important;
-		}
-	}
+	${({selected}) =>{
+		if (selected)
+			return (`
+				background-color:#D41450;
+				svg path {
+					fill:white !important;
+				}`
+			)
+		else 
+			return (`
+				&:hover {
+					background-color:#F0F0F0;
+				}`
+			)
+	}}
 
-	&.settings {
-		margin-top:30px
-	}
+	
 `;

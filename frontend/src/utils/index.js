@@ -2,6 +2,8 @@ import React from 'react';
 import Icon from '@mdi/react';
 import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle } from '@mdi/js';
 
+import numeral from 'numeral';
+
 export const getStatusIcon = (status) => {
 	switch(status) {
 		case 'waiting':
@@ -17,3 +19,21 @@ export const getStatusIcon = (status) => {
 		default: return '';
 	}
 }
+
+numeral.register('locale', 'br', {
+    delimiters: {
+        thousands: '.',
+        decimal: ','
+    },
+    abbreviations: {
+        thousand: 'k',
+        million: 'm',
+        billion: 'b',
+        trillion: 't'
+    },
+    currency: {
+        symbol: 'R$ '
+    }
+});
+
+numeral.locale('br');

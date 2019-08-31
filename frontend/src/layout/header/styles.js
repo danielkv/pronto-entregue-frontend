@@ -5,6 +5,7 @@ export const HeaderContainer = styled(Paper).attrs(props=>({elevation:2}))`
 	display:flex;
 	align-items:stretch;
 	height:70px;
+	border-radius:0 !important;
 `;
 
 export const LogoContainer = styled.div`
