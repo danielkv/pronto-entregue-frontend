@@ -20,6 +20,10 @@ export default createMuiTheme({
 	props: {
 		MuiSelect : {
 			disableUnderline : true,
+		},
+		MuiTablePagination : {
+			labelRowsPerPage : 'linhas por página',
+			labelDisplayedRows : ({ from, to, count }) => `${from}-${to} de ${count}`
 		}
 	},
 	palette : {

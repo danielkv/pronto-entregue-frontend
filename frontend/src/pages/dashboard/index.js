@@ -3,8 +3,8 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@materia
 
 import {getStatusIcon} from '../../utils';
 import Layout from '../../layout';
-import {Content, BlockTitle} from '../../layout/components';
-import {OrdersToday, OrderStatus, ProdCount, ProdImg, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, TopSalesContainer, LastSalesContainer} from './styles';
+import {Content, BlockTitle, CircleNumber} from '../../layout/components';
+import {OrdersToday, OrderStatus, ProdImg, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, TopSalesContainer, LastSalesContainer} from './styles';
 
 import OrdersAwaiting from '../../assets/images/orders-awaiting.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
@@ -109,7 +109,7 @@ function Page () {
 										<TableRow>
 											<TableCell style={{width:80, paddingRight:10}}><ProdImg src={row.image} alt={row.name} /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell style={{width:70}}><ProdCount>{row.qty}</ProdCount></TableCell>
+											<TableCell style={{width:70}}><CircleNumber>{row.qty}</CircleNumber></TableCell>
 										</TableRow>
 									))}
 								</TableBody>
@@ -135,7 +135,7 @@ function Page () {
 											<TableCell><OrderCreated><OrderDate></OrderDate>{row.created_at.date}<OrderTime>{row.created_at.time}</OrderTime></OrderCreated></TableCell>
 											<TableCell>{row.user}</TableCell>
 											<TableCell>{row.address}</TableCell>
-											<TableCell><ProdCount>{row.products_qty}</ProdCount></TableCell>
+											<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
 											<TableCell>{getStatusIcon(row.status)}</TableCell>
 										</TableRow>
 									))}

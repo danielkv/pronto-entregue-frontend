@@ -53,4 +53,19 @@ export const NumberOfRows = styled.div`
 	font-weight:lighter;
 	color:#707070;
 	text-align:right;
+	margin:8px 8px 8px 0;
 `
+
+export const CircleNumber = styled.div`
+	background-color:#F0F0F0;
+	border-radius:20px;
+	width:36px;
+	height:36px;
+	text-align:center;
+	color:#D41450;
+	font-size:15px;
+	font-weight:bold;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+`;

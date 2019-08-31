@@ -47,20 +47,6 @@ export const OrderStatus = styled.div`
 	}
 `;
 
-export const ProdCount = styled.div`
-	background-color:#F0F0F0;
-	border-radius:20px;
-	width:36px;
-	height:36px;
-	text-align:center;
-	color:#D41450;
-	font-size:18px;
-	font-weight:bold;
-	display:flex;
-	align-items:center;
-	justify-content:center;
-`;
-
 export const ProdImg = styled.div`
 	background-size: cover;
 	background-image:${props=>`url(${props.src})`};

@@ -1,14 +1,18 @@
-import React from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, Switch } from '@material-ui/core';
+import React, {useState} from 'react';
+import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, Switch, TablePagination } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiStore, mdiPencil} from '@mdi/js';
 
 import numeral from 'numeral';
 import Layout from '../../layout';
-import {Content, BlockTitle, NumberOfRows} from '../../layout/components';
+import {Content, BlockTitle, NumberOfRows, CircleNumber} from '../../layout/components';
 //import {} from './styles';
 
 function Page () {
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+
 	const companies = [
 		{
 			name: 'Copeiro',
@@ -48,7 +52,7 @@ function Page () {
 		<Layout>
 			<Content>
 				<BlockTitle>Empresas</BlockTitle>
-				<NumberOfRows></NumberOfRows>
+				<NumberOfRows>{companies.length} empresas</NumberOfRows>
 				<Paper>
 					<Table>
 						<TableHead>
@@ -63,13 +67,13 @@ function Page () {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{companies.map(row => (
+							{companies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
 								<TableRow key={row.name}>
 									<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 									<TableCell>{row.name}</TableCell>
 									<TableCell>{numeral(row.revenue).format('$0,0.00')}</TableCell>
-									<TableCell>{row.branches_qty}</TableCell>
-									<TableCell>{row.orders_qty}</TableCell>
+									<TableCell><CircleNumber>{row.branches_qty}</CircleNumber></TableCell>
+									<TableCell><CircleNumber>{row.orders_qty}</CircleNumber></TableCell>
 									<TableCell>{row.created_at}</TableCell>
 									<TableCell>
 										<IconButton>
@@ -88,7 +92,22 @@ function Page () {
 							))}
 						</TableBody>
 					</Table>
+					<TablePagination
+						component="div"
+						count={companies.length}
+						rowsPerPage={rowsPerPage}
+						page={page}
+						backIconButtonProps={{
+							'aria-label': 'previous page',
+						}}
+						nextIconButtonProps={{
+							'aria-label': 'next page',
+						}}
+						onChangePage={(e, newPage)=>{setPage(newPage)}}
+						onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
+						/>
 				</Paper>
+				<NumberOfRows>{companies.length} empresas</NumberOfRows>
 			</Content>
 		</Layout>
 	)
