@@ -1,17 +1,16 @@
 import React, {useState} from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, Switch, TablePagination } from '@material-ui/core';
+import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
-import {mdiStore, mdiPencil} from '@mdi/js';
+import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
+import {Link} from 'react-router-dom';
 
 import numeral from 'numeral';
 import Layout from '../../layout';
-import {Content, BlockTitle, NumberOfRows, CircleNumber} from '../../layout/components';
-//import {} from './styles';
+import {Content, BlockHeader, BlockTitle, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, SidebarBlock} from '../../layout/components';
 
 function Page () {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
-
 
 	const companies = [
 		{
@@ -51,8 +50,10 @@ function Page () {
 	return (
 		<Layout>
 			<Content>
-				<BlockTitle>Empresas</BlockTitle>
-				<NumberOfRows>{companies.length} empresas</NumberOfRows>
+				<BlockHeader>
+					<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button></BlockTitle>
+					<NumberOfRows>{companies.length} empresas</NumberOfRows>
+				</BlockHeader>
 				<Paper>
 					<Table>
 						<TableHead>
@@ -109,6 +110,34 @@ function Page () {
 				</Paper>
 				<NumberOfRows>{companies.length} empresas</NumberOfRows>
 			</Content>
+			<SidebarContainer>
+				<BlockHeader>
+					<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+					<FormControlLabel
+						control={
+							<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+						}
+						
+						label="Incluir inativos"
+					/>
+				</BlockHeader>
+				<Sidebar>
+					<form noValidate>
+						<SidebarBlock>
+							<TextField
+								label='Buscar'
+								onChange={(event)=>{}}
+								/>
+						</SidebarBlock>
+						<SidebarBlock>
+							<ButtonGroup fullWidth>
+								<Button color='primary'>Limpar</Button>
+								<Button variant="contained" color='primary'>Aplicar</Button>
+							</ButtonGroup>
+						</SidebarBlock>
+					</form>
+				</Sidebar>
+			</SidebarContainer>
 		</Layout>
 	)
 }

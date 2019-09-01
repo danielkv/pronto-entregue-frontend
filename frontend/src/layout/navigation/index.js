@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function Navigation(props) {
-	const {path} = props.match;
+	const path = '/'+props.match.path.substr(1).split('/')[0];
 	const [popperOpen, setPopperOpen] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [popperText, setPopperText] = useState(null);

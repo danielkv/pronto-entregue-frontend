@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Paper } from '@material-ui/core';
 
 export const Container = styled.div`
 	display:grid;
@@ -31,15 +32,42 @@ export const Main = styled.main`
 
 `;
 
-export const Sidebar = styled.aside`
-	background-color:#f00;
+export const SidebarContainer = styled.aside`
 	width:300px;
+`;
+
+export const SidebarBlock = styled.div`
+	padding:30px;
+`;
+
+export const Sidebar = styled(Paper)`
+	border-top-right-radius:0 !important;
+	border-bottom-right-radius:0 !important;
+
+	display:flex;
+	flex-direction:column;
+	justify-items:stretch;
+
+	& ${SidebarBlock} {
+		border-bottom: 1px solid #ddd;
+	}
 `;
 
 export const Content = styled.div`
 	flex:1;
 	margin-right:65px;
 `;
+
+export const BlockHeader = styled.div`
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+`
+export const BlockFooter = styled.div`
+	display:flex;
+	justify-content:space-between;
+	align-items:flex-start;
+`
 
 export const BlockTitle = styled.h2`
 	font-size:18px;
@@ -54,6 +82,7 @@ export const NumberOfRows = styled.div`
 	color:#707070;
 	text-align:right;
 	margin:8px 8px 8px 0;
+	align-self:flex-end;
 `
 
 export const CircleNumber = styled.div`
