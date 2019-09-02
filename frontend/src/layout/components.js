@@ -121,3 +121,11 @@ export const FieldControl = styled.div`
 	align-items:flex-end;
 	margin: 0 15px;
 `;
+
+export const ProductImage = styled.div`
+	background-size: cover;
+	background-image:${props=>`url(${props.src})`};
+	width:60px;
+	height:60px;
+	border-radius:30px;
+`;

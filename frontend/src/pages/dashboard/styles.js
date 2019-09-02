@@ -47,14 +47,6 @@ export const OrderStatus = styled.div`
 	}
 `;
 
-export const ProdImg = styled.div`
-	background-size: cover;
-	background-image:${props=>`url(${props.src})`};
-	width:60px;
-	height:60px;
-	border-radius:30px;
-`;
-
 export const OrderCreated = styled.div`
 	display:flex;
 	flex-direction:column;

@@ -3,8 +3,8 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@materia
 
 import {getStatusIcon, setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, BlockTitle, CircleNumber} from '../../layout/components';
-import {OrdersToday, OrderStatus, ProdImg, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, TopSalesContainer, LastSalesContainer} from './styles';
+import {Content, BlockTitle, CircleNumber, ProductImage} from '../../layout/components';
+import {OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, TopSalesContainer, LastSalesContainer} from './styles';
 
 import OrdersAwaiting from '../../assets/images/orders-awaiting.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
@@ -108,7 +108,7 @@ function Page () {
 								<TableBody>
 									{topSales.map(row => (
 										<TableRow>
-											<TableCell style={{width:80, paddingRight:10}}><ProdImg src={row.image} alt={row.name} /></TableCell>
+											<TableCell style={{width:80, paddingRight:10}}><ProductImage src={row.image} alt={row.name} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell style={{width:70}}><CircleNumber>{row.qty}</CircleNumber></TableCell>
 										</TableRow>

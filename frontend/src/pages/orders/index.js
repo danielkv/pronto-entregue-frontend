@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
+import {Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
 import Icon from '@mdi/react';
-import {mdiStore, mdiPencil, mdiFilter, mdiDotsVertical} from '@mdi/js';
+import {mdiPencil, mdiFilter, mdiDotsVertical} from '@mdi/js';
 import {Link} from 'react-router-dom';
 import numeral from 'numeral'
 
@@ -176,6 +176,37 @@ function Page () {
 											label='Buscar'
 											onChange={(event)=>{}}
 											/>
+									</FieldControl>
+								</FormRow>
+							</BlockSeparator>
+							<BlockSeparator>
+								<FormRow>
+									<FieldControl>
+										<FormControl component="fieldset">
+											<FormLabel component="legend">Status</FormLabel>
+											<FormGroup>
+												<FormControlLabel
+													control={<Checkbox checked={false} onChange={()=>{}} value="waiting" />}
+													label="Aguardando"
+												/>
+												<FormControlLabel
+													control={<Checkbox checked={false} onChange={()=>{}} value="preparing" />}
+													label="Preparando"
+												/>
+												<FormControlLabel
+													control={<Checkbox checked={false} onChange={()=>{}} value="delivering" />}
+													label="Na entrega"
+												/>
+												<FormControlLabel
+													control={<Checkbox checked={false} onChange={()=>{}} value="delivered" />}
+													label="Entregue"
+												/>
+												<FormControlLabel
+													control={<Checkbox checked={false} onChange={()=>{}} value="canceled" />}
+													label="Cancelado"
+												/>
+											</FormGroup>
+										</FormControl>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

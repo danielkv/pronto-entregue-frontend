@@ -5,17 +5,7 @@ export default createMuiTheme({
 		MuiFormControl : {
 			root: {
 				minWidth:200,
-			}
-		},
-		MuiFormControlLabel : {
-			label: {
-				fontSize:14,
-				color:'#707070'
-			}
-		},
-		MuiTextField: {backgroundColor:"#F0F0F0",
-			root:{
-				'& .MuiFormLabel-root':{
+				'& .MuiInputLabel-animated' : {
 					zIndex:100,
 					marginTop:3,
 					marginLeft:18,
@@ -26,6 +16,16 @@ export default createMuiTheme({
 						marginTop:0,
 					}
 				},
+			}
+		},
+		MuiFormControlLabel : {
+			label: {
+				fontSize:14,
+				color:'#707070'
+			}
+		},
+		MuiTextField: {backgroundColor:"#F0F0F0",
+			root:{
 				'& .MuiInputBase-root' : {
 					backgroundColor:"#F0F0F0",
 					borderRadius:3,
@@ -36,6 +36,10 @@ export default createMuiTheme({
 					'&::before, &::after ' : {
 						borderBottom:'none !important'
 					}
+				},
+				'& .MuiSelect-select' : {
+					backgroundColor:"none !important",
+					padding: '0',
 				}
 			},
 		},
@@ -62,6 +66,9 @@ export default createMuiTheme({
 			SelectProps : {
 				fullWidth:false,
 			}
+		},
+		MuiFormControl : {
+			fullWidth:true,
 		}
 	},
 	palette : {

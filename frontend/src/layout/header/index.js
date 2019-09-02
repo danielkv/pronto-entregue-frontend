@@ -25,7 +25,7 @@ export default function Header () {
 			
 			<SelectContainer>
 				<Icon path={mdiStore} size='24' color='#D41450' />
-				<FormControl>
+				<FormControl fullWidth={false}>
 					<Select
 						value={company}
 						onChange={selectCompany}
@@ -42,7 +42,7 @@ export default function Header () {
 			</SelectContainer>
 			<SelectContainer>
 				<Icon path={mdiSourceBranch} size='24' color='#D41450' />
-				<FormControl>
+				<FormControl fullWidth={false}>
 					<Select
 						value={branch}
 						onChange={selectBranch}
