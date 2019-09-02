@@ -108,7 +108,7 @@ function Page () {
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+											<Switch size='small' color='primary' checked={true} onChange={()=>{}} value="includeDisabled" />
 										}
 										label="Ativo"
 									/>
@@ -117,8 +117,8 @@ function Page () {
 							<FormRow>
 								<FieldControl>
 									<ButtonGroup fullWidth>
-										<Button color='secondary'>Limpar</Button>
-										<Button variant="contained" color='secondary'>Aplicar</Button>
+										<Button color='secondary'>Cancelar</Button>
+										<Button variant="contained" color='secondary'>Salvar</Button>
 									</ButtonGroup>
 								</FieldControl>
 							</FormRow>

@@ -17,33 +17,22 @@ function Page () {
 
 	const companies = [
 		{
-			name: 'Copeiro',
+			name: 'Copeiro 1',
 			revenue:10684,
-			branches_qty:3,
 			orders_qty:15,
 			created_at:'25/08/19 15:35',
 			active: true,
 		},
 		{
-			name: 'Temperoma',
+			name: 'Copeiro 2',
 			revenue:9465,
-			branches_qty:3,
 			orders_qty:15,
 			created_at:'25/08/19 15:35',
 			active: false,
 		},
 		{
-			name: 'Casa da Árvore',
+			name: 'Copeiro 3',
 			revenue:10684,
-			branches_qty:3,
-			orders_qty:15,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Pizzaria Bom Gosto',
-			revenue:32646,
-			branches_qty:2,
 			orders_qty:15,
 			created_at:'25/08/19 15:35',
 			active: true,
@@ -55,8 +44,8 @@ function Page () {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/filiais/novo' component={Link}>Adicionar</Button></BlockTitle>
-						<NumberOfRows>{companies.length} empresas</NumberOfRows>
+						<BlockTitle>Filiais <Button size='small' variant="contained" color='secondary' to='/filiais/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<NumberOfRows>{companies.length} filiais</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table>
@@ -65,7 +54,6 @@ function Page () {
 									<TableCell style={{width:30, paddingRight:10}}></TableCell>
 									<TableCell>Empresa</TableCell>
 									<TableCell>Faturamento último mês</TableCell>
-									<TableCell>Número de filiais</TableCell>
 									<TableCell>Número de pedidos</TableCell>
 									<TableCell>Criada em</TableCell>
 									<TableCell>Ações</TableCell>
@@ -77,7 +65,6 @@ function Page () {
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
 										<TableCell>{numeral(row.revenue).format('$0,0.00')}</TableCell>
-										<TableCell><CircleNumber>{row.branches_qty}</CircleNumber></TableCell>
 										<TableCell><CircleNumber>{row.orders_qty}</CircleNumber></TableCell>
 										<TableCell>{row.created_at}</TableCell>
 										<TableCell>
@@ -112,7 +99,7 @@ function Page () {
 							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
 							/>
 					</Paper>
-					<NumberOfRows>{companies.length} empresas</NumberOfRows>
+					<NumberOfRows>{companies.length} filiais</NumberOfRows>
 				</Block>
 			</Content>
 			<SidebarContainer>

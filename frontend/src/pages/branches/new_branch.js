@@ -14,23 +14,15 @@ function Page () {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Nova empresa</BlockTitle>
+						<BlockTitle>Nova filial</BlockTitle>
 					</BlockHeader>
 					<Paper>
 						<FormRow>
 							<FieldControl>
-								<TextField label='Nome Fantasia' />
+								<TextField label='Nome da Filial' />
 							</FieldControl>
-							<FieldControl>
-								<TextField label='Razão Social' />
-							</FieldControl>
-						</FormRow>
-						<FormRow>
 							<FieldControl>
 								<TextField label='CNPJ' />
-							</FieldControl>
-							<FieldControl>
-								<TextField label='Responsável' />
 							</FieldControl>
 						</FormRow>
 					</Paper>
@@ -66,7 +58,7 @@ function Page () {
 				</Block>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Outros dados da empresa</BlockTitle>
+						<BlockTitle>Outros dados da filial</BlockTitle>
 					</BlockHeader>
 					<Paper>
 						<BlockSeparator>
@@ -108,7 +100,7 @@ function Page () {
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+											<Switch size='small' color='primary' checked={true} onChange={()=>{}} value="includeDisabled" />
 										}
 										label="Ativo"
 									/>
@@ -117,8 +109,8 @@ function Page () {
 							<FormRow>
 								<FieldControl>
 									<ButtonGroup fullWidth>
-										<Button color='secondary'>Limpar</Button>
-										<Button variant="contained" color='secondary'>Aplicar</Button>
+										<Button color='secondary'>Cancelar</Button>
+										<Button variant="contained" color='secondary'>Salvar</Button>
 									</ButtonGroup>
 								</FieldControl>
 							</FormRow>
