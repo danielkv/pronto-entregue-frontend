@@ -36,10 +36,6 @@ export const SidebarContainer = styled.aside`
 	width:300px;
 `;
 
-export const SidebarBlock = styled.div`
-	padding:30px;
-`;
-
 export const Sidebar = styled(Paper)`
 	border-top-right-radius:0 !important;
 	border-bottom-right-radius:0 !important;
@@ -47,10 +43,6 @@ export const Sidebar = styled(Paper)`
 	display:flex;
 	flex-direction:column;
 	justify-items:stretch;
-
-	& ${SidebarBlock} {
-		border-bottom: 1px solid #ddd;
-	}
 `;
 
 export const Content = styled.div`
@@ -58,6 +50,17 @@ export const Content = styled.div`
 	margin-right:65px;
 `;
 
+export const BlockSeparator = styled.div`
+	border-bottom: 1px solid #ddd;
+`;
+
+export const Block = styled.div`
+	margin-bottom:25px;
+
+	& ${BlockSeparator}:last-child {
+		margin-bottom:0;
+	}
+`
 export const BlockHeader = styled.div`
 	display:flex;
 	justify-content:space-between;
@@ -97,4 +100,24 @@ export const CircleNumber = styled.div`
 	display:flex;
 	align-items:center;
 	justify-content:center;
+`;
+
+export const FormRow = styled.div`
+	display:flex;
+	justify-items:stretch;
+	padding:0 15px 10px 15px;
+
+	${Block} &:first-child {
+		padding-top:20px;
+	}
+	${Block} &:last-child {
+		padding-bottom:30px;
+	}
+`;
+
+export const FieldControl = styled.div`
+	flex:1;
+	display:flex;
+	align-items:flex-end;
+	margin: 0 15px;
 `;

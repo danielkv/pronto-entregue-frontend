@@ -17,7 +17,7 @@ export default createMuiTheme({
 			root:{
 				'& .MuiFormLabel-root':{
 					zIndex:100,
-					marginTop:5,
+					marginTop:3,
 					marginLeft:18,
 					pointerEvents: 'none',
 					transition: 'color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms',
@@ -29,7 +29,7 @@ export default createMuiTheme({
 				'& .MuiInputBase-root' : {
 					backgroundColor:"#F0F0F0",
 					borderRadius:3,
-					padding: '11px 18px',
+					padding: '9px 18px',
 					'& input' : {
 						padding:0,
 					},
@@ -43,7 +43,7 @@ export default createMuiTheme({
 			select:{
 				backgroundColor:"#F0F0F0",
 				borderRadius:3,
-				padding: '8px 26px 8px 12px',
+				padding: '9px 26px 9px 12px',
 			},
 		
 		}
@@ -54,10 +54,14 @@ export default createMuiTheme({
 		},
 		MuiSelect : {
 			disableUnderline : true,
+			fullWidth : true,
 		},
 		MuiTablePagination : {
 			labelRowsPerPage : 'linhas por página',
-			labelDisplayedRows : ({ from, to, count }) => `${from}-${to} de ${count}`
+			labelDisplayedRows : ({ from, to, count }) => `${from}-${to} de ${count}`,
+			SelectProps : {
+				fullWidth:false,
+			}
 		}
 	},
 	palette : {
