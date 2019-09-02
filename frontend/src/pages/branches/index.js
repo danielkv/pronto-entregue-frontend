@@ -15,7 +15,7 @@ function Page () {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const companies = [
+	const branches = [
 		{
 			name: 'Copeiro 1',
 			revenue:10684,
@@ -45,7 +45,7 @@ function Page () {
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Filiais <Button size='small' variant="contained" color='secondary' to='/filiais/novo' component={Link}>Adicionar</Button></BlockTitle>
-						<NumberOfRows>{companies.length} filiais</NumberOfRows>
+						<NumberOfRows>{branches.length} filiais</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table>
@@ -60,7 +60,7 @@ function Page () {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{companies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								{branches.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
 									<TableRow key={row.name}>
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
@@ -86,7 +86,7 @@ function Page () {
 						</Table>
 						<TablePagination
 							component="div"
-							count={companies.length}
+							count={branches.length}
 							rowsPerPage={rowsPerPage}
 							page={page}
 							backIconButtonProps={{
@@ -99,7 +99,7 @@ function Page () {
 							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
 							/>
 					</Paper>
-					<NumberOfRows>{companies.length} filiais</NumberOfRows>
+					<NumberOfRows>{branches.length} filiais</NumberOfRows>
 				</Block>
 			</Content>
 			<SidebarContainer>

@@ -9,6 +9,9 @@ import NewCompany from './pages/companies/new_company';
 import Branches from './pages/branches';
 import NewBranch from './pages/branches/new_branch';
 
+import Orders from './pages/orders';
+import NewOrder from './pages/orders/new_order';
+
 export default function Router() {
 	return (
 		<BrowserRouter>
@@ -20,6 +23,9 @@ export default function Router() {
 				
 				<Route exact path='/filiais' component={Branches} />
 				<Route path='/filiais/novo' component={NewBranch} />
+				
+				<Route exact path='/pedidos' component={Orders} />
+				<Route path='/pedidos/novo' component={NewOrder} />
 			</Switch>
 		</BrowserRouter>
 	);
