@@ -1,7 +1,7 @@
 import React from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core';
 
-import {getStatusIcon} from '../../utils';
+import {getStatusIcon, setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, BlockTitle, CircleNumber} from '../../layout/components';
 import {OrdersToday, OrderStatus, ProdImg, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, TopSalesContainer, LastSalesContainer} from './styles';
@@ -13,6 +13,7 @@ import OrdersDelivered from '../../assets/images/orders-delivered.png';
 import OrdersCanceled from '../../assets/images/orders-canceled.png';
 
 function Page () {
+	setPageTitle('Dashboard');
 	const topSales = [
 		{
 			image:'https://media-manager.noticiasaominuto.com/1920/1509039392/naom_59bfa667ce128.jpg',

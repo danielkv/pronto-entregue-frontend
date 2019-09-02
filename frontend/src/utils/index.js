@@ -20,6 +20,13 @@ export const getStatusIcon = (status) => {
 	}
 }
 
+export const setPageTitle = (new_title) => {
+	if (new_title)
+		return document.title = `Flakery - ${new_title}`;
+	
+	return document.title = `Flakery`;
+}
+
 numeral.register('locale', 'br', {
     delimiters: {
         thousands: '.',

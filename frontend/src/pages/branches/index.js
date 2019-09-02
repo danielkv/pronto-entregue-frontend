@@ -3,14 +3,14 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, For
 import Icon from '@mdi/react';
 import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
-import numeral from 'numeral';
+import numeral from 'numeral'
 
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar} from '../../layout/components';
 
 function Page () {
-	setPageTitle('Empresas');
+	setPageTitle('Filiais');
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -55,7 +55,7 @@ function Page () {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/filiais/novo' component={Link}>Adicionar</Button></BlockTitle>
 						<NumberOfRows>{companies.length} empresas</NumberOfRows>
 					</BlockHeader>
 					<Paper>

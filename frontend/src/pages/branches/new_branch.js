@@ -8,7 +8,7 @@ import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl} from '../../layout/components';
 
 function Page () {
-	setPageTitle('Nova empresa');
+	setPageTitle('Nova filial');
 	return (
 		<Layout>
 			<Content>
