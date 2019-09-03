@@ -15,6 +15,9 @@ import NewOrder from './pages/orders/new_order';
 import Categories from './pages/categories';
 import NewCategory from './pages/categories/new_category';
 
+import Products from './pages/products';
+import NewProduct from './pages/products/new_product';
+
 export default function Router() {
 	return (
 		<BrowserRouter>
@@ -32,6 +35,9 @@ export default function Router() {
 				
 				<Route exact path='/categorias' component={Categories} />
 				<Route path='/categorias/novo' component={NewCategory} />
+				
+				<Route exact path='/produtos' component={Products} />
+				<Route path='/produtos/novo' component={NewProduct} />
 			</Switch>
 		</BrowserRouter>
 	);

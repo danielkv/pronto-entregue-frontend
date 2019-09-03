@@ -2,6 +2,11 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 export default createMuiTheme({
 	overrides: {
+		MuiFormLabel : {
+			root: {
+				marginBottom:12
+			}
+		},
 		MuiExpansionPanel : {
 			root: {
 				boxShadow:'none !important',

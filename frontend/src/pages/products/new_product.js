@@ -1,5 +1,5 @@
 import React from 'react';
-import {Paper, TextField, FormControlLabel, Switch, ButtonGroup, Button, FormLabel, FormControl} from '@material-ui/core';
+import {Paper, TextField, FormControlLabel, Switch, ButtonGroup, Button} from '@material-ui/core';
 
 import ImagePlaceHolder from '../../assets/images/image_placeholder.png';
 import {setPageTitle} from '../../utils';
@@ -59,10 +59,12 @@ function Page () {
 						<BlockSeparator>
 							<FormRow>
 								<FieldControl>
-									<FormControl>
-										<FormLabel>Imagem</FormLabel> 
-										<img src={ImagePlaceHolder} alt='Clique para adicionar uma imagem' />
-									</FormControl>
+									<label>Imagem</label>
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<img src={ImagePlaceHolder} alt='Clique para adicionar uma imagem' />
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
