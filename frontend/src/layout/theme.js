@@ -2,6 +2,16 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 export default createMuiTheme({
 	overrides: {
+		MuiExpansionPanel : {
+			root: {
+				boxShadow:'none !important',
+			}
+		},
+		MuiExpansionPanelDetails : {
+			root: {
+				backgroundColor:'#F0F0F0'
+			}
+		},
 		MuiFormControl : {
 			root: {
 				minWidth:200,
@@ -24,7 +34,7 @@ export default createMuiTheme({
 				color:'#707070'
 			}
 		},
-		MuiTextField: {backgroundColor:"#F0F0F0",
+		MuiTextField: {
 			root:{
 				'& .MuiInputBase-root' : {
 					backgroundColor:"#F0F0F0",

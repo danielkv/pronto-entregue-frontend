@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Paper, InputAdornment, TextField, IconButton, FormControl, ButtonGroup, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead} from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiContentDuplicate, mdiDelete, mdiPencil } from '@mdi/js';
 import numeral from 'numeral';
 
+import ProductModal from './product_modal';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage} from '../../layout/components';
 
 function Page () {
 	setPageTitle('Novo pedido');
+
+	const [modalOpen, setModalOpen] = useState(true);
 
 	const order_products = [
 		{
@@ -36,6 +39,7 @@ function Page () {
 
 	return (
 		<Layout>
+			<ProductModal open={modalOpen} onClose={()=>setModalOpen(false)} />
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -171,7 +175,7 @@ function Page () {
 								</TableHead>
 								<TableBody>
 									{order_products.map(row => (
-										<TableRow>
+										<TableRow key={row.name}>
 											<TableCell style={{width:80, paddingRight:10}}><ProductImage src={row.image} alt={row.name} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell>
@@ -205,7 +209,7 @@ function Page () {
 						<BlockSeparator>
 							<FormRow>
 								<FieldControl>
-									<TextField select label='Status'>
+									<TextField select label='Status' value='delivering'>
 										<MenuItem value='waiting'>Aguardando</MenuItem>
 										<MenuItem value='preparing'>Preparando</MenuItem>
 										<MenuItem value='delivering'>Na entrega</MenuItem>
@@ -236,7 +240,7 @@ function Page () {
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<TextField select label='Forma de pagamento'>
+									<TextField select label='Forma de pagamento' value='money'>
 										<MenuItem value='credit_debit'>Cartão de crédito/débito</MenuItem>
 										<MenuItem value='money'>Dinheiro</MenuItem>
 									</TextField>
