@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import numeral from 'numeral';
-import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, Radio, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell} from '@material-ui/core';
+import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell} from '@material-ui/core';
 
 import {ModalPaper, ModalHeader, ProductTitle, ProductAmount, ProductImage, ProductInfo } from './modal_styles';
 import { FormRow, FieldControl, Block, BlockSeparator } from '../../layout/components';

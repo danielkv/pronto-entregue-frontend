@@ -7,9 +7,15 @@ body, html {
 	font-family: 'Roboto', sans-serif;
 	width: 100%;
 	height: 100%;
+	color:#707070;
 }
 
 #root {
 	width: 100%;
 	height: 100%;
+}
+
+label {
+	color:#707070;
+	font-size: 13px;
 }

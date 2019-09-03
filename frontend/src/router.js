@@ -12,6 +12,9 @@ import NewBranch from './pages/branches/new_branch';
 import Orders from './pages/orders';
 import NewOrder from './pages/orders/new_order';
 
+import Categories from './pages/categories';
+import NewCategory from './pages/categories/new_category';
+
 export default function Router() {
 	return (
 		<BrowserRouter>
@@ -26,6 +29,9 @@ export default function Router() {
 				
 				<Route exact path='/pedidos' component={Orders} />
 				<Route path='/pedidos/novo' component={NewOrder} />
+				
+				<Route exact path='/categorias' component={Categories} />
+				<Route path='/categorias/novo' component={NewCategory} />
 			</Switch>
 		</BrowserRouter>
 	);
