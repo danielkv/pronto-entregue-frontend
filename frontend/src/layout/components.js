@@ -58,7 +58,7 @@ export const Block = styled.div`
 	margin-bottom:25px;
 
 	& ${BlockSeparator}:last-child {
-		margin-bottom:0;
+		border-bottom:none;
 	}
 `
 export const BlockHeader = styled.div`

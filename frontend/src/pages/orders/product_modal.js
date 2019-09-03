@@ -21,7 +21,7 @@ export default function ProductModal (props) {
 		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} open={props.open} onClose={props.onClose}>
 			<Fade in={props.open}>
 				<ModalPaper>
-					<Block>
+					<Block style={{margin:0}}>
 						<BlockSeparator>
 							<ModalHeader>
 								<ProductImage src='https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg' />
@@ -64,6 +64,13 @@ export default function ProductModal (props) {
 										<Button color='secondary'>Cancelar</Button>
 										<Button variant="contained" color='secondary'>Salvar</Button>
 									</ButtonGroup>
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<FormHelperText>
+										Salvar irá recalcular todos os valores definidos nessa janela
+									</FormHelperText>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
