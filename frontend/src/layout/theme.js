@@ -2,6 +2,20 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 export default createMuiTheme({
 	overrides: {
+		MuiTable : {
+			root:{
+				'& .MuiTableCell-root' :{
+					padding: '14px 20px 14px 16px',
+				},
+				'& .MuiTableRow-root .MuiTableCell-root:first-child':{
+					paddingLeft:30,
+					paddingRight:5,
+				},
+				'& .MuiTableRow-root .MuiTableCell-root:last-child':{
+					paddingRight:30
+				}
+			}
+		},
 		MuiFormLabel : {
 			root: {
 				marginBottom:12
@@ -10,6 +24,9 @@ export default createMuiTheme({
 		MuiExpansionPanel : {
 			root: {
 				boxShadow:'none !important',
+				'& .Mui-expanded' : {
+					margin:'0 !important',
+				}
 			}
 		},
 		MuiExpansionPanelDetails : {
@@ -19,7 +36,7 @@ export default createMuiTheme({
 		},
 		MuiFormControl : {
 			root: {
-				minWidth:200,
+				minWidth:100,
 				'& .MuiInputLabel-animated' : {
 					zIndex:100,
 					marginTop:3,
@@ -52,10 +69,10 @@ export default createMuiTheme({
 						borderBottom:'none !important'
 					}
 				},
-				'& .MuiSelect-select' : {
-					backgroundColor:"none !important",
-					padding: '0',
-				}
+				'& .MuiInput-input' : {
+					background:"none !important",
+					padding:0
+				},
 			},
 		},
 		MuiSelect:{

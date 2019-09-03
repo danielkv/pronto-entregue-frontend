@@ -50,7 +50,7 @@ function Page () {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Produtos <Button size='small' variant="contained" color='secondary' to='/categorias/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Produtos <Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button></BlockTitle>
 						<NumberOfRows>{products.length} produtos</NumberOfRows>
 					</BlockHeader>
 					<Paper>
