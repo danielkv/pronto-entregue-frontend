@@ -31,21 +31,16 @@ export const NavItem = styled(Link)`
 		margin-bottom:0;
 	}
 
-	${({selected}) =>{
-		if (selected)
-			return (`
-				background-color:#D41450;
-				svg path {
-					fill:white !important;
-				}`
-			)
-		else 
-			return (`
-				&:hover {
-					background-color:#F0F0F0;
-				}`
-			)
-	}}
+	&.selected {
+		background-color:#D41450;
+		svg path {
+			fill:white !important;
+		}
+	}
 
-	
+	&:not(.selected) {
+		&:hover {
+					background-color:#F0F0F0;
+				}
+	}	
 `;

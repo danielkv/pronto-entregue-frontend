@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Icon from '@mdi/react';
-import { mdiViewDashboard, mdiStore, mdiSourceBranch, mdiViewList,  mdiShape, mdiBasket, mdiAccountMultiple, mdiSettings } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiSourceBranch, mdiViewList,  mdiShape, mdiBasket, mdiAccountMultiple, mdiSettings, mdiInboxMultiple } from '@mdi/js';
 import {Popper, Paper} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import {withRouter } from 'react-router-dom';
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function Navigation(props) {
-	const path = '/'+props.match.path.substr(1).split('/')[0];
+	
 	const [popperOpen, setPopperOpen] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [popperText, setPopperText] = useState(null);
@@ -32,6 +32,11 @@ function Navigation(props) {
 		setPopperText(event.currentTarget.getAttribute('alt'));
 	};
 
+	function isSelected(location) {
+		const current_location = props.match.path.substr(1).split('/')[0];
+		return current_location === location ? 'selected' : '';
+	}
+
 	return (
 		<NavigationContainer>
 			<Popper className={classes.root} open={popperOpen} anchorEl={anchorEl} placement='right' modifiers={{arrow:{enabled:true}}}>
@@ -40,29 +45,32 @@ function Navigation(props) {
 				</Paper>
 			</Popper>
 			<nav>
-				<NavItem to='/' selected={path==='/'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='Dashboard'>
+				<NavItem to='/' className={isSelected('')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Dashboard'>
 					<Icon className='teste' path={mdiViewDashboard} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/empresas' selected={path==='/empresas'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='Empresas'>
+				<NavItem to='/empresas' className={isSelected('empresas')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Empresas'>
 					<Icon path={mdiStore} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/filiais' selected={path==='/filiais'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='Filiais'>
+				<NavItem to='/filiais' className={isSelected('filiais')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Filiais'>
 					<Icon path={mdiSourceBranch} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/pedidos' selected={path==='/pedidos'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='Pedidos'>
+				<NavItem to='/estoque' className={isSelected('estoque')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Estoque'>
+					<Icon path={mdiInboxMultiple} size='22' color='#707070' />
+				</NavItem>
+				<NavItem to='/pedidos' className={isSelected('pedidos')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Pedidos'>
 					<Icon path={mdiViewList} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/categorias' selected={path==='/categorias'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='Categorias'>
+				<NavItem to='/categorias' className={isSelected('categorias')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Categorias'>
 					<Icon path={mdiShape} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/produtos' selected={path==='/produtos'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='Produtos'>
+				<NavItem to='/produtos' className={isSelected('produtos')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Produtos'>
 					<Icon path={mdiBasket} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/usuarios' selected={path==='/usuarios'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} alt='usuários'>
+				<NavItem to='/usuarios' className={isSelected('usuarios')} onMouseOver={handleClick} onMouseOut={handleClick} alt='usuários'>
 					<Icon path={mdiAccountMultiple} size='22' color='#707070' />
 				</NavItem>
 
-				<NavItem className='settings' selected={path==='/configuracoes'?true:false} onMouseOver={handleClick} onMouseOut={handleClick} to='/configuracoes' alt='Configurações'>
+				<NavItem className={`settings ${isSelected('configuracoes')}`} onMouseOver={handleClick} onMouseOut={handleClick} to='/configuracoes' alt='Configurações'>
 					<Icon path={mdiSettings} size='22' color='#707070' />
 				</NavItem>
 			</nav>
