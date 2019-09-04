@@ -83,6 +83,19 @@ export default createMuiTheme({
 				padding: '9px 26px 9px 12px',
 			},
 		
+		},
+		MuiPaper : {
+			root: {
+				overflow:'hidden',
+			}
+		},
+		MuiButton: {
+			root: {
+				'& .iconLeft' : {
+					marginRight:5,
+					marginTop:-3
+				}
+			}
 		}
 	},
 	props: {
