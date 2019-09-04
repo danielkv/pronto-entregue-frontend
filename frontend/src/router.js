@@ -18,6 +18,9 @@ import NewCategory from './pages/categories/new_category';
 import Products from './pages/products';
 import NewProduct from './pages/products/new_product';
 
+import Users from './pages/users';
+import NewUser from './pages/users/new_user';
+
 export default function Router() {
 	return (
 		<BrowserRouter>
@@ -38,6 +41,9 @@ export default function Router() {
 				
 				<Route exact path='/produtos' component={Products} />
 				<Route path='/produtos/novo' component={NewProduct} />
+				
+				<Route exact path='/usuarios' component={Users} />
+				<Route path='/usuarios/novo' component={NewUser} />
 			</Switch>
 		</BrowserRouter>
 	);
