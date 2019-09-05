@@ -182,39 +182,6 @@ async function authorize (req, res, next) {
 	.catch(next);
 }
 
-/**
- * Faz autenticação de usuário e insere no
- * objeto de requisição
- * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- */
-
-function authenticate (req, res, next) {
-	if (req.path === '/users/authorize') return next(); //Não faz a autenticação em caso de login
-	if (!req.headers.authorization && req.path === '/users/create') return next(); //Autenticação não é necessária para criar usuário (cliente)
-	
-	if (!req.headers.authorization || req.headers.authorization.split(' ')[0] !== 'Bearer') throw new Error('Autorização desconhecida'); 
-	const {id, email} = jwt.verify(req.headers.authorization.split(' ')[1], process.env.SECRET, {ignoreExpiration:true});
-
-	Users.findOne({
-		where:{id, email},
-		attributes: {exclude:['password', 'salt']}
-	})
-	.then(async (user_found)=>{
-		if (!user_found) throw new Error('Usuário não encontrado');
-		if (user_found.active != true) throw new Error('Usuário está inativo');
-
-		user_found.permissions = [user_found.role];
-
-		req.user = user_found;
-
-		next();
-		return null;
-	}).catch(next);
-}
-
 /*
  * Middleware para verificar permissão de editar usuário
  * 
@@ -232,24 +199,6 @@ function usersEditPermission(req, res, next) {
 	return null;
 }
 
-/*
- * Middleware para verificar permissão
- * 
- */
-
-function permit(perms, options) {
-	return (req, res, next) => {
-		if (!req.user) throw new Error('Usuário não autenticado');
-
-		const {user} = req;
-		if (options && typeof options.function == 'function' && options.function(req)){next(); return null;}
-		if (!user.can(perms, options)) throw new Error('Você não tem permissões para esta ação');
-
-		next();
-		return null;
-	}
-}
-
 module.exports = {
 	//default
 	read,
@@ -262,9 +211,7 @@ module.exports = {
 
 	//authorization
 	authorize,
-	authenticate,
 	
 	//permissions
-	permit,
 	usersEditPermission,
 }

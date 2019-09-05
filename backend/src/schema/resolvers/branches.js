@@ -112,34 +112,6 @@ async function bind_user(req, res, next) {
 }
 
 /**
- * Faz a seleção da filial e insere no objeto de requisição
- * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- */
-
-function select (req, res, next) {
-	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
-	if (!req.headers.branch_id) throw new Error('Filial não selecionada');
-	
-	const {company} = req;
-	const {branch_id} = req.headers;
-
-	company.getBranches({where:{id:branch_id}})
-	.then(async (branches_found)=>{
-		if (!branches_found.length) throw new Error('Filial selecionada não foi encontrada');
-		
-		const branch_found = branches_found[0];
-		if (!branch_found.active) throw new Error('Essa filial não está ativa');
-
-		req.branch = branch_found;
-		next();
-		return null;
-	}).catch(next);
-}
-
-/**
  * Procura o vinculo entre usuário e filial e insere 
  * as permissões na requisição
  * 

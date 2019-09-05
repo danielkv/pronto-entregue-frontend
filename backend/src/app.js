@@ -1,24 +1,29 @@
 require('dotenv').config();
 require('./services/setup'); //Configura banco de dados e relações das tabelas
-const express = require('express');
-const morgan = require('morgan');
-const cors = require('cors');
+const { ApolloServer } = require('apollo-server');
+const mid = require('./middlewares');
 
-const Routes = require('./routes/_index');
+const schema = require('./schema');
 
-const app = express();
-const port = process.env.PORT || 3000;
+const server = new ApolloServer({
+	schema,
+	context : async ({req}) => {
+		const {authorization, company_id, branch_id} = req.headers;
+		let user = null, company = null, branch = null;
 
-//Configuração inicial
-app.use(cors());
-app.use(express.urlencoded({ extended: true}));
-app.use(express.json());
-app.use(morgan('tiny'));
+		if (authorization) user = await mid.authenticate(authorization);
+		if (company_id) company = await mid.selecCompany(company_id, user);
+		if (branch_id) branch = await mid.selectBranch(branch_id, company, user);
 
-//Rotas
-app.use(Routes);
+		return {
+			user,
+			company,
+			branch,
+		}
+	},
+});
 
 //Atender porta
-app.listen(port, ()=> {
-	console.log(`Listening port ${port}`);
+server.listen().then(({url})=> {
+	console.log(`Server ready at ${url}`);
 });

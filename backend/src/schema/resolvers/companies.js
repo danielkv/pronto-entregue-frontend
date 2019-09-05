@@ -1,8 +1,29 @@
-const Companies = require('../model/companies');
-const CompaniesMeta = require('../model/companies_meta');
-const Users = require('../model/users');
-const UsersMeta = require('../model/users_meta');
-const sequelize = require('../services/connection');
+const Companies = require('../../model/companies');
+const CompaniesMeta = require('../../model/companies_meta');
+const Users = require('../../model/users');
+const UsersMeta = require('../../model/users_meta');
+const sequelize = require('../../services/connection');
+
+module.exports = {
+	Query: {
+		companies : (parent, args, ctx) => {
+			return Companies.findAll();
+		},
+
+		/*
+		* Retrona as informações da empresa
+		*/
+		company : (parent, args, {user, company}) => {
+			if (!(company instanceof Companies)) throw new Error('Empresa não encontrada');
+		
+			company.getMetas()
+			.then((metas)=> {
+				res.send({...company.get(), metas});
+			})
+			.catch(next);
+		}
+	}
+}
 
 /*
  * Retrona as informações da filial
@@ -114,33 +135,6 @@ async function bind_user(req, res, next) {
 }
 
 
-
-/**
- * Faz a seleção da empresa e das permissões para empresa
- * para os próximos middlewares e insere no object de requisição
- * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- */
-
-function select (req, res, next) {
-	if (!req.headers.company_id) throw new Error('Empresa não selecionada');
-	
-	const {company_id} = req.headers;
-
-	Companies.findOne({where:{id:company_id}})
-	.then(async (company_found)=>{
-		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
-		if (!company_found.active) throw new Error('Essa empresa não está ativa');
-
-		req.company = company_found;
-		next();
-		return null
-	}).catch(next);
-}
-
-
 /**
  * Procura o vinculo entre usuário e empresa e insere 
  * as permissões na requisição
@@ -169,18 +163,4 @@ async function permissions (req, res, next) {
 	} catch (err) {
 		next(err);
 	}
-}
-
-module.exports = {
-	//default
-	read,
-	create,
-	update,
-
-	//settings
-	bind_user,
-
-	//permissions
-	select,
-	permissions,
 }
