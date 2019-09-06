@@ -25,7 +25,7 @@ const OptionsGroups = require('../model/options_groups');
 const Options = require('../model/options');
 const Items = require('../model/items');
 
-const BranchesProducts = require('../model/branches_products');
+//const BranchesProducts = require('../model/branches_products');
 
 const Orders = require('../model/orders');
 const OrdersProducts = require('../model/orders_products');
@@ -33,7 +33,6 @@ const OrdersOptionsGroups = require('../model/orders_options_groups');
 const OrdersOptions = require('../model/orders_options');
 
 //Companies Relations
-Companies.hasMany(Products, {foreignKey:'company_id'});
 Companies.hasMany(Branches, {foreignKey:'company_id'});
 Companies.hasMany(CompaniesMeta, {foreignKey:'company_id'});
 Companies.hasMany(Items, {foreignKey:'company_id'});
@@ -49,7 +48,7 @@ Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
 Branches.hasMany(ProductsCategories, {foreignKey:'branch_id'});
 Branches.belongsToMany(PaymentMethods, {through:BranchesPaymentMethods, foreignKey:'branch_id', otherKey:'payment_method_id'});
 Branches.belongsToMany(Users, {through:BranchesUsers, foreignKey:'branch_id', otherKey:'user_id'});
-Branches.belongsToMany(Products, {through: BranchesProducts, foreignKey:'branch_id', otherKey:'product_id'});
+//Branches.hasMany(Products, {foreignKey:'branch_id'});
 
 //BranchesUsers relations
 BranchesUsers.belongsTo(Roles, {foreignKey:'role_id'});
@@ -67,16 +66,14 @@ Users.belongsToMany(Branches, {through:BranchesUsers, foreignKey:'user_id', othe
 UsersMeta.belongsTo(Users, {foreignKey:'user_id'});
 
 //ProductsCategories relations
-ProductsCategories.hasMany(BranchesProducts, {foreignKey:'category_id'});
 ProductsCategories.belongsTo(Branches, {foreignKey:'branch_id'});
+ProductsCategories.hasMany(Products, {foreignKey:'category_id'});
 
 //Products relations
-Products.belongsTo(Companies, {foreignKey:'company_id'});
+Products.belongsTo(ProductsCategories, {foreignKey:'category_id'});
+//Products.belongsTo(Branches, {foreignKey:'company_id'});
 Products.hasOne(OrdersProducts, {foreignKey:'product_id'});
-
-//BranchesProducts relations
-BranchesProducts.belongsTo(ProductsCategories, {foreignKey:'category_id'});
-BranchesProducts.hasMany(OptionsGroups, {foreignKey:'branches_product_id'});
+Products.hasMany(OptionsGroups, {foreignKey:'product_id'});
 
 //OptionsGroups relations
 OptionsGroups.hasMany(Options, {foreignKey:'option_group_id'});
@@ -96,7 +93,7 @@ OrdersOptions.belongsTo(Items, {foreignKey:'item_id'});
 Orders.belongsTo(PaymentMethods, {foreignKey:'payment_method_id'});
 
 OrdersProducts.belongsTo(Products, {foreignKey:'product_id'});
-OrdersOptionsGroups.belongsTo(OptionsGroups, {foreignKey:'options_group_id'});
+//OrdersOptionsGroups.belongsTo(OptionsGroups, {foreignKey:'options_group_id'});
 
 //Items relations
 Items.hasMany(Options, {foreignKey:'item_id'});

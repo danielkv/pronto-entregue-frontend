@@ -1,7 +1,7 @@
 const {gql} = require('apollo-server');
 
-module.exports = gql`
-	type shipping_area {
+module.exports.typeDefs = gql`
+	type ShippingArea {
 		id:ID!
 		name:String!
 		type:String!
@@ -11,9 +11,6 @@ module.exports = gql`
 		created_at:String!
 		updated_at:String!
 	}
-
-	type Query {
-		shipping_areas:[shipping_area]!
-		shipping_area(id:ID!): shipping_area!
-	}
 `;
+
+module.exports.resolvers = {}

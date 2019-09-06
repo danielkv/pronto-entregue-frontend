@@ -34,6 +34,6 @@ BranchesProducts.init({
 		type: Sequelize.INTEGER,
 		defaultValue : 0,
 	},
-}, {modelName:'branch_relation', tableName:'branches_products', underscored:true, sequelize});
+}, {modelName:'branch_relation', tableName:'branches_products', underscored:true, sequelize, name:{singular:'branchProduct', plural:'branchProducts'}} );
 
 module.exports = BranchesProducts;

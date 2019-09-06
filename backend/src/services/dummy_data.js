@@ -132,27 +132,26 @@ Promise.all([
 	return result;
 })
 .then (async (result)=>{
-	const products = await ProductsCategories.bulkCreate(categories_create);
-	const categories = await Products.bulkCreate(products_create);
-	return {...result, products, categories};
-})
-.then(async (result)=> {
-	const branch_products = await Promise.all([
-		result.branch.addProduct(result.products[0].id, {through:{category_id:result.categories[0].id}}),
-		result.branch.addProduct(result.products[1].id, {through:{category_id:result.categories[1].id}}),
-		result.branch.addProduct(result.products[2].id, {through:{category_id:result.categories[2].id}})
-	]);
+	const categories = await Promise.all(categories_create.map(cat => {
+		return result.branch.createCategory(cat);
+	}));
 
-	return {...result, branch_products};
+	const products = await Promise.all([
+		categories[0].createProduct(products_create[0]),
+		categories[1].createProduct(products_create[1]),
+		categories[2].createProduct(products_create[2]),
+	])
+	
+	return {...result, products, categories};
 })
 .then(async (result)=>{
 	const options_groups = await Promise.all([
-		result.branch_products[0][0].createOptionsGroup(create_options_groups[0]),
-		result.branch_products[1][0].createOptionsGroup(create_options_groups[1]),
-		result.branch_products[2][0].createOptionsGroup(create_options_groups[2]),
+		result.products[0].createOptionsGroup(create_options_groups[0]),
+		result.products[1].createOptionsGroup(create_options_groups[1]),
+		result.products[2].createOptionsGroup(create_options_groups[2]),
 	]);
 
-	return options_groups;
+	return {...result, options_groups};
 })
 
 .catch((err)=>{

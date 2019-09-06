@@ -1,17 +1,14 @@
 const {gql} = require('apollo-server');
 
-module.exports = gql`
-	type role {
+module.exports.typeDefs = gql`
+	type Role {
 		id:ID!
 		name:String!
 		display_name:String!
-		permissions:String!
+		permissions:[String]!
 		created_at:String!
 		updated_at:String!
 	}
-
-	type Query {
-		roles:[role]!
-		role(id:ID!): role!
-	}
 `;
+
+module.exports.resolvers = {}

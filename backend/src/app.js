@@ -3,7 +3,7 @@ require('./services/setup'); //Configura banco de dados e relações das tabelas
 const { ApolloServer } = require('apollo-server');
 const mid = require('./middlewares');
 
-const schema = require('./schema');
+const schema = require('./schema/_index');
 
 const server = new ApolloServer({
 	schema,

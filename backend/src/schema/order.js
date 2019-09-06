@@ -1,9 +1,9 @@
 const {gql} = require('apollo-server');
 
-module.exports = gql`
-	type order {
+module.exports.typeDefs = gql`
+	type Order {
 		id:ID!
-		payment_fee:
+		payment_fee:Float!
 		name:String!
 		shipping_amount:Float!
 		amount:Float!
@@ -19,12 +19,18 @@ module.exports = gql`
 		zipcode:String!
 		created_at:String!
 		updated_at:String!
-		#products
-		#payment_method
-	}
-
-	type Query {
-		orders(branch_id:ID!):[order_option]!
-		order(id:ID!): order!
+		products:[Product]!
+		payment_method:PaymentMethod!
 	}
 `;
+
+module.exports.resolvers = {
+	Order: {
+		products: (parent, args, ctx) => {
+			return parent.getOrderProducts();
+		},
+		payment_method: (parent, args, ctx) => {
+			return parent.getPaymentMethod();
+		},
+	}
+}
