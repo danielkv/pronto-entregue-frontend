@@ -12,7 +12,7 @@ const server = new ApolloServer({
 		let user = null, company = null, branch = null;
 
 		if (authorization) user = await mid.authenticate(authorization);
-		if (company_id) company = await mid.selecCompany(company_id, user);
+		if (company_id) company = await mid.selecCompany(company_id);
 		if (branch_id) branch = await mid.selectBranch(branch_id, company, user);
 
 		return {

@@ -1,4 +1,5 @@
 const {AuthenticationError} = require('apollo-server');
+const jwt = require('jsonwebtoken');
 const Users = require('../model/users');
 
 /**
@@ -11,8 +12,6 @@ const Users = require('../model/users');
  */
 
 function authenticate (authorization) {
-	if (!authorization) return null;
-
 	if (authorization.split(' ')[0] !== 'Bearer') throw new AuthenticationError('Autorização desconhecida'); 
 	const {id, email} = jwt.verify(authorization.split(' ')[1], process.env.SECRET, {ignoreExpiration:true});
 
@@ -39,20 +38,17 @@ function authenticate (authorization) {
  * @param {*} next 
  */
 
-function selecCompany (req, res, next) {
-	if (!req.headers.company_id) throw new Error('Empresa não selecionada');
-	
-	const {company_id} = req.headers;
+function selecCompany (company_id) {
 
-	Companies.findOne({where:{id:company_id}})
-	.then(async (company_found)=>{
+	return Companies.findOne({where:{id:company_id}})
+	.then((company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
 		if (!company_found.active) throw new Error('Essa empresa não está ativa');
 
 		req.company = company_found;
 		next();
 		return null
-	}).catch(next);
+	})
 }
 
 /**
