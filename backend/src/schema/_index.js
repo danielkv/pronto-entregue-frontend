@@ -1,5 +1,6 @@
 const {makeExecutableSchema, gql} = require('apollo-server');
 const {merge} = require('lodash');
+const directives = require('./directives');
 
 //types
 const {typeDefs: Branch, resolvers: branchResolvers} = require('./branch');
@@ -19,6 +20,9 @@ const {typeDefs: ShippingArea, resolvers: shippingAreaResolvers} = require('./sh
 const {typeDefs: User, resolvers: userResolvers} = require('./user');
 
 const typeDefs = gql`
+	directive @isAuthenticated on FIELD | FIELD_DEFINITION
+	directive @hasRole(permission: String) on FIELD | FIELD_DEFINITION
+
 	type Query {
 		branches:[Branch]!
 		companies:[Company]!
@@ -34,12 +38,12 @@ const typeDefs = gql`
 		products:[Product]!
 		roles:[Role]!
 		shipping_areas:[ShippingArea]!
-		users:[User]!
+		users:[User]! @hasRole(permission:"master")
 	}
 `
 
-
 module.exports = makeExecutableSchema({
 	typeDefs : [typeDefs, Branch, Category, Company, Item, Option, OptionsGroup, OrderOption, OrderOptionsGroup, OrderProduct, Order, PaymentMethod, Product, Role, ShippingArea, User],
-	resolvers : merge(branchResolvers, categoryResolvers, companyResolvers, itemResolvers, optionResolvers, optionsGroupResolvers, orderOptionResolvers, orderOptionsGroupResolvers, orderProductResolvers, orderResolvers, paymentMethodResolvers, productResolvers, roleResolvers, shippingAreaResolvers, userResolvers)
+	resolvers : merge(branchResolvers, categoryResolvers, companyResolvers, itemResolvers, optionResolvers, optionsGroupResolvers, orderOptionResolvers, orderOptionsGroupResolvers, orderProductResolvers, orderResolvers, paymentMethodResolvers, productResolvers, roleResolvers, shippingAreaResolvers, userResolvers),
+	directiveResolvers : directives,
 })

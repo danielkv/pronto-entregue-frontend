@@ -1,14 +1,13 @@
 const {AuthenticationError} = require('apollo-server');
 const jwt = require('jsonwebtoken');
 const Users = require('../model/users');
+const Companies = require('../model/companies');
+const Branches = require('../model/branches');
 
 /**
- * Faz autenticação de usuário e insere no
- * objeto de requisição
+ * Faz autenticação de usuário e insere no contexto
  * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ * @param {string} authorization => Token
  */
 
 function authenticate (authorization) {
@@ -25,58 +24,44 @@ function authenticate (authorization) {
 
 		user_found.permissions = [user_found.role];
 
-		return {...user_found.get(), permissions: [user_found.role]};
+		return user_found;
 	});
 }
 
 /**
- * Faz a seleção da empresa e das permissões para empresa
- * para os próximos middlewares e insere no object de requisição
+ * Faz a seleção da empresa e insere no contexto
  * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ * @param {*} company_id => ID da empresa
  */
 
-function selecCompany (company_id) {
+function selectCompany (company_id) {
 
 	return Companies.findOne({where:{id:company_id}})
 	.then((company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
 		if (!company_found.active) throw new Error('Essa empresa não está ativa');
 
-		req.company = company_found;
-		next();
-		return null
+		return company_found;
 	})
 }
 
 /**
- * Faz a seleção da filial e insere no objeto de requisição
+ * Faz a seleção da filial e insere no contexto]
+ * Retorna um erro se filial for filho de empresa ou não estiver ativa
  * 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ * @param {Companies} company => objeto empresa
+ * @param {*} branch_id => ID da filial
  */
 
-function selectBranch (req, res, next) {
-	if (!(req.company instanceof Companies)) throw new Error('Empresa não encontrada');
-	if (!req.headers.branch_id) throw new Error('Filial não selecionada');
-	
-	const {company} = req;
-	const {branch_id} = req.headers;
+function selectBranch (company, branch_id) {
 
-	company.getBranches({where:{id:branch_id}})
-	.then(async (branches_found)=>{
-		if (!branches_found.length) throw new Error('Filial selecionada não foi encontrada');
-		
-		const branch_found = branches_found[0];
+	return company.getBranches({where:{id:branch_id}})
+	.then(([branch_found])=>{
+		if (!branch_found) throw new Error('Filial selecionada não foi encontrada');
 		if (!branch_found.active) throw new Error('Essa filial não está ativa');
 
-		req.branch = branch_found;
-		next();
-		return null;
-	}).catch(next);
+		return branch_found;
+	});
 }
 
 /*
@@ -99,7 +84,7 @@ function permit(perms, options) {
 
 module.exports = {
 	authenticate,
-	selecCompany,
+	selectCompany,
 	selectBranch,
 	permit,
 }
