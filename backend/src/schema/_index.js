@@ -21,7 +21,8 @@ const {typeDefs: User, resolvers: userResolvers} = require('./user');
 
 const typeDefs = gql`
 	directive @isAuthenticated on FIELD | FIELD_DEFINITION
-	directive @hasRole(permission: String) on FIELD | FIELD_DEFINITION
+	directive @hasRole(permission: String!, scope: String = "master") on FIELD | FIELD_DEFINITION
+	directive @isLinked on FIELD | FIELD_DEFINITION
 
 	type Query {
 		branches:[Branch]!

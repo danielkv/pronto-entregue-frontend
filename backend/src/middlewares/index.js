@@ -7,7 +7,7 @@ const Branches = require('../model/branches');
 /**
  * Faz autenticação de usuário e insere no contexto
  * 
- * @param {string} authorization => Token
+ * @param {string} authorization Token de autenciação
  */
 
 function authenticate (authorization) {
@@ -31,10 +31,11 @@ function authenticate (authorization) {
 /**
  * Faz a seleção da empresa e insere no contexto
  * 
- * @param {*} company_id => ID da empresa
+ * @param {integer} company_id ID da empresa
+ * @param {Users} user ID da empresa
  */
 
-function selectCompany (company_id) {
+function selectCompany (company_id, user) {
 
 	return Companies.findOne({where:{id:company_id}})
 	.then((company_found)=>{
@@ -43,22 +44,44 @@ function selectCompany (company_id) {
 
 		return company_found;
 	})
+	.then (async (company_found) => {
+		
+		const [assigned_user] = await company_found.getUsers({where:{id:user.get('id')}});
+		
+		if (assigned_user && assigned_user.company_relation.active) {
+			company_found.user_relation = assigned_user.company_relation;
+		}
+
+		return company_found;
+	});
 }
 
 /**
  * Faz a seleção da filial e insere no contexto]
  * Retorna um erro se filial for filho de empresa ou não estiver ativa
  * 
- * @param {Companies} company => objeto empresa
- * @param {*} branch_id => ID da filial
+ * @param {Companies} company Empresa
+ * @param {Users} user Usuário
+ * @param {integer} branch_id ID da filial
  */
 
-function selectBranch (company, branch_id) {
+function selectBranch (company, user, branch_id) {
 
 	return company.getBranches({where:{id:branch_id}})
 	.then(([branch_found])=>{
 		if (!branch_found) throw new Error('Filial selecionada não foi encontrada');
 		if (!branch_found.active) throw new Error('Essa filial não está ativa');
+
+		return branch_found;
+	})
+	.then (async (branch_found) => {
+		const [assigned_user] = await branch_found.getUsers({where:{id:user.get('id')}});
+		if (assigned_user && assigned_user.branch_relation.active) {
+			branch_found.user_relation = assigned_user.branch_relation;
+
+			const role = await assigned_user.branch_relation.getRole();
+			user.permissions = [...user.permissions, role.permissions];
+		}
 
 		return branch_found;
 	});

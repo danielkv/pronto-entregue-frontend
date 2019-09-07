@@ -12,9 +12,9 @@ class CompaniesMeta extends Sequelize.Model {
 	 */
 
 	static async updateAll(metas, model_instance, transaction=null) {
-		const metas_remove = metas.filter(row=>row.id && row.remove===true);
-		const metas_create = metas.filter(row=>!row.id && !row.remove);
-		const metas_update = metas.filter(row=>row.id && !row.remove);
+		const metas_create = metas.filter(row=>!row.id && row.action==='create');
+		const metas_update = metas.filter(row=>row.id && row.action==='update');
+		const metas_remove = metas.filter(row=>row.id && row.action==='delete');
 		
 		const [removed, created, updated] = await Promise.all([
 			CompaniesMeta.destroy({ where: { id: metas_remove.map(r => r.id) }, transaction }).then(() => metas_remove),

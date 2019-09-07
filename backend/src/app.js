@@ -12,13 +12,13 @@ const server = new ApolloServer({
 	//introspection:true,
 	context : async ({req}) => {
 		if (req.headers['x-apollo-tracing']) return {};
-		
+
 		const {authorization, company_id, branch_id} = req.headers;
 		let user = null, company = null, branch = null;
 
 		if (authorization) user = await mid.authenticate(authorization);
-		if (company_id) company = await mid.selectCompany(company_id);
-		if (branch_id) branch = await mid.selectBranch(company, branch_id);
+		if (company_id) company = await mid.selectCompany(company_id, user);
+		if (branch_id) branch = await mid.selectBranch(company, user, branch_id);
 
 		return {
 			user,

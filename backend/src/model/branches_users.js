@@ -16,6 +16,6 @@ BranchesUsers.init({
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-}, {modelName:'branch_relation', modelName:'branches_users', underscored:true, sequelize});
+}, {modelName:'branch_relation', tableName:'branches_users', underscored:true, sequelize});
 
 module.exports = BranchesUsers;
