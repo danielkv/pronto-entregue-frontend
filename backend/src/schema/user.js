@@ -23,6 +23,7 @@ module.exports.typeDefs = gql`
 
 	type User {
 		id:ID!
+		full_name:String!
 		first_name:String!
 		last_name:String!
 		email:String!
@@ -67,12 +68,16 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		user(id:ID!): User!
+		me:User! @isAuthenticated
 	}
 
 `;
 
 module.exports.resolvers = {
 	Query : {
+		me: (parent, args, ctx) => {
+			return ctx.user;
+		},
 		users : (parent, args, ctx) => {
 			return Users.findAll();
 		},
@@ -163,6 +168,9 @@ module.exports.resolvers = {
 		}
 	},
 	User: {
+		full_name : (parent, args, ctx) => {
+			return `${parent.first_name} ${parent.last_name}`;
+		},
 		metas: (parent, args, ctx) => {
 			return parent.getMetas();
 		},
