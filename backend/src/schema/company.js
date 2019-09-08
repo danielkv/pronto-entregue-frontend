@@ -23,21 +23,25 @@ module.exports.typeDefs = gql`
 	}
 	
 	input CompanyMetaInput {
-		id:ID
+		id:ID!
 		action:String! #create | update | delete
-		meta_type:String
-		meta_value:String
+		meta_type:String!
+		meta_value:String!
 	}
 
 	input CompanyInput {
-		name:String
-		display_name:String
-		metas:[CompanyMetaInput]
+		name:String!
+		display_name:String!
+		metas:[CompanyMetaInput]!
 	}
 
 	extend type Mutation {
 		createCompany(data:CompanyInput!):Company! @hasRole(permission:"companies_edit", scope:"adm")
 		updateCompany(id:ID!, data:CompanyInput!):Company! @hasRole(permission:"companies_edit", scope:"adm")
+	}
+
+	extend type Query {
+		company(id:ID!): Company!
 	}
 `;
 
@@ -70,6 +74,14 @@ module.exports.resolvers = {
 	Query : {
 		companies: (parent, args, ctx) => {
 			return Companies.findAll();
+		},
+		company:(parent, {id}, ctx) => {
+			return Companies.findByPk(id)
+			.then(company => {
+				if (!company) throw new Error('Empresa não encontrada');
+
+				return company;
+			});
 		}
 	},
 	Company: {

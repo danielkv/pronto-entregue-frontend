@@ -19,7 +19,7 @@ class CompaniesMeta extends Sequelize.Model {
 		const [removed, created, updated] = await Promise.all([
 			CompaniesMeta.destroy({ where: { id: metas_remove.map(r => r.id) }, transaction }).then(() => metas_remove),
 			Promise.all(metas_create.map(row => model_instance.createMeta(row, {transaction}))),
-			Promise.all(metas_update.map(row => CompaniesMeta.findByPk(row.id).then((meta) => meta.update(row, {fields:['meta_value'], transaction}))))
+			Promise.all(metas_update.map(row => model_instance.getMetas({where:{id:row.id}}).then(([meta]) => {if (!meta) throw new Error('Esse metadado não pertence a essa empresa'); return meta.update(row, {fields:['meta_value'], transaction})})))
 		]);
 
 		return {
