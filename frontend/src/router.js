@@ -32,7 +32,7 @@ export default function Router() {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route exact path='/login' component={Dashboard} />
+				<Route exact path='/login' component={Login} />
 
 				<Route exact path='/' component={Dashboard} />
 
