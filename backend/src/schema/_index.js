@@ -22,23 +22,11 @@ const {typeDefs: User, resolvers: userResolvers} = require('./user');
 const typeDefs = gql`
 	directive @isAuthenticated on FIELD | FIELD_DEFINITION
 	directive @hasRole(permission: String!, scope: String = "master") on FIELD | FIELD_DEFINITION
-	directive @isLinked on FIELD | FIELD_DEFINITION
 
 	type Query {
-		branches:[Branch]!
-		companies:[Company]!
-		categories:[Category]!
-		items:[Item]!
-		options:[Option]!
-		optios_groups:[OptionsGroup]!
-		order_options:[OrderOption]!
-		order_options_groups:[OrderOptionsGroup]!
-		order_products:[OrderProduct]!
-		orders:[Order]!
-		payment_methods:[PaymentMethod]!
-		products:[Product]!
-		roles:[Role]!
-		shipping_areas:[ShippingArea]!
+		companies:[Company]! @hasRole(permission:"master")
+		payment_methods:[PaymentMethod]! @hasRole(permission:"payment_methods_read", scope:"adm")
+		roles:[Role]! @hasRole(permission:"roles_edit", scope:"adm")
 		users:[User]! @hasRole(permission:"master")
 	}
 `

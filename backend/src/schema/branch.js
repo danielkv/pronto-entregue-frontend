@@ -1,4 +1,5 @@
 const Branches = require('../model/branches');
+const BranchesMeta = require('../model/branches_meta');
 const {gql} = require('apollo-server');
 
 module.exports.typeDefs = gql`
@@ -27,17 +28,68 @@ module.exports.typeDefs = gql`
 		payment_methods:[PaymentMethod]!
 		shipping_areas:[ShippingArea]!
 		business_hours:[BusinessHour]!
-		products:[Product]!
 		orders:[Order]!
 		user_relation:BranchRelation!
+	}
+
+	input BranchMetaInput {
+		id:ID
+		action:String! #create | update | delete
+		meta_type:String
+		meta_value:String
+	}
+	
+	input BranchInput {
+		name:String
+		active:Boolean
+		metas:[BranchMetaInput]
+	}
+
+	extend type Query {
+		branch(id:ID!): Branch!
+	}
+
+	extend type Mutation {
+		createBranch(data:BranchInput!):Branch! @hasRole(permission:"branches_edit", scope:"adm")
+		updateBranch(id:ID!, data:BranchInput!): Branch! @hasRole(permission:"branches_edit", scope:"adm")
 	}
 `;
 
 module.exports.resolvers = {
 	Query : {
-		branches : (parent, args, ctx) => {
-			return Branches.findAll();
-		}
+		branch: (parent, {id}, ctx) => {
+			return Branches.findByPk(id)
+			.then(branch => {
+				if (!branch) throw new Error('Filial não encontrada');
+				return branch;
+			})
+		},
+	},
+	Mutation:{
+		createBranch: (parent, {data}, ctx) => {
+			return sequelize.transaction(transaction => {
+				return Branches.create(data, {include:[BranchesMeta], transaction})
+				.then(branch => {
+					ctx.company.addbranch(branch);
+				});
+			})
+		},
+		updateBranch: (parent, {id, data}, ctx) => {
+			return sequelize.transaction(transaction => {
+				return ctx.company.getBranches({where:{id}})
+				.then(([branch])=>{
+					if (!branch) throw new Error('Filial não encontrada');
+
+					return branch.update(data, { fields: ['name', 'active'], transaction });
+				})
+				.then(async (branch_updated) => {
+					if (data.metas) {
+						await BranchesMeta.updateAll(data.metas, branch_updated, transaction);
+					}
+					return branch_updated;
+				})
+			})
+		},
 	},
 	Branch: {
 		users: (parent, args, ctx) => {
@@ -57,9 +109,6 @@ module.exports.resolvers = {
 		},
 		business_hours: (parent, args, ctx) => {
 
-		},
-		products: (parent, args, ctx) => {
-			return parent.getProducts();
 		},
 		orders: (parent, args, ctx) => {
 			return parent.getOrders();

@@ -4,8 +4,6 @@ const UsersMeta = require('../model/users_meta');
 const Roles = require('../model/roles');
 const {salt} = require('../utilities');
 const jwt = require('jsonwebtoken');
-//const Notifications = require('../notifications');
-//const sequelize = require('../services/connection');
 const {gql} = require('apollo-server');
 
 module.exports.typeDefs = gql`

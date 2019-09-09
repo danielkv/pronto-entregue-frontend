@@ -48,13 +48,11 @@ module.exports.typeDefs = gql`
 module.exports.resolvers = {
 	Mutation : {
 		createCompany: (parent, {data}, ctx) => {
-			//console.log(data)
 			return sequelize.transaction(transaction => {
 				return Companies.create(data, {include:[CompaniesMeta], transaction})
 			})
 		},
 		updateCompany: (parent, {id, data}, ctx) => {
-			//console.log(data)
 			return sequelize.transaction(transaction => {
 				return Companies.findByPk(id)
 				.then(company=>{
