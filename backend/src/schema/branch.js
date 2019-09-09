@@ -112,6 +112,7 @@ module.exports.resolvers = {
 				return ctx.branch;
 			})
 		},
+		
 	},
 	Branch: {
 		users: (parent, args, ctx) => {

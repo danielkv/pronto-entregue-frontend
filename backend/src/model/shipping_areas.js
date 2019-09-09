@@ -33,12 +33,6 @@ ShippingAreas.init({
 		validate : {
 			notEmpty:{msg:'Você deve definir os CEps para o local de entrega'},
 			notNull:{msg:'Você deve definir os CEPs para o local de entrega'},
-		},
-		set (val) {
-			this.setDataValue('zipcodes', JSON.stringify(val));
-		},
-		get () {
-			return JSON.parse(this.getDataValue('zipcodes'));
 		}
 	},
 	amount: {
