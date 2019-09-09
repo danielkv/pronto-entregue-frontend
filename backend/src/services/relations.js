@@ -93,7 +93,8 @@ OrdersOptions.belongsTo(Items, {foreignKey:'item_id'});
 Orders.belongsTo(PaymentMethods, {foreignKey:'payment_method_id'});
 
 OrdersProducts.belongsTo(Products, {foreignKey:'product_id'});
-//OrdersOptionsGroups.belongsTo(OptionsGroups, {foreignKey:'options_group_id'});
+OrdersOptionsGroups.belongsTo(OptionsGroups, {foreignKey:'options_group_id'});
+OrdersOptions.belongsTo(Options, {foreignKey:'option_id'});
 
 //Items relations
 Items.hasMany(Options, {foreignKey:'item_id'});

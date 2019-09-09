@@ -22,6 +22,41 @@ module.exports.typeDefs = gql`
 		products:[Product]!
 		payment_method:PaymentMethod!
 	}
+
+	input OrderProductInput {
+		name:String
+		action:String! #create | update | delete
+		file:Upload
+		type:String
+		amount:Float
+		active:Boolean
+		product_id:ID
+		options_groups:[OrderOptionsGroupInput]
+	}
+
+	input OrderOptionsGroupInput {
+		id:ID
+		action:String! #create | update | delete
+		name:String
+		type:String
+		min_select:Int
+		max_select:Int
+		active:Boolean
+		options_group_id:ID
+		options:[OrderOptionInput]
+		max_select_restricted_by:ID
+	}
+
+	input OrderOptionInput {
+		id:ID
+		action:String! #create | update | delete
+		name:String
+		order:Int
+		active:Boolean
+		amount:Float
+		max_select_restrain_other:Int
+		item_id:ID
+	}
 `;
 
 module.exports.resolvers = {

@@ -22,8 +22,8 @@ class OrdersProducts extends Sequelize.Model {
 							delete product.id;
 							order_product = await order.createProduct({...product, product_id}, {transaction});
 						} else {
-							if (product.remove === true) await order.removeProduct(product, {transaction});
-							else order_product = await order_product.update(product, {fields:['message', 'amount'], transaction});
+							if (product.action === "remove") await order.removeProduct(product, {transaction});
+							else if (product.action === 'update') order_product = await order_product.update(product, {fields:['message', 'amount'], transaction});
 						}
 						
 						if (!product.remove && product.options_groups)
@@ -47,6 +47,6 @@ OrdersProducts.init({
 	name: Sequelize.STRING,
 	amount: Sequelize.DECIMAL(10,2),
 	message: Sequelize.STRING,
-}, {modelName:'orders_products', underscored:true, sequelize});
+}, {modelName:'product_relation', tableName:'orders_products', underscored:true, sequelize});
 
 module.exports = OrdersProducts;
