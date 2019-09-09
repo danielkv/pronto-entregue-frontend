@@ -1,5 +1,5 @@
 const Routes = require('express').Router();
-const shippingAreasController = require('../controller/shipping_areas');
+const deliveryAreasController = require('../controller/delivery_areas');
 const usersController = require('../controller/users');
 const companiesController = require('../controller/companies');
 const branchesController = require('../controller/branches');
@@ -10,14 +10,14 @@ Routes.use('/',
 	companiesController.permissions,
 	branchesController.select,
 	branchesController.permissions,
-	usersController.permit(['branches_edit', 'shipping_areas_edit'], {scope:'adm'}));
+	usersController.permit(['branches_edit', 'delivery_areas_edit'], {scope:'adm'}));
 
-Routes.post('/', shippingAreasController.create);
+Routes.post('/', deliveryAreasController.create);
 
-Routes.put('/:shipping_area_id', shippingAreasController.update);
+Routes.put('/:delivery_area_id', deliveryAreasController.update);
 
-Routes.delete('/:shipping_area_id', shippingAreasController.remove);
+Routes.delete('/:delivery_area_id', deliveryAreasController.remove);
 
-Routes.get('/', shippingAreasController.read);
+Routes.get('/', deliveryAreasController.read);
 
 module.exports = Routes;

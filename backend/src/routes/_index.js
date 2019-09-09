@@ -10,7 +10,7 @@ const productsCategoriesRoutes = require('../routes/products_categories');
 const optionsGroupsRoutes = require('../routes/options_groups');
 
 const branchesRoutes = require('../routes/branches');
-const shippingAreasRoutes = require('../routes/shipping_areas');
+const deliveryAreasRoutes = require('../routes/delivery_areas');
 const paymentMethodsRoutes = require('../routes/payment_methods');
 const branchesProductsRoutes = require('../routes/branches_products');
 
@@ -29,7 +29,7 @@ Routes.use('/companies/options_groups', optionsGroupsRoutes);
 	
 Routes.use('/branches', branchesRoutes);
 Routes.use('/branches/categories', productsCategoriesRoutes);
-Routes.use('/branches/shipping_areas', shippingAreasRoutes);
+Routes.use('/branches/delivery_areas', deliveryAreasRoutes);
 Routes.use('/branches/payment_methods', paymentMethodsRoutes);
 
 Routes.use('/products', branchesProductsRoutes);

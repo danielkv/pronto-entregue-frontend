@@ -5,8 +5,8 @@ const Sequelize = require('sequelize');
  * Define modelo (tabela) de locais de entrega
  */
 
-class ShippingAreas extends Sequelize.Model {};
-ShippingAreas.init({
+class DeliveryAreas extends Sequelize.Model {};
+DeliveryAreas.init({
 	name: {
 		type: Sequelize.STRING,
 		allowNull:false,
@@ -39,6 +39,6 @@ ShippingAreas.init({
 		type: Sequelize.DECIMAL(10,2),
 		defaultValue: 0
 	},
-}, {modelName:'shipping_areas', underscored:true, sequelize, name:{singular:'ShippingArea', plural:'ShippingAreas'}});
+}, {modelName:'delivery_areas', underscored:true, sequelize, name:{singular:'DeliveryArea', plural:'DeliveryAreas'}});
 
-module.exports = ShippingAreas;
+module.exports = DeliveryAreas;

@@ -1,4 +1,4 @@
-//const ShippingAreas = require('../model/shipping_areas');
+//const DeliveryAreas = require('../model/delivery_areas');
 //const sequelize = require('../services/connection');
 
 /**
@@ -11,11 +11,11 @@
 
 function create (req, res, next) {
 	const {branch} = req;
-	const shipping_area_data = req.body;
+	const delivery_area_data = req.body;
 
-	branch.createShippingArea(shipping_area_data)
-	.then((created_shipping_area)=>{
-		return res.send(created_shipping_area);
+	branch.createDeliveryArea(delivery_area_data)
+	.then((created_delivery_area)=>{
+		return res.send(created_delivery_area);
 	})
 	.catch(next);
 }
@@ -27,7 +27,7 @@ function create (req, res, next) {
 function read (req, res, next) {
 	const {branch} = req;
 	
-	branch.getShippingAreas()
+	branch.getDeliveryAreas()
 	.then((result)=>{
 		res.send(result);
 	})
@@ -44,14 +44,14 @@ function read (req, res, next) {
 
 function update (req, res, next) {
 	const {branch} = req;
-	const {shipping_area_id} = req.params;
-	const shipping_area_data = req.body;
+	const {delivery_area_id} = req.params;
+	const delivery_area_data = req.body;
 
-	branch.getShippingAreas({where:{id:shipping_area_id}})
-	.then(([shipping_area]) => {
-		if (!shipping_area) throw new Error('Local de entrega não encontrado');
+	branch.getDeliveryAreas({where:{id:delivery_area_id}})
+	.then(([delivery_area]) => {
+		if (!delivery_area) throw new Error('Local de entrega não encontrado');
 
-		return shipping_area.update(shipping_area_data, {fields:['name', 'zipcodes', 'price']});
+		return delivery_area.update(delivery_area_data, {fields:['name', 'zipcodes', 'price']});
 	})
 	.then((updated)=>{
 		return res.send(updated);
@@ -67,13 +67,13 @@ function update (req, res, next) {
 
 function remove (req, res, next) {
 	const {branch} = req;
-	const {shipping_area_id} = req.params;
+	const {delivery_area_id} = req.params;
 
-	branch.getShippingAreas({where:{id:shipping_area_id}})
-	.then(([shipping_area]) => {
-		if (!shipping_area) throw new Error('Local de entrega não encontrado');
+	branch.getDeliveryAreas({where:{id:delivery_area_id}})
+	.then(([delivery_area]) => {
+		if (!delivery_area) throw new Error('Local de entrega não encontrado');
 
-		return shipping_area.destroy();
+		return delivery_area.destroy();
 	})
 	.then((updated)=>{
 		return res.send(updated);

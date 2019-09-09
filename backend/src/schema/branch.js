@@ -27,7 +27,7 @@ module.exports.typeDefs = gql`
 		metas:[BranchMeta]!
 		categories:[Category]!
 		payment_methods:[PaymentMethod]!
-		shipping_areas:[ShippingArea]!
+		delivery_areas:[DeliveryArea]!
 		business_hours:[BusinessHour]!
 		orders:[Order]!
 		user_relation:BranchRelation!
@@ -127,8 +127,8 @@ module.exports.resolvers = {
 		payment_methods: (parent, args, ctx) => {
 			return parent.getPaymentMethods();
 		},
-		shipping_areas: (parent, args, ctx) => {
-			return parent.getShippingAreas();
+		delivery_areas: (parent, args, ctx) => {
+			return parent.getDeliveryAreas();
 		},
 		business_hours: (parent, args, ctx) => {
 

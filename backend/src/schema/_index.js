@@ -16,7 +16,7 @@ const {typeDefs: Order, resolvers: orderResolvers} = require('./order');
 const {typeDefs: PaymentMethod, resolvers: paymentMethodResolvers} = require('./payment_method');
 const {typeDefs: Product, resolvers: productResolvers} = require('./product');
 const {typeDefs: Role, resolvers: roleResolvers} = require('./role');
-const {typeDefs: ShippingArea, resolvers: shippingAreaResolvers} = require('./shipping_area');
+const {typeDefs: DeliveryArea, resolvers: deliveryAreaResolvers} = require('./delivery_area');
 const {typeDefs: User, resolvers: userResolvers} = require('./user');
 
 const typeDefs = gql`
@@ -40,7 +40,7 @@ const typeDefs = gql`
 `
 
 module.exports = makeExecutableSchema({
-	typeDefs : [typeDefs, Branch, Category, Company, Item, Option, OptionsGroup, OrderOption, OrderOptionsGroup, OrderProduct, Order, PaymentMethod, Product, Role, ShippingArea, User],
-	resolvers : merge(branchResolvers, categoryResolvers, companyResolvers, itemResolvers, optionResolvers, optionsGroupResolvers, orderOptionResolvers, orderOptionsGroupResolvers, orderProductResolvers, orderResolvers, paymentMethodResolvers, productResolvers, roleResolvers, shippingAreaResolvers, userResolvers),
+	typeDefs : [typeDefs, Branch, Category, Company, Item, Option, OptionsGroup, OrderOption, OrderOptionsGroup, OrderProduct, Order, PaymentMethod, Product, Role, DeliveryArea, User],
+	resolvers : merge(branchResolvers, categoryResolvers, companyResolvers, itemResolvers, optionResolvers, optionsGroupResolvers, orderOptionResolvers, orderOptionsGroupResolvers, orderProductResolvers, orderResolvers, paymentMethodResolvers, productResolvers, roleResolvers, deliveryAreaResolvers, userResolvers),
 	directiveResolvers : directives,
 })

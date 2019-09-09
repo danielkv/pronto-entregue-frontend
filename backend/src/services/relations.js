@@ -13,7 +13,7 @@ const BranchesPaymentMethods = require('../model/branches_payment_methods');
 const BranchesMeta = require('../model/branches_meta');
 const BranchesUsers = require('../model/branches_users');
 const PaymentMethods = require('../model/payment_methods');
-const ShippingAreas = require('../model/shipping_areas');
+const DeliveryAreas = require('../model/delivery_areas');
 
 const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
@@ -44,7 +44,7 @@ Roles.hasMany(BranchesUsers, {foreignKey:'role_id'});
 //Branches Relations
 Branches.hasMany(BranchesMeta, {foreignKey:'branch_id'});
 Branches.hasMany(Orders, {foreignKey:'branch_id'});
-Branches.hasMany(ShippingAreas, {foreignKey:'branch_id'});
+Branches.hasMany(DeliveryAreas, {foreignKey:'branch_id'});
 Branches.hasMany(ProductsCategories, {foreignKey:'branch_id'});
 Branches.belongsToMany(PaymentMethods, {through:BranchesPaymentMethods, foreignKey:'branch_id', otherKey:'payment_method_id'});
 Branches.belongsToMany(Users, {through:BranchesUsers, foreignKey:'branch_id', otherKey:'user_id'});
