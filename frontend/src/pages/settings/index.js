@@ -8,7 +8,7 @@ import {Content} from '../../layout/components';
 import { MenuLink } from './styles';
 
 import BusinessHours from './business_hours';
-import ShippingAreas from './shipping_areas';
+import DeliveryAreas from './delivery_areas';
 import PaymentMethods from './payment_methods';
 
 function Page (props) {
@@ -33,7 +33,7 @@ function Page (props) {
 					</Grid>
 					<Grid item xs={6}>
 						<Route path={`${props.match.path}/horarios`} component={BusinessHours} />
-						<Route path={`${props.match.path}/locais`} component={ShippingAreas} />
+						<Route path={`${props.match.path}/locais`} component={DeliveryAreas} />
 						<Route path={`${props.match.path}/pagamentos`} component={PaymentMethods} />
 					</Grid>
 				</Grid>
