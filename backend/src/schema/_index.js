@@ -23,6 +23,14 @@ const typeDefs = gql`
 	directive @isAuthenticated on FIELD | FIELD_DEFINITION
 	directive @hasRole(permission: String!, scope: String = "master") on FIELD | FIELD_DEFINITION
 
+	scalar Upload
+
+	type File {
+		filename: String!
+		mimetype: String!
+		encoding: String!
+	}
+
 	type Query {
 		companies:[Company]! @hasRole(permission:"master")
 		payment_methods:[PaymentMethod]! @hasRole(permission:"payment_methods_read", scope:"adm")

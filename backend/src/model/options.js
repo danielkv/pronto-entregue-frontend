@@ -10,14 +10,16 @@ class Options extends Sequelize.Model {
 		return Promise.all(
 			options.map(async (option) => {
 				let option_model;
-				if (option.id) [option_model] = await group_model.getOptions({where:{id:option.id}});
+				if (option.id && option.action !== 'create') [option_model] = await group_model.getOptions({where:{id:option.id}});
 	
 				if (option_model) {
-					if (option.remove === true) return group_model.removeOption(option_model, {transaction});
-					else return option_model.update(option, {fields:['name', 'amount', 'active', 'order', 'max_select_restrain_other'], transaction});
+					if (option.action === "remove") return group_model.removeOption(option_model, {transaction});
+					else if (option.action === "update") return option_model.update(option, {fields:['name', 'amount', 'active', 'order', 'max_select_restrain_other'], transaction});
 				} else {
 					return group_model.createOption({...option}, {transaction});
 				}
+
+				return option;
 			})
 		);
 	}

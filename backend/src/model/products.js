@@ -13,6 +13,7 @@ Products.init({
 	},
 	name: Sequelize.STRING,
 	image: Sequelize.TEXT,
+	order: Sequelize.INTEGER,
 	type: {
 		type: Sequelize.STRING(50),
 		comment: 'single | multiple',

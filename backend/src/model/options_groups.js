@@ -13,11 +13,11 @@ class OptionsGroups extends Sequelize.Model {
 				let group_model;
 				return new Promise(async (resolve, reject) => {
 					try {
-						if (group.id) [group_model] = await product.getOptionsGroups({where:{id:group.id}});
+						if (group.id && group.action !== 'create') [group_model] = await product.getOptionsGroups({where:{id:group.id}});
 						
 						if (group_model) {
-							if (group.remove === true) await product.removeOptionsGroup(group_model, {transaction});
-							else await group_model.update(group, {fields:['name', 'type', 'min_select', 'max_select', 'order', 'max_select_restrained_by'], transaction});
+							if (group.action === "remove") await product.removeOptionsGroup(group_model, {transaction});
+							else if (group.action === 'update') await group_model.update(group, {fields:['name', 'type', 'min_select', 'max_select', 'order', 'max_select_restrained_by'], transaction});
 						} else {
 							group_model = await product.createOptionsGroup(group, {transaction});
 						}
