@@ -21,7 +21,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Ivandro Cardoso',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'waiting',
 		},
@@ -29,7 +29,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Maria José Almeida',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'preparing',
 		},
@@ -37,7 +37,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Carlos antonio',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'delivered',
 		},
@@ -45,7 +45,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Ivandro Cardoso',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'waiting',
 		},
@@ -53,7 +53,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Maria José Almeida',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'preparing',
 		},
@@ -61,7 +61,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Carlos antonio',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'delivered',
 		},
@@ -69,7 +69,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Ivandro Cardoso',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'waiting',
 		},
@@ -77,7 +77,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Maria José Almeida',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'preparing',
 		},
@@ -85,7 +85,7 @@ function Page () {
 			created_at:{date:'25/08', time:'15:35'},
 			user: 'Carlos antonio',
 			address: 'Rua João Quartieiro, 43',
-			amount:72.32,
+			price:72.32,
 			products_qty:15,
 			status: 'delivered',
 		},
@@ -123,7 +123,7 @@ function Page () {
 										</TableCell>
 										<TableCell>{row.user}</TableCell>
 										<TableCell>{row.address}</TableCell>
-										<TableCell>{numeral(row.amount).format('$0,0.00')}</TableCell>
+										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 										<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
 										<TableCell style={{width:30, textAlign:'center'}}>{getStatusIcon(row.status)}</TableCell>
 										<TableCell style={{width:100}}>

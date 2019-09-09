@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import numeral from 'numeral';
 import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell} from '@material-ui/core';
 
-import {ModalPaper, ModalHeader, ProductTitle, ProductAmount, ProductImage, ProductInfo } from './modal_styles';
+import {ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductImage, ProductInfo } from './modal_styles';
 import { FormRow, FieldControl, Block, BlockSeparator } from '../../layout/components';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -27,7 +27,7 @@ export default function ProductModal (props) {
 								<ProductImage src='https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg' />
 								<ProductInfo>
 									<ProductTitle>Hamburguer de Siri</ProductTitle>
-									<ProductAmount>{numeral(15.60).format('$0,0.00')}</ProductAmount>
+									<ProductPrice>{numeral(15.60).format('$0,0.00')}</ProductPrice>
 								</ProductInfo>
 							</ModalHeader>
 							<FormRow>

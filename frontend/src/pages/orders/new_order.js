@@ -18,22 +18,22 @@ function Page () {
 		{
 			image:'https://media-manager.noticiasaominuto.com/1920/1509039392/naom_59bfa667ce128.jpg',
 			name:'Hambúrguer de Siri',
-			amount : 7.5,
+			price : 7.5,
 		},
 		{
 			image:'https://www.tropicalishotel.com.br/wp-content/uploads/bodegadosertao_59365197_598901567288489_8009772026720440913_n-950x600.jpg',
 			name:'Hambúrguer de Costela',
-			amount : 5,
+			price : 5,
 		},
 		{
 			image:'https://img.elo7.com.br/product/main/258B7CB/adesivo-parede-restaurante-prato-feito-comida-caseira-lenha-adesivo-restaurante-fritas-salada.jpg',
 			name:'Top Pão com arroz',
-			amount : 3.76,
+			price : 3.76,
 		},
 		{
 			image:'https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg',
 			name:'Panelada Mineira',
-			amount : 4.78,
+			price : 4.78,
 		},
 	];
 
@@ -179,7 +179,7 @@ function Page () {
 											<TableCell style={{width:80, paddingRight:10}}><ProductImage src={row.image} alt={row.name} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell>
-												<TextField value={numeral(row.amount).format('0,0.00')} InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
+												<TextField value={numeral(row.price).format('0,0.00')} InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
 											</TableCell>
 											<TableCell>
 												<IconButton>

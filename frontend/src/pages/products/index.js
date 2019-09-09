@@ -21,7 +21,7 @@ function Page () {
 			name: 'Hamburguer de Siri',
 			category: 'Hamburguer',
 			options_qty: 3,
-			amount: 17.50,
+			price: 17.50,
 			created_at:'25/08/19 15:35',
 			active: true,
 		},
@@ -30,7 +30,7 @@ function Page () {
 			name: 'Hamburguer de costela',
 			category: 'Hamburguer',
 			options_qty: 3,
-			amount: 17.50,
+			price: 17.50,
 			created_at:'25/08/19 15:35',
 			active: true,
 		},
@@ -39,7 +39,7 @@ function Page () {
 			name: 'Hamburguer de Siri',
 			category: 'Hamburguer',
 			options_qty: 3,
-			amount: 17.50,
+			price: 17.50,
 			created_at:'25/08/19 15:35',
 			active: true,
 		},
@@ -73,7 +73,7 @@ function Page () {
 										<TableCell>{row.name}</TableCell>
 										<TableCell>{row.category}</TableCell>
 										<TableCell><CircleNumber>{row.options_qty}</CircleNumber></TableCell>
-										<TableCell>{numeral(row.amount).format('$0,0.00')}</TableCell>
+										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 										<TableCell>{row.created_at}</TableCell>
 										<TableCell>
 											<IconButton>

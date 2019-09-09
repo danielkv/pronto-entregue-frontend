@@ -24,7 +24,7 @@ export const ProductTitle = styled.div`
 	color:#707070;
 `;
 
-export const ProductAmount = styled.div`
+export const ProductPrice = styled.div`
 	font-size:18px;
 	font-weight:normal;
 	color:#707070;

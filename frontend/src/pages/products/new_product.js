@@ -35,13 +35,13 @@ function Page () {
 					name:'Bacon',
 					max_select_restrain_other : null,
 					active:true,
-					amount:5.30,
+					price:5.30,
 				},
 				{
 					name:'Hamburguer extra',
 					max_select_restrain_other : null,
 					active:false,
-					amount:4.30,
+					price:4.30,
 				},
 			]
 		}
