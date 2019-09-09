@@ -11,7 +11,6 @@ export const LoginPanel = styled(Paper)`
 	border-radius:0 !important;
 	display:flex;
 	flex-direction:column;
-	padding:30px;
 	align-items:center;
 	justify-content:flex-start;
 	width:23%;
@@ -21,15 +20,15 @@ export const LoginPanel = styled(Paper)`
 	box-sizing:border-box;
 `;
 
-export const LoginArea = styled.div`
+export const LoginArea = styled.form`
 	margin-top:30px;
+	width:100%;
 `;
 
 export const LoginLabel = styled.h1`
 	color:#707070;
 	font-size:18px;
 	font-weight:normal;
-	margin-bottom:20px;
 `;
 
 export const ImagePanel = styled.div`
