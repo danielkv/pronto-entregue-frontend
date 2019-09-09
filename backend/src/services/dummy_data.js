@@ -107,21 +107,21 @@ const products_create = [
 	{
 		name:'Hambúrguer com Calabresa',
 		type:'single',
-		amount: 16.98,
+		price: 16.98,
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		company_id:1,
 	},
 	{
 		name:'Suco de laranja',
 		type:'single',
-		amount: 4.8,
+		price: 4.8,
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		company_id:1,
 	},
 	{
 		name:'Pizza',
 		type:'multiple',
-		amount: 55.90,
+		price: 55.90,
 		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
 		company_id:1,
 	},
@@ -154,15 +154,15 @@ const create_options_groups = [
 		options:[
 			{
 				name:'Sem alface',
-				amount:0,
+				price:0,
 			},
 			{
 				name:'Bacon',
-				amount:1.5,
+				price:1.5,
 			},
 			{
 				name:'Salada',
-				amount:0,
+				price:0,
 			},
 		]
 	},
@@ -174,15 +174,15 @@ const create_options_groups = [
 		options:[
 			{
 				name:'Pequeno',
-				amount:0,
+				price:0,
 			},
 			{
 				name:'Médio',
-				amount:1.5,
+				price:1.5,
 			},
 			{
 				name:'Grande',
-				amount:0,
+				price:0,
 			},
 		]
 	},
@@ -194,15 +194,15 @@ const create_options_groups = [
 		options:[
 			{
 				name:'Calabres',
-				amount:0,
+				price:0,
 			},
 			{
 				name:'4 queijos',
-				amount:0,
+				price:0,
 			},
 			{
 				name:'Camarão',
-				amount:5,
+				price:5,
 			},
 		]
 	},

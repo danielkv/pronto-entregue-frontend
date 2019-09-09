@@ -5,8 +5,8 @@ module.exports.typeDefs = gql`
 		id:ID!
 		payment_fee:Float!
 		name:String!
-		shipping_amount:Float!
-		amount:Float!
+		delivery_price:Float!
+		price:Float!
 		discount:Float!
 		status:String!
 		message:String!
@@ -28,7 +28,7 @@ module.exports.typeDefs = gql`
 		action:String! #create | update | delete
 		file:Upload
 		type:String
-		amount:Float
+		price:Float
 		active:Boolean
 		product_id:ID
 		options_groups:[OrderOptionsGroupInput]
@@ -53,7 +53,7 @@ module.exports.typeDefs = gql`
 		name:String
 		order:Int
 		active:Boolean
-		amount:Float
+		price:Float
 		max_select_restrain_other:Int
 		item_id:ID
 	}

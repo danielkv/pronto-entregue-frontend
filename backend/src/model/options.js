@@ -14,7 +14,7 @@ class Options extends Sequelize.Model {
 	
 				if (option_model) {
 					if (option.action === "remove") return group_model.removeOption(option_model, {transaction});
-					else if (option.action === "update") return option_model.update(option, {fields:['name', 'amount', 'active', 'order', 'max_select_restrain_other'], transaction});
+					else if (option.action === "update") return option_model.update(option, {fields:['name', 'price', 'active', 'order', 'max_select_restrain_other'], transaction});
 				} else {
 					return group_model.createOption({...option}, {transaction});
 				}
@@ -32,16 +32,16 @@ Options.init({
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
 	},
-	amount: {
+	price: {
 		type: Sequelize.DECIMAL(10, 2),
 		set (val) {
 			if (typeof val == 'string')
-				this.setDataValue('amount', parseFloat(val.replace(/\,/g, '.')));
+				this.setDataValue('price', parseFloat(val.replace(/\,/g, '.')));
 			else
-				this.setDataValue('amount', val);
+				this.setDataValue('price', val);
 		},
 		get () {
-			return parseFloat(this.getDataValue('amount'));
+			return parseFloat(this.getDataValue('price'));
 		}
 	},
 }, {modelName:'options', underscored:true, sequelize, name:{singular:'option', plural:'options'}});

@@ -136,7 +136,7 @@ function read (req, res, next) {
 /**
  * Atualiza/altera vinculo do produto com a filial
  * 
- * update [amount, order]
+ * update [price, order]
  */
 
 function update (req, res, next) {
@@ -156,7 +156,7 @@ function update (req, res, next) {
 			}
 
 			if (Object.keys(product_data).length > 1 || !product_data.category_id) {
-				const branch_relation = await product.branch_relation.update(product_data, {fields:['amount', 'order', 'active'], transaction});
+				const branch_relation = await product.branch_relation.update(product_data, {fields:['price', 'order', 'active'], transaction});
 				
 				if (product_data.options_groups) {
 					options_groups = await OptionsGroups.updateAll(product_data.options_groups, branch_relation, transaction);

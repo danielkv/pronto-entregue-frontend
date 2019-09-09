@@ -5,7 +5,7 @@ module.exports.typeDefs = gql`
 		id:ID!
 		name:String!
 		type:String!
-		amount:Float!
+		price:Float!
 		zipcodes:String!
 		created_at:String!
 		updated_at:String!
@@ -14,7 +14,7 @@ module.exports.typeDefs = gql`
 	input ShippingAreaInput {
 		name:String
 		type:String
-		amount:Float
+		price:Float
 		zipcodes:String
 	}
 
@@ -35,7 +35,7 @@ module.exports.resolvers = {
 			.then (([shipping_area]) => {
 				if (!shipping_area) throw new Error('Área de entrega não encontrada');
 
-				return shipping_area.update(data, {fields:['name', 'type', 'zipcodes', 'amount']});
+				return shipping_area.update(data, {fields:['name', 'type', 'zipcodes', 'price']});
 			});
 		},
 		removeShippingArea: (parent, {id}, ctx) => {

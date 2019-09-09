@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 
+import Login from './pages/login';
 import Dashboard from './pages/dashboard';
 
 import Companies from './pages/companies';
@@ -31,6 +32,8 @@ export default function Router() {
 	return (
 		<BrowserRouter>
 			<Switch>
+				<Route exact path='/login' component={Dashboard} />
+
 				<Route exact path='/' component={Dashboard} />
 
 				<Route exact path='/empresas' component={Companies} />

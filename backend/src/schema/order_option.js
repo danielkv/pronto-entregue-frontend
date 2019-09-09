@@ -4,7 +4,7 @@ module.exports.typeDefs = gql`
 	type OrderOption {
 		id:ID!
 		name:String!
-		amount:Float!
+		price:Float!
 		created_at:String!
 		updated_at:String!
 		item:Item

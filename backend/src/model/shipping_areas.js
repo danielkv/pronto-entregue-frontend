@@ -35,7 +35,7 @@ ShippingAreas.init({
 			notNull:{msg:'Você deve definir os CEPs para o local de entrega'},
 		}
 	},
-	amount: {
+	price: {
 		type: Sequelize.DECIMAL(10,2),
 		defaultValue: 0
 	},

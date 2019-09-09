@@ -31,16 +31,16 @@ OrdersOptions.init({
 		autoIncrement:true
 	},
 	name: Sequelize.STRING,
-	amount: {
+	price: {
 		type: Sequelize.DECIMAL(10, 2),
 		set (val) {
 			if (typeof val == 'string')
-				this.setDataValue('amount', parseFloat(val.replace(/\,/g, '.')));
+				this.setDataValue('price', parseFloat(val.replace(/\,/g, '.')));
 			else
-				this.setDataValue('amount', val);
+				this.setDataValue('price', val);
 		},
 		get () {
-			return parseFloat(this.getDataValue('amount'));
+			return parseFloat(this.getDataValue('price'));
 		}
 	},
 }, {modelName:'orders_options', underscored:true, sequelize});

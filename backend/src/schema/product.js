@@ -12,7 +12,7 @@ module.exports.typeDefs = gql`
 		image:String!
 		order:Int!
 		type:String!
-		amount:Float!
+		price:Float!
 		category:Category!
 		active:Boolean!
 		created_at:String!
@@ -24,7 +24,7 @@ module.exports.typeDefs = gql`
 		name:String
 		file:Upload
 		type:String
-		amount:Float
+		price:Float
 		active:Boolean
 		category_id:ID
 		options_groups:[OptionsGroupInput]
@@ -48,7 +48,7 @@ module.exports.typeDefs = gql`
 		name:String
 		order:Int
 		active:Boolean
-		amount:Float
+		price:Float
 		max_select_restrain_other:Int
 		item_id:ID
 	}
@@ -102,7 +102,7 @@ module.exports.resolvers = {
 				return Products.findByPk(id)
 				.then(async (product) => {
 					if (!product) throw new Error('Produto não encontrado');
-					const product_updated = await product.update(data, {fields:['amount', 'order', 'active', 'image', 'type'], transaction});
+					const product_updated = await product.update(data, {fields:['price', 'order', 'active', 'image', 'type'], transaction});
 					
 					if (data.category_id) {
 						const [category] = await ctx.branch.getCategories({where:{id:data.category_id}})

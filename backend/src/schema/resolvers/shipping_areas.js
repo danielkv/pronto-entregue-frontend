@@ -51,7 +51,7 @@ function update (req, res, next) {
 	.then(([shipping_area]) => {
 		if (!shipping_area) throw new Error('Local de entrega não encontrado');
 
-		return shipping_area.update(shipping_area_data, {fields:['name', 'zipcodes', 'amount']});
+		return shipping_area.update(shipping_area_data, {fields:['name', 'zipcodes', 'price']});
 	})
 	.then((updated)=>{
 		return res.send(updated);

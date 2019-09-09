@@ -81,7 +81,7 @@ function update (req, res, next) {
 		.then(async ([order])=>{
 			if (!order) throw new Error('Pedido não encontrado');
 
-			await order.update(order_data, {fields:['payment_fee', 'shipping_amount', 'amount', 'discount', 'message', 'street', 'number', 'complement', 'city', 'state', 'district', 'zipcode'], transaction})
+			await order.update(order_data, {fields:['payment_fee', 'delivery_price', 'price', 'discount', 'message', 'street', 'number', 'complement', 'city', 'state', 'district', 'zipcode'], transaction})
 
 			const products = await OrdersProducts.updateAll(order_data.products, branch, order, transaction);
 
