@@ -1,5 +1,6 @@
 const Branches = require('../model/branches');
 const BranchesMeta = require('../model/branches_meta');
+const PaymentMethods = require('../model/payment_methods');
 const {gql} = require('apollo-server');
 
 module.exports.typeDefs = gql`
@@ -52,6 +53,9 @@ module.exports.typeDefs = gql`
 	extend type Mutation {
 		createBranch(data:BranchInput!):Branch! @hasRole(permission:"branches_edit", scope:"adm")
 		updateBranch(id:ID!, data:BranchInput!): Branch! @hasRole(permission:"branches_edit", scope:"adm")
+
+		addPaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
+		removePaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
 	}
 `;
 
@@ -70,7 +74,7 @@ module.exports.resolvers = {
 			return sequelize.transaction(transaction => {
 				return Branches.create(data, {include:[BranchesMeta], transaction})
 				.then(branch => {
-					ctx.company.addbranch(branch);
+					return ctx.company.addBranch(branch, {transaction});
 				});
 			})
 		},
@@ -88,6 +92,24 @@ module.exports.resolvers = {
 					}
 					return branch_updated;
 				})
+			})
+		},
+		addPaymentMethod : (parent, {id}, ctx) => {
+			return PaymentMethods.findByPk(id)
+			.then (async (payment_method) => {
+				if (!payment_method) throw new Error('Método de pagamento não encontrado');
+
+				await ctx.branch.addPaymentMethods(payment_method);
+				return ctx.branch;
+			})
+		},
+		removePaymentMethod : (parent, {id}, ctx) => {
+			return ctx.branch.getPaymentMethods({where:{id}})
+			.then (async ([payment_method]) => {
+				if (!payment_method) throw new Error('Método de pagamento não encontrado');
+
+				await ctx.branch.removePaymentMethod(payment_method);
+				return ctx.branch;
 			})
 		},
 	},
