@@ -11,7 +11,6 @@ const server = new ApolloServer({
 	schema,
 	//introspection:true,
 	context : async ({req}) => {
-		if (req.headers['x-apollo-tracing']) return {};
 
 		const {authorization, company_id, branch_id} = req.headers;
 		let user = null, company = null, branch = null;
