@@ -58,14 +58,18 @@ module.exports.typeDefs = gql`
 
 	type Mutation {
 		login (email:String!, password:String!): Login!
+		authenticate (token:String!): User!
+		
 		createUser (data:UserInput!): User! @hasRole(permission:"users_edit", scope:"adm")
 		updateUser (id:ID!, data:UserInput!): User! @hasRole(permission:"users_edit", scope:"adm")
+		
 		setUserRole (id:ID!, role_id:ID!):User! @hasRole(permission:"adm")
 		setUserScopeRole (id:ID!, role:String!):User! @hasRole(permission:"adm")
+
 	}
 
 	extend type Query {
-		user(id:ID!): User!
+		user(id:ID!): User! @hasRole(permission:"users_read", scope:"adm")
 		me:User! @isAuthenticated
 	}
 
@@ -163,7 +167,7 @@ module.exports.resolvers = {
 					user:authorized,
 				};
 			});
-		}
+		},
 	},
 	User: {
 		full_name : (parent, args, ctx) => {

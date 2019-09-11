@@ -1,3 +1,5 @@
+import './services/init';
+
 import React from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 
@@ -27,8 +29,7 @@ import NewUser from './pages/users/new_user';
 
 import Settings from './pages/settings';
 
-
-export default function Router() {
+export default function Router(props) {
 	return (
 		<BrowserRouter>
 			<Switch>

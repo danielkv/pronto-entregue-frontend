@@ -96,6 +96,13 @@ export default createMuiTheme({
 					marginTop:-3
 				}
 			}
+		},
+		MuiSnackbarContent : {
+			root : {
+				'&.error' : {
+					backgroundColor:'#c1051d'
+				}
+			}
 		}
 	},
 	props: {
