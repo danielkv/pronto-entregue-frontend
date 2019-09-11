@@ -1,6 +1,7 @@
 const sequelize = require('../services/connection');
 const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
+const Companies = require('../model/companies');
 const Roles = require('../model/roles');
 const {salt} = require('../utilities');
 const jwt = require('jsonwebtoken');
@@ -31,7 +32,6 @@ module.exports.typeDefs = gql`
 		updated_at:String!
 		metas:[UserMeta]!
 		companies:[Company]!
-		branches:[Branch]!
 		branch_relation:BranchRelation!
 	}
 
@@ -177,10 +177,10 @@ module.exports.resolvers = {
 			return parent.getMetas();
 		},
 		companies: (parent, args, ctx) => {
-			return parent.getCompanies();
-		},
-		branches: (parent, args, ctx) => {
-			return parent.getBranches();
+			if (parent.can('master'))
+				return Companies.findAll();
+
+			return parent.getCompanies({where:{active:true}, through:{where:{active:true}}});
 		},
 		branch_relation: (parent, args, ctx) => {
 			if (!parent.branches_users) throw new Error('Nenhum usuário selecionado');

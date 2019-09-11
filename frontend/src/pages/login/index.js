@@ -2,13 +2,13 @@ import React, {useState} from 'react';
 import {TextField, Button, Snackbar, SnackbarContent} from '@material-ui/core';
 import {ThemeProvider} from '@material-ui/styles';
 import {useApolloClient} from '@apollo/react-hooks';
+import {LOGIN} from '../../services/graphql';
 
 import theme from '../../layout/theme';
 import imageLogo from '../../assets/images/logo-full.png';
 import {setPageTitle} from '../../utils';
 import {Container, LoginPanel, LoginArea, ImagePanel, LoginLabel} from './styles';
 import { FormRow, FieldControl } from '../../layout/components';
-import gql from 'graphql-tag';
 
 import * as Yup from 'yup';
 import {Formik} from 'formik';
@@ -19,22 +19,6 @@ const backgrounds = [
 	require('../../assets/images/bg3.jpg'),
 ];
 
-const LOGIN = gql`
-	mutation Login($email: String!, $password: String!) {
-		login(email: $email, password: $password) {
-			user {
-				id
-				full_name
-				first_name
-				last_name
-				email
-				role
-				active
-			}
-			token
-		}
-	}
-`;
 const image = backgrounds[Math.round(Math.random()*(backgrounds.length-1))];
 
 const LoginSchema = Yup.object().shape({

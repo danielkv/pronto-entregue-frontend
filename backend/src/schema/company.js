@@ -1,6 +1,7 @@
 const sequelize = require('../services/connection');
 const Companies = require('../model/companies');
 const CompaniesMeta = require('../model/companies_meta');
+const Users = require('../model/users');
 const {gql} = require('apollo-server');
 
 module.exports.typeDefs = gql`
@@ -83,8 +84,11 @@ module.exports.resolvers = {
 		}
 	},
 	Company: {
-		branches: (parent, args, ctx) => {
-			return parent.getBranches();
+		branches: (parent, args, ctx, info) => {
+			if (!parent.company_relation) return parent.getBranches();
+			
+			return Users.findByPk(parent.company_relation.get('user_id'))
+			.then(user=>user.getBranches({where:{active:true}, through:{where:{active:true}}}));
 		},
 		metas: (parent, args, ctx) => {
 			return parent.getMetas();

@@ -4,6 +4,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import {setContext} from 'apollo-link-context';
 import resolvers from '../resolvers';
 //import typeDefs from '../resolvers/types';
+import {GET_USER_TOKEN} from './graphql';
 
 const host = 'http://localhost:4000/graphql';
 
@@ -28,12 +29,9 @@ const initialData = {
 cache.writeData({data:initialData});
 
 const authLink = setContext((_, {headers})=> {
-	const token = localStorage.getItem('@flakery/userToken');
+	const {userToken} = cache.readQuery({query:GET_USER_TOKEN});
 	
-	if (token) {
-		cache.writeData({data:{userToken:token}});
-		headers = {...headers, authorization: `Bearer ${token}`};
-	}
+	if (userToken) headers = {...headers, authorization: `Bearer ${userToken}`};
 
 	return {headers};
 })
@@ -41,7 +39,7 @@ const authLink = setContext((_, {headers})=> {
 const client = new ApolloClient({
 	cache,
 	link : authLink.concat(httpLink),
-	//resolvers,
+	resolvers,
 	//typeDefs
 });
 

@@ -1,37 +1,39 @@
-import gql from "graphql-tag";
 import client from './server';
+import {AUTHENTICATION, LOAD_INITIAL_DATA} from './graphql';
 
-const LOAD_INITIAL_DATA = gql`
-	query init ($user_id:ID!) {
-		user(id:$user_id) {
-			companies
-			branches
-		}
+async function isUserLoggedIn () {
+	const token = localStorage.getItem('@flakery/userToken');
+	let response = null;
+
+	if (token) {
+		client.writeData({data:{userToken:token}});
+		response = await client.query({query:AUTHENTICATION});
 	}
-`;
 
-const GET_USER_TOKEN = gql`
-	{
-		userToken @client 
-	}
-`;
-
-export function canLogin () {
-	const {userToken} = client.readQuery({query:GET_USER_TOKEN});
-	if (userToken) return true;
+	if (response.data.me) return true;
 	return false;
 }
 
-function init() {
-	if (!canLogin()) {
+async function loadInitialData() {
+	const {data} = await client.query({query:LOAD_INITIAL_DATA});
+
+	console.log(data);
+}
+
+async function init() {
+	try {
+		//Verifica se usuário já foi autenticado
+		if (await isUserLoggedIn()) {
+			//Redireciona para Dashboard se usuário acessou página de login
+			if (window.location.pathname === '/login') return window.location.href = '/';
+
+			//Load inital data
+			loadInitialData();
+		}
+	} catch (err) {
+		//Usuário não está autenticado ou ocorreu algum erro
 		if (window.location.pathname !== '/login') return window.location.href = '/login';
-	} else {
-		if (window.location.pathname === '/login') return window.location.href = '/';
 	}
-
-	//Load inital data
-
-
 }
 
 init();
