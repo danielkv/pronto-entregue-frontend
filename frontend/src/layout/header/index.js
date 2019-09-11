@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FormControl, Select, MenuItem } from '@material-ui/core';
 import Icon from '@mdi/react';
 import { mdiStore, mdiSourceBranch  } from '@mdi/js';
+import {useQuery, useMutation} from '@apollo/react-hooks';
 
 import {HeaderContainer, LogoContainer, SelectContainer} from './styles';
 import mainLogo from '../../assets/images/logo.png';
+import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, GET_SELECTED_BRANCH, SELECT_COMPANY, SELECT_BRANCH} from '../../graphql/companies';
 
 export default function Header () {
-	const [company, setCompany] = useState('');
-	const [branch, setBranch] = useState('');
+
+	const {data:companiesData} = useQuery(GET_USER_COMPANIES);
+	const {data:selectedCompanyData} = useQuery(GET_SELECTED_COMPANY);
+	const userBranches = selectedCompanyData ? selectedCompanyData.selectedCompany.branches : [];
+	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
+
+	const [selectCompanyGQL] = useMutation(SELECT_COMPANY);
+	const [selectBranchGQL] = useMutation(SELECT_BRANCH);
 
 	function selectCompany(event) {	
-		setCompany(event.target.value);
+		selectCompanyGQL({variables:{id:event.target.value}});
 	}
 	function selectBranch(event) {	
-		setBranch(event.target.value);
+		selectBranchGQL({variables:{id:event.target.value}});
 	}
 
 	return (
@@ -26,34 +34,40 @@ export default function Header () {
 			<SelectContainer>
 				<Icon path={mdiStore} size='24' color='#D41450' />
 				<FormControl fullWidth={false}>
+					{(!selectedCompanyData || !companiesData || !companiesData.userCompanies.length) ? 'Nenhuma empresa' : 
 					<Select
-						value={company}
+						value={selectedCompanyData ? selectedCompanyData.selectedCompany.id : ''}
 						onChange={selectCompany}
 						inputProps={{
 							name: 'company',
 							id: 'company',
 						}}
-						>
-						<MenuItem value='Empresa 1'>Empresa 1</MenuItem>
-						<MenuItem value='Empresa 2'>Empresa 2</MenuItem>
-						<MenuItem value='Empresa 3'>Empresa 3</MenuItem>
-					</Select>
+					>	
+						{
+							companiesData.userCompanies.map(company=>{
+								return <MenuItem key={company.id} value={company.id}>{company.display_name}</MenuItem>;
+							})
+						}
+					</Select>}
 				</FormControl>
 			</SelectContainer>
 			<SelectContainer>
 				<Icon path={mdiSourceBranch} size='24' color='#D41450' />
 				<FormControl fullWidth={false}>
+					{(!selectedBranchData || !userBranches || !userBranches.length) ? 'Nenhuma filial' : 
 					<Select
-						value={branch}
+						value={selectedBranchData.selectedBranch ? selectedBranchData.selectedBranch.id : ''}
 						onChange={selectBranch}
 						inputProps={{
 							name: 'Filial',
 							id: 'Filial',
 						}}>
-						<MenuItem value='Filial 1'>Filial 1</MenuItem>
-						<MenuItem value='Filial 2'>Filial 2</MenuItem>
-						<MenuItem value='Filial 3'>Filial 3</MenuItem>
-					</Select>
+						{
+							userBranches.map(branch=>{
+								return <MenuItem key={branch.id} value={branch.id}>{branch.name}</MenuItem>;
+							})
+						}
+					</Select>}
 				</FormControl>
 			</SelectContainer>
 		</HeaderContainer>

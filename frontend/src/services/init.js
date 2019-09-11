@@ -1,5 +1,7 @@
 import client from './server';
-import {AUTHENTICATION, LOAD_INITIAL_DATA} from './graphql';
+import {AUTHENTICATION} from '../graphql/authentication';
+import {LOAD_INITIAL_DATA} from '../graphql/user';
+import {SELECT_COMPANY} from '../graphql/companies';
 
 async function isUserLoggedIn () {
 	const token = localStorage.getItem('@flakery/userToken');
@@ -16,8 +18,11 @@ async function isUserLoggedIn () {
 
 async function loadInitialData() {
 	const {data} = await client.query({query:LOAD_INITIAL_DATA});
+	
+	client.writeData({data:{userCompanies: data.me.companies}});
 
-	console.log(data);
+
+	await client.mutate({mutation:SELECT_COMPANY, variables:{id:data.me.companies[0].id}});
 }
 
 async function init() {

@@ -88,7 +88,16 @@ module.exports.resolvers = {
 			if (!parent.company_relation) return parent.getBranches();
 			
 			return Users.findByPk(parent.company_relation.get('user_id'))
-			.then(user=>user.getBranches({where:{active:true}, through:{where:{active:true}}}));
+			.then(user=>{
+				//se Usuário for master pode buscar todas as filiais mesmo desativadas
+				if (user.get('role') === 'master') return parent.getBranches({where:{company_id:parent.get('id')}});
+				
+				//se Usuário for adm pode buscar todas as filiais ativas
+				if (user.get('role') === 'adm') return parent.getBranches({where:{company_id:parent.get('id')}});
+
+				//caso chegue aqui usuário verá a lista de filiais que estão ativas e estão vinculadas a ele
+				return user.getBranches({where:{active:true, company_id:parent.get('id')}, through:{where:{active:true}}})
+			});
 		},
 		metas: (parent, args, ctx) => {
 			return parent.getMetas();

@@ -1,23 +1,13 @@
 import gql from "graphql-tag";
 
 /**
- * Carrega todas infomações ao acessar
- * 
- * companies, branches, 
+ * Recupera o Token do usuário salvo em cache 
  */
-export const LOAD_INITIAL_DATA = gql`
-	query init {
-		me {
-			companies
-			branches
-		}
+export const GET_USER_TOKEN = gql`
+	{
+		userToken @client
 	}
 `;
-
-/**
- * Pega o Token do usuário salvo em cache 
- */
-export const GET_USER_TOKEN = gql`{userToken @client}`;
 
 /**
  * GRAPHQL para fazer o login do usuário

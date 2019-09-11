@@ -14,6 +14,8 @@ function authenticate (authorization) {
 	if (authorization.split(' ')[0] !== 'Bearer') throw new AuthenticationError('Autorização desconhecida'); 
 	const {id, email} = jwt.verify(authorization.split(' ')[1], process.env.SECRET, {ignoreExpiration:true});
 
+	console.log(id);
+
 	return Users.findOne({
 		where:{id, email},
 		attributes: {exclude:['password', 'salt']}

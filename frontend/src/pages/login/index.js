@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {TextField, Button, Snackbar, SnackbarContent} from '@material-ui/core';
 import {ThemeProvider} from '@material-ui/styles';
 import {useApolloClient} from '@apollo/react-hooks';
-import {LOGIN} from '../../services/graphql';
+import {LOGIN} from '../../graphql/authentication';
 
 import theme from '../../layout/theme';
 import imageLogo from '../../assets/images/logo-full.png';

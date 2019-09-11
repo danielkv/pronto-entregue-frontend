@@ -4,7 +4,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import {setContext} from 'apollo-link-context';
 import resolvers from '../resolvers';
 //import typeDefs from '../resolvers/types';
-import {GET_USER_TOKEN} from './graphql';
+import {GET_USER_TOKEN} from '../graphql/authentication';
 
 const host = 'http://localhost:4000/graphql';
 
@@ -14,6 +14,12 @@ const httpLink = createHttpLink({ uri: host });
 const initialData = {
 	isUserLoggedIn : false,
 	userToken:null,
+	userCompanies:[],
+	userBranches:[],
+	selectedCompany:'',
+	selectedBranch:''
+	//permissions:[],
+	
 	/* user: {
 		__typename:'User',
 		id:0,
