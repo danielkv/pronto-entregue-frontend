@@ -15,8 +15,8 @@ module.exports.typeDefs = gql`
 		price:Float!
 		category:Category!
 		active:Boolean!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		options_groups:[OptionsGroup]!
 	}
 

@@ -7,8 +7,8 @@ module.exports.typeDefs = gql`
 		order:Int!
 		active:Boolean!
 		price:Float!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		max_select_restrain_other:Int
 		item:Item
 	}

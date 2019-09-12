@@ -13,9 +13,14 @@ export const LOAD_INITIAL_DATA = gql`
 				id
 				name
 				display_name
+				last_month_revenue
+				createdAt
+				active
 				branches {
 					id
 					name
+					active
+					last_month_revenue
 				}
 			}
 		}

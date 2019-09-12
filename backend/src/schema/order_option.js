@@ -5,8 +5,8 @@ module.exports.typeDefs = gql`
 		id:ID!
 		name:String!
 		price:Float!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		item:Item
 	}
 `;

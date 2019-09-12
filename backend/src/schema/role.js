@@ -6,8 +6,8 @@ module.exports.typeDefs = gql`
 		name:String!
 		display_name:String!
 		permissions:[String]!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 	}
 `;
 

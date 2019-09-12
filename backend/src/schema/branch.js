@@ -8,7 +8,7 @@ module.exports.typeDefs = gql`
 		id:ID!
 		meta_type:String!
 		meta_value:String!
-		created_at:String!
+		createdAt:String!
 	}
 
 	type BusinessHour {
@@ -20,8 +20,8 @@ module.exports.typeDefs = gql`
 		id:ID!
 		name:String!
 		active:Boolean!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		company:Company!
 		users:[User]!
 		metas:[BranchMeta]!
@@ -31,6 +31,7 @@ module.exports.typeDefs = gql`
 		business_hours:[BusinessHour]!
 		orders:[Order]!
 		user_relation:BranchRelation!
+		last_month_revenue:Float!
 	}
 
 	input BranchMetaInput {
@@ -146,5 +147,8 @@ module.exports.resolvers = {
 				}
 			});
 		},
+		last_month_revenue : (parent, args, ctx) => {
+			return 0;
+		}
 	}
 }

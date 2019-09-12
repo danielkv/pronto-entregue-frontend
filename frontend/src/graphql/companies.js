@@ -28,6 +28,8 @@ export const GET_USER_COMPANIES = gql`
 			id
 			name
 			display_name
+			createdAt
+			active
 			branches {
 				id
 				name

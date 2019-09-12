@@ -6,8 +6,8 @@ module.exports.typeDefs = gql`
 		name:String!
 		price:Float!
 		message:Int!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		order_options_groups:[OrderOptionsGroup]
 	}
 `;

@@ -4,7 +4,9 @@ import Icon from '@mdi/react';
 import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
 import numeral from 'numeral';
+import { useQuery } from '@apollo/react-hooks';
 
+import { GET_USER_COMPANIES } from '../../graphql/companies';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar} from '../../layout/components';
@@ -12,43 +14,11 @@ import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldC
 function Page () {
 	setPageTitle('Empresas');
 
+	const {data:companiesData} = useQuery(GET_USER_COMPANIES);
+	const companies = companiesData.userCompanies.length ? companiesData.userCompanies : [];
+
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
-
-	const companies = [
-		{
-			name: 'Copeiro',
-			revenue:10684,
-			branches_qty:3,
-			orders_qty:15,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Temperoma',
-			revenue:9465,
-			branches_qty:3,
-			orders_qty:15,
-			created_at:'25/08/19 15:35',
-			active: false,
-		},
-		{
-			name: 'Casa da Árvore',
-			revenue:10684,
-			branches_qty:3,
-			orders_qty:15,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Pizzaria Bom Gosto',
-			revenue:32646,
-			branches_qty:2,
-			orders_qty:15,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-	];
 
 	return (
 		<Layout>
@@ -66,7 +36,6 @@ function Page () {
 									<TableCell>Empresa</TableCell>
 									<TableCell>Faturamento último mês</TableCell>
 									<TableCell>Número de filiais</TableCell>
-									<TableCell>Número de pedidos</TableCell>
 									<TableCell>Criada em</TableCell>
 									<TableCell>Ações</TableCell>
 								</TableRow>
@@ -76,10 +45,9 @@ function Page () {
 									<TableRow key={row.name}>
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
-										<TableCell>{numeral(row.revenue).format('$0,0.00')}</TableCell>
-										<TableCell><CircleNumber>{row.branches_qty}</CircleNumber></TableCell>
-										<TableCell><CircleNumber>{row.orders_qty}</CircleNumber></TableCell>
-										<TableCell>{row.created_at}</TableCell>
+										<TableCell>{numeral(row.last_month_revenue).format('$0,0.00')}</TableCell>
+										<TableCell><CircleNumber>{row.branches.length}</CircleNumber></TableCell>
+										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
 											<IconButton>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />

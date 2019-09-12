@@ -110,7 +110,7 @@ export default createMuiTheme({
 			fullWidth : true,
 		},
 		MuiSelect : {
-			disableUnderline : true,
+			//disableUnderline : true, // FUNCIONA, MAS RETORNA UM ERRO NO CONSOLE
 			fullWidth : true,
 		},
 		MuiTablePagination : {

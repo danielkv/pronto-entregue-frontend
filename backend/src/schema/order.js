@@ -17,8 +17,8 @@ module.exports.typeDefs = gql`
 		state:String!
 		district:String!
 		zipcode:String!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		products:[Product]!
 		payment_method:PaymentMethod!
 	}

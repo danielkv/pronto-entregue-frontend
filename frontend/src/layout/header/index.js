@@ -15,15 +15,8 @@ export default function Header () {
 	const userBranches = selectedCompanyData ? selectedCompanyData.selectedCompany.branches : [];
 	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
 
-	const [selectCompanyGQL] = useMutation(SELECT_COMPANY);
-	const [selectBranchGQL] = useMutation(SELECT_BRANCH);
-
-	function selectCompany(event) {	
-		selectCompanyGQL({variables:{id:event.target.value}});
-	}
-	function selectBranch(event) {	
-		selectBranchGQL({variables:{id:event.target.value}});
-	}
+	const [selectCompany] = useMutation(SELECT_COMPANY);
+	const [selectBranch] = useMutation(SELECT_BRANCH);
 
 	return (
 		<HeaderContainer>
@@ -36,8 +29,9 @@ export default function Header () {
 				<FormControl fullWidth={false}>
 					{(!selectedCompanyData || !companiesData || !companiesData.userCompanies.length) ? 'Nenhuma empresa' : 
 					<Select
+						disableUnderline={true}
 						value={selectedCompanyData ? selectedCompanyData.selectedCompany.id : ''}
-						onChange={selectCompany}
+						onChange={(e)=>selectCompany({variables:{id:e.target.value}})}
 						inputProps={{
 							name: 'company',
 							id: 'company',
@@ -56,8 +50,9 @@ export default function Header () {
 				<FormControl fullWidth={false}>
 					{(!selectedBranchData || !userBranches || !userBranches.length) ? 'Nenhuma filial' : 
 					<Select
+						disableUnderline={true}
 						value={selectedBranchData.selectedBranch ? selectedBranchData.selectedBranch.id : ''}
-						onChange={selectBranch}
+						onChange={(e)=>selectBranch({variables:{id:e.target.value}})}
 						inputProps={{
 							name: 'Filial',
 							id: 'Filial',

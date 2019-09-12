@@ -9,8 +9,8 @@ module.exports.typeDefs = gql`
 		active:Boolean!
 		image:String!
 		order:Int!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		products:[Product]!
 	}
 

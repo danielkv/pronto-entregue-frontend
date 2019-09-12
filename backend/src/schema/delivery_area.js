@@ -7,8 +7,8 @@ module.exports.typeDefs = gql`
 		type:String!
 		price:Float!
 		zipcodes:String!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 	}
 
 	input DeliveryAreaInput {

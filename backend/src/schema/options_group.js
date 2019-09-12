@@ -8,8 +8,8 @@ module.exports.typeDefs = gql`
 		min_select:Int!
 		max_select:Int!
 		active:Boolean!
-		created_at:String!
-		updated_at:String!
+		createdAt:String!
+		updatedAt:String!
 		options:[Option]!
 		max_select_restricted_by:OptionsGroup
 	}

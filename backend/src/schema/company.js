@@ -9,7 +9,7 @@ module.exports.typeDefs = gql`
 		id:ID!
 		meta_type:String!
 		meta_value:String!
-		created_at:String!
+		createdAt:String! @dateTime
 	}
 
 	type Company {
@@ -17,10 +17,11 @@ module.exports.typeDefs = gql`
 		name:String!
 		display_name:String!
 		active:Boolean!
-		created_at:String!
-		updated_at:String!
+		createdAt:String! @dateTime
+		updatedAt:String! @dateTime
 		metas:[CompanyMeta]!
 		branches:[Branch]!
+		last_month_revenue:Float!
 	}
 	
 	input CompanyMetaInput {
@@ -101,6 +102,9 @@ module.exports.resolvers = {
 		},
 		metas: (parent, args, ctx) => {
 			return parent.getMetas();
+		},
+		last_month_revenue: (parent, args, ctx) => {
+			return 0;
 		},
 	}
 }
