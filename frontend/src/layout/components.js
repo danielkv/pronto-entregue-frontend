@@ -1,5 +1,27 @@
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 import { Paper } from '@material-ui/core';
+
+import Icon from '@mdi/react';
+import {mdiLoading} from '@mdi/js';
+
+const rotate = keyframes`
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+`;
+
+export const Loading = styled(Icon).attrs(()=>({
+	path: mdiLoading,
+	size:'26',
+	color:'#707070'
+}))`
+	margin-left:10px;
+	animation: ${rotate} 1s linear infinite;
+`
 
 export const Container = styled.div`
 	display:grid;
@@ -73,6 +95,8 @@ export const BlockFooter = styled.div`
 `
 
 export const BlockTitle = styled.h2`
+	display:flex;
+	align-items:center;
 	font-size:18px;
 	font-weight:normal;
 	color:#707070;

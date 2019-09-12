@@ -4,14 +4,14 @@ import Icon from '@mdi/react';
 import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
 import numeral from 'numeral';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
-import { GET_USER_COMPANIES } from '../../graphql/companies';
+import { GET_USER_COMPANIES, UPDATE_COMPANY} from '../../graphql/companies';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar} from '../../layout/components';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, Loading} from '../../layout/components';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Empresas');
 
 	const {data:companiesData} = useQuery(GET_USER_COMPANIES);
@@ -20,12 +20,14 @@ function Page () {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
+	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_COMPANY);
+
 	return (
 		<Layout>
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button>{loading && <Loading />}</BlockTitle>
 						<NumberOfRows>{companies.length} empresas</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -49,12 +51,13 @@ function Page () {
 										<TableCell><CircleNumber>{row.branches.length}</CircleNumber></TableCell>
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton disabled={loading} onClick={()=>{props.history.push(`/empresas/edit/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch
+												disabled={loading}
 												checked={row.active}
-												onChange={()=>{}}
+												onChange={()=>setCompanyEnabled({variables:{id:row.id, data:{active:!row.active}}})}
 												value="checkedB"
 												size='small'
 												color="secondary"

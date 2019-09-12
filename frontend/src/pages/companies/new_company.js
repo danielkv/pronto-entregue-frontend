@@ -7,8 +7,11 @@ import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl} from '../../layout/components';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Nova empresa');
+
+	console.log(props);
+
 	return (
 		<Layout>
 			<Content>

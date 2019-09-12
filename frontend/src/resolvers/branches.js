@@ -7,7 +7,7 @@ export default {
 			return cache.readFragment({
 				id: getCacheKey({__typename:'Branch', id}),
 				fragment : gql`
-					fragment Branch on userBranches {
+					fragment Branch on Branch {
 						id
 						name
 					}

@@ -20,8 +20,7 @@ async function loadInitialData() {
 	const {data} = await client.query({query:LOAD_INITIAL_DATA});
 	
 	client.writeData({data:{userCompanies: data.me.companies}});
-
-
+	
 	await client.mutate({mutation:SELECT_COMPANY, variables:{id:data.me.companies[0].id}});
 }
 

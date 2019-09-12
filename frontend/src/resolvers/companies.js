@@ -4,11 +4,12 @@ import { SELECT_BRANCH } from "../graphql/branches";
 
 export default {
 	Query : {
-		userCompany: (parent, {id}, {cache, getCacheKey}) => {
-			return cache.readFragment({
+		userCompany: (parent, {id}, {client, cache, getCacheKey}) => {
+
+			const frag = cache.readFragment({
 				id: getCacheKey({__typename:'Company', id}),
 				fragment : gql`
-					fragment Company on userCompanies {
+					fragment userCompany on Company {
 						id
 						name
 						display_name
@@ -19,6 +20,8 @@ export default {
 					}
 				`
 			});
+
+			return frag
 		},
 	},
 	Mutation : {
@@ -42,8 +45,5 @@ export default {
 				console.error(e);
 			}
 		},
-		updateCompany: (_, {id}, {cache}) => {
-
-		}
 	}
 }

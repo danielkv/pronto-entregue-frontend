@@ -39,6 +39,7 @@ export default function Router(props) {
 
 				<Route exact path='/empresas' component={Companies} />
 				<Route path='/empresas/novo' component={NewCompany} />
+				<Route path='/empresas/edit/:id' component={NewCompany} />
 				
 				<Route exact path='/filiais' component={Branches} />
 				<Route path='/filiais/novo' component={NewBranch} />

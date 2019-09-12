@@ -1,11 +1,11 @@
 import gql from "graphql-tag";
 
 /**
- * Carrega infomações da empresa selecionada
+ * Atualiza infomações da empresa no servidor
  * 
  */
 export const UPDATE_COMPANY = gql`
-	mutation ($id: ID!, $data:Company!) {
+	mutation ($id: ID!, $data:CompanyInput!) {
 		updateCompany (id: $id, data:$data) {
 			id
 			name
