@@ -4,12 +4,18 @@ import gql from "graphql-tag";
  * Carrega infomações da empresa selecionada
  * 
  */
-export const LOAD_SELECTED_COMPANY = gql`
-	query ($id: ID!) {
-		company (id: $id) {
+export const UPDATE_COMPANY = gql`
+	mutation ($id: ID!, $data:Company!) {
+		updateCompany (id: $id, data:$data) {
 			id
 			name
 			display_name
+			createdAt
+			active
+			branches {
+				id
+				name
+			}
 			metas {
 				meta_type
 				meta_value
@@ -29,10 +35,13 @@ export const GET_USER_COMPANIES = gql`
 			name
 			display_name
 			createdAt
+			last_month_revenue
 			active
 			branches {
 				id
 				name
+				active
+				last_month_revenue
 			}
 		}
 	}
@@ -89,56 +98,3 @@ export const SELECT_COMPANY = gql`
 		}
 	}
 `;
-
-
-/**
- * Seleciona filial
- */
-
-export const SELECT_BRANCH = gql`
-	mutation ($id:ID!) {
-		selectBranch (id:$id) @client {
-			id
-			name
-		}
-	}
-`;
-
-/**
- * Retorna filiais selecionaveis
- */
-
-export const GET_USER_BRANCHES = gql`
-	query {
-		userBranches @client {
-			id
-			name
-		}
-	}
-`;
-
-/**
- * Retorna filial a partir do ID
- */
-
-export const GET_USER_BRANCH = gql`
-	query ($id:ID!) {
-		userBranch (id:$id) @client {
-			id
-			name
-		}
-	}
-`;
-
-/**
-  * Retorna filial selecionada
-  */
- 
- export const GET_SELECTED_BRANCH = gql`
-	 query {
-		 selectedBranch @client {
-			 id
-			 name
-		 }
-	 }
- `;

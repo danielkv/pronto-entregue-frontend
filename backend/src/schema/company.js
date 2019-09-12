@@ -32,9 +32,10 @@ module.exports.typeDefs = gql`
 	}
 
 	input CompanyInput {
-		name:String!
-		display_name:String!
-		metas:[CompanyMetaInput]!
+		name:String
+		display_name:String
+		active:Boolean
+		metas:[CompanyMetaInput]
 	}
 
 	extend type Mutation {
