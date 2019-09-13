@@ -4,30 +4,6 @@ import gql from "graphql-tag";
  * Atualiza infomações da empresa no servidor
  * 
  */
-export const LOAD_COMPANY = gql`
-	mutation ($id: ID!) {
-		company (id: $id, data:$data) {
-			id
-			name
-			display_name
-			createdAt
-			active
-			branches {
-				id
-				name
-			}
-			metas {
-				id
-				meta_type
-				meta_value
-			}
-		}
-	}
-`;
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
 export const UPDATE_COMPANY = gql`
 	mutation ($id: ID!, $data:CompanyInput!) {
 		updateCompany (id: $id, data:$data) {
@@ -44,7 +20,6 @@ export const UPDATE_COMPANY = gql`
 				id
 				meta_type
 				meta_value
-				action
 			}
 		}
 	}

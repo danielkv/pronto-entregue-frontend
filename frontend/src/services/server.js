@@ -6,8 +6,6 @@ import resolvers from '../resolvers';
 import {GET_USER_TOKEN} from '../graphql/authentication';
 import introspectionQueryResultData from '../schema.json';
 
-//console.log(introspectionQueryResultData);
-
 const fragmentMatcher = new IntrospectionFragmentMatcher({
 	introspectionQueryResultData
 });

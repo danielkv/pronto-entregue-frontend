@@ -24,6 +24,11 @@ export default {
 			return frag
 		},
 	},
+	CompanyMeta:{
+		action : ()=> {
+			return 'update';
+		}
+	},
 	Mutation : {
 		selectCompany: async (_, {id}, {client, cache}) => {
 			try {

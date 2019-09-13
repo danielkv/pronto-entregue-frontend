@@ -54,8 +54,7 @@ function Page () {
 			}
 		})
 		.catch(e=>{
-			console.log(e);
-			//setError(e.graphQLErrors ? e.graphQLErrors[0].message : e.message);
+			setError(e.graphQLErrors ? e.graphQLErrors[0].message : e.message);
 		}).finally(()=>{
 			setLoading(false);
 		});

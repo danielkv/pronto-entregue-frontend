@@ -25,10 +25,10 @@ module.exports.typeDefs = gql`
 	}
 	
 	input CompanyMetaInput {
-		id:ID!
+		id:ID
 		action:String! #create | update | delete
-		meta_type:String!
-		meta_value:String!
+		meta_type:String
+		meta_value:String
 	}
 
 	input CompanyInput {
