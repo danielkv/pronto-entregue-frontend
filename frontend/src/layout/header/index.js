@@ -7,13 +7,13 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import {HeaderContainer, LogoContainer, SelectContainer} from './styles';
 import mainLogo from '../../assets/images/logo.png';
 import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SELECT_COMPANY} from '../../graphql/companies';
-import { GET_SELECTED_BRANCH, SELECT_BRANCH} from '../../graphql/branches';
+import { GET_SELECTED_BRANCH, SELECT_BRANCH, GET_USER_BRANCHES} from '../../graphql/branches';
 
 export default function Header () {
 
 	const {data:companiesData} = useQuery(GET_USER_COMPANIES);
 	const {data:selectedCompanyData} = useQuery(GET_SELECTED_COMPANY);
-	const userBranches = selectedCompanyData ? selectedCompanyData.selectedCompany.branches : [];
+	const {data:branchesData} = useQuery(GET_USER_BRANCHES);
 	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
 
 	const [selectCompany] = useMutation(SELECT_COMPANY);
@@ -49,7 +49,7 @@ export default function Header () {
 			<SelectContainer>
 				<Icon path={mdiSourceBranch} size='24' color='#D41450' />
 				<FormControl fullWidth={false}>
-					{(!selectedBranchData || !userBranches || !userBranches.length) ? 'Nenhuma filial' : 
+					{(!selectedBranchData || !branchesData || !branchesData.userBranches.length) ? 'Nenhuma filial' : 
 					<Select
 						disableUnderline={true}
 						value={selectedBranchData.selectedBranch ? selectedBranchData.selectedBranch.id : ''}
@@ -59,7 +59,7 @@ export default function Header () {
 							id: 'Filial',
 						}}>
 						{
-							userBranches.map(branch=>{
+							branchesData.userBranches.map(branch=>{
 								return <MenuItem key={branch.id} value={branch.id}>{branch.name}</MenuItem>;
 							})
 						}

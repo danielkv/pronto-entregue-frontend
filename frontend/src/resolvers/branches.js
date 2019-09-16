@@ -4,6 +4,7 @@ import { GET_USER_BRANCH } from "../graphql/branches";
 export default {
 	Query : {
 		userBranch: (parent, {id}, {cache, getCacheKey}) => {
+			
 			return cache.readFragment({
 				id: getCacheKey({__typename:'Branch', id}),
 				fragment : gql`

@@ -1,5 +1,6 @@
+import React from 'react';
 import styled, {keyframes} from 'styled-components';
-import { Paper } from '@material-ui/core';
+import { Paper, TextField } from '@material-ui/core';
 
 import Icon from '@mdi/react';
 import {mdiLoading} from '@mdi/js';
@@ -85,8 +86,9 @@ export const Block = styled.div`
 `
 export const BlockHeader = styled.div`
 	display:flex;
-	justify-content:space-between;
+	justify-content:flex-start;
 	align-items:center;
+	margin-bottom:10px;
 `
 export const BlockFooter = styled.div`
 	display:flex;
@@ -100,7 +102,8 @@ export const BlockTitle = styled.h2`
 	font-size:18px;
 	font-weight:normal;
 	color:#707070;
-	margin-top:5px;
+	margin:0;
+	margin-right:10px;
 `
 
 export const NumberOfRows = styled.div`
@@ -108,8 +111,8 @@ export const NumberOfRows = styled.div`
 	font-weight:lighter;
 	color:#707070;
 	text-align:right;
-	margin:8px 8px 8px 0;
-	align-self:flex-end;
+	margin:8px 8px 0 0;
+	margin-left:auto;
 `
 
 export const CircleNumber = styled.div`
@@ -153,3 +156,15 @@ export const ProductImage = styled.div`
 	height:60px;
 	border-radius:30px;
 `;
+
+export function tField({field, label, form:{isSubmitting, errors}}) {
+	
+	let error = '';
+	const nesting = field.name.split('.');
+
+	if (errors[nesting[0]]) error = nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, errors);
+
+	return (
+		<TextField {...field} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
+	)
+}

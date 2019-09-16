@@ -16,12 +16,6 @@ export const LOAD_INITIAL_DATA = gql`
 				last_month_revenue
 				createdAt
 				active
-				branches {
-					id
-					name
-					active
-					last_month_revenue
-				}
 			}
 		}
 	}

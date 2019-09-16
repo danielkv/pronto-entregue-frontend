@@ -13,10 +13,6 @@ export default {
 						id
 						name
 						display_name
-						branches {
-							id
-							name
-						}
 					}
 				`
 			});
@@ -32,17 +28,31 @@ export default {
 	Mutation : {
 		selectCompany: async (_, {id}, {client, cache}) => {
 			try {
-
+				//carrega, do cliente, a empresa selecionada
 				const {data} = await client.query({query:GET_USER_COMPANY, variables:{id}});
+
+				//carrega, do servidor, as filiais da empresa selecionadas
+				const {data:companyData} = await client.query({query:gql`
+					query ($id:ID!) {
+						company(id:$id) {
+							branches {
+								id
+								name
+							}
+						}
+					}
+				`, variables:{id}});
+				
+				if (!companyData) new Error('Empresa não encontrada');
 
 				//define empresa selecionada e filiais selecionaveis
 				cache.writeData({data:{
 					selectedCompany:data.userCompany,
-					userBranches:data.userCompany.branches
+					userBranches:companyData.company.branches
 				}});
 
-				const selectedBranch = data.userCompany.branches[0].id;
-
+				//seleciona a primeira filial
+				const selectedBranch = companyData.company.branches.length ? companyData.company.branches[0].id : 0;
 				await client.mutate({mutation:SELECT_BRANCH, variables:{id:selectedBranch}});
 				
 				return data.userCompany;

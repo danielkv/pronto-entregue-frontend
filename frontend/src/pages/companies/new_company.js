@@ -1,43 +1,69 @@
 import React from 'react';
-import {Formik} from 'formik';
+import gql from 'graphql-tag';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import PageForm from './form';
-import {setPageTitle} from '../../utils';
+import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import Layout from '../../layout';
 
+const CREATE_COMPANY = gql`
+	mutation ($data:CompanyInput!) {
+		createCompany (data:$data) {
+			id
+			name
+			display_name
+			createdAt
+			active
+			metas {
+				id
+				meta_type
+				meta_value
+			}
+		}
+	}
+`;
 
 function Page (props) {
 	setPageTitle('Nova empresa');
+	
+	const client = useApolloClient();
 
 	const company = {
 		name:'',
 		display_name:'',
 		active:true,
-		document:'',
-		contact:'',
-		address:{
-			street:'',
-			number:'',
-			district:'',
-			zipcode:'',
-			city:'',
-			state:'',
-		},
-		phones:[{id:0, meta_type:'phone', meta_value:'', action:'create'}],
-		emails:[{id:0, meta_type:'phone', meta_value:'', action:'create'}],
+		...initialMetas(['address', 'document', 'contact', 'phones', 'emails'])
 	};
 
-	function onSubmit(values) {
-		console.log(values)
+	function onSubmit(values, {setSubmitting}) {
+		const data = {...values, metas:joinMetas(values)};
+		delete data.address;
+		delete data.contact;
+		delete data.phones;
+		delete data.emails;
+		delete data.document;
+
+		console.log(data);
+
+		client.mutate({mutation:CREATE_COMPANY, variables:{data}})
+		.then(({data, error}) => {
+			if (error) console.error(error);
+			
+			setSubmitting(false);
+		})
+		.catch((err)=>{
+			console.error(err.graphQLErrors, err.networkError, err.operation);
+		})
 	}
 	
 	return (
 		<Layout>
-			<Formik
-				initialValues={company}
+			<PageForm
 				onSubmit={onSubmit}
-				component={PageForm}
-				/>
+				initialValues={company}
+				pageTitle='Nova empresa'
+				validateOnChange={false}
+			/>
 		</Layout>
 	)
 }

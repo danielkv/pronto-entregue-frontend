@@ -1,6 +1,4 @@
 import React from 'react';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 
@@ -29,35 +27,8 @@ export const LOAD_COMPANY = gql`
 	}
 `;
 
-const companySchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	display_name: Yup.string().required('Obrigatório'),
-	document : Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório')
-		}),
-	contact : Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório')
-		}),
-	address : Yup.object().shape({
-		meta_value: Yup.object().shape({
-				street: Yup.string().required('Obrigatório'),
-				number: Yup.number().typeError('Deve ser um número').required('Obrigatório'),
-				zipcode: Yup.string().required('Obrigatório'),
-				district: Yup.string().required('Obrigatório'),
-				city: Yup.string().required('Obrigatório'),
-				state: Yup.string().required('Obrigatório'),
-			})
-		}),
-	phones: Yup.array().of(Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório')
-		})).min(1),
-	emails: Yup.array().of(Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório').email('Email não é válido'),
-		})).min(1),
-});
-
 function Page (props) {
-	setPageTitle('Nova empresa');
+	setPageTitle('Alterar empresa');
 
 	const edit_id = props.match.params.id;
 	
@@ -70,7 +41,7 @@ function Page (props) {
 		name: data.company.name,
 		display_name: data.company.display_name,
 		active: data.company.active,
-		...extractMetas(data.company.metas)
+		...extractMetas(data.company.metas, ['address', 'document', 'contact', 'phones', 'emails'])
 	};
 
 	function onSubmit(values, {setSubmitting}) {
@@ -82,24 +53,21 @@ function Page (props) {
 		delete data.document;
 
 		client.mutate({mutation:UPDATE_COMPANY, variables:{id:edit_id, data}})
-		.then(({data, error}) => {
-			if (error) return console.error(error);
-
+		.then(({data}) => {
 			setSubmitting(false);
 		})
 		.catch((err)=>{
-			console.log(err.graphQLErrors, err.networkError, err.operation);
+			console.error(err.graphQLErrors, err.networkError, err.operation);
 		})
 	}
 	
 	return (
 		<Layout>
-			<Formik
-				validationSchema={companySchema}
-				initialValues={company}
+			<PageForm
 				onSubmit={onSubmit}
-				component={PageForm}
-				/>
+				initialValues={company}
+				pageTitle='Alterar empresa'
+			/>
 		</Layout>
 	)
 }

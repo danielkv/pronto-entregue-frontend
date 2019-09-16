@@ -41,50 +41,64 @@ export const joinMetas = ({address, emails, phones, contact, document}) => {
 	return metas;
 }
 
-export const extractMetas = (metas) => {
-	let address = {id:'', action:'create', meta_type:'address', meta_value: {
+export const initialMetas = (needed) => {
+	if (!needed) throw new Error('Metas necessárias não definidas');
+	const metas = {};
+
+	if (needed.includes('address')) metas.address = {id:'', action:'create', meta_type:'address', meta_value: {
 		street:'',
 		number:'',
 		district:'',
 		zipcode:'',
 		city:'',
 		state:'',
-	}},
-	contact = {id:'', meta_type:'contact', meta_value:'', action:'create'},
-	document = {id:'', meta_type:'document', meta_value:'', action:'create'},
-	emails = [{id:'', meta_type:'email', meta_value:'', action:'create'}],
-	phones = [{id:'', meta_type:'phone', meta_value:'', action:'create'}];
+	}};
+
+	if (needed.includes('contact')) metas.contact = {id:'', meta_type:'contact', meta_value:'', action:'create'};
+	if (needed.includes('document')) metas.document = {id:'', meta_type:'document', meta_value:'', action:'create'};
+	if (needed.includes('emails')) metas.emails = [{id:'', meta_type:'emails', meta_value:'', action:'create'}];
+	if (needed.includes('phones')) metas.phones = [{id:'', meta_type:'phones', meta_value:'', action:'create'}];
+
+	return metas;
+}
+
+export const extractMetas = (metas, needed) => {
+	const return_metas = initialMetas(needed);
 
 	//Retira __typename dos metadados
 	metas = metas.map(meta => {delete meta.__typename; return meta});
 
 	//ADDRESS
-	const addressData = metas[metas.findIndex(meta=>meta.meta_type==='address')];
-	if (addressData) address = {...addressData, meta_value: JSON.parse(addressData.meta_value)};
+	if (return_metas.address) {
+		const addressData = metas[metas.findIndex(meta=>meta.meta_type==='address')];
+		if (addressData) return_metas.address = {...addressData, meta_value: JSON.parse(addressData.meta_value)};
+	}
 
 	//DOCUMENT
-	const documentData = metas[metas.findIndex(meta=>meta.meta_type==='document')];
-	if (documentData) document = documentData;
+	if (return_metas.document) {
+		const documentData = metas[metas.findIndex(meta=>meta.meta_type==='document')];
+		if (documentData) return_metas.document = documentData;
+	}
 
 	//CONTACT
-	const contactData = metas[metas.findIndex(meta=>meta.meta_type==='contact')];
-	if (contactData) contact = contactData;
+	if (return_metas.contact) {
+		const contactData = metas[metas.findIndex(meta=>meta.meta_type==='contact')];
+		if (contactData) return_metas.contact = contactData;
+	}
 
 	//PHONES
-	const phonesData = metas.filter(meta=>meta.meta_type==='phone');
-	if(phonesData.length) phones = phonesData;
+	if (return_metas.phones) {
+		const phonesData = metas.filter(meta=>meta.meta_type==='phone');
+		if(phonesData.length) return_metas.phones = phonesData;
+	}
 
 	//EMAILS
-	const emailsData = metas.filter(meta=>meta.meta_type==='email');
-	if(emailsData.length) emails = emailsData;
-
-	return {
-		address,
-		contact,
-		document,
-		emails,
-		phones,
+	if (return_metas.emails) {
+		const emailsData = metas.filter(meta=>meta.meta_type==='email');
+		if(emailsData.length) return_metas.emails = emailsData;
 	}
+
+	return return_metas;
 }
 
 export const setPageTitle = (new_title) => {

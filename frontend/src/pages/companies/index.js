@@ -9,7 +9,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GET_USER_COMPANIES, UPDATE_COMPANY} from '../../graphql/companies';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, /* CircleNumber, */ SidebarContainer, Sidebar, Loading} from '../../layout/components';
 
 function Page (props) {
 	setPageTitle('Empresas');
@@ -27,7 +27,8 @@ function Page (props) {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Empresas <Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button>{loading && <Loading />}</BlockTitle>
+						<BlockTitle>Empresas</BlockTitle>
+						<Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button>{loading && <Loading />}
 						<NumberOfRows>{companies.length} empresas</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -37,18 +38,18 @@ function Page (props) {
 									<TableCell style={{width:30, paddingRight:10}}></TableCell>
 									<TableCell>Empresa</TableCell>
 									<TableCell>Faturamento último mês</TableCell>
-									<TableCell>Número de filiais</TableCell>
+									{/* <TableCell>Número de filiais</TableCell> */}
 									<TableCell>Criada em</TableCell>
 									<TableCell>Ações</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
 								{companies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-									<TableRow key={row.name}>
+									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
 										<TableCell>{numeral(row.last_month_revenue).format('$0,0.00')}</TableCell>
-										<TableCell><CircleNumber>{row.branches.length}</CircleNumber></TableCell>
+										{/* <TableCell><CircleNumber>{row.branches.length}</CircleNumber></TableCell> */}
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
 											<IconButton disabled={loading} onClick={()=>{props.history.push(`/empresas/edit/${row.id}`)}}>

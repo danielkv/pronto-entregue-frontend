@@ -12,10 +12,6 @@ export const UPDATE_COMPANY = gql`
 			display_name
 			createdAt
 			active
-			branches {
-				id
-				name
-			}
 			metas {
 				id
 				meta_type
@@ -38,12 +34,6 @@ export const GET_USER_COMPANIES = gql`
 			createdAt
 			last_month_revenue
 			active
-			branches {
-				id
-				name
-				active
-				last_month_revenue
-			}
 		}
 	}
 `;
@@ -58,10 +48,6 @@ export const GET_USER_COMPANY = gql`
 			id
 			name
 			display_name
-			branches {
-				id
-				name
-			}
 		}
 	}
 `;
@@ -78,10 +64,6 @@ export const GET_SELECTED_COMPANY = gql`
 			id
 			name
 			display_name
-			branches {
-				id
-				name
-			}
 		}
 	}
 `;
