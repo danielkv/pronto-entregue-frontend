@@ -5,7 +5,8 @@ import gql from 'graphql-tag';
 import PageForm from './form';
 import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import Layout from '../../layout';
-import { GET_USER_COMPANIES } from '../../graphql/companies';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_COMPANY_BRANCHES } from '../../graphql/branches';
 
 const CREATE_BRANCH = gql`
 	mutation ($data:BranchInput!) {
@@ -37,7 +38,9 @@ function Page (props) {
 		delete data.emails;
 		delete data.document;
 
-		client.mutate({mutation:CREATE_BRANCH, variables:{data}, refetchQueries:[{query:GET_USER_COMPANIES}]})
+		const {selectedCompany} = client.readQuery({query:GET_SELECTED_COMPANY});
+
+		client.mutate({mutation:CREATE_BRANCH, variables:{data}, refetchQueries:[{query:GET_COMPANY_BRANCHES, variables:{id:selectedCompany}}]})
 		.catch((err)=>{
 			console.error(err);
 		})

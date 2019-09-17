@@ -3,10 +3,10 @@ import PageForm from './form';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 
-import { Loading } from '../../layout/components';
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
 import Layout from '../../layout';
 import { UPDATE_BRANCH } from '../../graphql/branches';
+import LoadingBlock from '../../layout/loadingBlock';
 
 export const LOAD_BRANCH = gql`
 	query ($id: ID!) {
@@ -33,7 +33,7 @@ function Page (props) {
 	const {data, loading:loadingGetData} = useQuery(LOAD_BRANCH, {variables:{id:edit_id}});
 	const client = useApolloClient();
 
-	if (!data || loadingGetData) return (<Layout><Loading /></Layout>);
+	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const branch = {
 		name: data.branch.name,

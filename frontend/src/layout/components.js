@@ -15,14 +15,27 @@ const rotate = keyframes`
 	}
 `;
 
-export const Loading = styled(Icon).attrs(()=>({
+export const Loading = styled(Icon).attrs(({size})=>({
 	path: mdiLoading,
-	size:'26',
+	size: size || '26',
 	color:'#707070'
 }))`
 	margin-left:10px;
 	animation: ${rotate} 1s linear infinite;
 `
+export const LoadingContainer = styled.div`
+	display:flex;
+	height:100%;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+`
+export const LoadingText = styled.div`
+	font-size:14px;
+	margin-top:18px;
+	color:#999;
+`
+
 
 export const Container = styled.div`
 	display:grid;

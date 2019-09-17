@@ -37,7 +37,7 @@ export const SELECT_BRANCH = gql`
  * Retorna filiais selecionaveis
  */
 
-export const GET_USER_BRANCHES = gql`
+/* export const GET_USER_BRANCHES = gql`
 	query {
 		userBranches @client {
 			id
@@ -45,6 +45,25 @@ export const GET_USER_BRANCHES = gql`
 			active
 			last_month_revenue
 			createdAt
+		}
+	}
+`; */
+
+/**
+ * Retorna filiais selecionaveis
+ */
+
+export const GET_COMPANY_BRANCHES = gql`
+	query ($id:ID!) {
+		company (id:$id) {
+			id
+			branches {
+				id
+				name
+				active
+				last_month_revenue
+				createdAt
+			}
 		}
 	}
 `;

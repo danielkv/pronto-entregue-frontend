@@ -8,19 +8,25 @@ import { useQuery, useMutation} from '@apollo/react-hooks';
 
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, /* CircleNumber, */ SidebarContainer, Sidebar, Loading} from '../../layout/components';
-import { GET_USER_BRANCHES, UPDATE_BRANCH } from '../../graphql/branches';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+import LoadingBlock from '../../layout/loadingBlock';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_COMPANY_BRANCHES, UPDATE_BRANCH } from '../../graphql/branches';
 
 function Page (props) {
 	setPageTitle('Filiais');
 
-	const {data:branchesData} = useQuery(GET_USER_BRANCHES);
-	const branches = branchesData && branchesData.userBranches.length ? branchesData.userBranches : [];
+	const {data:selectedCompanyData, loading:loadingSelectedData} = useQuery(GET_SELECTED_COMPANY);
+
+	const {data:branchesData, loading:loadingBranchesData} = useQuery(GET_COMPANY_BRANCHES, {variables:{id:selectedCompanyData.selectedCompany}});
+	const branches = branchesData && branchesData.company.branches.length ? branchesData.company.branches : [];
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
-
+	
 	const [setBranchEnabled, {loading}] = useMutation(UPDATE_BRANCH);
+	
+	if (loadingSelectedData || loadingBranchesData) return (<LoadingBlock />);
 
 	return (
 		<Layout>

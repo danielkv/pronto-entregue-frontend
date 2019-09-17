@@ -5,7 +5,7 @@ import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import PageForm from './form';
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
 import Layout from '../../layout';
-import { Loading } from '../../layout/components';
+import LoadingBlock from '../../layout/loadingBlock';
 import { UPDATE_COMPANY } from '../../graphql/companies';
 
 
@@ -35,7 +35,7 @@ function Page (props) {
 	const {data, loading:loadingGetData} = useQuery(LOAD_COMPANY, {variables:{id:edit_id}});
 	const client = useApolloClient();
 
-	if (!data || loadingGetData) return (<Layout><Loading /></Layout>);
+	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const company = {
 		name: data.company.name,
