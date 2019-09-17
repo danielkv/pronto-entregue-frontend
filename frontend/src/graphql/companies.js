@@ -22,32 +22,30 @@ export const UPDATE_COMPANY = gql`
 `;
 
 /**
+ * Atualiza infomações da empresa no servidor
+ * 
+ */
+/* export const CREATE_USER_COMPANY = gql`
+	mutation ($data:CompanyInput!) {
+		createUserCompany (data:$data) @client {
+			id
+		}
+	}
+`; */
+
+/**
  * Retorna empresas selecionaveis
  */
 
 export const GET_USER_COMPANIES = gql`
 	query {
-		userCompanies @client {
+		userCompanies {
 			id
 			name
 			display_name
 			createdAt
 			last_month_revenue
 			active
-		}
-	}
-`;
-
-/**
- * Retorna empresa a partir do ID
- */
-
-export const GET_USER_COMPANY = gql`
-	query ($id:ID!) {
-		userCompany (id:$id) @client {
-			id
-			name
-			display_name
 		}
 	}
 `;
@@ -59,12 +57,8 @@ export const GET_USER_COMPANY = gql`
  */
 
 export const GET_SELECTED_COMPANY = gql`
-	query {
-		selectedCompany @client {
-			id
-			name
-			display_name
-		}
+	{
+		selectedCompany @client
 	}
 `;
 

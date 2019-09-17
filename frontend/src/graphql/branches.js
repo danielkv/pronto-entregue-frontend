@@ -1,6 +1,26 @@
 import gql from "graphql-tag";
 
 /**
+ * Atualiza infomações da empresa no servidor
+ * 
+ */
+export const UPDATE_BRANCH = gql`
+	mutation ($id: ID!, $data:BranchInput!) {
+		updateBranch (id: $id, data:$data) {
+			id
+			name
+			createdAt
+			active
+			metas {
+				id
+				meta_type
+				meta_value
+			}
+		}
+	}
+`;
+
+/**
  * Seleciona filial
  */
 
@@ -22,19 +42,9 @@ export const GET_USER_BRANCHES = gql`
 		userBranches @client {
 			id
 			name
-		}
-	}
-`;
-
-/**
- * Retorna filial a partir do ID
- */
-
-export const GET_USER_BRANCH = gql`
-	query ($id:ID!) {
-		userBranch (id:$id) @client {
-			id
-			name
+			active
+			last_month_revenue
+			createdAt
 		}
 	}
 `;
@@ -44,10 +54,7 @@ export const GET_USER_BRANCH = gql`
   */
  
  export const GET_SELECTED_BRANCH = gql`
-	 query {
-		 selectedBranch @client {
-			 id
-			 name
-		 }
-	 }
+	query {
+		selectedBranch @client
+	}
  `;

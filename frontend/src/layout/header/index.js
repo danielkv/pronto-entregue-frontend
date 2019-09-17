@@ -31,7 +31,7 @@ export default function Header () {
 					{(!selectedCompanyData || !companiesData || !companiesData.userCompanies.length) ? 'Nenhuma empresa' : 
 					<Select
 						disableUnderline={true}
-						value={selectedCompanyData ? selectedCompanyData.selectedCompany.id : ''}
+						value={selectedCompanyData ? selectedCompanyData.selectedCompany : ''}
 						onChange={(e)=>selectCompany({variables:{id:e.target.value}})}
 						inputProps={{
 							name: 'company',
@@ -52,7 +52,7 @@ export default function Header () {
 					{(!selectedBranchData || !branchesData || !branchesData.userBranches.length) ? 'Nenhuma filial' : 
 					<Select
 						disableUnderline={true}
-						value={selectedBranchData.selectedBranch ? selectedBranchData.selectedBranch.id : ''}
+						value={selectedBranchData ? selectedBranchData.selectedBranch : ''}
 						onChange={(e)=>selectBranch({variables:{id:e.target.value}})}
 						inputProps={{
 							name: 'Filial',

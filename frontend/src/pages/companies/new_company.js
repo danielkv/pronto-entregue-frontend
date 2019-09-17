@@ -1,10 +1,11 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { useApolloClient } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import PageForm from './form';
 import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import Layout from '../../layout';
+import { GET_USER_COMPANIES } from '../../graphql/companies';
 
 const CREATE_COMPANY = gql`
 	mutation ($data:CompanyInput!) {
@@ -12,13 +13,9 @@ const CREATE_COMPANY = gql`
 			id
 			name
 			display_name
+			last_month_revenue
 			createdAt
 			active
-			metas {
-				id
-				meta_type
-				meta_value
-			}
 		}
 	}
 `;
@@ -43,16 +40,12 @@ function Page (props) {
 		delete data.emails;
 		delete data.document;
 
-		console.log(data);
-
-		client.mutate({mutation:CREATE_COMPANY, variables:{data}})
-		.then(({data, error}) => {
-			if (error) console.error(error);
-			
-			setSubmitting(false);
-		})
+		client.mutate({mutation:CREATE_COMPANY, variables:{data}, refetchQueries:[{query:GET_USER_COMPANIES}]})
 		.catch((err)=>{
-			console.error(err.graphQLErrors, err.networkError, err.operation);
+			console.error(err);
+		})
+		.finally(()=>{
+			setSubmitting(false);
 		})
 	}
 	

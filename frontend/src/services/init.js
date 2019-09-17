@@ -1,7 +1,6 @@
 import client from './server';
 import {AUTHENTICATION} from '../graphql/authentication';
-import {LOAD_INITIAL_DATA} from '../graphql/user';
-import {SELECT_COMPANY} from '../graphql/companies';
+import {SELECT_COMPANY, GET_USER_COMPANIES} from '../graphql/companies';
 
 async function isUserLoggedIn () {
 	const token = localStorage.getItem('@flakery/userToken');
@@ -16,12 +15,11 @@ async function isUserLoggedIn () {
 	return false;
 }
 
-async function loadInitialData() {
-	const {data} = await client.query({query:LOAD_INITIAL_DATA});
-	
-	client.writeData({data:{userCompanies: data.me.companies}});
-	
-	await client.mutate({mutation:SELECT_COMPANY, variables:{id:data.me.companies[0].id}});
+function loadInitialData() {
+	client.query({query:GET_USER_COMPANIES})
+	.then (async ({data})=> {
+		await client.mutate({mutation:SELECT_COMPANY, variables:{id:data.userCompanies[0].id}});
+	});
 }
 
 async function init() {
@@ -35,12 +33,10 @@ async function init() {
 			loadInitialData();
 		}
 	} catch (err) {
+		console.error(err);
 		//Usuário não está autenticado ou ocorreu algum erro
 		if (window.location.pathname !== '/login') return window.location.href = '/login';
 	}
 }
 
 init();
-
-
-

@@ -1,29 +1,27 @@
 import gql from "graphql-tag";
-import { GET_USER_BRANCH } from "../graphql/branches";
 
 export default {
 	Query : {
-		userBranch: (parent, {id}, {cache, getCacheKey}) => {
-			
-			return cache.readFragment({
-				id: getCacheKey({__typename:'Branch', id}),
-				fragment : gql`
-					fragment Branch on Branch {
-						id
-						name
-					}
-				`
-			});
-		},
+		
 	},
 	Mutation : {
 		selectBranch: async (_, {id}, {client, cache}) => {
 			try {
-				const {data} = await client.query({query:GET_USER_BRANCH, variables:{id}});
+				const {data} = await client.query({query:gql`
+					query ($id:ID!) {
+						branch (id:$id) {
+							id
+							name
+							active
+							last_month_revenue
+							createdAt
+						}
+					}
+				`, variables:{id}});
 				
-				cache.writeData({data:{selectedBranch:data.userBranch}});
+				cache.writeData({data:{selectedBranch:data.branch.id}});
 
-				return data.userBranch;
+				return data.branch;
 			} catch (e) {
 				console.error(e);
 			}

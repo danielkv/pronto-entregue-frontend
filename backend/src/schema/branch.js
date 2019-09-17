@@ -1,3 +1,4 @@
+const sequelize = require('../services/connection');
 const Branches = require('../model/branches');
 const BranchesMeta = require('../model/branches_meta');
 const PaymentMethods = require('../model/payment_methods');
@@ -20,8 +21,8 @@ module.exports.typeDefs = gql`
 		id:ID!
 		name:String!
 		active:Boolean!
-		createdAt:String!
-		updatedAt:String!
+		createdAt:String! @dateTime
+		updatedAt:String! @dateTime
 		company:Company!
 		users:[User]!
 		metas:[BranchMeta]!
@@ -80,6 +81,7 @@ module.exports.resolvers = {
 			})
 		},
 		updateBranch: (parent, {id, data}, ctx) => {
+			console.log(ctx);
 			return sequelize.transaction(transaction => {
 				return ctx.company.getBranches({where:{id}})
 				.then(([branch])=>{

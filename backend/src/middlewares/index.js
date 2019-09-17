@@ -40,7 +40,7 @@ function selectCompany (company_id, user) {
 	return Companies.findOne({where:{id:company_id}})
 	.then((company_found)=>{
 		if (!company_found) throw new Error('Empresa selecionada não foi encontrada');
-		if (!company_found.active) throw new Error('Essa empresa não está ativa');
+		//if (!company_found.active) throw new Error('Essa empresa não está ativa');
 
 		return company_found;
 	})
@@ -70,7 +70,7 @@ function selectBranch (company, user, branch_id) {
 	return company.getBranches({where:{id:branch_id}})
 	.then(([branch_found])=>{
 		if (!branch_found) throw new Error('Filial selecionada não foi encontrada');
-		if (!branch_found.active) throw new Error('Essa filial não está ativa');
+		//if (!branch_found.active) throw new Error('Essa filial não está ativa');
 
 		return branch_found;
 	})

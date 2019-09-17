@@ -45,6 +45,7 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		company(id:ID!): Company!
+		userCompanies: [Company!] @hasRole(permission:"companies_read", scope:"adm")
 	}
 `;
 
@@ -75,6 +76,12 @@ module.exports.resolvers = {
 	Query : {
 		companies: (parent, args, ctx) => {
 			return Companies.findAll();
+		},
+		userCompanies: (parent, args, ctx) => {
+			if (ctx.user.can('master'))
+				return Companies.findAll();
+
+			return ctx.user.getCompanies({through:{where:{active:true}}});
 		},
 		company:(parent, {id}, ctx) => {
 			return Companies.findByPk(id)

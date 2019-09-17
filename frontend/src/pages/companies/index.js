@@ -15,7 +15,7 @@ function Page (props) {
 	setPageTitle('Empresas');
 
 	const {data:companiesData} = useQuery(GET_USER_COMPANIES);
-	const companies = companiesData.userCompanies.length ? companiesData.userCompanies : [];
+	const companies = companiesData && companiesData.userCompanies.length ? companiesData.userCompanies : [];
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -40,7 +40,7 @@ function Page (props) {
 									<TableCell>Faturamento último mês</TableCell>
 									{/* <TableCell>Número de filiais</TableCell> */}
 									<TableCell>Criada em</TableCell>
-									<TableCell>Ações</TableCell>
+									<TableCell style={{width:100}}>Ações</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
