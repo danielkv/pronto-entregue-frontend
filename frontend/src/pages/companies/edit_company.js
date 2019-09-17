@@ -41,7 +41,7 @@ function Page (props) {
 		name: data.company.name,
 		display_name: data.company.display_name,
 		active: data.company.active,
-		...extractMetas(data.company.metas, ['address', 'document', 'contact', 'phones', 'emails'])
+		...extractMetas(data.company.metas, ['address', 'document', 'contact', 'phone', 'email'])
 	};
 
 	function onSubmit(values, {setSubmitting}) {

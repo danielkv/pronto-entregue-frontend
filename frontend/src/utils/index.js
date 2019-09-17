@@ -41,23 +41,27 @@ export const joinMetas = ({address, emails, phones, contact, document}) => {
 	return metas;
 }
 
+export const meta_model = (type, value='', action='create') => {
+	return {action, meta_type:type, meta_value:value};
+}
+
 export const initialMetas = (needed) => {
 	if (!needed) throw new Error('Metas necessárias não definidas');
 	const metas = {};
 
-	if (needed.includes('address')) metas.address = {id:'', action:'create', meta_type:'address', meta_value: {
+	if (needed.includes('address')) metas.address = meta_model('address', {
 		street:'',
 		number:'',
 		district:'',
 		zipcode:'',
 		city:'',
 		state:'',
-	}};
+	});
 
-	if (needed.includes('contact')) metas.contact = {id:'', meta_type:'contact', meta_value:'', action:'create'};
-	if (needed.includes('document')) metas.document = {id:'', meta_type:'document', meta_value:'', action:'create'};
-	if (needed.includes('emails')) metas.emails = [{id:'', meta_type:'emails', meta_value:'', action:'create'}];
-	if (needed.includes('phones')) metas.phones = [{id:'', meta_type:'phones', meta_value:'', action:'create'}];
+	if (needed.includes('contact')) metas.contact = meta_model('contact');
+	if (needed.includes('document')) metas.document = meta_model('document');
+	if (needed.includes('email')) metas.emails = [meta_model('email')];
+	if (needed.includes('phone')) metas.phones = [meta_model('phone')];
 
 	return metas;
 }

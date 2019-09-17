@@ -1,123 +1,59 @@
 import React from 'react';
-import {Paper, TextField, IconButton, FormControlLabel, Switch, ButtonGroup, Button} from '@material-ui/core';
-import Icon from '@mdi/react';
-import {mdiPlusCircle} from '@mdi/js';
+import { useApolloClient } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
-import {setPageTitle} from '../../utils';
+import PageForm from './form';
+import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl} from '../../layout/components';
+import { GET_USER_COMPANIES } from '../../graphql/companies';
 
-function Page () {
+const CREATE_BRANCH = gql`
+	mutation ($data:BranchInput!) {
+		createBranch (data:$data) {
+			id
+			name
+			last_month_revenue
+			createdAt
+			active
+		}
+	}
+`;
+
+function Page (props) {
 	setPageTitle('Nova filial');
+	
+	const client = useApolloClient();
+
+	const branch = {
+		name:'',
+		active:true,
+		...initialMetas(['address', 'document', 'phone', 'email'])
+	};
+
+	function onSubmit(values, {setSubmitting}) {
+		const data = {...values, metas:joinMetas(values)};
+		delete data.address;
+		delete data.phones;
+		delete data.emails;
+		delete data.document;
+
+		client.mutate({mutation:CREATE_BRANCH, variables:{data}, refetchQueries:[{query:GET_USER_COMPANIES}]})
+		.catch((err)=>{
+			console.error(err);
+		})
+		.finally(()=>{
+			setSubmitting(false);
+		})
+	}
+	
 	return (
 		<Layout>
-			<Content>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Nova filial</BlockTitle>
-					</BlockHeader>
-					<Paper>
-						<FormRow>
-							<FieldControl>
-								<TextField label='Nome da Filial' />
-							</FieldControl>
-							<FieldControl>
-								<TextField label='CNPJ' />
-							</FieldControl>
-						</FormRow>
-					</Paper>
-				</Block>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Endereço</BlockTitle>
-					</BlockHeader>
-					<Paper>
-						<FormRow>
-							<FieldControl>
-								<TextField label='Rua' />
-							</FieldControl>
-							<FieldControl style={{flex:.3}}>
-								<TextField type='number' label='Número' />
-							</FieldControl>
-							<FieldControl style={{flex:.3}}>
-								<TextField label='CEP' />
-							</FieldControl>
-						</FormRow>
-						<FormRow>
-							<FieldControl>
-								<TextField label='Bairro' />
-							</FieldControl>
-							<FieldControl>
-								<TextField label='Cidade' />
-							</FieldControl>
-							<FieldControl>
-								<TextField label='Estado' />
-							</FieldControl>
-						</FormRow>
-					</Paper>
-				</Block>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Outros dados da filial</BlockTitle>
-					</BlockHeader>
-					<Paper>
-						<BlockSeparator>
-							<FormRow>
-								<FieldControl>
-									<TextField label='Telefone' />
-								</FieldControl>
-								<FieldControl>
-									<IconButton>
-										<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
-									</IconButton>
-								</FieldControl>
-							</FormRow>
-						</BlockSeparator>
-						<BlockSeparator>
-							<FormRow>
-								<FieldControl>
-									<TextField label='Email' />
-								</FieldControl>
-								<FieldControl>
-									<IconButton>
-										<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
-									</IconButton>
-								</FieldControl>
-							</FormRow>
-						</BlockSeparator>
-					</Paper>
-				</Block>
-			</Content>
-			<SidebarContainer>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Configuração</BlockTitle>
-					</BlockHeader>
-					<Sidebar>
-						<BlockSeparator>
-							<FormRow>
-								<FieldControl style={{justifyContent:'flex-end', paddingRight:7}}>
-									<FormControlLabel
-										labelPlacement='start'
-										control={
-											<Switch size='small' color='primary' checked={true} onChange={()=>{}} value="includeDisabled" />
-										}
-										label="Ativo"
-									/>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
-								<FieldControl>
-									<ButtonGroup fullWidth>
-										<Button color='secondary'>Cancelar</Button>
-										<Button variant="contained" color='secondary'>Salvar</Button>
-									</ButtonGroup>
-								</FieldControl>
-							</FormRow>
-						</BlockSeparator>
-					</Sidebar>
-				</Block>
-			</SidebarContainer>
+			<PageForm
+				onSubmit={onSubmit}
+				initialValues={branch}
+				pageTitle='Nova filial'
+				validateOnChange={false}
+			/>
 		</Layout>
 	)
 }

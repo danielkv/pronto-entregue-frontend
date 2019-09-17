@@ -29,7 +29,7 @@ function Page (props) {
 		name:'',
 		display_name:'',
 		active:true,
-		...initialMetas(['address', 'document', 'contact', 'phones', 'emails'])
+		...initialMetas(['address', 'document', 'contact', 'phone', 'email'])
 	};
 
 	function onSubmit(values, {setSubmitting}) {

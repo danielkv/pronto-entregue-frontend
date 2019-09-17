@@ -38,7 +38,7 @@ function Page (props) {
 	const branch = {
 		name: data.branch.name,
 		active: data.branch.active,
-		...extractMetas(data.branch.metas, ['address', 'document', 'phones', 'emails'])
+		...extractMetas(data.branch.metas, ['address', 'document', 'phone', 'email'])
 	};
 
 	function onSubmit(values, {setSubmitting}) {
@@ -49,11 +49,11 @@ function Page (props) {
 		delete data.document;
 
 		client.mutate({mutation:UPDATE_BRANCH, variables:{id:edit_id, data}})
-		.then(({data}) => {
-			setSubmitting(false);
-		})
 		.catch((err)=>{
 			console.error(err.graphQLErrors, err.networkError, err.operation);
+		})
+		.finally(() => {
+			setSubmitting(false);
 		})
 	}
 

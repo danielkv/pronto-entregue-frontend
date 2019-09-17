@@ -5,9 +5,8 @@ import {mdiPlusCircle, mdiDelete} from '@mdi/js';
 import * as Yup from 'yup';
 import { Formik, Form, Field, FieldArray } from 'formik';
 
+import {meta_model} from '../../utils';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
-
-const meta_model = {id:0, meta_type:'', meta_value:'', action:'create'};
 
 const branchSchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
@@ -103,7 +102,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												<Field name={`phones.${index}.meta_value`} component={tField} label='Telefone' />
 											</FieldControl>
 											<FieldControl>
-												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, {...meta_model, meta_type:'phone'}); return false}}>
+												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, meta_model('phone')); return false}}>
 													<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
 												</IconButton>}
 												{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (phone.action ==='create') return remove(index); setFieldValue(`phones.${index}.action`, 'delete')}}>
@@ -124,7 +123,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 													<Field name={`emails.${index}.meta_value`} component={tField} label='Email' />
 												</FieldControl>
 												<FieldControl>
-													{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, {...meta_model, meta_type:'email'})}}>
+													{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, meta_model('email'))}}>
 														<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
 													</IconButton>}
 													{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (email.action ==='create') return remove(index); setFieldValue(`emails.${index}.action`, 'delete');}}>
