@@ -4,20 +4,15 @@ import Icon from '@mdi/react';
 import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
 import numeral from 'numeral'
-import { useQuery, useMutation, useApolloClient} from '@apollo/react-hooks';
+import { useQuery, useMutation} from '@apollo/react-hooks';
 
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, /* CircleNumber, */ SidebarContainer, Sidebar, Loading} from '../../layout/components';
 import { GET_USER_BRANCHES, UPDATE_BRANCH } from '../../graphql/branches';
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Filiais');
-
-	const client = useApolloClient();
-
-	console.log(client.readQuery({query:GET_SELECTED_COMPANY}));
 
 	const {data:branchesData} = useQuery(GET_USER_BRANCHES);
 	const branches = branchesData && branchesData.userBranches.length ? branchesData.userBranches : [];
@@ -57,7 +52,7 @@ function Page () {
 										{/* <TableCell><CircleNumber>{row.orders_qty}</CircleNumber></TableCell> */}
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton disabled={loading} onClick={()=>{props.history.push(`/filiais/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch

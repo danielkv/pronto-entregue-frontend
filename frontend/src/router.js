@@ -12,6 +12,7 @@ import EditCompany from './pages/companies/edit_company';
 
 import Branches from './pages/branches';
 import NewBranch from './pages/branches/new_branch';
+import EditBranch from './pages/branches/edit_branch';
 
 import Storage from './pages/storage';
 import NewItem from './pages/storage/new_item';
@@ -40,10 +41,11 @@ export default function Router(props) {
 
 				<Route exact path='/empresas' component={Companies} />
 				<Route path='/empresas/novo' component={NewCompany} />
-				<Route path='/empresas/edit/:id' component={EditCompany} />
+				<Route path='/empresas/alterar/:id' component={EditCompany} />
 				
 				<Route exact path='/filiais' component={Branches} />
 				<Route path='/filiais/novo' component={NewBranch} />
+				<Route path='/filiais/alterar/:id' component={EditBranch} />
 
 				<Route exact path='/estoque' component={Storage} />
 				<Route path='/estoque/novo' component={NewItem} />

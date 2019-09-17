@@ -4,6 +4,11 @@ export default {
 	Query : {
 		
 	},
+	BranchMeta:{
+		action : ()=> {
+			return 'update';
+		}
+	},
 	Mutation : {
 		selectBranch: async (_, {id}, {client, cache}) => {
 			try {
