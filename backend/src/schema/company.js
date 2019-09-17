@@ -20,7 +20,8 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		metas:[CompanyMeta]!
-		branches:[Branch]!
+		branches:[Branch]! @hasRole(permission:"branches_read", scope:"adm")
+		users:[User]! @hasRole(permission:"users_read", scope:"adm")
 		last_month_revenue:Float!
 	}
 	
@@ -107,6 +108,9 @@ module.exports.resolvers = {
 				//caso chegue aqui usuário verá a lista de filiais que estão ativas e estão vinculadas a ele
 				return user.getBranches({where:{active:true, company_id:parent.get('id')}, through:{where:{active:true}}})
 			});
+		},
+		users: (parent, args, ctx) => {
+			return parent.getUsers();
 		},
 		metas: (parent, args, ctx) => {
 			return parent.getMetas();

@@ -31,7 +31,7 @@ module.exports.typeDefs = gql`
 		createdAt:String!
 		updatedAt:String!
 		metas:[UserMeta]!
-		companies:[Company]!
+		companies:[Company]! @hasRole(permission:"companies_read", scope:"adm")
 		branch_relation:BranchRelation!
 	}
 
