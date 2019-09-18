@@ -1,20 +1,19 @@
 import React from 'react';
+import PageForm from './form';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 
-import PageForm from './form';
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
 import Layout from '../../layout';
+import { UPDATE_USER } from '../../graphql/users';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
-import { UPDATE_COMPANY } from '../../graphql/companies';
 
-
-export const LOAD_COMPANY = gql`
+export const LOAD_USER = gql`
 	query ($id: ID!) {
-		company (id: $id) {
+		user (id: $id) {
 			id
-			name
-			display_name
+			fist_name
+			last_name
 			createdAt
 			active
 			metas {
@@ -28,47 +27,45 @@ export const LOAD_COMPANY = gql`
 `;
 
 function Page (props) {
-	setPageTitle('Alterar empresa');
+	setPageTitle('Alterar usuário');
 
 	const edit_id = props.match.params.id;
 	
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_COMPANY, {variables:{id:edit_id}});
+	const {data, loading:loadingGetData, error:errorGetData} = useQuery(LOAD_USER, {variables:{id:edit_id}});
 	const client = useApolloClient();
 
-	if (error) return <ErrorBlock error={error} />
+	if (errorGetData) return <ErrorBlock error={errorGetData} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
-	const company = {
-		name: data.company.name,
-		display_name: data.company.display_name,
-		active: data.company.active,
-		...extractMetas(data.company.metas, ['address', 'document', 'contact', 'phone', 'email'])
+	const user = {
+		name: data.user.name,
+		active: data.user.active,
+		...extractMetas(data.user.metas, ['document', 'phone', 'email'])
 	};
 
 	function onSubmit(values, {setSubmitting}) {
 		const data = {...values, metas:joinMetas(values)};
 		delete data.address;
-		delete data.contact;
 		delete data.phones;
 		delete data.emails;
 		delete data.document;
 
-		client.mutate({mutation:UPDATE_COMPANY, variables:{id:edit_id, data}})
-		.then(({data}) => {
-			setSubmitting(false);
-		})
+		client.mutate({mutation:UPDATE_USER, variables:{id:edit_id, data}})
 		.catch((err)=>{
 			console.error(err.graphQLErrors, err.networkError, err.operation);
 		})
+		.finally(() => {
+			setSubmitting(false);
+		})
 	}
-	
+
 	return (
 		<Layout>
 			<PageForm
+				pageTitle='Alterar usuário'
+				initialValues={user}
 				onSubmit={onSubmit}
-				initialValues={company}
-				pageTitle='Alterar empresa'
-			/>
+				/>
 		</Layout>
 	)
 }

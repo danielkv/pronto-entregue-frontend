@@ -3,44 +3,36 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, For
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter, mdiAccountCircle} from '@mdi/js';
 import {Link} from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
+import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar} from '../../layout/components';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_COMPANY_USERS } from '../../graphql/users';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Usuários');
+
+	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
+
+	const {data:usersData, loading:loadingUsersData, error} = useQuery(GET_COMPANY_USERS, {variables:{id:selectedCompanyData.selectedCompany}});
+	const users = usersData && usersData.company.users.length ? usersData.company.users : [];
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const users = [
-		{
-			name: 'Ivandro Cardoso',
-			role: 'Consumidor',
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Daniel K. Guolo',
-			role: 'Administrador',
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Diego Alves',
-			role: 'Gerente',
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-	];
+	if (error) return <ErrorBlock error={error} />
+	if (loadingSelectedCompany || loadingUsersData) return (<LoadingBlock />);
 
 	return (
 		<Layout>
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Usuários <Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Usuários</BlockTitle>
+						<Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button>
 						<NumberOfRows>{users.length} usuários</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -56,13 +48,13 @@ function Page () {
 							</TableHead>
 							<TableBody>
 								{users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-									<TableRow key={row.name}>
+									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:30, paddingRight:10}}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
-										<TableCell>{row.name}</TableCell>
+										<TableCell>{row.full_name}</TableCell>
 										<TableCell>{row.role}</TableCell>
-										<TableCell>{row.created_at}</TableCell>
+										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton onClick={()=>{props.history.push(`/usuarios/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch

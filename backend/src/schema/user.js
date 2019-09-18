@@ -12,7 +12,7 @@ module.exports.typeDefs = gql`
 		id:ID!
 		meta_type:String!
 		meta_value:String!
-		createdAt:String!
+		createdAt:String! @dateTime
 	}
 
 	type BranchRelation {
@@ -28,8 +28,8 @@ module.exports.typeDefs = gql`
 		email:String!
 		role:String!
 		active:Boolean!
-		createdAt:String!
-		updatedAt:String!
+		createdAt:String! @dateTime
+		updatedAt:String! @dateTime
 		metas:[UserMeta]!
 		companies:[Company]! @hasRole(permission:"companies_read", scope:"adm")
 		branch_relation:BranchRelation!

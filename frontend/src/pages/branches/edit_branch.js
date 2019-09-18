@@ -6,7 +6,7 @@ import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
 import Layout from '../../layout';
 import { UPDATE_BRANCH } from '../../graphql/branches';
-import LoadingBlock from '../../layout/loadingBlock';
+import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 
 export const LOAD_BRANCH = gql`
 	query ($id: ID!) {
@@ -30,9 +30,10 @@ function Page (props) {
 
 	const edit_id = props.match.params.id;
 	
-	const {data, loading:loadingGetData} = useQuery(LOAD_BRANCH, {variables:{id:edit_id}});
+	const {data, loading:loadingGetData, error} = useQuery(LOAD_BRANCH, {variables:{id:edit_id}});
 	const client = useApolloClient();
 
+	if (error) return <ErrorBlock error={error} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const branch = {

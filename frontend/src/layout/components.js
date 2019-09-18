@@ -23,7 +23,7 @@ export const Loading = styled(Icon).attrs(({size})=>({
 	margin-left:10px;
 	animation: ${rotate} 1s linear infinite;
 `
-export const LoadingContainer = styled.div`
+export const BlockContainer = styled.div`
 	display:flex;
 	height:100%;
 	flex-direction:column;
@@ -35,6 +35,24 @@ export const LoadingText = styled.div`
 	margin-top:18px;
 	color:#999;
 `
+export const ErrorTitle = styled.div`
+	font-size:18px;
+	margin-top:18px;
+	color:rgb(206, 17, 38);
+`
+export const ErrorSubtitle = styled.div`
+	font-size:14px;
+	margin-top:18px;
+	color:#999;
+`
+export const Error = styled.div`
+	font-size:14px;
+	margin-top:18px;
+	color:rgb(206, 17, 38);
+`
+
+
+
 
 
 export const Container = styled.div`

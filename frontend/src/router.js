@@ -28,6 +28,7 @@ import NewProduct from './pages/products/new_product';
 
 import Users from './pages/users';
 import NewUser from './pages/users/new_user';
+import EditUser from './pages/users/edit_user';
 
 import Settings from './pages/settings';
 
@@ -61,6 +62,7 @@ export default function Router(props) {
 				
 				<Route exact path='/usuarios' component={Users} />
 				<Route path='/usuarios/novo' component={NewUser} />
+				<Route path='/usuarios/alterar/:id' component={EditUser} />
 				
 				<Route path='/configuracoes' component={Settings} />
 			</Switch>

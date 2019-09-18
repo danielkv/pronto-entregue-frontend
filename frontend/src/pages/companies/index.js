@@ -9,13 +9,13 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { GET_USER_COMPANIES, UPDATE_COMPANY} from '../../graphql/companies';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import LoadingBlock from '../../layout/loadingBlock';
+import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
 
 function Page (props) {
 	setPageTitle('Empresas');
 
-	const {data:companiesData, loading:loadingCompaniesData} = useQuery(GET_USER_COMPANIES);
+	const {data:companiesData, loading:loadingCompaniesData, error} = useQuery(GET_USER_COMPANIES);
 	const companies = companiesData && companiesData.userCompanies.length ? companiesData.userCompanies : [];
 
 	const [page, setPage] = useState(0);
@@ -23,6 +23,7 @@ function Page (props) {
 
 	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_COMPANY);
 
+	if (error) return <ErrorBlock error={error} />
 	if (loadingCompaniesData) return (<LoadingBlock />);
 
 	return (
