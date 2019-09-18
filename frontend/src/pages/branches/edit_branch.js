@@ -39,7 +39,7 @@ function Page (props) {
 	const branch = {
 		name: data.branch.name,
 		active: data.branch.active,
-		...extractMetas(data.branch.metas, ['address', 'document', 'phone', 'email'])
+		...extractMetas(['address', 'document', 'phones', 'email'], data.branch.metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {

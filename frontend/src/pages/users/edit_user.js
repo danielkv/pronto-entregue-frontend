@@ -12,8 +12,9 @@ export const LOAD_USER = gql`
 	query ($id: ID!) {
 		user (id: $id) {
 			id
-			fist_name
+			first_name
 			last_name
+			email
 			createdAt
 			active
 			metas {
@@ -38,9 +39,11 @@ function Page (props) {
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const user = {
-		name: data.user.name,
+		first_name: data.user.first_name,
+		last_name: data.user.last_name,
+		email: data.user.email,
 		active: data.user.active,
-		...extractMetas(data.user.metas, ['document', 'phone', 'email'])
+		...extractMetas(['document', 'phones'], data.user.metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {
@@ -65,6 +68,7 @@ function Page (props) {
 				pageTitle='Alterar usuário'
 				initialValues={user}
 				onSubmit={onSubmit}
+				edit={true}
 				/>
 		</Layout>
 	)

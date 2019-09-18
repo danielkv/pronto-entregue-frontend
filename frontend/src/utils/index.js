@@ -20,34 +20,41 @@ export const getStatusIcon = (status) => {
 	}
 }
 
-export const joinMetas = ({address, emails, phones, contact, document}) => {
-	let metas = [];
-
-	//ADDRESS
-	if (address) metas.push({...address, meta_value:JSON.stringify(address.meta_value)});
-
-	//DOCUMENT
-	if (document) metas.push(document);
-
-	//CONTACT
-	if (contact) metas.push(contact);
-
-	//PHONES
-	if (phones && phones.length) metas = [...metas, ...phones];
+export const joinMetas = (metas={}) => {
+	let return_metas = [];
 	
-	//EMAILS
-	if (emails && emails.length) metas = [...metas, ...emails];
+	Object(metas).keys(key => {
+		let value = metas[key];
+		switch (key) {
+			case 'address':
+				return_metas.push({...value, meta_value:JSON.stringify(value.meta_value)});
+			break;
+			case 'addresses':
+				return_metas = [...return_metas, ...value.map(v => ({...v, meta_value:JSON.stringify(v.meta_value)}))];
+			break;
+			case 'phones':
+			case 'emails':
+				return_metas = [...return_metas, ...value];
+			break;
+			default :
+				return_metas.push(value);
+		}
+	});
 
-	return metas;
+	return return_metas;
 }
 
 export const meta_model = (type, value='', action='create') => {
 	return {action, meta_type:type, meta_value:value};
 }
 
-export const initialMetas = (needed) => {
+export const initialMetas = (needed=[]) => {
 	if (!needed) throw new Error('Metas necessárias não definidas');
 	const metas = {};
+
+	needed.forEach(need => {
+		metas[need] = meta_model(need);
+	});
 
 	if (needed.includes('address')) metas.address = meta_model('address', {
 		street:'',
@@ -57,50 +64,52 @@ export const initialMetas = (needed) => {
 		city:'',
 		state:'',
 	});
-
-	if (needed.includes('contact')) metas.contact = meta_model('contact');
-	if (needed.includes('document')) metas.document = meta_model('document');
-	if (needed.includes('email')) metas.emails = [meta_model('email')];
-	if (needed.includes('phone')) metas.phones = [meta_model('phone')];
+	
+	if (needed.includes('phones')) metas.phones = [meta_model('phone')];
+	if (needed.includes('emails')) metas.emails = [meta_model('email')];
 
 	return metas;
 }
 
-export const extractMetas = (metas, needed) => {
-	const return_metas = initialMetas(needed);
+export const extractMetas = (needed, metas=[]) => {
+	//valores padrão
+	let return_metas = initialMetas(needed);
 
 	//Retira __typename dos metadados
 	metas = metas.map(meta => {delete meta.__typename; return meta});
 
-	//ADDRESS
-	if (return_metas.address) {
-		const addressData = metas[metas.findIndex(meta=>meta.meta_type==='address')];
-		if (addressData) return_metas.address = {...addressData, meta_value: JSON.parse(addressData.meta_value)};
-	}
+	needed.forEach(meta_type => {
+		let value, search_meta;
 
-	//DOCUMENT
-	if (return_metas.document) {
-		const documentData = metas[metas.findIndex(meta=>meta.meta_type==='document')];
-		if (documentData) return_metas.document = documentData;
-	}
+		if (meta_type === 'addresses')
+			search_meta = 'address';
+		else if (meta_type === 'phones')
+			search_meta = 'phone';
+		else if (meta_type === 'emails')
+			search_meta = 'email';
+		else
+			search_meta = meta_type;
 
-	//CONTACT
-	if (return_metas.contact) {
-		const contactData = metas[metas.findIndex(meta=>meta.meta_type==='contact')];
-		if (contactData) return_metas.contact = contactData;
-	}
-
-	//PHONES
-	if (return_metas.phones) {
-		const phonesData = metas.filter(meta=>meta.meta_type==='phone');
-		if(phonesData.length) return_metas.phones = phonesData;
-	}
-
-	//EMAILS
-	if (return_metas.emails) {
-		const emailsData = metas.filter(meta=>meta.meta_type==='email');
-		if(emailsData.length) return_metas.emails = emailsData;
-	}
+		const found = metas.filter(m => m.meta_type === search_meta);
+		
+		if (found.length) {
+			switch(meta_type) {
+				case 'address':
+					value = found[0];
+					return_metas[meta_type] = {...value, meta_value: JSON.parse(value.meta_value)};
+				break;
+				case 'addresses':
+					return_metas[meta_type] = found.map(meta=>({...meta, meta_value:JSON.parse(meta.meta_value)}));
+				break;
+				case 'phones':
+				case 'emails':
+					return_metas[meta_type] = found;
+				break;
+				default :
+					return_metas[meta_type] = found[0];
+			}
+		}
+	});
 
 	return return_metas;
 }

@@ -6,36 +6,21 @@ import * as Yup from 'yup';
 import {Formik, FieldArray, Form, Field} from 'formik';
 
 import {meta_model} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl} from '../../layout/components';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
 
 const userSchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	display_name: Yup.string().required('Obrigatório'),
+	first_name: Yup.string().required('Obrigatório'),
+	last_name: Yup.string().required('Obrigatório'),
+	email: Yup.string().required('Obrigatório'),
 	document : Yup.object().shape({
 			meta_value:Yup.string().required('Obrigatório')
-		}),
-	contact : Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório')
-		}),
-	address : Yup.object().shape({
-		meta_value: Yup.object().shape({
-				street: Yup.string().required('Obrigatório'),
-				number: Yup.number().typeError('Deve ser um número').required('Obrigatório'),
-				zipcode: Yup.string().required('Obrigatório'),
-				district: Yup.string().required('Obrigatório'),
-				city: Yup.string().required('Obrigatório'),
-				state: Yup.string().required('Obrigatório'),
-			})
 		}),
 	phones: Yup.array().of(Yup.object().shape({
 			meta_value:Yup.string().required('Obrigatório')
 		})).min(1),
-	emails: Yup.array().of(Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório').email('Email não é válido'),
-		})).min(1),
 });
 
-export default function pageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {
+export default function pageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
 	return (
 		<Formik
 			validationSchema={userSchema}
@@ -44,7 +29,7 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, phones, emails}, setFieldValue, handleChange, isSubmitting}) => (
+			{({values:{active, phones}, setFieldValue, handleChange, isSubmitting}) => (
 			<Form>
 				<Content>
 					<Block>
@@ -54,16 +39,16 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 						<Paper>
 							<FormRow>
 								<FieldControl>
-									<TextField label='Primeiro nome' />
+									<Field name='first_name' component={tField} label='Primeiro nome' />
 								</FieldControl>
 								<FieldControl>
-									<TextField label='Sobrenome' />
+									<Field name='last_name' component={tField} label='Sobrenome' />
 								</FieldControl>
 							</FormRow>
 							<FormRow>
 								<FieldControl>
 									<FormControl>
-										<TextField type='email' label='email' />
+										<Field name='email' component={tField} label='Email' />
 										<FormHelperText>Email para acesso ao sistema ou aplicativo</FormHelperText>
 									</FormControl>
 								</FieldControl>
@@ -84,123 +69,101 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
-										<TextField label='CPF' />
+										<Field name='document.meta_value' component={tField} label='CPF' />
 									</FieldControl>
 									<FieldControl>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
 							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<TextField label='Email' />
-									</FieldControl>
-									<FieldControl>
-										<IconButton>
-											<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
-										</IconButton>
-									</FieldControl>
-								</FormRow>
+								<FieldArray name='phones'>
+									{ ({insert, remove}) => (
+										phones.filter((row)=>row.action !== 'delete').map((phone, index) => {
+											
+											return (<FormRow key={index}>
+												<FieldControl>
+													<Field name={`phones.${index}.meta_value`} component={tField} label='Telefone' />
+												</FieldControl>
+												<FieldControl>
+													{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, meta_model('phone')); return false}}>
+														<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
+													</IconButton>}
+													{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (phone.action ==='create') return remove(index); setFieldValue(`phones.${index}.action`, 'delete')}}>
+														<Icon path={mdiDelete} size='18' color='#707070' />
+													</IconButton>}
+												</FieldControl>
+											</FormRow>)
+										}))
+									}
+								</FieldArray>
 							</BlockSeparator>
 						</Paper>
 					</Block>
-					<Grid container spacing={5}>
-						<Grid item xs={6}>
-							<Block>
-								<BlockHeader>
-									<BlockTitle>Empresas vinculadas</BlockTitle>
-								</BlockHeader>
-								<Paper>
-									<BlockSeparator>
-										<FormRow>
-											<FieldControl>
-												<TextField label='Buscar empresa' />
-											</FieldControl>
-										</FormRow>
-									</BlockSeparator>
-									<BlockSeparator>
-										<Table>
-											<TableBody>
-												<TableRow>
-													<TableCell style={{width:30}}>
-														<Icon path={mdiStore} color='#BCBCBC' size='18' />
-													</TableCell>
-													<TableCell>Copeiro</TableCell>
-													<TableCell style={{width:30}}><Icon path={mdiCloseCircle} color='#BCBCBC' size='18' /></TableCell>
-												</TableRow>
-											</TableBody>
-										</Table>
-									</BlockSeparator>
-								</Paper>
-							</Block>
-						</Grid>
-						<Grid item xs={6}>
-							<Block>
-								<BlockHeader>
-									<BlockTitle>Filiais vinculadas</BlockTitle>
-								</BlockHeader>
-								<Paper>
-									<BlockSeparator>
-										<FormRow>
-											<FieldControl>
-												<TextField label='Buscar filial' />
-											</FieldControl>
-										</FormRow>
-									</BlockSeparator>
-									<BlockSeparator>
-										<Table>
-											<TableBody>
-												<TableRow>
-													<TableCell style={{width:30}}>
-														<Icon path={mdiSourceBranch} color='#BCBCBC' size='18' />
-													</TableCell>
-													<TableCell>Copeiro 1</TableCell>
-													<TableCell style={{width:30}}><Icon path={mdiCloseCircle} color='#BCBCBC' size='18' /></TableCell>
-												</TableRow>
-											</TableBody>
-										</Table>
-									</BlockSeparator>
-								</Paper>
-							</Block>
-						</Grid>
-					</Grid>
 					<Block>
 						<BlockHeader>
-							<BlockTitle>Enderços</BlockTitle>
+							<BlockTitle>Filiais vinculadas</BlockTitle>
 						</BlockHeader>
 						<Paper>
 							<BlockSeparator>
+								<FormRow>
+									<FieldControl>
+										<TextField label='Buscar filial' />
+									</FieldControl>
+								</FormRow>
+							</BlockSeparator>
+							<BlockSeparator>
 								<Table>
-									<TableHead>
-										<TableRow>
-											<TableCell></TableCell>
-											<TableCell>Identificação</TableCell>
-											<TableCell>Rua</TableCell>
-											<TableCell>Bairro</TableCell>
-											<TableCell>Cidade / Estado</TableCell>
-											<TableCell>CEP</TableCell>
-											<TableCell>Ações</TableCell>
-										</TableRow>
-									</TableHead>
 									<TableBody>
 										<TableRow>
-											<TableCell style={{width:30}}><Icon path={mdiMapMarker} color='#BCBCBC' size='18' /></TableCell>
-											<TableCell>Casa</TableCell>
-											<TableCell>Rua João Quartieiro</TableCell>
-											<TableCell>Centro</TableCell>
-											<TableCell>Sombrio SC</TableCell>
-											<TableCell>88960-000</TableCell>
 											<TableCell style={{width:30}}>
-												<IconButton>
-													<Icon path={mdiDelete} color='#BCBCBC' size='18' />
-												</IconButton>
+												<Icon path={mdiSourceBranch} color='#BCBCBC' size='18' />
 											</TableCell>
+											<TableCell>Copeiro 1</TableCell>
+											<TableCell style={{width:30}}><Icon path={mdiCloseCircle} color='#BCBCBC' size='18' /></TableCell>
 										</TableRow>
 									</TableBody>
 								</Table>
 							</BlockSeparator>
 						</Paper>
 					</Block>
+					{!!edit &&
+						<Block>
+							<BlockHeader>
+								<BlockTitle>Enderços</BlockTitle>
+							</BlockHeader>
+							<Paper>
+								<BlockSeparator>
+									<Table>
+										<TableHead>
+											<TableRow>
+												<TableCell></TableCell>
+												<TableCell>Identificação</TableCell>
+												<TableCell>Rua</TableCell>
+												<TableCell>Bairro</TableCell>
+												<TableCell>Cidade / Estado</TableCell>
+												<TableCell>CEP</TableCell>
+												<TableCell>Ações</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow>
+												<TableCell style={{width:30}}><Icon path={mdiMapMarker} color='#BCBCBC' size='18' /></TableCell>
+												<TableCell>Casa</TableCell>
+												<TableCell>Rua João Quartieiro</TableCell>
+												<TableCell>Centro</TableCell>
+												<TableCell>Sombrio SC</TableCell>
+												<TableCell>88960-000</TableCell>
+												<TableCell style={{width:30}}>
+													<IconButton>
+														<Icon path={mdiDelete} color='#BCBCBC' size='18' />
+													</IconButton>
+												</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</BlockSeparator>
+							</Paper>
+						</Block>}
 				</Content>
 				<SidebarContainer>
 					<Block>
