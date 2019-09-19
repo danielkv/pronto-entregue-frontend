@@ -81,7 +81,6 @@ module.exports.resolvers = {
 			})
 		},
 		updateBranch: (parent, {id, data}, ctx) => {
-			console.log(ctx);
 			return sequelize.transaction(transaction => {
 				return ctx.company.getBranches({where:{id}})
 				.then(([branch])=>{
@@ -140,12 +139,12 @@ module.exports.resolvers = {
 			return parent.getOrders();
 		},
 		user_relation: (parent, args, ctx) => {
-			if (!parent.branches_users) throw new Error('Nenhum usuário selecionado');
-			return parent.branches_users.getRole()
+			if (!parent.branch_relation) throw new Error('Nenhum usuário selecionado');
+			return parent.branch_relation.getRole()
 			.then(role => {
 				return {
+					...parent.branch_relation.get(),
 					role,
-					active:parent.branches_users.active
 				}
 			});
 		},

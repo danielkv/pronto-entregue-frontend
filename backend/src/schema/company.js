@@ -20,6 +20,7 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		metas:[CompanyMeta]!
+		assigned_branches: [Branch]! @hasRole(permission:"users_edit", scope:"adm")
 		branches:[Branch]! @hasRole(permission:"branches_read", scope:"adm")
 		users:[User]! @hasRole(permission:"users_read", scope:"adm")
 		last_month_revenue:Float!
@@ -94,7 +95,17 @@ module.exports.resolvers = {
 		}
 	},
 	Company: {
-		branches: (parent, args, ctx, info) => {
+		assigned_branches : (parent, args, ctx) => {
+			if (!parent.company_relation) throw new Error('Nenhum usuário selecionado');
+			
+			return parent.getUsers({where:{id:parent.company_relation.user_id}})
+			.then(([user])=>{
+				if (!user) throw new Error('Usuário não encontrado');
+
+				return user.getBranches({where:{company_id:parent.get('id')}});
+			})
+		},
+		branches: (parent, args, ctx) => {
 			if (!parent.company_relation) return parent.getBranches();
 			
 			return Users.findByPk(parent.company_relation.get('user_id'))

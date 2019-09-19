@@ -1,12 +1,14 @@
 import React from 'react';
-import {Paper, TextField, FormControlLabel, Switch, ButtonGroup, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid} from '@material-ui/core';
+import {Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton} from '@material-ui/core';
 import Icon from '@mdi/react';
-import {mdiStore, mdiSourceBranch, mdiMapMarker, mdiCloseCircle, mdiPlusCircle, mdiDelete } from '@mdi/js'
+import {mdiSourceBranch, mdiMapMarker, mdiCloseCircle, mdiPlusCircle, mdiDelete } from '@mdi/js'
 import * as Yup from 'yup';
 import {Formik, FieldArray, Form, Field} from 'formik';
+import { useQuery } from '@apollo/react-hooks';
 
 import {meta_model} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading} from '../../layout/components';
+import gql from 'graphql-tag';
 
 const userSchema = Yup.object().shape({
 	first_name: Yup.string().required('Obrigatório'),
@@ -20,16 +22,31 @@ const userSchema = Yup.object().shape({
 		})).min(1),
 });
 
-export default function pageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
+const GET_ROLES = gql`
+	query  {
+		roles {
+			id
+			name
+			display_name
+		}
+	}
+`;
+
+export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit, selectedBranch, assignBranch}) {
+
+	const {data:rolesData, loading:loadingRoles} = useQuery(GET_ROLES);
+
+	if (loadingRoles) return <Loading />
+
 	return (
 		<Formik
 			validationSchema={userSchema}
 			initialValues={initialValues}
 			onSubmit={onSubmit}
-			validateOnChange={validateOnChange}
+			validateOnChange={false}
 			validateOnBlur={false}
 		>
-			{({values:{active, phones}, setFieldValue, handleChange, isSubmitting}) => (
+			{({values:{active, phones, assigned_branches, addresses}, setFieldValue, handleChange, isSubmitting}) => (
 			<Form>
 				<Content>
 					<Block>
@@ -79,7 +96,6 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 								<FieldArray name='phones'>
 									{ ({insert, remove}) => (
 										phones.filter((row)=>row.action !== 'delete').map((phone, index) => {
-											
 											return (<FormRow key={index}>
 												<FieldControl>
 													<Field name={`phones.${index}.meta_value`} component={tField} label='Telefone' />
@@ -103,28 +119,73 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 						<BlockHeader>
 							<BlockTitle>Filiais vinculadas</BlockTitle>
 						</BlockHeader>
-						<Paper>
-							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<TextField label='Buscar filial' />
-									</FieldControl>
-								</FormRow>
-							</BlockSeparator>
-							<BlockSeparator>
-								<Table>
-									<TableBody>
-										<TableRow>
-											<TableCell style={{width:30}}>
-												<Icon path={mdiSourceBranch} color='#BCBCBC' size='18' />
-											</TableCell>
-											<TableCell>Copeiro 1</TableCell>
-											<TableCell style={{width:30}}><Icon path={mdiCloseCircle} color='#BCBCBC' size='18' /></TableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
-							</BlockSeparator>
-						</Paper>
+						<FieldArray name='assigned_branches'>
+							{({insert, remove}) => (
+							<Paper>									
+								<BlockSeparator>
+									<Table>
+										<TableHead>
+											<TableRow>
+												<TableCell style={{width:30}}></TableCell>
+												<TableCell>Filial</TableCell>
+												<TableCell style={{width:200}}>Função</TableCell>
+												<TableCell style={{width:100}}>Ações</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											{assigned_branches.filter((row)=>row.action !== 'unassign').map((branch, index) => {
+												return (
+													<TableRow key={branch.id}>
+														<TableCell><Icon path={mdiSourceBranch} color='#BCBCBC' size='18' /></TableCell>
+														<TableCell>{branch.name}</TableCell>
+														<TableCell>
+															<TextField select disabled={isSubmitting}
+																value={branch.user_relation.role_id}
+																name={`assigned_branches.${index}.user_relation.role_id`}
+																onChange={(e)=>{
+																	handleChange(e);
+																	if (branch.action === '') setFieldValue(`assigned_branches.${index}.action`, 'update');
+																}}
+															>
+																{rolesData.roles.map(role=>
+																<MenuItem key={role.id} value={role.id}>{role.display_name}</MenuItem>
+																)}
+															</TextField>
+														</TableCell>
+														<TableCell>
+															<Switch
+																checked={branch.user_relation.active}
+																disabled={isSubmitting}
+																onChange={()=>{
+																	setFieldValue(`assigned_branches.${index}.user_relation.active`, !branch.user_relation.active);
+																	if (branch.action === '') setFieldValue(`assigned_branches.${index}.action`, 'update');
+																}}
+																size='small'
+															/>
+															<IconButton
+																disabled={isSubmitting}
+																onClick={()=>{
+																	setFieldValue(`assigned_branches.${index}.action`, 'unassign');
+																}}
+																>
+																<Icon path={mdiCloseCircle} color='#BCBCBC' size='18' />
+															</IconButton>
+														</TableCell>
+													</TableRow>)
+											})}
+										</TableBody>
+									</Table>
+								</BlockSeparator>
+								{!assigned_branches.some(branch=> branch.id === selectedBranch) && 
+								<BlockSeparator>
+									<FormRow>
+										<FieldControl>
+											<Button disabled={isSubmitting} onClick={()=>{insert(assigned_branches.length, assignBranch)}} variant='contained'>Vincular filial selecionada</Button>
+										</FieldControl>
+									</FormRow>
+								</BlockSeparator>}
+							</Paper>)}
+						</FieldArray>
 					</Block>
 					{!!edit &&
 						<Block>
@@ -136,7 +197,7 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 									<Table>
 										<TableHead>
 											<TableRow>
-												<TableCell></TableCell>
+												<TableCell style={{width:30}}></TableCell>
 												<TableCell>Identificação</TableCell>
 												<TableCell>Rua</TableCell>
 												<TableCell>Bairro</TableCell>
@@ -146,19 +207,26 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 											</TableRow>
 										</TableHead>
 										<TableBody>
-											<TableRow>
-												<TableCell style={{width:30}}><Icon path={mdiMapMarker} color='#BCBCBC' size='18' /></TableCell>
-												<TableCell>Casa</TableCell>
-												<TableCell>Rua João Quartieiro</TableCell>
-												<TableCell>Centro</TableCell>
-												<TableCell>Sombrio SC</TableCell>
-												<TableCell>88960-000</TableCell>
-												<TableCell style={{width:30}}>
-													<IconButton>
-														<Icon path={mdiDelete} color='#BCBCBC' size='18' />
-													</IconButton>
-												</TableCell>
-											</TableRow>
+											<FieldArray name='phones'>
+												{ ({insert, remove}) => (
+													addresses.filter((row)=>row.action !== 'delete').map((address, index) => {
+														return (
+														<TableRow key={index}>
+															<TableCell><Icon path={mdiMapMarker} color='#BCBCBC' size='18' /></TableCell>
+															<TableCell>{address.meta_value.name}</TableCell>
+															<TableCell>{address.meta_value.street}</TableCell>
+															<TableCell>{address.meta_value.district}</TableCell>
+															<TableCell>{`${address.meta_value.city} ${address.meta_value.state}`}</TableCell>
+															<TableCell>{address.meta_value.zipcode}</TableCell>
+															<TableCell>
+																<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`addresses.${index}.action`, 'delete')}}>
+																	<Icon path={mdiDelete} color='#BCBCBC' size='18' />
+																</IconButton>
+															</TableCell>
+														</TableRow>)
+													}))
+												}
+											</FieldArray>
 										</TableBody>
 									</Table>
 								</BlockSeparator>
@@ -177,7 +245,7 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 										<FormControlLabel
 											labelPlacement='start'
 											control={
-												<Switch size='small' color='primary' checked={true} onChange={()=>{}} value="includeDisabled" />
+												<Switch size='small' color='primary' checked={active} onChange={()=>{setFieldValue('active', !active)}} />
 											}
 											label="Ativo"
 										/>
@@ -185,10 +253,7 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 								</FormRow>
 								<FormRow>
 									<FieldControl>
-										<ButtonGroup fullWidth>
-											<Button color='secondary'>Cancelar</Button>
-											<Button variant="contained" color='secondary'>Salvar</Button>
-										</ButtonGroup>
+										<Button fullWidth type='submit' variant="contained" color='secondary'>Salvar</Button>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
@@ -196,13 +261,13 @@ export default function pageForm ({initialValues, onSubmit, pageTitle, validateO
 								<FormRow>
 									<FieldControl>
 										<FormControl>
-											<TextField select label='Função'>
+											{/* <TextField select label='Função'>
 												<MenuItem value='adm'>Administrador</MenuItem>
 												<MenuItem value='branch_manager'>Gerente de Filiais</MenuItem>
 												<MenuItem value='manager'>Gerente</MenuItem>
 												<MenuItem value='seller'>Vendedor</MenuItem>
 												<MenuItem value='customer'>Consumidor</MenuItem>
-											</TextField>
+											</TextField> */}
 										</FormControl>
 									</FieldControl>
 								</FormRow>

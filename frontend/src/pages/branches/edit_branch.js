@@ -8,7 +8,7 @@ import Layout from '../../layout';
 import { UPDATE_BRANCH } from '../../graphql/branches';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 
-export const LOAD_BRANCH = gql`
+const LOAD_BRANCH = gql`
 	query ($id: ID!) {
 		branch (id: $id) {
 			id

@@ -20,24 +20,28 @@ export const getStatusIcon = (status) => {
 	}
 }
 
-export const joinMetas = (metas={}) => {
+export const joinMetas = (metas, values={}) => {
 	let return_metas = [];
+
+	//console.log(metas);
 	
-	Object(metas).keys(key => {
-		let value = metas[key];
-		switch (key) {
-			case 'address':
-				return_metas.push({...value, meta_value:JSON.stringify(value.meta_value)});
-			break;
-			case 'addresses':
-				return_metas = [...return_metas, ...value.map(v => ({...v, meta_value:JSON.stringify(v.meta_value)}))];
-			break;
-			case 'phones':
-			case 'emails':
-				return_metas = [...return_metas, ...value];
-			break;
-			default :
-				return_metas.push(value);
+	metas.forEach(key => {
+		if (values[key]) {
+			let value = values[key];
+			switch (key) {
+				case 'address':
+					return_metas.push({...value, meta_value:JSON.stringify(value.meta_value)});
+				break;
+				case 'addresses':
+					return_metas = [...return_metas, ...value.map(v => ({...v, meta_value:JSON.stringify(v.meta_value)}))];
+				break;
+				case 'phones':
+				case 'emails':
+					return_metas = [...return_metas, ...value];
+				break;
+				default :
+					return_metas.push(value);
+			}
 		}
 	});
 
@@ -53,20 +57,31 @@ export const initialMetas = (needed=[]) => {
 	const metas = {};
 
 	needed.forEach(need => {
-		metas[need] = meta_model(need);
+		if (need === 'address') {
+			metas[need] = meta_model('address', {
+				street:'',
+				number:'',
+				district:'',
+				zipcode:'',
+				city:'',
+				state:'',
+			});
+		} else if (need === 'addresses') {
+			metas[need] = [meta_model('address', {
+				street:'',
+				number:'',
+				district:'',
+				zipcode:'',
+				city:'',
+				state:'',
+			})];
+		} else if (need === 'phones') {
+			metas[need] = [meta_model('phone')];
+		} else if (need === 'emails') {
+			metas[need] = [meta_model('email')];
+		} else
+			metas[need] = meta_model(need);
 	});
-
-	if (needed.includes('address')) metas.address = meta_model('address', {
-		street:'',
-		number:'',
-		district:'',
-		zipcode:'',
-		city:'',
-		state:'',
-	});
-	
-	if (needed.includes('phones')) metas.phones = [meta_model('phone')];
-	if (needed.includes('emails')) metas.emails = [meta_model('email')];
 
 	return metas;
 }
@@ -74,6 +89,8 @@ export const initialMetas = (needed=[]) => {
 export const extractMetas = (needed, metas=[]) => {
 	//valores padrão
 	let return_metas = initialMetas(needed);
+
+	console.log(return_metas);
 
 	//Retira __typename dos metadados
 	metas = metas.map(meta => {delete meta.__typename; return meta});

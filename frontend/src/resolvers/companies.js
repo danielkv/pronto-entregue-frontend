@@ -37,6 +37,8 @@ export default {
 					userBranches:data.company.branches
 				}});
 
+				localStorage.setItem('@flakery/selectedCompany', data.company.id);
+
 				//seleciona a primeira filial
 				const selectedBranch = data.company.branches.length ? data.company.branches[0].id : 0;
 				await client.mutate({mutation:SELECT_BRANCH, variables:{id:selectedBranch}});

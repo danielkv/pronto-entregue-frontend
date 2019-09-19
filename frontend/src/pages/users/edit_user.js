@@ -7,9 +7,11 @@ import {setPageTitle, extractMetas, joinMetas} from '../../utils';
 import Layout from '../../layout';
 import { UPDATE_USER } from '../../graphql/users';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 
-export const LOAD_USER = gql`
-	query ($id: ID!) {
+const LOAD_USER = gql`
+	query ($id: ID!, $company_id:ID!) {
 		user (id: $id) {
 			id
 			first_name
@@ -17,6 +19,17 @@ export const LOAD_USER = gql`
 			email
 			createdAt
 			active
+			company(company_id:$company_id) {
+				id
+				assigned_branches {
+					id
+					name
+					user_relation {
+						active
+						role_id
+					}
+				}
+			}
 			metas {
 				id
 				meta_type
@@ -27,31 +40,62 @@ export const LOAD_USER = gql`
 	}
 `;
 
+const LOAD_USER_BRANCH = gql`
+	query ($id: ID!, $branch_id:ID!) {
+		user (id:$id) {
+			id
+			branch (branch_id: $branch_id) {
+				id
+				name
+			}
+		}
+	}
+`;
+
 function Page (props) {
 	setPageTitle('Alterar usuário');
 
 	const edit_id = props.match.params.id;
 	
-	const {data, loading:loadingGetData, error:errorGetData} = useQuery(LOAD_USER, {variables:{id:edit_id}});
+	//busca usuário para edição
+	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
+	const {data, loading:loadingGetData, error:errorGetData} = useQuery(LOAD_USER, {variables:{id:edit_id, company_id:selectedCompanyData.selectedCompany}});
+
+	//busca filial selecionada para ser vincular
+	const {data:selectedBranchData, loading:loadingSelectedBranch} = useQuery(GET_SELECTED_BRANCH);
+	const {data:userBranchData, loading:loadingUserBranch} = useQuery(LOAD_USER_BRANCH, {variables:{id:edit_id, branch_id:selectedBranchData.selectedBranch}});
+	
+	//normaliza filial para ser vinculada
+	const assignBranch = userBranchData ? userBranchData.user.branch : '';
+	if (assignBranch) {
+		delete assignBranch.__typename;
+		assignBranch.action = 'assign';
+		assignBranch.user_relation = {role_id:'', active:true};
+	}	
+
 	const client = useApolloClient();
 
 	if (errorGetData) return <ErrorBlock error={errorGetData} />
-	if (!data || loadingGetData) return (<LoadingBlock />);
+	if (!data || loadingGetData || loadingSelectedCompany || loadingSelectedBranch || loadingUserBranch) return (<LoadingBlock />);
 
+	const metas = ['document', 'addresses', 'phones'];
 	const user = {
 		first_name: data.user.first_name,
 		last_name: data.user.last_name,
 		email: data.user.email,
 		active: data.user.active,
-		...extractMetas(['document', 'phones'], data.user.metas)
+		assigned_branches: data.user.company.assigned_branches.map(branch=>{delete branch.__typename; delete branch.user_relation.__typename; return {...branch, action:''}}),
+		...extractMetas(metas, data.user.metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {
-		const data = {...values, metas:joinMetas(values)};
-		delete data.address;
+		values = JSON.parse(JSON.stringify(values));
+		const data = {...values, metas:joinMetas(metas, values)};
+		delete data.addresses;
 		delete data.phones;
-		delete data.emails;
 		delete data.document;
+		
+		data.assigned_branches = values.assigned_branches.map(branch => {delete branch.name; return branch});
 
 		client.mutate({mutation:UPDATE_USER, variables:{id:edit_id, data}})
 		.catch((err)=>{
@@ -68,6 +112,8 @@ function Page (props) {
 				pageTitle='Alterar usuário'
 				initialValues={user}
 				onSubmit={onSubmit}
+				selectedBranch={selectedBranchData.selectedBranch}
+				assignBranch={assignBranch}
 				edit={true}
 				/>
 		</Layout>

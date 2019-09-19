@@ -1,7 +1,7 @@
-import './services/init';
-
-import React from 'react';
+import React, { useState } from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
+
+import {init} from './services/init';
 
 import Login from './pages/login';
 import Dashboard from './pages/dashboard';
@@ -31,8 +31,24 @@ import NewUser from './pages/users/new_user';
 import EditUser from './pages/users/edit_user';
 
 import Settings from './pages/settings';
+//import { LoadingBlock } from './layout/blocks';
+import { Loading } from './layout/components';
 
 export default function Router(props) {
+	const [loading, setLoading] = useState(true);
+
+	function load() {
+		init()
+		.then(()=>{
+			setLoading(false);
+		})
+	}
+
+	if (loading) {
+		load();
+		return <Loading />
+	}
+
 	return (
 		<BrowserRouter>
 			<Switch>

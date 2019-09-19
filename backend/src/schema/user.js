@@ -2,6 +2,7 @@ const sequelize = require('../services/connection');
 const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
 const Companies = require('../model/companies');
+const Branches = require('../model/branches');
 const Roles = require('../model/roles');
 const {salt} = require('../utilities');
 const jwt = require('jsonwebtoken');
@@ -18,6 +19,7 @@ module.exports.typeDefs = gql`
 	type BranchRelation {
 		active:Boolean!
 		role: Role!
+		role_id: Int!
 	}
 
 	type User {
@@ -31,8 +33,11 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		metas:[UserMeta]!
-		companies:[Company]! @hasRole(permission:"companies_read", scope:"adm")
+		
 		branch_relation:BranchRelation!
+		branch(branch_id:ID!): Branch!
+		company(company_id:ID!): Company!
+		companies:[Company]! @hasRole(permission:"companies_read", scope:"adm")
 	}
 
 	input UserInput {
@@ -41,7 +46,19 @@ module.exports.typeDefs = gql`
 		password:String
 		email:String
 		active:Boolean
+		assigned_branches:[AssignedBranchInput]
 		metas:[UserMetaInput]
+	}
+
+	input AssignedBranchInput {
+		id:ID!
+		action:String!
+		user_relation: BranchUserRelationInput!
+	}
+
+	input BranchUserRelationInput {
+		active:Boolean!
+		role_id:ID!
 	}
 
 	input UserMetaInput {
@@ -109,6 +126,12 @@ module.exports.resolvers = {
 				.then(async (user_updated) => {
 					if (data.metas) {
 						await UsersMeta.updateAll(data.metas, user_updated, transaction);
+					}
+					return user_updated;
+				})
+				.then(async (user_updated)=> {
+					if (data.assigned_branches) {
+						await Branches.assignAll(data.assigned_branches, user_updated, transaction);
 					}
 					return user_updated;
 				})
@@ -182,7 +205,25 @@ module.exports.resolvers = {
 
 			return parent.getCompanies({where:{active:true}, through:{where:{active:true}}});
 		},
+		company:(parent, {company_id}, ctx) => {
+			return parent.getCompanies({where:{id:company_id}})
+			.then (([company])=>{
+				if (!company) throw new Error('Empresa não encontrada');
+
+				return company;
+			})
+		},
+		branch:(parent, {branch_id}, ctx) => {
+			return ctx.company.getBranches({where:{id:branch_id}})
+			.then (([branch])=>{
+				console.log(branch,  branch_id);
+				if (!branch) throw new Error('Filial não encontrada');
+
+				return branch;
+			})
+		},
 		branch_relation: (parent, args, ctx) => {
+			
 			if (!parent.branches_users) throw new Error('Nenhum usuário selecionado');
 			return parent.branches_users.getRole()
 			.then(role => {

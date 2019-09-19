@@ -1,42 +1,46 @@
 import client from './server';
 import {AUTHENTICATION} from '../graphql/authentication';
-import {SELECT_COMPANY, GET_USER_COMPANIES} from '../graphql/companies';
+import {SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY} from '../graphql/companies';
 
-async function isUserLoggedIn () {
+function authenticate () {
 	const token = localStorage.getItem('@flakery/userToken');
-	let response = null;
+	
+	client.writeData({data:{userToken:token}});
 
-	if (token) {
-		client.writeData({data:{userToken:token}});
-		response = await client.query({query:AUTHENTICATION});
-	}
-
-	if (response.data.me) return true;
-	return false;
-}
-
-function loadInitialData() {
-	client.query({query:GET_USER_COMPANIES})
-	.then (async ({data})=> {
-		await client.mutate({mutation:SELECT_COMPANY, variables:{id:data.userCompanies[0].id}});
+	return client.query({query:AUTHENTICATION})
+	.then(({data})=>{
+		if (data.me) {
+			client.writeData({data:{isUserLoggedIn:true}});
+			return true;
+		}
+		return false;
 	});
 }
 
-async function init() {
-	try {
-		//Verifica se usuário já foi autenticado
-		if (await isUserLoggedIn()) {
-			//Redireciona para Dashboard se usuário acessou página de login
-			if (window.location.pathname === '/login') return window.location.href = '/';
+function loadInitialData() {
+	return client.query({query:GET_USER_COMPANIES})
+	.then (async ({data})=> {
+		const {selectedCompany} = client.readQuery({query:GET_SELECTED_COMPANY});
+		const selectCompany_id = selectedCompany || data.userCompanies[0].id;
 
-			//Load inital data
-			loadInitialData();
-		}
-	} catch (err) {
+		return client.mutate({mutation:SELECT_COMPANY, variables:{id:selectCompany_id}});
+	});
+}
+
+export function init() {
+	
+	//Verifica se usuário já foi autenticado
+	return authenticate()
+	.then(result => {
+		if (!result) throw new Error('Usuário não foi autenticado');
+		if (window.location.pathname === '/login') return window.location.href = '/';
+
+		//Load inital data
+		return loadInitialData();
+	})
+	.catch ((err)=>{
 		console.error(err);
 		//Usuário não está autenticado ou ocorreu algum erro
 		if (window.location.pathname !== '/login') return window.location.href = '/login';
-	}
+	});
 }
-
-init();

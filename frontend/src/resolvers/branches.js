@@ -26,6 +26,8 @@ export default {
 				
 				cache.writeData({data:{selectedBranch:data.branch.id}});
 
+				localStorage.setItem('@flakery/selectedBranch', data.branch.id);
+
 				return data.branch;
 			} catch (e) {
 				console.error(e);

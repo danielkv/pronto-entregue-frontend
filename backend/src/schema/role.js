@@ -1,4 +1,5 @@
 const {gql} = require('apollo-server');
+const Roles = require('../model/roles');
 
 module.exports.typeDefs = gql`
 	type Role {
@@ -11,4 +12,10 @@ module.exports.typeDefs = gql`
 	}
 `;
 
-module.exports.resolvers = {}
+module.exports.resolvers = {
+	Query: {
+		roles : async (parent, args, ctx) => {
+			return Roles.findAll();
+		}
+	}
+}
