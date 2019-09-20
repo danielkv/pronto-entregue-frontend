@@ -15,15 +15,17 @@ import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 function Page (props) {
 	setPageTitle('Usuários');
 
+	//carrega empresa selecionada
 	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
 
+	//carrega usuários
 	const {data:usersData, loading:loadingUsersData, error} = useQuery(GET_COMPANY_USERS, {variables:{id:selectedCompanyData.selectedCompany}});
 	const users = usersData && usersData.company.users.length ? usersData.company.users : [];
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const [setUserEnabled, {loading}] = useMutation(UPDATE_USER)
+	const [setUserEnabled, {loading}] = useMutation(UPDATE_USER);
 
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedCompany || loadingUsersData) return (<LoadingBlock />);
@@ -56,13 +58,14 @@ function Page (props) {
 										<TableCell>{row.role}</TableCell>
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
-											<IconButton onClick={()=>{props.history.push(`/usuarios/alterar/${row.id}`)}}>
+											<IconButton  disabled={loading}  onClick={()=>{props.history.push(`/usuarios/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch
 												checked={row.active}
 												onChange={()=>setUserEnabled({variables:{id:row.id, data:{active:!row.active}}})}
 												value="checkedB"
+												disabled={loading} 
 												size='small'
 												color="secondary"
 												inputProps={{ 'aria-label': 'primary checkbox' }}
@@ -94,7 +97,7 @@ function Page (props) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
-						<FormControlLabel
+						<FormControlLabel	
 							control={
 								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
 							}

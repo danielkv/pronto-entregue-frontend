@@ -101,6 +101,9 @@ export default createMuiTheme({
 			root : {
 				'&.error' : {
 					backgroundColor:'#c1051d'
+				},
+				'&.success' : {
+					backgroundColor:'#309a39'
 				}
 			}
 		}
