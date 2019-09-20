@@ -6,7 +6,7 @@ export default {
 	},
 	BranchMeta:{
 		action : ()=> {
-			return 'update';
+			return 'editable';
 		}
 	},
 	Mutation : {

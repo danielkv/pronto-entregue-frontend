@@ -22,8 +22,6 @@ export const getStatusIcon = (status) => {
 
 export const joinMetas = (metas, values={}) => {
 	let return_metas = [];
-
-	//console.log(metas);
 	
 	metas.forEach(key => {
 		if (values[key]) {
@@ -48,7 +46,7 @@ export const joinMetas = (metas, values={}) => {
 	return return_metas;
 }
 
-export const meta_model = (type, value='', action='create') => {
+export const meta_model = (type, value='', action='new_empty') => {
 	return {action, meta_type:type, meta_value:value};
 }
 
@@ -89,8 +87,6 @@ export const initialMetas = (needed=[]) => {
 export const extractMetas = (needed, metas=[]) => {
 	//valores padrão
 	let return_metas = initialMetas(needed);
-
-	console.log(return_metas);
 
 	//Retira __typename dos metadados
 	metas = metas.map(meta => {delete meta.__typename; return meta});

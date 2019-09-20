@@ -53,7 +53,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<Field name='name' component={tField} label='Nome da Filial' />
 								</FieldControl>
 								<FieldControl>
-									<Field name='document.meta_value' component={tField} label='CNPJ' />
+									<Field name='document.meta_value' action='document.action' component={tField} label='CNPJ' />
 								</FieldControl>
 							</FormRow>
 						</Paper>
@@ -65,24 +65,24 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 						<Paper>
 							<FormRow>
 								<FieldControl>
-									<Field name='address.meta_value.street' component={tField} label='Rua' />
+									<Field name='address.meta_value.street' action='address.action' component={tField} label='Rua' />
 								</FieldControl>
 								<FieldControl style={{flex:.3}}>
-									<Field name='address.meta_value.number' component={tField} label='Número' />
+									<Field name='address.meta_value.number' action='address.action' component={tField} label='Número' />
 								</FieldControl>
 								<FieldControl style={{flex:.3}}>
-									<Field name='address.meta_value.zipcode' component={tField} label='CEP' />
+									<Field name='address.meta_value.zipcode' action='address.action' component={tField} label='CEP' />
 								</FieldControl>
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Field name='address.meta_value.district' component={tField} label='Bairro' />
+									<Field name='address.meta_value.district' action='address.action' component={tField} label='Bairro' />
 								</FieldControl>
 								<FieldControl>
-									<Field name='address.meta_value.city' component={tField} label='Cidade' />
+									<Field name='address.meta_value.city' action='address.action' component={tField} label='Cidade' />
 								</FieldControl>
 								<FieldControl>
-									<Field name='address.meta_value.state' component={tField} label='Estado' />
+									<Field name='address.meta_value.state' action='address.action' component={tField} label='Estado' />
 								</FieldControl>
 							</FormRow>
 						</Paper>
@@ -99,13 +99,19 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 										
 										return (<FormRow key={index}>
 											<FieldControl>
-												<Field name={`phones.${index}.meta_value`} component={tField} label='Telefone' />
+												<Field name={`phones.${index}.meta_value`} action={`phones.${index}.action`} component={tField} label='Telefone' />
 											</FieldControl>
 											<FieldControl>
 												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, meta_model('phone')); return false}}>
-													<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
+													<Icon path={mdiPlusCircle} size='18' color='#363E5E' /> 
 												</IconButton>}
-												{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (phone.action ==='create') return remove(index); setFieldValue(`phones.${index}.action`, 'delete')}}>
+												{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{
+													e.preventDefault();
+													if (phone.action ==='create' || phone.action ==='new_empty')
+														return remove(index);
+													else
+														setFieldValue(`phones.${index}.action`, 'delete')
+													}}>
 													<Icon path={mdiDelete} size='18' color='#707070' />
 												</IconButton>}
 											</FieldControl>
@@ -120,13 +126,19 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 										emails.filter((row)=>row.action !== 'delete').map((email, index) => {
 											return (<FormRow key={index}>
 												<FieldControl>
-													<Field name={`emails.${index}.meta_value`} component={tField} label='Email' />
+													<Field name={`emails.${index}.meta_value`} action={`emails.${index}.action`} component={tField} label='Email' />
 												</FieldControl>
 												<FieldControl>
 													{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, meta_model('email'))}}>
 														<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
 													</IconButton>}
-													{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (email.action ==='create') return remove(index); setFieldValue(`emails.${index}.action`, 'delete');}}>
+													{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{
+														e.preventDefault();
+														if (email.action ==='create' || email.action ==='new_empty')
+															return remove(index);
+														else
+															setFieldValue(`emails.${index}.action`, 'delete');
+														}}>
 														<Icon path={mdiDelete} size='18' color='#707070' />
 													</IconButton>}
 												</FieldControl>

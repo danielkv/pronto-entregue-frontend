@@ -36,14 +36,15 @@ function Page (props) {
 	if (error) return <ErrorBlock error={error} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
+	const metas = ['address', 'document', 'phones', 'emails'];
 	const branch = {
 		name: data.branch.name,
 		active: data.branch.active,
-		...extractMetas(['address', 'document', 'phones', 'email'], data.branch.metas)
+		...extractMetas(metas, data.branch.metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {
-		const data = {...values, metas:joinMetas(values)};
+		const data = {...values, metas:joinMetas(metas, values)};
 		delete data.address;
 		delete data.phones;
 		delete data.emails;

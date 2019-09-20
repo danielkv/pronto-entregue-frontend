@@ -11,7 +11,7 @@ class Branches extends Sequelize.Model {
 		const branches_unassign = branches.filter(row=>row.id && row.action==='unassign');
 		const branches_update = branches.filter(row=>row.id && row.action==='update');
 		
-		const [assigned, unassigned, activated, deactivated] = await Promise.all([
+		const [assigned, unassigned, updated] = await Promise.all([
 			Promise.all(branches_assign.map(branch=>Branches.findByPk(branch.id).then(branch_model=>branch_model.addUser(user_instance, {through:{...branch.user_relation}, transaction})))),
 			Promise.all(branches_unassign.map(branch=>Branches.findByPk(branch.id).then(branch_model=>branch_model.removeUser(user_instance, {transaction})))),
 			Promise.all(branches_update.map(branch=>user_instance.getBranches({where:{id:branch.id}}).then(([branch_model])=>branch_model.branch_relation.update({...branch.user_relation}, {transaction})))),
@@ -20,8 +20,7 @@ class Branches extends Sequelize.Model {
 		return {
 			assigned,
 			unassigned,
-			activated,
-			deactivated
+			updated
 		};
 	}
 };

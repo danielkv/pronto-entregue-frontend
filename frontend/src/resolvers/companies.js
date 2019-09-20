@@ -4,7 +4,7 @@ import { SELECT_BRANCH } from "../graphql/branches";
 export default {
 	CompanyMeta:{
 		action : ()=> {
-			return 'update';
+			return 'editable';
 		}
 	},
 	Mutation : {

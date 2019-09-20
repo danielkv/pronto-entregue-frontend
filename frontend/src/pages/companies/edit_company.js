@@ -38,15 +38,17 @@ function Page (props) {
 	if (error) return <ErrorBlock error={error} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
+	const metas = ['address', 'document', 'contact', 'phones', 'emails'];
+
 	const company = {
 		name: data.company.name,
 		display_name: data.company.display_name,
 		active: data.company.active,
-		...extractMetas(['address', 'document', 'contact', 'phones', 'email'], data.company.metas)
+		...extractMetas(metas, data.company.metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {
-		const data = {...values, metas:joinMetas(values)};
+		const data = {...values, metas:joinMetas(metas, values)};
 		delete data.address;
 		delete data.contact;
 		delete data.phones;
@@ -54,11 +56,11 @@ function Page (props) {
 		delete data.document;
 
 		client.mutate({mutation:UPDATE_COMPANY, variables:{id:edit_id, data}})
-		.then(({data}) => {
-			setSubmitting(false);
-		})
 		.catch((err)=>{
 			console.error(err.graphQLErrors, err.networkError, err.operation);
+		})
+		.finally(() => {
+			setSubmitting(false);
 		})
 	}
 	

@@ -41,13 +41,10 @@ const LOAD_USER = gql`
 `;
 
 const LOAD_USER_BRANCH = gql`
-	query ($id: ID!, $branch_id:ID!) {
-		user (id:$id) {
+	query ($id: ID!) {
+		branch (id: $id) {
 			id
-			branch (branch_id: $branch_id) {
-				id
-				name
-			}
+			name
 		}
 	}
 `;
@@ -63,15 +60,15 @@ function Page (props) {
 
 	//busca filial selecionada para ser vincular
 	const {data:selectedBranchData, loading:loadingSelectedBranch} = useQuery(GET_SELECTED_BRANCH);
-	const {data:userBranchData, loading:loadingUserBranch} = useQuery(LOAD_USER_BRANCH, {variables:{id:edit_id, branch_id:selectedBranchData.selectedBranch}});
+	const {data:userBranchData, loading:loadingUserBranch} = useQuery(LOAD_USER_BRANCH, {variables:{id: selectedBranchData.selectedBranch}});
 	
 	//normaliza filial para ser vinculada
-	const assignBranch = userBranchData ? userBranchData.user.branch : '';
+	const assignBranch = userBranchData ? userBranchData.branch : '';
 	if (assignBranch) {
 		delete assignBranch.__typename;
 		assignBranch.action = 'assign';
 		assignBranch.user_relation = {role_id:'', active:true};
-	}	
+	}
 
 	const client = useApolloClient();
 
@@ -84,6 +81,7 @@ function Page (props) {
 		last_name: data.user.last_name,
 		email: data.user.email,
 		active: data.user.active,
+		password: '',
 		assigned_branches: data.user.company.assigned_branches.map(branch=>{delete branch.__typename; delete branch.user_relation.__typename; return {...branch, action:''}}),
 		...extractMetas(metas, data.user.metas)
 	};
@@ -95,7 +93,7 @@ function Page (props) {
 		delete data.phones;
 		delete data.document;
 		
-		data.assigned_branches = values.assigned_branches.map(branch => {delete branch.name; return branch});
+		data.assigned_branches = values.assigned_branches.map(branch => {delete branch.name; return branch});		
 
 		client.mutate({mutation:UPDATE_USER, variables:{id:edit_id, data}})
 		.catch((err)=>{

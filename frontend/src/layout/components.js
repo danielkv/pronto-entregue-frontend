@@ -176,7 +176,7 @@ export const FormRow = styled.div`
 export const FieldControl = styled.div`
 	flex:1;
 	display:flex;
-	align-items:flex-end;
+	align-items:center;
 	margin: 0 15px;
 `;
 
@@ -188,14 +188,26 @@ export const ProductImage = styled.div`
 	border-radius:30px;
 `;
 
-export function tField({field, label, form:{isSubmitting, errors}}) {
-	
+export function tField({field, label, action=false, type='text', form:{isSubmitting, errors, setFieldValue, values}, form}) {
 	let error = '';
 	const nesting = field.name.split('.');
-
+	
 	if (errors[nesting[0]]) error = nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, errors);
 
+	if (action) {
+		let action_nesting = action.split('.');
+		let action_value = action_nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, values);
+
+		let onChange = field.onChange;
+		field.onChange = (e) => {
+			onChange(e);
+			if (action_value === 'new_empty') setFieldValue(action, 'create');
+			else if (action_value === 'editable') setFieldValue(action, 'update');
+		}
+	} 
+
+
 	return (
-		<TextField {...field} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
+		<TextField {...field} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
 	)
 }

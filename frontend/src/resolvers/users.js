@@ -5,7 +5,7 @@ export default {
 	},
 	UserMeta:{
 		action : ()=> {
-			return 'update';
+			return 'editable';
 		}
 	},
 	Mutation : {

@@ -25,15 +25,16 @@ function Page (props) {
 	
 	const client = useApolloClient();
 
+	const metas = ['address', 'document', 'contact', 'phones', 'emails'];
 	const company = {
 		name:'',
 		display_name:'',
 		active:true,
-		...initialMetas(['address', 'document', 'contact', 'phone', 'email'])
+		...initialMetas(metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {
-		const data = {...values, metas:joinMetas(values)};
+		const data = {...values, metas:joinMetas(metas, values)};
 		delete data.address;
 		delete data.contact;
 		delete data.phones;

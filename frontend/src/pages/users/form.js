@@ -1,5 +1,5 @@
-import React from 'react';
-import {Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton} from '@material-ui/core';
+import React, { useState, Fragment } from 'react';
+import {Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid} from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiSourceBranch, mdiMapMarker, mdiCloseCircle, mdiPlusCircle, mdiDelete } from '@mdi/js'
 import * as Yup from 'yup';
@@ -9,18 +9,6 @@ import { useQuery } from '@apollo/react-hooks';
 import {meta_model} from '../../utils';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading} from '../../layout/components';
 import gql from 'graphql-tag';
-
-const userSchema = Yup.object().shape({
-	first_name: Yup.string().required('Obrigatório'),
-	last_name: Yup.string().required('Obrigatório'),
-	email: Yup.string().required('Obrigatório'),
-	document : Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório')
-		}),
-	phones: Yup.array().of(Yup.object().shape({
-			meta_value:Yup.string().required('Obrigatório')
-		})).min(1),
-});
 
 const GET_ROLES = gql`
 	query  {
@@ -34,6 +22,25 @@ const GET_ROLES = gql`
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit, selectedBranch, assignBranch}) {
 
+	const userSchema = Yup.object().shape({
+		first_name: Yup.string().required('Obrigatório'),
+		last_name: Yup.string().required('Obrigatório'),
+		email: Yup.string().required('Obrigatório'),
+		password: Yup.lazy(value => {
+			if (forcePassword)
+				return Yup.string().required('Obrigatório');
+			return Yup.string().notRequired();
+		}),
+		document : Yup.object().shape({
+				meta_value:Yup.string().required('Obrigatório')
+			}),
+		phones: Yup.array().of(Yup.object().shape({
+				meta_value:Yup.string().required('Obrigatório')
+			})).min(1),
+	});
+
+	const [forcePassword, setForcePassword] = useState(false);
+
 	const {data:rolesData, loading:loadingRoles} = useQuery(GET_ROLES);
 
 	if (loadingRoles) return <Loading />
@@ -43,7 +50,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validationSchema={userSchema}
 			initialValues={initialValues}
 			onSubmit={onSubmit}
-			validateOnChange={false}
+			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
 			{({values:{active, phones, assigned_branches, addresses}, setFieldValue, handleChange, isSubmitting}) => (
@@ -71,8 +78,22 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 								</FieldControl>
 								<FieldControl>
 									<FormControl>
-										<Button fullWidth={false} variant='contained' color='primary'>Forçar uma senha</Button>
-										<FormHelperText>Caso não forçar uma senha, o usuário receberá uma notificação para criar uma senha no primeiro acesso</FormHelperText>
+										{forcePassword ? 
+										<Grid container>
+											<Grid item xs='6'>
+												<Field name='password' type='password' component={tField} label='Senha' />
+												<FormHelperText>Vocês irá forçar uma senha para esse usuário</FormHelperText>
+											</Grid>
+											<Grid item xs='6' style={{marginTop:17, paddingLeft:30}}>
+												<Button fullWidth onClick={()=>{setForcePassword(false); setFieldValue('password', '');}} variant='contained'>Cancelar</Button>
+											</Grid>
+										</Grid>
+										:
+										<Fragment>
+											<Button onClick={()=>{setForcePassword(true)}} fullWidth={false} variant='contained' color='primary'>Forçar uma senha</Button>
+											<FormHelperText>Caso não forçar uma senha, o usuário receberá uma notificação para criar uma senha no primeiro acesso</FormHelperText>
+										</Fragment>
+										}
 									</FormControl>
 								</FieldControl>
 							</FormRow>
@@ -86,7 +107,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
-										<Field name='document.meta_value' component={tField} label='CPF' />
+										<Field name='document.meta_value' action='document.action' component={tField} label='CPF' />
 									</FieldControl>
 									<FieldControl>
 									</FieldControl>
@@ -98,13 +119,18 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 										phones.filter((row)=>row.action !== 'delete').map((phone, index) => {
 											return (<FormRow key={index}>
 												<FieldControl>
-													<Field name={`phones.${index}.meta_value`} component={tField} label='Telefone' />
+													<Field action={`phones.${index}.action`} name={`phones.${index}.meta_value`} component={tField} label='Telefone' />
 												</FieldControl>
 												<FieldControl>
 													{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, meta_model('phone')); return false}}>
 														<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
 													</IconButton>}
-													{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (phone.action ==='create') return remove(index); setFieldValue(`phones.${index}.action`, 'delete')}}>
+													{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{
+														e.preventDefault();
+														if (phone.action ==='create' || phone.action ==='new_empty') 
+															return remove(index);
+														else
+															setFieldValue(`phones.${index}.action`, 'delete')}}>
 														<Icon path={mdiDelete} size='18' color='#707070' />
 													</IconButton>}
 												</FieldControl>
