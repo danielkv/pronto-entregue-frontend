@@ -20,10 +20,12 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		metas:[CompanyMeta]!
-		assigned_branches: [Branch]! @hasRole(permission:"users_edit", scope:"adm")
 		branches:[Branch]! @hasRole(permission:"branches_read", scope:"adm")
 		users:[User]! @hasRole(permission:"users_read", scope:"adm")
 		last_month_revenue:Float!
+		user_relation: CompanyRelation!
+
+		assigned_branches: [Branch]! @hasRole(permission:"users_edit", scope:"adm")
 	}
 	
 	input CompanyMetaInput {
@@ -95,6 +97,11 @@ module.exports.resolvers = {
 		}
 	},
 	Company: {
+		user_relation : (parent, args, ctx) => {
+			if (!parent.company_relation) throw new Error('Nenhum usuário selecionado');
+
+			return parent.company_relation.get();
+		},
 		assigned_branches : (parent, args, ctx) => {
 			if (!parent.company_relation) throw new Error('Nenhum usuário selecionado');
 			

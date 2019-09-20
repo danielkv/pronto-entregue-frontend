@@ -3,14 +3,14 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, For
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter, mdiAccountCircle} from '@mdi/js';
 import {Link} from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar} from '../../layout/components';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
-import { GET_COMPANY_USERS } from '../../graphql/users';
+import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 
 function Page (props) {
 	setPageTitle('Usuários');
@@ -23,6 +23,8 @@ function Page (props) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
+	const [setUserEnabled, {loading}] = useMutation(UPDATE_USER)
+
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedCompany || loadingUsersData) return (<LoadingBlock />);
 
@@ -32,7 +34,7 @@ function Page (props) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Usuários</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button>
+						<Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button>{loading && <Loading />}
 						<NumberOfRows>{users.length} usuários</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -59,7 +61,7 @@ function Page (props) {
 											</IconButton>
 											<Switch
 												checked={row.active}
-												onChange={()=>{}}
+												onChange={()=>setUserEnabled({variables:{id:row.id, data:{active:!row.active}}})}
 												value="checkedB"
 												size='small'
 												color="secondary"

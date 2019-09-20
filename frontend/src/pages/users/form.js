@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import {Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid} from '@material-ui/core';
+import {Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid, FormLabel} from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiSourceBranch, mdiMapMarker, mdiCloseCircle, mdiPlusCircle, mdiDelete } from '@mdi/js'
 import * as Yup from 'yup';
@@ -62,7 +62,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, phones, assigned_branches, addresses}, errors, setFieldValue, handleChange, isSubmitting}) => {
+			{({values:{active, phones, role, assigned_branches, assigned_company, addresses}, errors, setFieldValue, handleChange, isSubmitting}) => {
 			return (
 			<Form>
 				<Content>
@@ -231,7 +231,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 					{!!edit &&
 						<Block>
 							<BlockHeader>
-								<BlockTitle>Enderços</BlockTitle>
+								<BlockTitle>Endereços</BlockTitle>
 							</BlockHeader>
 							<Paper>
 								<BlockSeparator>
@@ -301,15 +301,34 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
-										<FormControl>
-											{/* <TextField select label='Função'>
-												<MenuItem value='adm'>Administrador</MenuItem>
-												<MenuItem value='branch_manager'>Gerente de Filiais</MenuItem>
-												<MenuItem value='manager'>Gerente</MenuItem>
-												<MenuItem value='seller'>Vendedor</MenuItem>
-												<MenuItem value='customer'>Consumidor</MenuItem>
-											</TextField> */}
-										</FormControl>
+										<FormLabel>Opções</FormLabel> 
+									</FieldControl>
+								</FormRow>
+								<FormRow>
+									<FieldControl>
+										<TextField name='role' value={role} onChange={handleChange} select label='Função'>
+											<MenuItem value='adm'>Administrador</MenuItem>
+											<MenuItem value='customer'>Cliente</MenuItem>
+											<MenuItem value='default'>Padrão</MenuItem>
+										</TextField>
+									</FieldControl>
+								</FormRow>
+							</BlockSeparator>
+							<BlockSeparator>
+								<FormRow>
+									<FieldControl>
+										<FormLabel>Relação com a empresa</FormLabel> 
+									</FieldControl>
+								</FormRow>
+								<FormRow>
+									<FieldControl style={{ paddingLeft:7}}>
+										<FormControlLabel
+											labelPlacement='end'
+											control={
+												<Switch size='small' color='primary' checked={assigned_company.active} onChange={()=>{setFieldValue('assigned_company.active', !assigned_company.active)}} />
+											}
+											label="Ativo"
+										/>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

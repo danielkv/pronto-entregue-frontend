@@ -19,8 +19,12 @@ const LOAD_USER = gql`
 			email
 			createdAt
 			active
+			role
 			company(company_id:$company_id) {
 				id
+				user_relation {
+					active
+				}
 				assigned_branches {
 					id
 					name
@@ -81,7 +85,11 @@ function Page (props) {
 		last_name: data.user.last_name,
 		email: data.user.email,
 		active: data.user.active,
+		role: data.user.role,
 		password: '',
+		assigned_company: {
+			active : data.user.company.user_relation.active,
+		},
 		assigned_branches: data.user.company.assigned_branches.map(branch=>{delete branch.__typename; delete branch.user_relation.__typename; return {...branch, action:''}}),
 		...extractMetas(metas, data.user.metas)
 	};

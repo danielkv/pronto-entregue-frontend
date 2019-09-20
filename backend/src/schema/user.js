@@ -16,6 +16,10 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 	}
 
+	type CompanyRelation {
+		active:Boolean!
+	}
+
 	type BranchRelation {
 		active:Boolean!
 		role: Role!
@@ -44,6 +48,7 @@ module.exports.typeDefs = gql`
 		first_name:String
 		last_name:String
 		password:String
+		role:String
 		email:String
 		active:Boolean
 		assigned_branches:[AssignedBranchInput]
@@ -138,12 +143,17 @@ module.exports.resolvers = {
 				.then(user=>{
 					if (!user) throw new Error('Usuário não encontrada');
 
-					return user.update(data, { fields: ['first_name', 'last_name', 'password', 'active'], transaction })
+					return user.update(data, { fields: ['first_name', 'last_name', 'password', 'role', 'active'], transaction })
 				})
 				.then(async (user_updated) => {
 					if (data.metas) {
 						await UsersMeta.updateAll(data.metas, user_updated, transaction);
 					}
+					return user_updated;
+				})
+				.then(async (user_updated)=> {
+					await ctx.company.addUser(user_updated, {through:{...data.assigned_company}, transaction});
+
 					return user_updated;
 				})
 				.then(async (user_updated)=> {
