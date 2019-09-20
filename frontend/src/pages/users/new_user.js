@@ -59,6 +59,9 @@ function Page (props) {
 		email: '',
 		password: '',
 		active:true,
+		assigned_company : {
+			active:true,
+		},
 		assigned_branches: [],
 		...initialMetas(metas)
 	};
