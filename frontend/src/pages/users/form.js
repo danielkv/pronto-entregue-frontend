@@ -27,10 +27,19 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		last_name: Yup.string().required('Obrigatório'),
 		email: Yup.string().required('Obrigatório'),
 		password: Yup.lazy(value => {
-			if (forcePassword)
-				return Yup.string().required('Obrigatório');
-			return Yup.string().notRequired();
-		}),
+				if (forcePassword)
+					return Yup.string().required('Obrigatório');
+				return Yup.string().notRequired();
+			}),
+		assigned_branches: Yup.lazy(value => {
+				if (Array.isArray(value))
+					return Yup.array().of(Yup.object().shape({
+						user_relation: Yup.object().shape({
+							role_id: Yup.string().required('Obrigatório')
+						})
+					}));
+				return Yup.notRequired();
+			}),
 		document : Yup.object().shape({
 				meta_value:Yup.string().required('Obrigatório')
 			}),
@@ -53,7 +62,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, phones, assigned_branches, addresses}, setFieldValue, handleChange, isSubmitting}) => (
+			{({values:{active, phones, assigned_branches, addresses}, errors, setFieldValue, handleChange, isSubmitting}) => {
+			return (
 			<Form>
 				<Content>
 					<Block>
@@ -166,6 +176,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 														<TableCell>{branch.name}</TableCell>
 														<TableCell>
 															<TextField select disabled={isSubmitting}
+																error={!!errors.assigned_branches && !!errors.assigned_branches[index] && !!errors.assigned_branches[index].user_relation.role_id}
+																helperText={errors.assigned_branches && !!errors.assigned_branches[index] ? errors.assigned_branches[index].user_relation.role_id : ''}
 																value={branch.user_relation.role_id}
 																name={`assigned_branches.${index}.user_relation.role_id`}
 																onChange={(e)=>{
@@ -191,7 +203,10 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															<IconButton
 																disabled={isSubmitting}
 																onClick={()=>{
-																	setFieldValue(`assigned_branches.${index}.action`, 'unassign');
+																	if (branch.action === '')
+																		setFieldValue(`assigned_branches.${index}.action`, 'unassign');
+																	else
+																		remove(index);
 																}}
 																>
 																<Icon path={mdiCloseCircle} color='#BCBCBC' size='18' />
@@ -301,7 +316,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 						</Sidebar>
 					</Block>
 				</SidebarContainer>
-			</Form>)}
+			</Form>)}}
 		</Formik>
 	);
 }

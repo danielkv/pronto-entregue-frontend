@@ -3,15 +3,16 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import PageForm from './form';
-import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import Layout from '../../layout';
+import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
-import { GET_COMPANY_BRANCHES, GET_SELECTED_BRANCH } from '../../graphql/branches';
+import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
+import { GET_COMPANY_USERS } from '../../graphql/users';
 
 const CREATE_USER = gql`
-	mutation ($id:ID!, $data:UserInput!) {
-		createUser (id: $id, data:$data) {
+	mutation ($data:UserInput!) {
+		createUser (data:$data) {
 			id
 			full_name
 			role
@@ -56,22 +57,27 @@ function Page (props) {
 		first_name: '',
 		last_name: '',
 		email: '',
-		active: '',
 		password: '',
+		active:true,
 		assigned_branches: [],
 		...initialMetas(metas)
 	};
 
 	function onSubmit(values, {setSubmitting}) {
+		values = JSON.parse(JSON.stringify(values));
 		const data = {...values, metas:joinMetas(metas, values)};
-		delete data.address;
+		delete data.addresses;
 		delete data.phones;
-		delete data.emails;
 		delete data.document;
+
+		data.assigned_branches = values.assigned_branches.map(branch => {delete branch.name; return branch});
 
 		const {selectedCompany} = client.readQuery({query:GET_SELECTED_COMPANY});
 
-		client.mutate({mutation:CREATE_USER, variables:{data}, refetchQueries:[{query:GET_COMPANY_BRANCHES, variables:{id:selectedCompany}}]})
+		client.mutate({mutation:CREATE_USER, variables:{data}, refetchQueries:[{query:GET_COMPANY_USERS, variables:{id:selectedCompany}}]})
+		.then(({data:{createUser}})=>{
+			props.history.push(`/usuarios/alterar/${createUser.id}`);
+		})
 		.catch((err)=>{
 			console.error(err);
 		})

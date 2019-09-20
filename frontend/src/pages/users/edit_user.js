@@ -93,7 +93,7 @@ function Page (props) {
 		delete data.phones;
 		delete data.document;
 		
-		data.assigned_branches = values.assigned_branches.map(branch => {delete branch.name; return branch});		
+		data.assigned_branches = values.assigned_branches.map(branch => {delete branch.name; return branch});	
 
 		client.mutate({mutation:UPDATE_USER, variables:{id:edit_id, data}})
 		.catch((err)=>{

@@ -47,7 +47,12 @@ module.exports.typeDefs = gql`
 		email:String
 		active:Boolean
 		assigned_branches:[AssignedBranchInput]
+		assigned_company:AssignedCompanyInput
 		metas:[UserMetaInput]
+	}
+
+	input AssignedCompanyInput {
+		active:Boolean!
 	}
 
 	input AssignedBranchInput {
@@ -112,8 +117,20 @@ module.exports.resolvers = {
 	Mutation : {
 		createUser: (parent, {data}, ctx) => {
 			return sequelize.transaction(transaction => {
-				return Users.create(data, {include:[UsersMeta], transaction});
-			})
+
+				return Users.create(data, {include:[UsersMeta], transaction})
+				.then(async (user_created)=> {
+					await ctx.company.addUser(user_created, {through:{...data.assigned_company}, transaction});
+
+					return user_created;
+				})
+				.then(async (user_created)=> {
+					if (data.assigned_branches) {
+						await Branches.assignAll(data.assigned_branches, user_created, transaction);
+					}
+					return user_created;
+				})
+			});
 		},
 		updateUser: (parent, {id, data}, ctx) => {
 			return sequelize.transaction(transaction => {
