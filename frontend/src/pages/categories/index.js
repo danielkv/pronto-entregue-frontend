@@ -3,33 +3,32 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, For
 import Icon from '@mdi/react';
 import {mdiDrag , mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
+import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage} from '../../layout/components';
+import { GET_SELECTED_BRANCH } from '../../graphql/branches';
+import { GET_BRANCH_CATEGORIES, UPDATE_CATEGORY } from '../../graphql/categories';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Categorias');
+
+	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+
+	const {data:categoriesData, loading:loadingItemsData, error} = useQuery(GET_BRANCH_CATEGORIES, {variables:{id:selectedBranchData.selectedBranch}});
+	const categories = categoriesData && categoriesData.branch.categories.length ? categoriesData.branch.categories : [];
+
+	console.log(categories);
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
-
-	const categories = [
-		{
-			image: 'https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg',
-			name: 'Lanches',
-			products_qty: 3,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			image: 'https://img.elo7.com.br/product/main/258B7CB/adesivo-parede-restaurante-prato-feito-comida-caseira-lenha-adesivo-restaurante-fritas-salada.jpg',
-			name: 'Hamburguer',
-			products_qty: 3,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-	];
+	
+	const [setCategoryEnabled, {loading}] = useMutation(UPDATE_CATEGORY);
+	
+	if (error) return <ErrorBlock error={error} />
+	if (loadingSelectedData || loadingItemsData) return (<LoadingBlock />);
 
 	return (
 		<Layout>
@@ -60,12 +59,13 @@ function Page () {
 										<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
 										<TableCell>{row.created_at}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch
 												checked={row.active}
-												onChange={()=>{}}
+												disabled={loading}
+												onChange={()=>setCategoryEnabled({variables:{id:row.id, data:{active:!row.active}}})}
 												value="checkedB"
 												size='small'
 												color="secondary"

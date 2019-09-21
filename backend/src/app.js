@@ -1,15 +1,20 @@
 require('dotenv').config();
 require('./services/setup'); //Configura banco de dados e relações das tabelas
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer } = require('apollo-server-express');
+const express = require('express');
+const path = require('path');
 const mid = require('./middlewares');
+
+//express config
+const app = express();
+const port = process.env.PORT || 4000;
 
 //schema
 const schema = require('./schema/_index');
 
-//Configuração de schema e inserção de contexto
+//Configuração de schema e contexto
 const server = new ApolloServer({
 	schema,
-	//introspection:true,
 	context : async ({req}) => {
 
 		const {authorization, company_id, branch_id} = req.headers;
@@ -27,7 +32,13 @@ const server = new ApolloServer({
 	},
 });
 
-//Ouvir porta
-server.listen().then(({url})=> {
-	console.log(`Server ready at ${url}`);
-});
+//configura rota estática
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
+
+//configura apollo server
+server.applyMiddleware({app, path:'/graphql'});
+
+//ouve porta
+app.listen({ port }, () =>
+  console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
+);

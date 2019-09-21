@@ -12,6 +12,7 @@ module.exports.typeDefs = gql`
 		createdAt:String!
 		updatedAt:String!
 		products:[Product]!
+		products_qty:Int!
 	}
 
 	input CategoryInput {
@@ -73,6 +74,10 @@ module.exports.resolvers = {
 	Category : {
 		products: (parent) => {
 			return parent.getProducts();
+		},
+		products_qty : (parent) => {
+			return parent.getProducts()
+			.then (products=>products.length);
 		}
 	}
 }
