@@ -3,46 +3,38 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, For
 import Icon from '@mdi/react';
 import {mdiInbox , mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar} from '../../layout/components';
+import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_COMPANY_ITEMS, UPDATE_ITEM } from '../../graphql/items';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Estoque');
+
+	const {data:selectedCompanyData, loading:loadingSelectedData} = useQuery(GET_SELECTED_COMPANY);
+
+	const {data:itemsData, loading:loadingItemsData, error} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
+	const items = itemsData && itemsData.company.items.length ? itemsData.company.items : [];
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
-
-	const items = [
-		{
-			name: 'Bacon',
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Queijo',
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			name: 'Alface',
-			created_at:'25/08/19 15:35',
-			active: false,
-		},
-		{
-			name: 'Bacon',
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-	];
+	
+	const [setItemEnabled, {loading}] = useMutation(UPDATE_ITEM);
+	
+	if (error) return <ErrorBlock error={error} />
+	if (loadingSelectedData || loadingItemsData) return (<LoadingBlock />);
 
 	return (
 		<Layout>
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Estoque <Button size='small' variant="contained" color='secondary' to='/estoque/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Estoque</BlockTitle>
+						<Button size='small' variant="contained" color='secondary' to='/estoque/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
 						<NumberOfRows>{items.length} itens</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -62,12 +54,13 @@ function Page () {
 										<TableCell>{row.name}</TableCell>
 										<TableCell>{row.created_at}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton onClick={()=>{props.history.push(`/estoque/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch
 												checked={row.active}
-												onChange={()=>{}}
+												disabled={loading}
+												onChange={()=>setItemEnabled({variables:{id:row.id, data:{active:!row.active}}})}
 												value="checkedB"
 												size='small'
 												color="secondary"

@@ -39,7 +39,6 @@ module.exports.typeDefs = gql`
 		metas:[UserMeta]!
 		
 		branch_relation:BranchRelation!
-		branch(branch_id:ID!): Branch!
 		company(company_id:ID!): Company!
 		companies:[Company]! @hasRole(permission:"companies_read", scope:"adm")
 	}
@@ -238,15 +237,6 @@ module.exports.resolvers = {
 				if (!company) throw new Error('Empresa não encontrada');
 
 				return company;
-			})
-		},
-		branch:(parent, {branch_id}, ctx) => {
-			return ctx.company.getBranches({where:{id:branch_id}})
-			.then (([branch])=>{
-				console.log(branch,  branch_id);
-				if (!branch) throw new Error('Filial não encontrada');
-
-				return branch;
 			})
 		},
 		branch_relation: (parent, args, ctx) => {

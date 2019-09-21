@@ -59,12 +59,6 @@ Users.init({
 },{
 	modelName : 'users', //nome da tabela
 	underscored:true,
-	indexes : [ //Evita criação de 2 emails iguais
-		{
-			unique : true,
-			fields : ['email'],
-		}
-	],
 	sequelize,
 });
 

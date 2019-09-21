@@ -26,6 +26,7 @@ module.exports.typeDefs = gql`
 		user_relation: CompanyRelation!
 
 		assigned_branches: [Branch]! @hasRole(permission:"users_edit", scope:"adm")
+		items:[Item]!
 	}
 	
 	input CompanyMetaInput {
@@ -97,6 +98,9 @@ module.exports.resolvers = {
 		}
 	},
 	Company: {
+		items : (parent, args, ctx) => {
+			return parent.getItems();
+		},
 		user_relation : (parent, args, ctx) => {
 			if (!parent.company_relation) throw new Error('Nenhum usuário selecionado');
 

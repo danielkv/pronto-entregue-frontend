@@ -16,6 +16,7 @@ import EditBranch from './pages/branches/edit_branch';
 
 import Storage from './pages/storage';
 import NewItem from './pages/storage/new_item';
+import EditItem from './pages/storage/edit_item';
 
 import Orders from './pages/orders';
 import NewOrder from './pages/orders/new_order';
@@ -66,6 +67,7 @@ export default function Router(props) {
 
 				<Route exact path='/estoque' component={Storage} />
 				<Route path='/estoque/novo' component={NewItem} />
+				<Route path='/estoque/alterar/:id' component={EditItem} />
 				
 				<Route exact path='/pedidos' component={Orders} />
 				<Route path='/pedidos/novo' component={NewOrder} />

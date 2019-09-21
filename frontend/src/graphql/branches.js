@@ -37,22 +37,6 @@ export const SELECT_BRANCH = gql`
  * Retorna filiais selecionaveis
  */
 
-/* export const GET_USER_BRANCHES = gql`
-	query {
-		userBranches @client {
-			id
-			name
-			active
-			last_month_revenue
-			createdAt
-		}
-	}
-`; */
-
-/**
- * Retorna filiais selecionaveis
- */
-
 export const GET_COMPANY_BRANCHES = gql`
 	query ($id:ID!) {
 		company (id:$id) {

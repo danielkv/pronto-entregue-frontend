@@ -9,6 +9,7 @@ class Items extends Sequelize.Model {};
 
 Items.init({
 	name: Sequelize.STRING,
+	description: Sequelize.STRING,
 	active: {
 		type: Sequelize.BOOLEAN,
 		defaultValue: 1,
