@@ -46,6 +46,15 @@ OptionsGroups.init({
 			}
 		}
 	},
+	order: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0,
+		allowNull:false,
+		validate : {
+			notEmpty:{msg:'Você deve definir uma ordem'},
+			notNull:{msg:'Você deve definir uma ordem'},
+		}
+	},
 	min_select: Sequelize.INTEGER,
 	max_select: Sequelize.INTEGER,
 	active: {

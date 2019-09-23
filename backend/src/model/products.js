@@ -13,7 +13,15 @@ Products.init({
 	},
 	name: Sequelize.STRING,
 	image: Sequelize.TEXT,
-	order: Sequelize.INTEGER,
+	order: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0,
+		allowNull:false,
+		validate : {
+			notEmpty:{msg:'Você deve definir uma ordem'},
+			notNull:{msg:'Você deve definir uma ordem'},
+		}
+	},
 	type: {
 		type: Sequelize.STRING(50),
 		comment: 'single | multiple',

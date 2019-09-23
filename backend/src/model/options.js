@@ -26,7 +26,15 @@ class Options extends Sequelize.Model {
 };
 Options.init({
 	name: Sequelize.STRING,
-	order: Sequelize.INTEGER,
+	order: {
+		type: Sequelize.INTEGER,
+		defaultValue: 0,
+		allowNull:false,
+		validate : {
+			notEmpty:{msg:'Você deve definir uma ordem'},
+			notNull:{msg:'Você deve definir uma ordem'},
+		}
+	},
 	max_select_restrain_other:Sequelize.INTEGER,
 	active: {
 		type: Sequelize.BOOLEAN,

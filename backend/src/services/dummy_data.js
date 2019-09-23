@@ -108,21 +108,21 @@ const products_create = [
 		name:'Hambúrguer com Calabresa',
 		type:'single',
 		price: 16.98,
-		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		image : "http://localhost:4000/uploads/copeiro-hamburge1r/5ac6194c6c058d82eaa26886605c121f-hamburguer-de-siri-stunt-burger-1432825855665_1280x855.jpg",
 		company_id:1,
 	},
 	{
 		name:'Suco de laranja',
 		type:'single',
 		price: 4.8,
-		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		image : "http://localhost:4000/uploads/copeiro-hamburge1r/5ac6194c6c058d82eaa26886605c121f-hamburguer-de-siri-stunt-burger-1432825855665_1280x855.jpg",
 		company_id:1,
 	},
 	{
 		name:'Pizza',
 		type:'multiple',
 		price: 55.90,
-		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		image : "http://localhost:4000/uploads/copeiro-hamburge1r/0dfea2e56c3a2a1a331d5d56d4af528b-batata-frita-vagao-gourmet.jpg",
 		company_id:1,
 	},
 ];
@@ -130,17 +130,17 @@ const products_create = [
 const categories_create = [
 	{
 		name: 'Hambúrguer',
-		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		image : "http://localhost:4000/uploads/copeiro-hamburge1r/0dfea2e56c3a2a1a331d5d56d4af528b-batata-frita-vagao-gourmet.jpg",
 		branch_id : 1,
 	},
 	{
 		name: 'Bebidas',
-		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		image : "http://localhost:4000/uploads/copeiro-hamburge1r/5ac6194c6c058d82eaa26886605c121f-hamburguer-de-siri-stunt-burger-1432825855665_1280x855.jpg",
 		branch_id : 1,
 	},
 	{
 		name: 'Lanches',
-		image : "C:/Users/danie/Documents/GitHub/PizzariaDelivery/backend/uploads/copeiro-hamburge1r/7992a90a930724d8fc01e862dba8ee89-hamburguer-de-siri-stunt-burger-1432825855665_1280x855-1024x684.jpg",
+		image : "http://localhost:4000/uploads/copeiro-hamburge1r/5ac6194c6c058d82eaa26886605c121f-hamburguer-de-siri-stunt-burger-1432825855665_1280x855.jpg",
 		branch_id : 1,
 	}
 ];

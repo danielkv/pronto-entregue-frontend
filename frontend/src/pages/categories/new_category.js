@@ -1,74 +1,46 @@
 import React from 'react';
-import {Paper, TextField, FormControlLabel, Switch, ButtonGroup, Button, FormLabel, FormControl} from '@material-ui/core';
+import { useApolloClient } from '@apollo/react-hooks';
 
-import ImagePlaceHolder from '../../assets/images/image_placeholder.png';
+import PageForm from './form';
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl} from '../../layout/components';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_BRANCH_CATEGORIES, CREATE_CATEGORY } from '../../graphql/categories';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Nova categoria');
+	
+	const client = useApolloClient();
+
+	const item = {
+		name:'',
+		description:'',
+		active:true,
+	};
+
+	function onSubmit(data, {setSubmitting}) {
+		const {selectedCompany} = client.readQuery({query:GET_SELECTED_COMPANY});
+
+		client.mutate({mutation:CREATE_CATEGORY, variables:{data}, refetchQueries:[{query:GET_BRANCH_CATEGORIES, variables:{id:selectedCompany}}]})
+		.then(({data:{createCategory}})=>{
+			props.history.push(`/category/alterar/${createCategory.id}`);
+		})
+		.catch((err)=>{
+			console.error(err);
+		})
+		.finally(()=>{
+			setSubmitting(false);
+		})
+	}
+	
 	return (
 		<Layout>
-			<Content>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Nova categoria</BlockTitle>
-					</BlockHeader>
-					<Paper>
-						<FormRow>
-							<FieldControl>
-								<TextField label='Nome da categoria' />
-							</FieldControl>
-						</FormRow>
-						<FormRow>
-							<FieldControl>
-								<TextField label='Descrição' />
-							</FieldControl>
-						</FormRow>
-					</Paper>
-				</Block>
-			</Content>
-			<SidebarContainer>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Configuração</BlockTitle>
-					</BlockHeader>
-					<Sidebar>
-						<BlockSeparator>
-							<FormRow>
-								<FieldControl style={{justifyContent:'flex-end', paddingRight:7}}>
-									<FormControlLabel
-										labelPlacement='start'
-										control={
-											<Switch size='small' color='primary' checked={true} onChange={()=>{}} value="includeDisabled" />
-										}
-										label="Ativo"
-									/>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
-								<FieldControl>
-									<ButtonGroup fullWidth>
-										<Button color='secondary'>Cancelar</Button>
-										<Button variant="contained" color='secondary'>Salvar</Button>
-									</ButtonGroup>
-								</FieldControl>
-							</FormRow>
-						</BlockSeparator>
-						<BlockSeparator>
-							<FormRow>
-								<FieldControl>
-									<FormControl>
-										<FormLabel>Imagem</FormLabel> 
-										<img src={ImagePlaceHolder} alt='Clique para adicionar uma imagem' />
-									</FormControl>
-								</FieldControl>
-							</FormRow>
-						</BlockSeparator>
-					</Sidebar>
-				</Block>
-			</SidebarContainer>
+			<PageForm
+				onSubmit={onSubmit}
+				initialValues={item}
+				pageTitle='Nova categoria'
+				validateOnChange={false}
+			/>
 		</Layout>
 	)
 }

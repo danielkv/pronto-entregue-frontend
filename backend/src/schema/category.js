@@ -1,3 +1,4 @@
+const sequelize = require('../services/connection');
 const ProductsCagetories = require('../model/products_categories')
 const uploads = require('../config/uploads');
 const {gql} = require('apollo-server');
@@ -6,6 +7,7 @@ module.exports.typeDefs = gql`
 	type Category {
 		id:ID!
 		name:String!
+		description:String!
 		active:Boolean!
 		image:String!
 		order:Int!
@@ -16,7 +18,9 @@ module.exports.typeDefs = gql`
 	}
 
 	input CategoryInput {
+		id:ID
 		name:String
+		description:String
 		file:Upload
 		active:Boolean
 		order:Int
@@ -29,18 +33,21 @@ module.exports.typeDefs = gql`
 	extend type Mutation {
 		createCategory(data:CategoryInput!):Category! @hasRole(permission:"products_edit", scope:"adm")
 		updateCategory(id:ID!, data:CategoryInput!):Category! @hasRole(permission:"products_edit", scope:"adm")
+		updateCategoriesOrder(data:[CategoryInput!]!): [Category!]! @hasRole(permission:"products_edit", scope:"adm")
 	}
 `;
 
 module.exports.resolvers = {
 	Mutation: {
 		createCategory : async (parent, {data}, ctx) => {
-			const { stream, filename, mimetype, encoding } = await data.file;
-			
-			const filepath = uploads.createFilePath(ctx.company.name, filename);
-			const file_uploaded = await uploads.startUpload(stream, filepath);
+			if (data.file) {
+				const { stream, filename, mimetype, encoding } = await data.file;
+				
+				const filepath = uploads.createFilePath(ctx.company.name, filename);
+				const file_uploaded = await uploads.startUpload(stream, filepath);
 
-			data.image = file_uploaded;
+				data.image = file_uploaded;
+			}
 
 			return ctx.branch.createCategory(data);
 		},
@@ -58,9 +65,20 @@ module.exports.resolvers = {
 			.then (([category])=>{
 				if (!category) throw new Error('Categoria não encontrada');
 
-				return category.update(data);
+				return category.update(data, {fields:['name', 'image', 'active']});
 			})
 		},
+		updateCategoriesOrder: (parent, {data}, ctx) => {
+			return sequelize.transaction(transaction=>{
+				return Promise.all(data.map(category_obj => {
+					return ProductsCagetories.findByPk(category_obj.id).then(category=>{
+						if (!category) throw new Error('Categoria não encontrada');
+
+						return category.update({order:category_obj.order}, {transaction})
+					});
+				}))
+			});
+		}
 	},
 	Query : {
 		category: (parent, {id}, ctx) => {
