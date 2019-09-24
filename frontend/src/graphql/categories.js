@@ -37,9 +37,7 @@ export const UPDATE_CATEGORY = gql`
 			id
 			name
 			image
-			order
-			products_qty
-			createdAt
+			description
 			active
 		}
 	}
@@ -51,6 +49,7 @@ export const CREATE_CATEGORY = gql`
 			id
 			name
 			image
+			description
 			order
 			products_qty
 			createdAt
@@ -64,10 +63,7 @@ export const UPDATE_CATEGORIES_ORDER = gql`
 		updateCategoriesOrder (data:$data) {
 			id
 			name
-			image
 			order
-			products_qty
-			createdAt
 			active
 		}
 	}

@@ -14,6 +14,13 @@ import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldC
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BRANCH_CATEGORIES, UPDATE_CATEGORY, UPDATE_CATEGORIES_ORDER } from '../../graphql/categories';
 
+const sort = (a, b) => {
+	if (a.order > b.order) return 1;
+	else if (a.order < b.order) return -1;
+	
+	return 0;
+}
+
 function Page (props) {
 	setPageTitle('Categorias');
 
@@ -25,16 +32,18 @@ function Page (props) {
 	const [setCategoryEnabled, {loading}] = useMutation(UPDATE_CATEGORY);
 	const [updateCategoriesOrder, {loading:loadingCategoriesOrder}] = useMutation(UPDATE_CATEGORIES_ORDER, {refetchQueries:[{query:GET_BRANCH_CATEGORIES, variables:{id:selectedBranchData.selectedBranch}}]});
 	
-	const [selectedBranch, setSelectedBranch] = useState(null);
-	const [categories, setCategories] = useState([]);
 	const {data:categoriesData, loading:loadingItemsData, error} = useQuery(GET_BRANCH_CATEGORIES, {variables:{id:selectedBranchData.selectedBranch}});
+
+	//filter, order, pages
+	let categories = [];
+	if (categoriesData && categoriesData.branch.categories.length) {
+		categories = categoriesData.branch.categories
+		.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+		.sort(sort);
+	}
 	
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedData || loadingItemsData) return (<LoadingBlock />);
-	if (categoriesData && categoriesData.branch.categories.length && selectedBranch !== selectedBranchData.selectedBranch) {
-		setSelectedBranch(selectedBranchData.selectedBranch);
-		setCategories(categoriesData.branch.categories);
-	}
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -43,21 +52,16 @@ function Page (props) {
 
 		return result.map((row, index) => {row.order = index; return row;});
 	};
-	
-	const sort = (a, b) => {
-		if (a.order > b.order) return 1;
-		else if (a.order < b.order) return -1;
-		
-		return 0;
-	}
 
 	const onDragEnd = result => {
 		if (!result.destination || result.destination.index === result.source.index) return;
 
 		const new_order = reorder(categories, result.source.index, result.destination.index);
-		setCategories(new_order);
+		//setCategories(new_order);
 
 		const save_new_order = new_order.map((cat, index) => ({id: cat.id, order:index}));
+		console.table(new_order)
+		console.table(save_new_order)
 		updateCategoriesOrder({variables:{data:save_new_order}});
 	}
 
@@ -93,7 +97,7 @@ function Page (props) {
 										innerRef={provided.innerRef}
 										{...provided.droppableProps}
 										>
-										{categories.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).sort(sort).map((row, index) => (
+										{categories.map((row, index) => (
 											<Draggable key={row.id} draggableId={row.id} index={index} style={{display: 'table'}}>
 												{(provided)=>{
 													const selected = row.id === snapshot.draggingFromThisWith;

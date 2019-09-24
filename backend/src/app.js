@@ -16,7 +16,6 @@ const schema = require('./schema/_index');
 const server = new ApolloServer({
 	schema,
 	context : async ({req}) => {
-
 		const {authorization, company_id, branch_id} = req.headers;
 		let user = null, company = null, branch = null;
 
@@ -28,6 +27,7 @@ const server = new ApolloServer({
 			user,
 			company,
 			branch,
+			host: req.protocol + '://' + req.get('host')
 		}
 	},
 });
@@ -39,6 +39,6 @@ app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 server.applyMiddleware({app, path:'/graphql'});
 
 //ouve porta
-app.listen({ port }, () =>
-  console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
-);
+app.listen({ port }, () => {
+  	console.log(`Server ready at http://localhost:4000${server.graphqlPath}`)
+});

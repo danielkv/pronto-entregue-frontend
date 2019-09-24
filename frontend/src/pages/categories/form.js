@@ -1,20 +1,34 @@
 import React from 'react';
-import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl} from '@material-ui/core';
-import {Formik, Form, Field} from 'formik';
-import Dropzone from 'react-dropzone';
+import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText} from '@material-ui/core';
+import {Formik, Form, Field, ErrorMessage} from 'formik';
 import * as Yup from 'yup';
 
-import ImagePlaceHolder from '../../assets/images/image_placeholder.png';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
+import { DropzoneBlock } from '../../layout/blocks';
 
-const categorySchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	description: Yup.string().required('Obrigatório'),
-});
+const FILE_SIZE = 500 * 1024;
 
-export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {
-	const handleDropFile = () => {
+export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
+	const categorySchema = Yup.object().shape({
+		name: Yup.string().required('Obrigatório'),
+		description: Yup.string().required('Obrigatório'),
+		file: Yup.lazy(value => {
+			if (!edit) {
+				return Yup.mixed().required('Selecione uma imagem')
+				.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE)
+			}
+			
+			return Yup.mixed().notRequired();
+		}),
+	});
 
+	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
+		if ( Array.isArray(acceptedFiles)) {
+			const file = acceptedFiles[0];
+			const preview = URL.createObjectURL(file);
+			setFieldValue('preview', preview);
+			setFieldValue('file', file);
+		}
 	}
 
 	return (
@@ -25,7 +39,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active}, setFieldValue, handleChange, isSubmitting}) => (
+			{({values:{active, preview}, setFieldValue, handleChange, isSubmitting}) => (
 			<Form>
 				<Content>
 					<Block>
@@ -58,7 +72,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 										<FormControlLabel
 											labelPlacement='start'
 											control={
-												<Switch disabled={isSubmitting} size='small' color='primary' checked={true} onChange={()=>{}} value="includeDisabled" />
+												<Switch disabled={isSubmitting} size='small' color='primary' checked={active} onChange={()=>{setFieldValue('active', !active)}} value="includeDisabled" />
 											}
 											label="Ativo"
 										/>
@@ -75,19 +89,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<FieldControl>
 										<FormControl>
 											<FormLabel>Imagem</FormLabel> 
-											<Dropzone accept="image/*" onDropAccepted={handleDropFile}>
-												{({ getRootProps, getInputProps, isDragActive, isDragReject }) => (
-												<div
-													{...getRootProps()}
-													isDragActive={isDragActive}
-													isDragReject={isDragReject}
-												>
-													<input {...getInputProps()} />
-													<img src={ImagePlaceHolder} alt='Clique para adicionar uma imagem' />
-												</div>
-												)}
-											</Dropzone>
-											
+											<DropzoneBlock preview={preview} onDrop={handleDropFile(setFieldValue)} />
+											<FormHelperText error><ErrorMessage name="file" /></FormHelperText>
 										</FormControl>
 									</FieldControl>
 								</FormRow>

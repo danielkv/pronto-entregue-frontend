@@ -38,7 +38,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							role_id: Yup.string().required('Obrigatório')
 						})
 					}));
-				return Yup.notRequired();
+				return Yup.mixed().notRequired();
 			}),
 		document : Yup.object().shape({
 				meta_value:Yup.string().required('Obrigatório')

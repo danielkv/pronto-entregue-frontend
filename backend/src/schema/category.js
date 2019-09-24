@@ -7,7 +7,7 @@ module.exports.typeDefs = gql`
 	type Category {
 		id:ID!
 		name:String!
-		description:String!
+		description:String
 		active:Boolean!
 		image:String!
 		order:Int!
@@ -39,33 +39,34 @@ module.exports.typeDefs = gql`
 
 module.exports.resolvers = {
 	Mutation: {
-		createCategory : async (parent, {data}, ctx) => {
+		createCategory : async (parent, {data, file}, ctx) => {
 			if (data.file) {
-				const { stream, filename, mimetype, encoding } = await data.file;
+				const { stream, filename} = await data.file;
+				//console.log(filename);
 				
-				const filepath = uploads.createFilePath(ctx.company.name, filename);
-				const file_uploaded = await uploads.startUpload(stream, filepath);
+				const filepath = uploads.createFilePath(ctx.host, ctx.company.name, filename);
+				await uploads.startUpload(stream, filepath.path);
 
-				data.image = file_uploaded;
+				data.image = filepath.url;
 			}
 
 			return ctx.branch.createCategory(data);
 		},
 		updateCategory : async (parent, {id, data}, ctx) => {
 			if (data.file) {
-				const { stream, filename, mimetype, encoding } = await data.file;
+				const { stream, filename} = await data.file;
 				
-				const filepath = uploads.createFilePath(ctx.company.name, filename);
-				const file_uploaded = await uploads.startUpload(stream, filepath);
+				const filepath = uploads.createFilePath(ctx.host, ctx.company.name, filename);
+				await uploads.startUpload(stream, filepath.path);
 
-				data.image = file_uploaded;
+				data.image = filepath.url;
 			}
 
 			return ctx.branch.getCategories({where:{id}})
 			.then (([category])=>{
 				if (!category) throw new Error('Categoria não encontrada');
 
-				return category.update(data, {fields:['name', 'image', 'active']});
+				return category.update(data, {fields:['name', 'description', 'image', 'active']});
 			})
 		},
 		updateCategoriesOrder: (parent, {data}, ctx) => {

@@ -3,16 +3,16 @@ const fs = require('fs');
 const crypto = require('crypto');
 const {slugify} = require('../utilities');
 
-const destination = (company_name) => {
-	const company_folder = slugify(company_name);
+const destination = (folder) => {
+	const company_folder = slugify(folder);
 
-	const uploads_path = path.resolve(__dirname, '..', '..', 'uploads');
+	const uploads_path = path.join(__dirname, '..', '..', 'uploads');
 	if (!fs.existsSync(uploads_path)) fs.mkdirSync(uploads_path);
 
 	const company_path = path.resolve(__dirname, '..', '..', 'uploads', company_folder);
 	if (!fs.existsSync(company_path)) fs.mkdirSync(company_path);
 
-	return company_path;
+	return path.join('uploads', company_folder);
 }
 
 const newFileName = (filename) => {
@@ -22,8 +22,14 @@ const newFileName = (filename) => {
 	return new_name;
 }
 
-const createFilePath = (company_name, filename)=> {
-	return path.join(destination(company_name), newFileName(filename));
+const createFilePath = (host, company_name, filename)=> {
+	const new_destination = destination(company_name);
+	const new_filename = newFileName(filename);
+
+	const final_path = path.join(__dirname, '..', '..', new_destination, new_filename);
+	const url = `${host}/${new_destination}/${new_filename}`.replace(/\\/g, '/');
+
+	return {path:final_path, url};
 }
 
 const startUpload = async (readStream, writeStreamPath) => {

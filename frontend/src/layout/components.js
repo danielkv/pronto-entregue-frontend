@@ -236,3 +236,31 @@ export function tField({field, label, action=false, type='text', form:{isSubmitt
 		<TextField {...field} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
 	)
 }
+
+export const ImagePlaceHolderContainer = styled.div`
+	text-align:center;
+	padding:30px;
+	background-color:#F5F5F5;
+	border-radius:3px;
+	transition:background-color ease-in-out .3s;
+
+	${({isDragActive})=>{
+		if (isDragActive) return 'background-color:#B1FFA8;';
+	}}
+
+	& div {
+		color:#666;
+		font-size:14px;
+		margin-top:7px;
+	}
+	& img {
+		max-width:100%;
+		height:auto;
+	}
+`;
+
+export const ImagePlaceHolder = styled.div`
+	border:5px solid #BBBBBB;
+	border-radius:3px;
+	padding:30px;
+`;
