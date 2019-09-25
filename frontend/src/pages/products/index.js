@@ -4,53 +4,38 @@ import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
 import numeral from 'numeral';
+import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import {setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage} from '../../layout/components';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, Loading} from '../../layout/components';
+import { GET_SELECTED_BRANCH } from '../../graphql/branches';
+import { GET_BRANCHES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
 function Page () {
 	setPageTitle('Produtos');
 
+	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+
+	const {data:productsData, loading:loadingProductsData, error} = useQuery(GET_BRANCHES_PRODUCTS, {variables:{id:selectedBranchData.selectedBranch}});
+	const products = productsData && productsData.branch.products.length ? productsData.branch.products : [];
+
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const products = [
-		{
-			image: 'https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg',
-			name: 'Hamburguer de Siri',
-			category: 'Hamburguer',
-			options_qty: 3,
-			price: 17.50,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			image: 'https://img.elo7.com.br/product/main/258B7CB/adesivo-parede-restaurante-prato-feito-comida-caseira-lenha-adesivo-restaurante-fritas-salada.jpg',
-			name: 'Hamburguer de costela',
-			category: 'Hamburguer',
-			options_qty: 3,
-			price: 17.50,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-		{
-			image: 'https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg',
-			name: 'Hamburguer de Siri',
-			category: 'Hamburguer',
-			options_qty: 3,
-			price: 17.50,
-			created_at:'25/08/19 15:35',
-			active: true,
-		},
-	];
+	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_PRODUCT);
+
+	if (error) return <ErrorBlock error={error} />
+	if (loadingProductsData || loadingSelectedData) return (<LoadingBlock />);
 
 	return (
 		<Layout>
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Produtos <Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Produtos</BlockTitle>
+						<Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
 						<NumberOfRows>{products.length} produtos</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -71,10 +56,10 @@ function Page () {
 									<TableRow key={row.name}>
 										<TableCell style={{width:30, paddingLeft:30, paddingRight:10}}><ProductImage src={row.image} /></TableCell>
 										<TableCell>{row.name}</TableCell>
-										<TableCell>{row.category}</TableCell>
+										<TableCell>{row.category.name}</TableCell>
 										<TableCell><CircleNumber>{row.options_qty}</CircleNumber></TableCell>
 										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
-										<TableCell>{row.created_at}</TableCell>
+										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
 											<IconButton>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />

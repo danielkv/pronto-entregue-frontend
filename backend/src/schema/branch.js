@@ -1,5 +1,7 @@
 const sequelize = require('../services/connection');
 const Branches = require('../model/branches');
+const Products = require('../model/products');
+const ProductsCategories = require('../model/products_categories');
 const BranchesMeta = require('../model/branches_meta');
 const PaymentMethods = require('../model/payment_methods');
 const {gql} = require('apollo-server');
@@ -27,6 +29,7 @@ module.exports.typeDefs = gql`
 		users:[User]!
 		metas:[BranchMeta]!
 		categories:[Category]!
+		products:[Product]!
 		payment_methods:[PaymentMethod]!
 		delivery_areas:[DeliveryArea]!
 		business_hours:[BusinessHour]!
@@ -125,6 +128,9 @@ module.exports.resolvers = {
 		},
 		categories: (parent, args, ctx) => {
 			return parent.getCategories();
+		},
+		products : (parent) => {
+			return Products.findAll({include:[{model:ProductsCategories, where:{branch_id:parent.get('id')}}]})
 		},
 		payment_methods: (parent, args, ctx) => {
 			return parent.getPaymentMethods();

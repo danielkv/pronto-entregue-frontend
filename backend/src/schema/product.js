@@ -1,6 +1,6 @@
 const sequelize = require('../services/connection');
 const Products = require('../model/products');
-const ProductsCategories = require('../model/products_categories');
+const Options = require('../model/options');
 const OptionsGroups = require('../model/options_groups');
 const { gql} = require('apollo-server');
 const uploads = require('../config/uploads');
@@ -15,8 +15,9 @@ module.exports.typeDefs = gql`
 		price:Float!
 		category:Category!
 		active:Boolean!
-		createdAt:String!
-		updatedAt:String!
+		options_qty:Int!
+		createdAt:String! @dateTime
+		updatedAt:String! @dateTime
 		options_groups:[OptionsGroup]!
 	}
 
@@ -130,6 +131,9 @@ module.exports.resolvers = {
 		},
 	},
 	Product: {
+		options_qty : (parent, args, ctx) => {
+			return Options.count({where:{active:true}, include:[{model:OptionsGroups, where:{product_id:parent.get('id')}}]});
+		},
 		options_groups: (parent, args, ctx) => {
 			return parent.getOptionsGroups();
 		},
