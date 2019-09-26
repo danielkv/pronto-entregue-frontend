@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, MenuItem, FormControl, FormLabel , FormGroup} from '@material-ui/core';
+import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup} from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter} from '@mdi/js';
 import {Link} from 'react-router-dom';
@@ -13,7 +13,7 @@ import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldC
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BRANCHES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Produtos');
 
 	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
@@ -53,7 +53,7 @@ function Page () {
 							</TableHead>
 							<TableBody>
 								{products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-									<TableRow key={row.name}>
+									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:30, paddingRight:10}}><ProductImage src={row.image} /></TableCell>
 										<TableCell>{row.name}</TableCell>
 										<TableCell>{row.category.name}</TableCell>
@@ -61,12 +61,13 @@ function Page () {
 										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
-											<IconButton>
+											<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch
+												disabled={loading}
 												checked={row.active}
-												onChange={()=>{}}
+												onChange={()=>{setCompanyEnabled({variables:{id:row.id, data:{active:!row.active}}})}}
 												value="checkedB"
 												size='small'
 												color="secondary"
@@ -119,7 +120,7 @@ function Page () {
 								</FormRow>
 								<FormRow>
 									<FieldControl>
-										<TextField
+										{/* <TextField
 											select
 											label='Categoria'
 											onChange={(event)=>{}}
@@ -127,7 +128,7 @@ function Page () {
 											<MenuItem value='1'>Hamburguer</MenuItem>
 											<MenuItem value='2'>Lanches</MenuItem>
 											<MenuItem value='3'>Porções</MenuItem>
-										</TextField>
+										</TextField> */}
 
 									</FieldControl>
 								</FormRow>

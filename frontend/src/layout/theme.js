@@ -97,6 +97,17 @@ export default createMuiTheme({
 				}
 			}
 		},
+		MuiToggleButtonGroup: {
+			root :{
+				backgroundColor:'none',
+			},
+		},
+		MuiToggleButton: {
+			root: {
+				height:37,
+				backgroundColor:'#fff',
+			}
+		},
 		MuiSnackbarContent : {
 			root : {
 				'&.error' : {

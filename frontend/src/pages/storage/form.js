@@ -3,7 +3,6 @@ import {Paper, FormControlLabel, Switch, Button} from '@material-ui/core';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
-import {setPageTitle} from '../../utils';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
 
 const branchSchema = Yup.object().shape({
@@ -12,7 +11,6 @@ const branchSchema = Yup.object().shape({
 });
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {
-	setPageTitle('Novo item de estoque');
 	return (
 		<Formik
 			validationSchema={branchSchema}

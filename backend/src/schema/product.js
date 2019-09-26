@@ -9,6 +9,7 @@ module.exports.typeDefs = gql`
 	type Product {
 		id:ID!
 		name:String!
+		description:String!
 		image:String!
 		order:Int!
 		type:String!

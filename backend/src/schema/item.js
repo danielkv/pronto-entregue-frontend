@@ -7,8 +7,8 @@ module.exports.typeDefs = gql`
 		name:String!
 		description:String!
 		active:Boolean!
-		createdAt:String!
-		updatedAt:String!
+		createdAt:String! @dateTime
+		updatedAt:String! @dateTime
 		order_options:[OrderOption]!
 	}
 

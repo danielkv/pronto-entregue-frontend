@@ -12,6 +12,7 @@ Products.init({
 		defaultValue: 1,
 	},
 	name: Sequelize.STRING,
+	description: Sequelize.STRING,
 	image: Sequelize.TEXT,
 	order: {
 		type: Sequelize.INTEGER,

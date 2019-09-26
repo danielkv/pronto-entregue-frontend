@@ -43,7 +43,7 @@ function Page (props) {
 								<TableRow>
 									<TableCell style={{width:30, paddingRight:10}}></TableCell>
 									<TableCell>Nome</TableCell>
-									<TableCell style={{width:100}}>Criada em</TableCell>
+									<TableCell style={{width:130}}>Criada em</TableCell>
 									<TableCell style={{width:100}}>Ações</TableCell>
 								</TableRow>
 							</TableHead>
@@ -52,7 +52,7 @@ function Page (props) {
 									<TableRow key={row.name}>
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiInbox} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
-										<TableCell>{row.created_at}</TableCell>
+										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
 											<IconButton onClick={()=>{props.history.push(`/estoque/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
