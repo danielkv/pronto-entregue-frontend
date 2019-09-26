@@ -18,3 +18,11 @@ body, html {
 form {
 	display: contents;
 }
+
+.options-select {
+	width: 100%;
+}
+
+.options-select .opt__menu {
+	z-index: 999;
+}

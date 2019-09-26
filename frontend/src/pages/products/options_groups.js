@@ -49,7 +49,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, handle
 										{groups.length > 1 &&
 										<TextField label='Restrito por outra opção' select
 											onClick={(e)=>{e.stopPropagation();}}
-											onChange={(e)=>{console.log(e.target); setFieldValue(`options_groups.${groupIndex}.max_select_restrained_by`, e.target.value)}}
+											onChange={(e)=>{setFieldValue(`options_groups.${groupIndex}.max_select_restrained_by`, e.target.value)}}
 											value={group.max_select_restrained_by ? group.max_select_restrained_by : ''}
 											>
 											<MenuItem value=''>-- Não restringir --</MenuItem>

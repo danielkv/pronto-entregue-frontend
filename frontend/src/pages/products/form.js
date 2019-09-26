@@ -70,8 +70,6 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 	const {data:itemsData, loading:loadingItems} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
 	const items = itemsData ? itemsData.company.items : [];
 
-	console.log(items);
-
 	return (
 		<Formik
 			validationSchema={productSchema}

@@ -31,6 +31,10 @@ export default createMuiTheme({
 					margin:'0 !important',
 					borderBottom: '1px solid #dfdfdf',
 				},
+
+				'&.MuiPaper-root' : {
+					overflow:'visible !important',
+				},
 			}
 		},
 		MuiExpansionPanelDetails : {

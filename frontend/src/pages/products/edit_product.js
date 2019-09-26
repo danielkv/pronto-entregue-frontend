@@ -31,7 +31,7 @@ function Page (props) {
 		preview: data.product.image,
 		options_groups: data.product.options_groups.map(group=>{
 			delete group.__typename;
-			group.open = false;
+			group.open = true;
 			group.max_select_restrained_by = group.max_select_restrained_by ? group.max_select_restrained_by.id : '';
 			group.options = group.options.map(option=>{
 				delete option.__typename;
