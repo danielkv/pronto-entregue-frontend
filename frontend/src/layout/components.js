@@ -15,11 +15,13 @@ const rotate = keyframes`
 	}
 `;
 
-export const Loading = styled(Icon).attrs(({size})=>({
-	path: mdiLoading,
-	size: size || '26',
-	color:'#707070'
-}))`
+export const Loading = styled(Icon).attrs(({size})=>{
+	return ({
+		path: mdiLoading,
+		size: size || '26',
+		color:'#707070'
+	})
+})`
 	margin-left:10px;
 	animation: ${rotate} 1s linear infinite;
 `
@@ -233,7 +235,7 @@ export function tField({field, label, action=false, type='text', form:{isSubmitt
 
 
 	return (
-		<TextField {...field} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
+		<TextField {...field} onClick={(e)=>{e.stopPropagation();}} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
 	)
 }
 

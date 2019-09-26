@@ -1,14 +1,19 @@
 import React from 'react';
+import gql from 'graphql-tag';
 import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText} from '@material-ui/core';
 
 import * as Yup from 'yup';
 import { Formik, FieldArray, Form, Field} from 'formik';
+import { DragDropContext, Droppable} from 'react-beautiful-dnd';
 
 import ImagePlaceHolder from '../../assets/images/image_placeholder.png';
 import {setPageTitle} from '../../utils';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
 
+
 import OptionsGroups from './options_groups';
+import { useQuery } from '@apollo/react-hooks';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 
 const productSchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
@@ -20,34 +25,53 @@ const productSchema = Yup.object().shape({
 	})),
 });
 
+const onDragEnd = (groups, setFieldValue) => (result)=>{
+	if (!result.destination || result.destination.index === result.source.index) return;
+
+	const list = Array.from(groups);
+
+	if (result.type === 'group') {
+		let [removed] = list.splice(result.source.index, 1);
+		list.splice(result.destination.index, 0, removed);
+
+		setFieldValue('options_groups', list.map((row, index) => {row.order = index; return row;}));
+	}
+
+	if (result.type === 'option') {
+		let droppableSource = result.source.droppableId.split('.')[1];
+		let droppableDestination = result.destination.droppableId.split('.')[1];
+
+		let [removed] = list[droppableSource].options.splice(result.source.index, 1);
+		list[droppableDestination].options.splice(result.destination.index, 0, removed);
+
+		list[droppableSource].options.map((row, index) => {row.order = index; return row;});
+		list[droppableDestination].options.map((row, index) => {row.order = index; return row;});
+
+		setFieldValue('options_groups', list);
+	}
+}
+
+const GET_COMPANY_ITEMS = gql`
+	query ($id:ID!) {
+		company (id:$id) {
+			id
+			items {
+				id
+				name
+			}
+		}
+	}
+`;
+
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {
 	setPageTitle('Novo produto');
 
-	/* const options_groups = [
-		{
-			name : 'Extras',
-			type: 'multi',
-			max_select_restrained_by: null,
-			min_select: 0,
-			max_select:2,
-			active:true,
-			order:1,
-			options: [
-				{
-					name:'Bacon',
-					max_select_restrain_other : null,
-					active:true,
-					price:5.30,
-				},
-				{
-					name:'Hamburguer extra',
-					max_select_restrain_other : null,
-					active:false,
-					price:4.30,
-				},
-			]
-		}
-	] */
+	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
+	const {data:itemsData, loading:loadingItems} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
+	const items = itemsData ? itemsData.company.items : [];
+
+	console.log(items);
+
 	return (
 		<Formik
 			validationSchema={productSchema}
@@ -96,24 +120,34 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 								</FormRow>
 							</BlockSeparator>
 							<BlockSeparator>
-								<FieldArray name={`options_groups`}>
-									{({insert, remove}) => (
-										options_groups.map((group, groupIndex)=>{
-											const props = {
-												groups: options_groups,
-												group,
-												groupIndex,
-												insertGroup:insert,
-												removeGroup:remove,
+								<DragDropContext onDragEnd={onDragEnd(options_groups, setFieldValue)}>
+									<Droppable droppableId={`groups`} type='group'>
+										{(provided, snapshot)=>(
+											<FieldArray  name={`options_groups`}>
+												{({insert, remove}) => (
+													<div {...provided.droppableProps} ref={provided.innerRef}>
+														{options_groups.map((group, groupIndex)=>{
+															const props = {
+																groups: options_groups,
+																group,
+																groupIndex,
+																insertGroup:insert,
+																removeGroup:remove,
+																items,
 
-												setFieldValue,
-												handleChange,
-												errors
-											}
-											return <OptionsGroups key={group.id} {...props} />
-										})
-									)}
-								</FieldArray>
+																setFieldValue,
+																handleChange,
+																errors
+															}
+															return <OptionsGroups key={group.id} {...props} />
+														})}
+														{provided.placeholder}
+													</div>
+												)}
+											</FieldArray>
+										)}
+									</Droppable>
+								</DragDropContext>
 							</BlockSeparator>
 						</Paper>
 					</Block>

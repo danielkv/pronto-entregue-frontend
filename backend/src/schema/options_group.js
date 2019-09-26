@@ -19,7 +19,7 @@ module.exports.typeDefs = gql`
 module.exports.resolvers = {
 	OptionsGroup: {
 		options: (parent, args, ctx) => {
-			return parent.getOptions();
+			return parent.getOptions({order:[['order', 'ASC']]});
 		},
 		max_select_restrained_by: (parent, args, ctx) => {
 			return parent.getMaxSelectionRestriction();

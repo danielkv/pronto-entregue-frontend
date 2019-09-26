@@ -24,15 +24,18 @@ export default createMuiTheme({
 		},
 		MuiExpansionPanel : {
 			root: {
+				margin:'0 !important',
 				boxShadow:'none !important',
-				'& .Mui-expanded' : {
+
+				'& .MuiExpansionPanelSummary-content' : {
 					margin:'0 !important',
-				}
+					borderBottom: '1px solid #dfdfdf',
+				},
 			}
 		},
 		MuiExpansionPanelDetails : {
 			root: {
-				backgroundColor:'#F0F0F0'
+				backgroundColor:'#F3f3f3'
 			}
 		},
 		MuiFormControl : {

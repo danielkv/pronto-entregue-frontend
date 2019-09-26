@@ -136,7 +136,7 @@ module.exports.resolvers = {
 			return Options.count({where:{active:true}, include:[{model:OptionsGroups, where:{product_id:parent.get('id')}}]});
 		},
 		options_groups: (parent, args, ctx) => {
-			return parent.getOptionsGroups();
+			return parent.getOptionsGroups({order:[['order', 'ASC']]});
 		},
 		category : (parent, args, ctx) => {
 			return parent.getCategory();

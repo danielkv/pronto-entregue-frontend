@@ -57,7 +57,6 @@ function Page (props) {
 		if (!result.destination || result.destination.index === result.source.index) return;
 
 		const new_order = reorder(categories, result.source.index, result.destination.index);
-		//setCategories(new_order);
 
 		const save_new_order = new_order.map((cat, index) => ({id: cat.id, order:index}));
 		console.table(new_order)

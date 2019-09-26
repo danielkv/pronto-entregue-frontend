@@ -29,14 +29,24 @@ function Page (props) {
 		active: data.product.active,
 		file: '',
 		preview: data.product.image,
-		options_groups: data.product.options_groups
+		options_groups: data.product.options_groups.map(group=>{
+			delete group.__typename;
+			group.open = false;
+			group.max_select_restrained_by = group.max_select_restrained_by ? group.max_select_restrained_by.id : '';
+			group.options = group.options.map(option=>{
+				delete option.__typename;
+				option.item = option.item ? option.item.id : '';
+				return option;
+			});
+			return group;
+		})
 	};
 
 	function onSubmit(data, {setSubmitting}) {
 
-		console.log(data);
+		//console.log(data);
 
-		/* client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data}})
+		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data}})
 		.then(()=>{
 			setDisplaySuccess('O item de estoque foi salvo');
 		})
@@ -46,7 +56,7 @@ function Page (props) {
 		})
 		.finally(() => {
 			setSubmitting(false);
-		}) */
+		})
 	}
 
 	return (
