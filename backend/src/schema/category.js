@@ -9,6 +9,7 @@ module.exports.typeDefs = gql`
 		name:String!
 		description:String
 		active:Boolean!
+		branch:Branch!
 		image:String!
 		order:Int!
 		createdAt:String!
@@ -93,6 +94,9 @@ module.exports.resolvers = {
 	Category : {
 		products: (parent) => {
 			return parent.getProducts();
+		},
+		branch : (parent) => {
+			return parent.getBranch();
 		},
 		products_qty : (parent) => {
 			return parent.getProducts()

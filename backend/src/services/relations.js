@@ -78,6 +78,7 @@ Products.hasMany(OptionsGroups, {foreignKey:'product_id'});
 //OptionsGroups relations
 OptionsGroups.hasMany(Options, {foreignKey:'option_group_id'});
 OptionsGroups.hasOne(OptionsGroups, {foreignKey:'max_select_restrained_by', as:'maxSelectionRestriction'});
+OptionsGroups.belongsTo(Products, {foreignKey:'product_id'});
 
 //Options relations
 Options.belongsTo(OptionsGroups, {foreignKey:'option_group_id'});

@@ -37,6 +37,25 @@ export default createMuiTheme({
 				},
 			}
 		},
+		MuiList:{
+			root: {
+				'&.dropdown':{
+					position:'absolute',
+					right:0,
+					left:0,
+					zIndex:999,
+					borderRadius:3,
+					padding:0,
+					backgroundColor:'#fff',
+					boxShadow:'2px 2px 6px rgba(0,0,0,0.4)',
+					overflow:'hidden',
+					'& li':{
+						cursor:'default',
+						color:'#666'
+					}
+				}
+			}
+		},
 		MuiExpansionPanelDetails : {
 			root: {
 				backgroundColor:'#F3f3f3'

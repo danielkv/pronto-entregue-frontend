@@ -134,6 +134,20 @@ export const setPageTitle = (new_title) => {
 	return document.title = `Flakery`;
 }
 
+export const createEmptyOptionGroup = (overwrite={}) => {
+	return {
+		name:'',
+		type:'single',
+		max_select_restrained_by:'null',
+		action:'new_empty',
+		active:true,
+		min_select:0,
+		max_select:0,
+		options:[],
+		...overwrite
+	}
+}
+
 numeral.register('locale', 'br', {
     delimiters: {
         thousands: '.',

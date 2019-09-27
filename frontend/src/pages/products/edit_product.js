@@ -35,7 +35,7 @@ function Page (props) {
 			group.max_select_restrained_by = group.max_select_restrained_by ? group.max_select_restrained_by.id : '';
 			group.options = group.options.map(option=>{
 				delete option.__typename;
-				option.item = option.item ? option.item.id : '';
+				
 				return option;
 			});
 			return group;

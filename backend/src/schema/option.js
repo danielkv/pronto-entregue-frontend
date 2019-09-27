@@ -17,7 +17,7 @@ module.exports.typeDefs = gql`
 module.exports.resolvers = {
 	Option: {
 		item: (parent, args, ctx) => {
-
+			return parent.getItem();
 		},
 	}
 }

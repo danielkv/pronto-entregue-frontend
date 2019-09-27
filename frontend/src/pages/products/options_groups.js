@@ -16,7 +16,7 @@ import {
 import Options from './options';
 import { tField } from '../../layout/components';
 
-export default function Block ({groups, group, groupIndex, setFieldValue, handleChange, errors, items}) {
+export default function Block ({groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, items}) {
 	return (
 		<Draggable draggableId={`group.${group.id}`} index={groupIndex}>
 			{(provided, snapshot)=>(
@@ -72,9 +72,10 @@ export default function Block ({groups, group, groupIndex, setFieldValue, handle
 											value="checkedB"
 											size='small'
 										/>
-										<IconButton onClick={(e)=>{e.stopPropagation();}}>
+										{(group.action === 'new_empty' || group.action === 'create') &&
+										<IconButton onClick={(e)=>{e.stopPropagation(); removeGroup(groupIndex)}}>
 											<Icon path={mdiDelete} size='16' color='#363E5E' />
-										</IconButton>
+										</IconButton>}
 									</TableCell>
 								</TableRow>
 							</TableBody>

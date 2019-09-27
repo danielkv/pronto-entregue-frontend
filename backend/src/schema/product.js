@@ -1,4 +1,5 @@
 const sequelize = require('../services/connection');
+const Op = require('sequelize').Op;
 const Products = require('../model/products');
 const Options = require('../model/options');
 const OptionsGroups = require('../model/options_groups');
@@ -57,6 +58,7 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		product(id:ID!): Product!
+		searchProducts(search:String!):[Product]!
 	}
 
 	extend type Mutation {
@@ -129,6 +131,9 @@ module.exports.resolvers = {
 				if (!product) throw new Error('Produto não encontrada');
 				return product;
 			})
+		},
+		searchProducts: (parent, {search}, ctx) => {
+			return Products.findAll({where:{name:{[Op.like]:`%${search}%`}}})
 		},
 	},
 	Product: {

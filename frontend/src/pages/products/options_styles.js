@@ -20,6 +20,7 @@ export const OptionColumn = styled.div`
 	padding: 18px 30px;
 	display:flex;
 	align-items:center;
+	position:relative;
 
 	&.spaceDraggable {
 		margin-left:81px;
