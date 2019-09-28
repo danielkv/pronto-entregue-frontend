@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import PageForm from './form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+import numeral from 'numeral';
 
-import {setPageTitle} from '../../utils';
+import {setPageTitle, sanitizeProductData} from '../../utils';
 import Layout from '../../layout';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
@@ -27,6 +28,7 @@ function Page (props) {
 		name: data.product.name,
 		description: data.product.description,
 		active: data.product.active,
+		category: data.product.category,
 		file: '',
 		preview: data.product.image,
 		options_groups: data.product.options_groups.map(group=>{
@@ -35,7 +37,7 @@ function Page (props) {
 			group.max_select_restrained_by = group.max_select_restrained_by ? group.max_select_restrained_by.id : '';
 			group.options = group.options.map(option=>{
 				delete option.__typename;
-				
+				option.price = numeral(option.price).format('0,0.00')
 				return option;
 			});
 			return group;
@@ -43,10 +45,9 @@ function Page (props) {
 	};
 
 	function onSubmit(data, {setSubmitting}) {
-
 		//console.log(data);
 
-		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data}})
+		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data:sanitizeProductData(data)}})
 		.then(()=>{
 			setDisplaySuccess('O item de estoque foi salvo');
 		})

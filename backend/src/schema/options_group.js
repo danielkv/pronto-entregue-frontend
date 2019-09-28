@@ -24,6 +24,7 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		searchOptionsGroups(search:String!):[OptionsGroup]! @hasRole(permission:"products_edit", scope:"adm")
+		optionsGroup(id:ID!):OptionsGroup!
 	}
 `;
 
@@ -40,6 +41,9 @@ module.exports.resolvers = {
 					}]
 				}]
 			});
+		},
+		optionsGroup : (parent, {id}) => {
+			return OptionsGroups.findByPk(id);
 		},
 	},
 	OptionsGroup: {

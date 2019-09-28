@@ -134,17 +134,67 @@ export const setPageTitle = (new_title) => {
 	return document.title = `Flakery`;
 }
 
-export const createEmptyOptionGroup = (overwrite={}) => {
+export const createEmptyOptionsGroup = (overwrite={}) => {
 	return {
 		name:'',
 		type:'single',
-		max_select_restrained_by:'null',
+		max_select_restrained_by:'',
 		action:'new_empty',
 		active:true,
 		min_select:0,
 		max_select:0,
 		options:[],
 		...overwrite
+	}
+}
+
+export const createEmptyOption = (overwrite={}) => {
+	return {
+		name:'',
+		price:0,
+		item:'',
+		active:true,
+		max_select_restrain_other:0,
+		order:0,
+		action:'new_empty',
+		...overwrite
+	}
+}
+
+export const sanitizeProductData = (data) => {
+	return {
+		name: data.name,
+		file: data.file,
+		type: data.type,
+		price: data.price,
+		active: data.active,
+		category_id: data.category,
+		options_groups: data.options_groups.map(group=>{
+			let g = {
+				action: group.action,
+				name: group.name,
+				type: group.type,
+				min_select: group.min_select,
+				max_select: group.max_select,
+				active: group.active,
+				max_select_restricted_by: group.max_select_restrained_by,
+				options: group.options.map(option=>{
+					let o = {
+						action: option.action,
+						name: option.name,
+						order: option.order,
+						active: option.active,
+						price: option.price,
+						max_select_restrain_other: option.max_select_restrain_other,
+						item_id: option.item ? option.action.id : null,
+					};
+					if (option.id) o.id = option.id;
+					return o;
+				}),
+			}
+			if (group.id) g.id = group.id;
+			return g;
+		})	
 	}
 }
 

@@ -1,24 +1,28 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import gql from 'graphql-tag';
-import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction} from '@material-ui/core';
+import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment} from '@material-ui/core';
 
 import Icon from '@mdi/react';
 import {mdiPlus, mdiBasket } from '@mdi/js'
 import Downshift from "downshift";
 import * as Yup from 'yup';
-import { Formik, FieldArray, Form, Field} from 'formik';
+import { Formik, FieldArray, Form, Field, ErrorMessage} from 'formik';
 import { DragDropContext, Droppable} from 'react-beautiful-dnd';
 
-import ImagePlaceHolder from '../../assets/images/image_placeholder.png';
-import {setPageTitle, createEmptyOptionGroup} from '../../utils';
+import {setPageTitle, createEmptyOptionsGroup} from '../../utils';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading} from '../../layout/components';
 
 import OptionsGroups from './options_groups';
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
+import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { LOAD_OPTION_GROUP } from '../../graphql/products';
+import { DropzoneBlock } from '../../layout/blocks';
+import { GET_SELECTED_BRANCH } from '../../graphql/branches';
+import { GET_BRANCH_CATEGORIES } from '../../graphql/categories';
 
 const productSchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
+	price: Yup.number().required('Obrigatório'),
 	description: Yup.string().required('Obrigatório'),
 	options_groups: Yup.array().of(Yup.object().shape({
 		options: Yup.array().of(Yup.object().shape({
@@ -26,32 +30,6 @@ const productSchema = Yup.object().shape({
 		})),
 	})),
 });
-
-const onDragEnd = (groups, setFieldValue) => (result)=>{
-	if (!result.destination || result.destination.index === result.source.index) return;
-
-	const list = Array.from(groups);
-
-	if (result.type === 'group') {
-		let [removed] = list.splice(result.source.index, 1);
-		list.splice(result.destination.index, 0, removed);
-
-		setFieldValue('options_groups', list.map((row, index) => {row.order = index; return row;}));
-	}
-
-	if (result.type === 'option') {
-		let droppableSource = result.source.droppableId.split('.')[1];
-		let droppableDestination = result.destination.droppableId.split('.')[1];
-
-		let [removed] = list[droppableSource].options.splice(result.source.index, 1);
-		list[droppableDestination].options.splice(result.destination.index, 0, removed);
-
-		list[droppableSource].options.map((row, index) => {row.order = index; return row;});
-		list[droppableDestination].options.map((row, index) => {row.order = index; return row;});
-
-		setFieldValue('options_groups', list);
-	}
-}
 
 const GET_COMPANY_ITEMS = gql`
 	query ($id:ID!) {
@@ -90,17 +68,80 @@ const SEARCH_OPTIONS_GROUPS = gql`
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {
 	setPageTitle('Novo produto');
 
+	const [loadingCopy, setLoadingCopy] = useState(false);
+	const [dragAlertOpen, setDragAlertOpen] = useState(false);
+	
+	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+	const {data:categoriesData, loading:loadingcategoriesData} = useQuery(GET_BRANCH_CATEGORIES, {variables:{id:selectedBranchData.selectedBranch}});
+
 	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
 	const {data:itemsData, loading:loadingItems} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
 	const items = itemsData ? itemsData.company.items : [];
 
 	const [searchOptionsGroups, {data:groupsData, loading:loadingGroups}] = useLazyQuery(SEARCH_OPTIONS_GROUPS, {fetchPolicy:'no-cache'});
 	const groups = groupsData ? groupsData.searchOptionsGroups : [];
+	const client = useApolloClient();
 	
-	if (loadingSelectedCompany || loadingItems) return <Loading />;
+	if (loadingSelectedCompany || loadingItems || loadingcategoriesData || loadingSelectedData) return <Loading />;
+
+	const onDragEnd = (groups, setFieldValue) => (result)=>{
+		if (!result.destination || result.destination.index === result.source.index) return;
+	
+		const list = Array.from(groups);
+	
+		if (result.type === 'group') {
+			let [removed] = list.splice(result.source.index, 1);
+			list.splice(result.destination.index, 0, removed);
+	
+			setFieldValue('options_groups', list.map((row, index) => {row.order = index; return row;}));
+		}
+	
+		if (result.type === 'option') {
+			let droppableSource = result.source.droppableId.split('.')[1];
+			let droppableDestination = result.destination.droppableId.split('.')[1];
+
+			let draggableId = result.draggableId.split('.')[3];
+
+			if (droppableSource !== droppableDestination && list[droppableDestination].options.find(row=>row.id===draggableId)) {
+				setDragAlertOpen(true);
+				return;
+			}
+	
+			let [removed] = list[droppableSource].options.splice(result.source.index, 1);
+			list[droppableDestination].options.splice(result.destination.index, 0, removed);
+	
+			list[droppableSource].options.map((row, index) => {row.order = index; return row;});
+			list[droppableDestination].options.map((row, index) => {row.order = index; return row;});
+	
+			setFieldValue('options_groups', list);
+		}
+	}
 
 	const handleSearchGroups = (search) => {
 		searchOptionsGroups({variables:{search}});
+	}
+
+	const handleCopyOptionGroup = (group, insert) => {
+		setLoadingCopy(true);
+		client.query({query:LOAD_OPTION_GROUP, variables:{id:group.id}})
+		.then(({data:{optionsGroup}})=>{
+			insert(0, optionsGroup);
+		})
+		.catch(e=>{
+			console.error(e);
+		})
+		.finally(()=>{
+			setLoadingCopy(false);
+		})
+	}
+
+	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
+		if ( Array.isArray(acceptedFiles)) {
+			const file = acceptedFiles[0];
+			const preview = URL.createObjectURL(file);
+			setFieldValue('preview', preview);
+			setFieldValue('file', file);
+		}
 	}
 
 	return (
@@ -111,8 +152,26 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, options_groups}, setFieldValue, handleChange, isSubmitting, errors}) => (
+			{({values:{active, preview, category, options_groups}, setFieldValue, handleChange, isSubmitting, errors}) => (
 			<Form>
+				<Dialog
+					open={dragAlertOpen}
+					onClose={()=>setDragAlertOpen(false)}
+					aria-labelledby="alert-dialog-title"
+					aria-describedby="alert-dialog-description"
+				>
+					<DialogTitle id="alert-dialog-title">Você não pode soltar esse item aqui</DialogTitle>
+					<DialogContent>
+						<DialogContentText id="alert-dialog-description">
+							Essa opção já está dentro desse grupo, tente criar uma nova.
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={()=>setDragAlertOpen(false)} color="primary" autoFocus>
+							Ok
+						</Button>
+					</DialogActions>
+				</Dialog>
 				<Content>
 					<Block>
 						<BlockHeader>
@@ -129,13 +188,26 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<Field component={tField} name='description' label='Descrição' />
 								</FieldControl>
 							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<TextField name='price' type='number' onChange={handleChange} error={!!errors.price} helperText={!!errors.price && errors.price} label='Preço' InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
+								</FieldControl>
+								<FieldControl>
+									<TextField select value={category.id} label='Categoria' name='category.id' onChange={handleChange}>
+										{categoriesData && categoriesData.branch.categories.map(category_item=>(
+											<MenuItem key={category_item.id} value={category_item.id}>{category_item.name}</MenuItem>
+										))}
+									</TextField>
+								</FieldControl>
+							</FormRow>
 						</Paper>
 					</Block>
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Opções</BlockTitle>
+							{loadingCopy && <Loading />}
 						</BlockHeader>
-						<Paper>
+						<Paper style={{overflow:'visible'}}>
 							<FieldArray  name={`options_groups`}>
 								{({insert, remove}) => (
 									<Fragment>
@@ -147,6 +219,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 														onChange={(selected, {reset, clearSelection})=>{
 															if (selected.action === 'create') {
 																insert(0, selected);
+															} else {
+																handleCopyOptionGroup(selected, insert);
 															}
 														}}
 														itemToString={(item => item ? item.name : '')}
@@ -161,31 +235,31 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															highlightedIndex,
 														})=>{
 															if (inputValue && (!groups.length || !groups[groups.length-1].action))
-																groups.push(createEmptyOptionGroup({id:Math.round(Math.random()*1000), name:inputValue, action:'create'}));
+																groups.push(createEmptyOptionsGroup({id:Math.round(Math.random()*1000), name:inputValue, action:'create'}));
 
 															return (
 																<div>
-																	<TextField {...getInputProps()} />
+																	<TextField disabled={loadingCopy} {...getInputProps()} />
 																	{isOpen && (
 																		<List {...getMenuProps()} className="dropdown">
-																			{loadingGroups ?
-																				<Loading />
-																			:
-																				groups.map((item, index) => {
-																					let icon = item.action && item.action === 'create' ? mdiPlus : mdiBasket;
-																					let text = item.action && item.action === 'create' ? inputValue : <span>{`${item.name} `}<small>{`(${item.options_qty})`}</small></span>;
-																					let secondary = item.action && item.action === 'create' ? 'criar novo grupo' : `copiar de ${item.product.name} em ${item.product.category.branch.name}`;
+																			{loadingGroups && <div style={{padding:20}}><Loading /></div>}
+																			
+																			{groups.map((item, index) => {
+																				let icon = item.action && item.action === 'create' ? mdiPlus : mdiBasket;
+																				let text = item.action && item.action === 'create' ? inputValue : <span>{`${item.name} `}<small>{`(${item.options_qty})`}</small></span>;
+																				let secondary = item.action && item.action === 'create' ? 'criar novo grupo' : `copiar de ${item.product.name} em ${item.product.category.branch.name}`;
 
-																					return (<ListItem
-																						className="dropdown-item"
-																						selected={highlightedIndex === index}
-																						{...getItemProps({ key: item.id, index, item })}
-																						>
-																							<ListItemIcon><Icon path={icon} color='#707070' size='22' /></ListItemIcon>
-																							<ListItemText>{text}</ListItemText>
-																							<ListItemSecondaryAction><small>{secondary}</small></ListItemSecondaryAction>
-																						</ListItem>)
-																				})}
+																				return (<ListItem
+																					className="dropdown-item"
+																					selected={highlightedIndex === index}
+																					key={item.id}
+																					{...getItemProps({ key: item.id, index, item })}
+																					>
+																						<ListItemIcon><Icon path={icon} color='#707070' size='22' /></ListItemIcon>
+																						<ListItemText>{text}</ListItemText>
+																						<ListItemSecondaryAction><small>{secondary}</small></ListItemSecondaryAction>
+																					</ListItem>)
+																			})}
 																		</List>
 																	)}
 																</div>
@@ -216,7 +290,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 																	handleChange,
 																	errors
 																}
-																return <OptionsGroups key={group.id} {...props} />
+																return <OptionsGroups key={`${group.id}.${groupIndex}`} {...props} />
 															})}
 															{provided.placeholder}
 														</div>
@@ -259,8 +333,9 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 								<FormRow>
 									<FieldControl>
 										<FormControl>
-											<FormLabel>Imagem</FormLabel>
-											<img src={ImagePlaceHolder} alt='Clique para adicionar uma imagem' />
+											<FormLabel>Imagem</FormLabel> 
+											<DropzoneBlock preview={preview} onDrop={handleDropFile(setFieldValue)} />
+											<FormHelperText error><ErrorMessage name="file" /></FormHelperText>
 										</FormControl>
 									</FieldControl>
 								</FormRow>

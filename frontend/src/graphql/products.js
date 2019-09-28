@@ -1,5 +1,44 @@
 import gql from "graphql-tag";
 
+export const OPTIONS_GROUP_FRAGMENT = gql`
+	fragment OptionsGroupFields on OptionsGroup {
+		id
+		name
+		active
+		type
+		order
+		min_select
+		max_select
+		max_select_restrained_by {
+			id
+			name
+		}
+		action @client
+		options {
+			id
+			name
+			price
+			item {
+				id
+				name
+			}
+			active
+			max_select_restrain_other
+			order
+			action @client
+		}
+	}
+`;
+
+export const LOAD_OPTION_GROUP = gql`
+	query ($id: ID!) {
+		optionsGroup (id:$id) {
+			...OptionsGroupFields
+		}
+	}
+	${OPTIONS_GROUP_FRAGMENT}
+`;
+
 export const LOAD_PRODUCT = gql`
 	query ($id: ID!) {
 		product (id: $id) {
@@ -7,38 +46,18 @@ export const LOAD_PRODUCT = gql`
 			name
 			type
 			description
+			category {
+				id
+				name
+			}
 			image
 			active
 			options_groups {
-				id
-				name
-				active
-				type
-				order
-				min_select
-				max_select
-				max_select_restrained_by {
-					id
-					name
-				}
-				action @client
-				options {
-					id
-					name
-					price
-					item {
-						id
-						name
-					}
-					active
-					max_select_restrain_other
-					order
-					action @client
-				}
+				...OptionsGroupFields
 			}
-			
 		}
 	}
+	${OPTIONS_GROUP_FRAGMENT}
 `;
 
 export const CREATE_PRODUCT = gql`
