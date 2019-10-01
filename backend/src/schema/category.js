@@ -40,7 +40,7 @@ module.exports.typeDefs = gql`
 
 module.exports.resolvers = {
 	Mutation: {
-		createCategory : async (parent, {data, file}, ctx) => {
+		createCategory : async (parent, {data}, ctx) => {
 			if (data.file) {
 				const { stream, filename} = await data.file;
 				//console.log(filename);

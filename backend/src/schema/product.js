@@ -38,11 +38,12 @@ module.exports.typeDefs = gql`
 		action:String! #create | update | delete
 		name:String
 		type:String
+		order:Int
 		min_select:Int
 		max_select:Int
 		active:Boolean
 		options:[OptionInput]
-		max_select_restricted_by:ID
+		max_select_restrain:ID
 	}
 
 	input OptionInput {
@@ -70,12 +71,14 @@ module.exports.typeDefs = gql`
 module.exports.resolvers = {
 	Mutation: {
 		createProduct: async (parent, {data}, ctx) => {
-			const { stream, filename, mimetype, encoding } = await data.file;
-			
-			const filepath = uploads.createFilePath(ctx.company.name, filename);
-			const file_uploaded = await uploads.startUpload(stream, filepath);
+			if (data.file) {
+				const { stream, filename } = await data.file;
 
-			data.image = file_uploaded;
+				const filepath = uploads.createFilePath(ctx.host, ctx.company.name, filename);
+				await uploads.startUpload(stream, filepath.path);
+
+				data.image = filepath.url;
+			}
 
 			return sequelize.transaction(transaction => {
 				return ctx.branch.getCategories({where:{id:data.category_id}})
@@ -94,12 +97,12 @@ module.exports.resolvers = {
 		},
 		updateProduct : async (parent, {id, data}, ctx) => {
 			if (data.file) {
-				const { stream, filename, mimetype, encoding } = await data.file;
-				
-				const filepath = uploads.createFilePath(ctx.company.name, filename);
-				const file_uploaded = await uploads.startUpload(stream, filepath);
+				const { stream, filename } = await data.file;
 
-				data.image = file_uploaded;
+				const filepath = uploads.createFilePath(ctx.host, ctx.company.name, filename);
+				await uploads.startUpload(stream, filepath.path);
+
+				data.image = filepath.url;
 			}
 
 			return sequelize.transaction(transaction => {

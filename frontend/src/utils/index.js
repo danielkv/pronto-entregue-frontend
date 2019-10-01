@@ -138,7 +138,7 @@ export const createEmptyOptionsGroup = (overwrite={}) => {
 	return {
 		name:'',
 		type:'single',
-		max_select_restrained_by:'',
+		groupRestrained:'',
 		action:'new_empty',
 		active:true,
 		min_select:0,
@@ -168,16 +168,17 @@ export const sanitizeProductData = (data) => {
 		type: data.type,
 		price: data.price,
 		active: data.active,
-		category_id: data.category,
+		category_id: data.category.id,
 		options_groups: data.options_groups.map(group=>{
 			let g = {
 				action: group.action,
 				name: group.name,
 				type: group.type,
+				order: group.order,
 				min_select: group.min_select,
 				max_select: group.max_select,
 				active: group.active,
-				max_select_restricted_by: group.max_select_restrained_by,
+				max_select_restrain: group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : null,
 				options: group.options.map(option=>{
 					let o = {
 						action: option.action,
@@ -186,7 +187,7 @@ export const sanitizeProductData = (data) => {
 						active: option.active,
 						price: option.price,
 						max_select_restrain_other: option.max_select_restrain_other,
-						item_id: option.item ? option.action.id : null,
+						item_id: option.item && option.item.id !== 'none' ? option.item.id : null,
 					};
 					if (option.id) o.id = option.id;
 					return o;

@@ -13,18 +13,25 @@ class OptionsGroups extends Sequelize.Model {
 				let group_model;
 				return new Promise(async (resolve, reject) => {
 					try {
-						if (group.id && group.action !== 'create') [group_model] = await product.getOptionsGroups({where:{id:group.id}});
-						
-						if (group_model) {
-							if (group.action === "remove") await product.removeOptionsGroup(group_model, {transaction});
-							else if (group.action === 'update') await group_model.update(group, {fields:['name', 'type', 'min_select', 'max_select', 'order', 'max_select_restrained_by'], transaction});
-						} else {
+						if (!['create', 'remove', 'update'].includes(group.action)) return resolve(group);
+
+						if (group.id && group.action === "remove") {
+							group_model = await product.removeOptionsGroup(group_model, {transaction});
+							return resolve(group_model);
+						} else if (group.action === 'create') {
 							group_model = await product.createOptionsGroup(group, {transaction});
+						} else if (group.id && group.action === 'update') {
+							[group_model] = await product.getOptionsGroups({where:{id:group.id}});
+							console.log(group);
+							group_model = await group_model.update(group, {fields:['name', 'type', 'min_select', 'max_select', 'order', 'max_select_restrain'], transaction});
 						}
 						
-						if (!group.remove && group.options) group.options = await Options.updateAll(group.options, group_model, transaction);
-						
-						return resolve({...group_model.get(), options: group.options});
+						if (group_model) {
+							if (!group.remove && group.options) group.options = await Options.updateAll(group.options, group_model, transaction);
+							return resolve({...group_model.get(), options: group.options});
+						} else {
+							reject('Grupo não foi encontrado');
+						}
 					} catch (err) {
 						return reject(err);
 					}

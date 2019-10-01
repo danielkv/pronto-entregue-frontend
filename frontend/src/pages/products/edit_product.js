@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import PageForm from './form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import numeral from 'numeral';
 
 import {setPageTitle, sanitizeProductData} from '../../utils';
 import Layout from '../../layout';
@@ -29,27 +28,19 @@ function Page (props) {
 		description: data.product.description,
 		active: data.product.active,
 		category: data.product.category,
+		price: data.product.price, 
 		file: '',
 		preview: data.product.image,
-		options_groups: data.product.options_groups.map(group=>{
-			delete group.__typename;
-			group.open = true;
-			group.max_select_restrained_by = group.max_select_restrained_by ? group.max_select_restrained_by.id : '';
-			group.options = group.options.map(option=>{
-				delete option.__typename;
-				option.price = numeral(option.price).format('0,0.00')
-				return option;
-			});
-			return group;
-		})
+		options_groups: data.product.options_groups
 	};
 
 	function onSubmit(data, {setSubmitting}) {
-		//console.log(data);
+		const saveData = sanitizeProductData(data);
+		//console.log(saveData);
 
-		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data:sanitizeProductData(data)}})
+		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data:saveData}})
 		.then(()=>{
-			setDisplaySuccess('O item de estoque foi salvo');
+			setDisplaySuccess('O produto foi salvo');
 		})
 		.catch((err)=>{
 			setDisplayError(err.message);
@@ -88,6 +79,7 @@ function Page (props) {
 				pageTitle='Alterar produto'
 				initialValues={product}
 				onSubmit={onSubmit}
+				edit={true}
 				/>
 		</Layout>
 	)

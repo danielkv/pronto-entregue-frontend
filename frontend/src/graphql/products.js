@@ -9,7 +9,11 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 		order
 		min_select
 		max_select
-		max_select_restrained_by {
+		groupRestrained {
+			id
+			name
+		}
+		restrainedBy {
 			id
 			name
 		}
@@ -40,11 +44,12 @@ export const LOAD_OPTION_GROUP = gql`
 `;
 
 export const LOAD_PRODUCT = gql`
-	query ($id: ID!) {
+	query LoadProduct ($id: ID!) {
 		product (id: $id) {
 			id
 			name
 			type
+			price
 			description
 			category {
 				id
@@ -84,6 +89,7 @@ export const GET_BRANCHES_PRODUCTS = gql`
 				options_qty
 				createdAt
 				category {
+					id
 					name
 				}
 			}
@@ -96,14 +102,19 @@ export const UPDATE_PRODUCT = gql`
 		updateProduct (id:$id, data:$data) {
 			id
 			name
+			type
+			price
+			description
+			category {
+				id
+				name
+			}
 			image
 			active
-			price
-			options_qty
-			createdAt
-			category {
-				name
+			options_groups {
+				...OptionsGroupFields
 			}
 		}
 	}
+	${OPTIONS_GROUP_FRAGMENT}
 `;

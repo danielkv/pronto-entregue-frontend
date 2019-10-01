@@ -26,7 +26,7 @@ function Page (props) {
 			order:0,
 			min_select:0,
 			max_select:0,
-			max_select_restrained_by:'',
+			groupRestrained:'',
 			action:'create',
 			options: [{
 				id:'',

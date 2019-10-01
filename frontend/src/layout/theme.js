@@ -70,7 +70,7 @@ export default createMuiTheme({
 					marginLeft:18,
 					pointerEvents: 'none',
 					transition: 'color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, margin 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms',
-					'&.Mui-focused, &.MuiFormLabel-filled':{
+					'&.MuiInputLabel-shrink, &.MuiFormLabel-filled':{
 						marginLeft:0,
 						marginTop:0,
 					}

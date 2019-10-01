@@ -19,7 +19,8 @@ module.exports.typeDefs = gql`
 		product:Product!
 		options:[Option]!
 		options_qty:Int!
-		max_select_restrained_by:OptionsGroup
+		groupRestrained:OptionsGroup
+		restrainedBy:OptionsGroup
 	}
 
 	extend type Query {
@@ -50,14 +51,17 @@ module.exports.resolvers = {
 		options: (parent, args, ctx) => {
 			return parent.getOptions({order:[['order', 'ASC']]});
 		},
-		options_qty: (parent, args, ctx) => {
+		options_qty: (parent, argss, ctx) => {
 			return parent.getOptions()
 			.then(options=>{
 				return options.length;
 			})
 		},
-		max_select_restrained_by: (parent, args, ctx) => {
-			return parent.getMaxSelectionRestriction();
+		groupRestrained: (parent, args, ctx) => {
+			return parent.getGroupRestrained();
+		},
+		restrainedBy: (parent, args, ctx) => {
+			return parent.getRestrainedBy();
 		},
 		product : (parent) => {
 			return parent.getProduct();

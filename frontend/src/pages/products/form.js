@@ -20,17 +20,6 @@ import { DropzoneBlock } from '../../layout/blocks';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BRANCH_CATEGORIES } from '../../graphql/categories';
 
-const productSchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	price: Yup.number().required('Obrigatório'),
-	description: Yup.string().required('Obrigatório'),
-	options_groups: Yup.array().of(Yup.object().shape({
-		options: Yup.array().of(Yup.object().shape({
-			price: Yup.number().required('Obrigatório')
-		})),
-	})),
-});
-
 const GET_COMPANY_ITEMS = gql`
 	query ($id:ID!) {
 		company (id:$id) {
@@ -65,8 +54,31 @@ const SEARCH_OPTIONS_GROUPS = gql`
 	}
 `;
 
-export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {
+const FILE_SIZE = 500 * 1024;
+
+export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
 	setPageTitle('Novo produto');
+
+	const productSchema = Yup.object().shape({
+		name: Yup.string().required('Obrigatório'),
+		price: Yup.number().required('Obrigatório'),
+		description: Yup.string().required('Obrigatório'),
+		file: Yup.lazy(value => {
+			if (!edit) {
+				return Yup.mixed().required('Selecione uma imagem')
+				.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE)
+			}
+			
+			return Yup.mixed().notRequired();
+		}),
+		options_groups: Yup.array().of(Yup.object().shape({
+			name: Yup.string().required('Obrigatório'),
+			options: Yup.array().of(Yup.object().shape({
+				name: Yup.string().required('Obrigatório'),
+				price: Yup.number().required('Obrigatório'),
+			})),
+		})),
+	});
 
 	const [loadingCopy, setLoadingCopy] = useState(false);
 	const [dragAlertOpen, setDragAlertOpen] = useState(false);
@@ -76,13 +88,35 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 
 	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
 	const {data:itemsData, loading:loadingItems} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
-	const items = itemsData ? itemsData.company.items : [];
+	let items = [];
+	if (itemsData) {
+		items = itemsData.company.items;
+		if (!items.length || items[0].id !== 'none') items.unshift({id:'none', name:'Sem vínculo'})
+	}
 
 	const [searchOptionsGroups, {data:groupsData, loading:loadingGroups}] = useLazyQuery(SEARCH_OPTIONS_GROUPS, {fetchPolicy:'no-cache'});
 	const groups = groupsData ? groupsData.searchOptionsGroups : [];
 	const client = useApolloClient();
 	
 	if (loadingSelectedCompany || loadingItems || loadingcategoriesData || loadingSelectedData) return <Loading />;
+
+	const sanitizeOptionsGroupsOrder = (groups) => {
+		return groups.map((row, index) => {
+			row.order = index;
+			if (row.action==='editable') row.action = 'update';
+			return row;
+		})
+	}
+
+	const sanitizeOptionsOrder = (group) => {
+		group.options.map((row, index) => {
+			row.order = index;
+			if (row.action==='editable') row.action = 'update';
+			return row;
+		});
+		if (group.action === 'editable') group.action = 'update';
+		return group;
+	}
 
 	const onDragEnd = (groups, setFieldValue) => (result)=>{
 		if (!result.destination || result.destination.index === result.source.index) return;
@@ -92,8 +126,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		if (result.type === 'group') {
 			let [removed] = list.splice(result.source.index, 1);
 			list.splice(result.destination.index, 0, removed);
-	
-			setFieldValue('options_groups', list.map((row, index) => {row.order = index; return row;}));
+			
+			setFieldValue('options_groups', sanitizeOptionsGroupsOrder(list));
 		}
 	
 		if (result.type === 'option') {
@@ -109,9 +143,9 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 	
 			let [removed] = list[droppableSource].options.splice(result.source.index, 1);
 			list[droppableDestination].options.splice(result.destination.index, 0, removed);
-	
-			list[droppableSource].options.map((row, index) => {row.order = index; return row;});
-			list[droppableDestination].options.map((row, index) => {row.order = index; return row;});
+			
+			list[droppableSource] = sanitizeOptionsOrder(list[droppableSource]);
+			list[droppableDestination] = sanitizeOptionsOrder(list[droppableDestination]);
 	
 			setFieldValue('options_groups', list);
 		}
@@ -121,11 +155,18 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		searchOptionsGroups({variables:{search}});
 	}
 
-	const handleCopyOptionGroup = (group, insert) => {
+	const getCopiedOptionGroup = (group) => {
 		setLoadingCopy(true);
-		client.query({query:LOAD_OPTION_GROUP, variables:{id:group.id}})
+		return client.query({query:LOAD_OPTION_GROUP, variables:{id:group.id}})
 		.then(({data:{optionsGroup}})=>{
-			insert(0, optionsGroup);
+			delete optionsGroup.id;
+			optionsGroup.action = 'create';
+			optionsGroup.options = optionsGroup.options.map(row =>{
+				delete row.id;
+				row.action='create';
+				return row
+			});
+			return optionsGroup;
 		})
 		.catch(e=>{
 			console.error(e);
@@ -136,7 +177,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 	}
 
 	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
-		if ( Array.isArray(acceptedFiles)) {
+		if (Array.isArray(acceptedFiles)) {
 			const file = acceptedFiles[0];
 			const preview = URL.createObjectURL(file);
 			setFieldValue('preview', preview);
@@ -152,8 +193,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, preview, category, options_groups}, setFieldValue, handleChange, isSubmitting, errors}) => (
-			<Form>
+			{({values:{active, price, preview, category, options_groups}, values, setFieldValue, handleChange, isSubmitting, errors}) => {
+			return (<Form>
 				<Dialog
 					open={dragAlertOpen}
 					onClose={()=>setDragAlertOpen(false)}
@@ -190,7 +231,17 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<TextField name='price' type='number' onChange={handleChange} error={!!errors.price} helperText={!!errors.price && errors.price} label='Preço' InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
+									<TextField
+										name='price'
+										type='number'
+										value={price}
+										label='Preço'
+										onChange={handleChange}
+										disabled={isSubmitting}
+										error={!!errors.price}
+										helperText={!!errors.price && errors.price}
+										InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
+										inputProps={{step:0.01}} />
 								</FieldControl>
 								<FieldControl>
 									<TextField select value={category.id} label='Categoria' name='category.id' onChange={handleChange}>
@@ -216,12 +267,13 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												<FieldControl>
 													<FormControl>
 													<Downshift
-														onChange={(selected, {reset, clearSelection})=>{
-															if (selected.action === 'create') {
-																insert(0, selected);
-															} else {
-																handleCopyOptionGroup(selected, insert);
+														onChange={async (selected, {reset, clearSelection})=>{
+															if (selected.action !== 'create') {
+																selected = await getCopiedOptionGroup(selected);
 															}
+															const list = Array.from(options_groups);
+															list.unshift(selected);
+															setFieldValue('options_groups', sanitizeOptionsGroupsOrder(list));
 														}}
 														itemToString={(item => item ? item.name : '')}
 														onInputValueChange={(value)=>{handleSearchGroups(value)}}
@@ -281,9 +333,12 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 																const props = {
 																	groups: options_groups,
 																	group,
+																	sanitizeOptionsGroupsOrder,
+																	sanitizeOptionsOrder,
 																	groupIndex,
 																	insertGroup:insert,
 																	removeGroup:remove,
+																	isSubmitting,
 																	items,
 
 																	setFieldValue,
@@ -343,7 +398,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 						</Sidebar>
 					</Block>
 				</SidebarContainer>
-			</Form>)}
+			</Form>)}}
 		</Formik>
 	)
 }
