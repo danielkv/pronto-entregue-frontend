@@ -31,6 +31,17 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 	const nameError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].name ? errors.options_groups[groupIndex].name : '';
 	const groupRestrained = group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : '';
 	const restrainedBy = group.restrainedBy && group.restrainedBy.id;
+	
+	const filteredGroups = groups.filter(g=>{
+		if (!(group.groupRestrained && group.groupRestrained.id) && g.restrainedBy && g.restrainedBy.id) return false;
+		if (g.groupRestrained && g.groupRestrained.id) return false;
+
+		if (g.id !== group.id) {
+			if (!group.restrainedBy || !group.restrainedBy.id) return true;
+			if (parseInt(group.restrainedBy.id) !== parseInt(g.id)) return true;
+		}
+		return false;
+	});
 
 	return (
 		<Draggable draggableId={`group.${groupIndex}.${group.id}`} index={groupIndex}>
@@ -89,48 +100,16 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 														setFieldValue(`options_groups.${groupIndex}`, new_group);
 													}}
 													aria-label="text alignment"
-													disabled={isSubmitting}
 												>
-													<ToggleButton value="single" title="Única" aria-label="left aligned">
+													<ToggleButton disabled={isSubmitting || !!groupRestrained || restrainedBy} value="single" title="Única" aria-label="left aligned">
 														<Icon path={mdiRadioboxMarked} size='16' color='#707070' />
 													</ToggleButton>
-													<ToggleButton value="multiple" title="Múltipla" aria-label="left aligned">
+													<ToggleButton disabled={isSubmitting || !!groupRestrained || restrainedBy} value="multiple" title="Múltipla" aria-label="left aligned">
 														<Icon path={mdiFormatListBulleted} size='16' color='#707070' />
 													</ToggleButton>
 												</ToggleButtonGroup>
 											</FormControl>
 										</TableCell>
-										{groups.length > 1 &&
-										<TableCell style={{width:210}}>
-											<TextField label='Restringir outra opção' select
-												onClick={(e)=>{e.stopPropagation();}}
-												disabled={isSubmitting}
-												onChange={(e)=>{
-													let new_group = {
-														...group,
-														groupRestrained: {
-															id: e.target.value
-														}
-													}
-													if (group.action === 'editable') new_group.action = 'update';
-													setFieldValue(`options_groups.${groupIndex}`, new_group);
-												}}
-												value={groupRestrained}
-												>
-												<MenuItem value=''>-- Não restringir --</MenuItem>
-												{groups.filter(g=>g.id !== group.id).map(g=>{
-													return (<MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)
-												})}
-											</TextField>
-										</TableCell>}
-										{group.type === 'multiple' &&
-										<TableCell style={{width:150}}>
-											<Field type='number' onChange={()=>{if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');}} component={tField} name={`options_groups.${groupIndex}.min_select`} label='Seleção mínima' />
-										</TableCell>}
-										{group.type === 'multiple' && !restrainedBy &&
-										<TableCell style={{width:150}}>
-											<Field type='number' onChange={()=>{if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');}} component={tField} name={`options_groups.${groupIndex}.max_select`} label='Seleção máxima' />
-										</TableCell>}
 										{group.type === 'single' &&
 										<TableCell style={{width:150}}>
 											<FormControlLabel
@@ -138,6 +117,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 												control={
 													<Checkbox checked={group.min_select > 0}
 														onClick={(e)=>{e.stopPropagation();}}
+														disabled={isSubmitting || !!groupRestrained}
 														value="checkedA"
 														onChange={(e, newValue)=>{
 															if (newValue) {
@@ -161,6 +141,47 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 												label="Obrigatório"
 											/>
 										</TableCell>}
+										{group.type === 'multiple' &&
+										<TableCell style={{width:150}}>
+											<Field type='number' onChange={()=>{if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');}} component={tField} name={`options_groups.${groupIndex}.min_select`} label='Seleção mínima' />
+										</TableCell>}
+										{group.type === 'multiple' && !restrainedBy &&
+										<TableCell style={{width:150}}>
+											<Field type='number' onChange={()=>{if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');}} component={tField} name={`options_groups.${groupIndex}.max_select`} label='Seleção máxima' />
+										</TableCell>}
+										{!!filteredGroups.length &&
+										<TableCell style={{width:210}}>
+											<TextField label='Restringir outra opção' select
+												onClick={(e)=>{e.stopPropagation();}}
+												disabled={isSubmitting}
+												onChange={(e)=>{
+													groups[groupIndex].groupRestrained = {id: e.target.value};
+													if (group.action === 'editable') groups[groupIndex].action = 'update';
+													
+													if (groupRestrained && groupRestrained !== group.id) {
+														let groupOtherIndex = groups.findIndex(row=>row.id === groupRestrained);
+														groups[groupOtherIndex].restrainedBy = null;
+													}
+													if (e.target.value) {
+														groups[groupIndex].min_select = 1;
+														groups[groupIndex].max_select = 1;
+														groups[groupIndex].type = 'single';
+
+														let groupOtherIndex = groups.findIndex(row=>row.id === e.target.value);
+														groups[groupOtherIndex].restrainedBy = {id: group.id};
+														groups[groupOtherIndex].type = 'multiple';
+													}
+
+													setFieldValue(`options_groups`, groups);
+												}}
+												value={groupRestrained}
+												>
+												<MenuItem value=''>-- Não restringir --</MenuItem>
+												{filteredGroups.map(g=>{
+													return (<MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)
+												})}
+											</TextField>
+										</TableCell>}
 										<TableCell style={{width:120}}>
 											<Switch
 												disabled={isSubmitting}
@@ -181,7 +202,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 												disabled={isSubmitting}
 												onClick={(e)=>{
 													e.stopPropagation();
-													group.options.unshift(createEmptyOption({editing:true, action:'create'}))
+													group.options.unshift(createEmptyOption({editing:true, action:'create', id:Math.round(Math.random()*1000)}))
 													const new_group = {
 														...sanitizeOptionsOrder(group),
 														open:true,

@@ -7,7 +7,7 @@ import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContaine
 
 const branchSchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
-	description: Yup.string().required('Obrigatório'),
+	description: Yup.string().notRequired(),
 });
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange}) {

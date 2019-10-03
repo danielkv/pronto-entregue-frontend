@@ -96,7 +96,8 @@ function Page () {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Pedidos <Button size='small' variant="contained" color='secondary' to='/pedidos/novo' component={Link}>Adicionar</Button></BlockTitle>
+						<BlockTitle>Pedidos</BlockTitle>
+						<Button size='small' variant="contained" color='secondary' to='/pedidos/novo' component={Link}>Adicionar</Button>
 						<NumberOfRows>{orders.length} pedidos</NumberOfRows>
 					</BlockHeader>
 					<Paper>

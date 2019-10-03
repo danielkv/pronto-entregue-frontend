@@ -184,7 +184,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			setFieldValue('file', file);
 		}
 	}
-
+	
 	return (
 		<Formik
 			validationSchema={productSchema}
@@ -272,7 +272,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 																selected = await getCopiedOptionGroup(selected);
 															}
 															const list = Array.from(options_groups);
-															list.unshift(selected);
+															list.unshift({...selected, id:Math.round(Math.random()*1000)});
 															setFieldValue('options_groups', sanitizeOptionsGroupsOrder(list));
 														}}
 														itemToString={(item => item ? item.name : '')}

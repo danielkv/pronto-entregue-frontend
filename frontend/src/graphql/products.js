@@ -44,7 +44,7 @@ export const LOAD_OPTION_GROUP = gql`
 `;
 
 export const LOAD_PRODUCT = gql`
-	query LoadProduct ($id: ID!) {
+	query ($id: ID!) {
 		product (id: $id) {
 			id
 			name

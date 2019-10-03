@@ -176,7 +176,7 @@ export const sanitizeProductData = (data) => {
 				type: group.type,
 				order: group.order,
 				min_select: group.min_select,
-				max_select: group.max_select,
+				max_select: group.type === 'single' ? 1 : group.max_select,
 				active: group.active,
 				max_select_restrain: group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : null,
 				options: group.options.map(option=>{
@@ -186,14 +186,14 @@ export const sanitizeProductData = (data) => {
 						order: option.order,
 						active: option.active,
 						price: option.price,
-						max_select_restrain_other: option.max_select_restrain_other,
+						max_select_restrain_other: parseInt(option.max_select_restrain_other),
 						item_id: option.item && option.item.id !== 'none' ? option.item.id : null,
 					};
-					if (option.id) o.id = option.id;
+					if (option.id && option.action !== 'create') o.id = option.id;
 					return o;
 				}),
 			}
-			if (group.id) g.id = group.id;
+			if (group.id && group.action !== 'create') g.id = group.id;
 			return g;
 		})	
 	}

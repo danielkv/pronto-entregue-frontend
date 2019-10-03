@@ -36,7 +36,7 @@ function Page (props) {
 
 	function onSubmit(data, {setSubmitting}) {
 		const saveData = sanitizeProductData(data);
-		//console.log(saveData);
+		console.log(saveData);
 
 		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data:saveData}})
 		.then(()=>{

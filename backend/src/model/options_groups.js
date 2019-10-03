@@ -22,8 +22,7 @@ class OptionsGroups extends Sequelize.Model {
 							group_model = await product.createOptionsGroup(group, {transaction});
 						} else if (group.id && group.action === 'update') {
 							[group_model] = await product.getOptionsGroups({where:{id:group.id}});
-							console.log(group);
-							group_model = await group_model.update(group, {fields:['name', 'type', 'min_select', 'max_select', 'order', 'max_select_restrain'], transaction});
+							group_model = await group_model.update(group, {fields:['name', 'active', 'type', 'min_select', 'max_select', 'order', 'max_select_restrain'], transaction});
 						}
 						
 						if (group_model) {
