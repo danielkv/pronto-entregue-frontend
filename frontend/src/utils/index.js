@@ -165,6 +165,7 @@ export const sanitizeProductData = (data) => {
 	return {
 		name: data.name,
 		file: data.file,
+		description: data.description,
 		type: data.type,
 		price: data.price,
 		active: data.active,

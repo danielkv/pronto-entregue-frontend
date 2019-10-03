@@ -2,7 +2,7 @@ import React from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import PageForm from './form';
-import {setPageTitle} from '../../utils';
+import {setPageTitle, sanitizeProductData} from '../../utils';
 import Layout from '../../layout';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { CREATE_PRODUCT, GET_BRANCHES_PRODUCTS } from '../../graphql/products';
@@ -16,38 +16,21 @@ function Page (props) {
 		name:'',
 		description:'',
 		active:true,
+		price:'',
 		file:'',
 		preview:'',
-		options_groups: [{
-			id:'',
-			name:'',
-			active:true,
-			type:'single',
-			order:0,
-			min_select:0,
-			max_select:0,
-			groupRestrained:'',
-			action:'create',
-			options: [{
-				id:'',
-				name:'',
-				price:'',
-				item_id:'',
-				active:true,
-				max_select_restrain_other:0,
-				order:0,
-				action:'create'
-			}]
-		}]
+		category:{id:''},
+		options_groups: []
 	};
 
 	function onSubmit(data, {setSubmitting}) {
+		const dataSave = sanitizeProductData(data);
 		const {selectedBranch} = client.readQuery({query:GET_SELECTED_BRANCH});
 
-		client.mutate({mutation:CREATE_PRODUCT, variables:{data}, refetchQueries:[{query:GET_BRANCHES_PRODUCTS, variables:{id:selectedBranch}}]})
-		/* .then(({data:{createItem}})=>{
+		client.mutate({mutation:CREATE_PRODUCT, variables:{data:dataSave}, refetchQueries:[{query:GET_BRANCHES_PRODUCTS, variables:{id:selectedBranch}}]})
+		.then(({data:{createItem}})=>{
 			props.history.push(`/estoque/alterar/${createItem.id}`);
-		}) */
+		})
 		.catch((err)=>{
 			console.error(err);
 		})

@@ -29,6 +29,7 @@ function Page (props) {
 		active: data.product.active,
 		category: data.product.category,
 		price: data.product.price, 
+		type: data.product.type, 
 		file: '',
 		preview: data.product.image,
 		options_groups: data.product.options_groups

@@ -1,9 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import gql from 'graphql-tag';
 import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment} from '@material-ui/core';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import ToggleButton from '@material-ui/lab/ToggleButton';
 
 import Icon from '@mdi/react';
-import {mdiPlus, mdiBasket } from '@mdi/js'
+import {mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram } from '@mdi/js'
 import Downshift from "downshift";
 import * as Yup from 'yup';
 import { Formik, FieldArray, Form, Field, ErrorMessage} from 'formik';
@@ -193,7 +195,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, price, preview, category, options_groups}, values, setFieldValue, handleChange, isSubmitting, errors}) => {
+			{({values:{active, price, type, preview, category, options_groups}, values, setFieldValue, handleChange, isSubmitting, errors}) => {
 			return (<Form>
 				<Dialog
 					open={dragAlertOpen}
@@ -232,10 +234,10 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							<FormRow>
 								<FieldControl>
 									<TextField
-										name='price'
 										type='number'
 										value={price}
 										label='Preço'
+										name='price'
 										onChange={handleChange}
 										disabled={isSubmitting}
 										error={!!errors.price}
@@ -381,6 +383,31 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 								<FormRow>
 									<FieldControl>
 										<Button fullWidth type='submit' variant="contained" color='secondary'>Salvar</Button>
+									</FieldControl>
+								</FormRow>
+							</BlockSeparator>
+							<BlockSeparator>
+								<FormRow>
+									<FieldControl>
+										<FormControl>
+											<FormLabel>Tipo de seleção</FormLabel> 
+											<ToggleButtonGroup
+												value={type}
+												exclusive
+												name='type'
+												onChange={(e, value)=>{
+													setFieldValue('type', value);
+												}}
+												aria-label="text alignment"
+												>
+												<ToggleButton disabled={isSubmitting} value="single" title="Normal" aria-label="left aligned">
+													<Icon path={mdiCheckDecagram} size='16' color='#707070' />
+												</ToggleButton>
+												<ToggleButton disabled={isSubmitting} value="multiple" title="Painel" aria-label="left aligned">
+													<Icon path={mdiFormatListChecks} size='16' color='#707070' />
+												</ToggleButton>
+											</ToggleButtonGroup>
+										</FormControl>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

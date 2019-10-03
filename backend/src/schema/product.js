@@ -25,6 +25,7 @@ module.exports.typeDefs = gql`
 
 	input ProductInput {
 		name:String
+		description:String
 		file:Upload
 		type:String
 		price:Float

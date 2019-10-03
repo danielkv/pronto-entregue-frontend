@@ -17,7 +17,7 @@ const destination = (folder) => {
 
 const newFileName = (filename) => {
 	const hash = crypto.randomBytes(16);
-	const new_name = `${hash.toString("hex")}-${filename}`;
+	const new_name = `${hash.toString("hex")}-${slugify(filename)}`;
 
 	return new_name;
 }
