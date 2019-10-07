@@ -8,7 +8,7 @@ import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { CREATE_PRODUCT, GET_BRANCHES_PRODUCTS } from '../../graphql/products';
 
 function Page (props) {
-	setPageTitle('Novo item de estoque');
+	setPageTitle('Novo produto');
 	
 	const client = useApolloClient();
 
@@ -16,6 +16,7 @@ function Page (props) {
 		name:'',
 		description:'',
 		active:true,
+		type:'single',
 		price:'',
 		file:'',
 		preview:'',

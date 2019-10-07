@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import gql from 'graphql-tag';
+import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
 import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment} from '@material-ui/core';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -11,11 +12,10 @@ import * as Yup from 'yup';
 import { Formik, FieldArray, Form, Field, ErrorMessage} from 'formik';
 import { DragDropContext, Droppable} from 'react-beautiful-dnd';
 
-import {setPageTitle, createEmptyOptionsGroup} from '../../utils';
+import {createEmptyOptionsGroup} from '../../utils';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading} from '../../layout/components';
 
 import OptionsGroups from './options_groups';
-import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { LOAD_OPTION_GROUP } from '../../graphql/products';
 import { DropzoneBlock } from '../../layout/blocks';
@@ -59,8 +59,6 @@ const SEARCH_OPTIONS_GROUPS = gql`
 const FILE_SIZE = 500 * 1024;
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
-	setPageTitle('Novo produto');
-
 	const productSchema = Yup.object().shape({
 		name: Yup.string().required('Obrigatório'),
 		price: Yup.number().required('Obrigatório'),

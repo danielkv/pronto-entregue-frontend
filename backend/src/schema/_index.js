@@ -19,6 +19,8 @@ const {typeDefs: Role, resolvers: roleResolvers} = require('./role');
 const {typeDefs: DeliveryArea, resolvers: deliveryAreaResolvers} = require('./delivery_area');
 const {typeDefs: User, resolvers: userResolvers} = require('./user');
 
+const {typeDefs: Address, resolvers: addressResolvers} = require('./address');
+
 const typeDefs = gql`
 	directive @isAuthenticated on FIELD | FIELD_DEFINITION
 	directive @hasRole(permission: String!, scope: String = "master") on FIELD | FIELD_DEFINITION
@@ -41,7 +43,7 @@ const typeDefs = gql`
 `
 
 module.exports = makeExecutableSchema({
-	typeDefs : [typeDefs, Branch, Category, Company, Item, Option, OptionsGroup, OrderOption, OrderOptionsGroup, OrderProduct, Order, PaymentMethod, Product, Role, DeliveryArea, User],
-	resolvers : merge(branchResolvers, categoryResolvers, companyResolvers, itemResolvers, optionResolvers, optionsGroupResolvers, orderOptionResolvers, orderOptionsGroupResolvers, orderProductResolvers, orderResolvers, paymentMethodResolvers, productResolvers, roleResolvers, deliveryAreaResolvers, userResolvers),
+	typeDefs : [typeDefs, Branch, Category, Company, Item, Option, OptionsGroup, OrderOption, OrderOptionsGroup, OrderProduct, Order, PaymentMethod, Product, Role, DeliveryArea, User, Address],
+	resolvers : merge(branchResolvers, categoryResolvers, companyResolvers, itemResolvers, optionResolvers, optionsGroupResolvers, orderOptionResolvers, orderOptionsGroupResolvers, orderProductResolvers, orderResolvers, paymentMethodResolvers, productResolvers, roleResolvers, deliveryAreaResolvers, userResolvers, addressResolvers),
 	directiveResolvers : directives,
 })

@@ -1,6 +1,9 @@
 const sequelize = require('../services/connection');
+const Sequelize = require('sequelize');
 const Op = require('sequelize').Op;
 const Products = require('../model/products');
+const ProductsCategories = require('../model/products_categories');
+const Branches = require('../model/branches');
 const Options = require('../model/options');
 const OptionsGroups = require('../model/options_groups');
 const { gql} = require('apollo-server');
@@ -60,7 +63,7 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		product(id:ID!): Product!
-		searchProducts(search:String!):[Product]!
+		searchBranchProducts(search:String!):[Product]!
 	}
 
 	extend type Mutation {
@@ -136,8 +139,13 @@ module.exports.resolvers = {
 				return product;
 			})
 		},
-		searchProducts: (parent, {search}, ctx) => {
-			return Products.findAll({where:{name:{[Op.like]:`%${search}%`}}})
+		searchBranchProducts: (parent, {search}, ctx) => {
+			return Products.findAll({
+				where:{name:{[Op.like]:`%${search}%`}, ['$category.branch_id$']: ctx.branch.get('id')},
+				include: [{
+					model:ProductsCategories
+				}]
+			})
 		},
 	},
 	Product: {

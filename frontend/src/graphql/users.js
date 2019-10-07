@@ -1,5 +1,24 @@
 import gql from "graphql-tag";
 
+export const SEARCH_USERS = gql`
+	query ($search:String!) {
+		searchCompanyUsers(search:$search) {
+			id
+			full_name
+			email
+			addresses {
+				id
+				street
+				number
+				zipcode
+				district
+				city
+				state
+			}
+		}
+	}
+`;
+
 /**
  * Carrega todas infomações ao acessar
  * 

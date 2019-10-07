@@ -14,6 +14,16 @@ Orders.init({
 	//Dados principais
 	payment_fee: Sequelize.DECIMAL(10,2),
 	delivery_price: Sequelize.STRING,
+	type : {
+		type:Sequelize.STRING,
+		allowNull : false,
+		defaultValue : 'takeout',
+		comment: 'takeout | delivery',
+		validate : {
+			isIn : [['takeout', 'delivery']],
+			msg: 'Esse tipo de pedido não é válido'
+		}
+	},
 	price: {
 		type: Sequelize.DECIMAL(10, 2),
 		set (val) {

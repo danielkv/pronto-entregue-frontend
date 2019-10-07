@@ -1,5 +1,18 @@
 import gql from "graphql-tag";
 
+export const SEARCH_BRANCH_PRODUCTS = gql`
+	query ($search:String!) {
+		searchBranchProducts(search:$search) {
+			id
+			name
+			category {
+				id
+				name
+			}
+		}
+	}
+`;
+
 export const OPTIONS_GROUP_FRAGMENT = gql`
 	fragment OptionsGroupFields on OptionsGroup {
 		id

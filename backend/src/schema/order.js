@@ -3,10 +3,11 @@ const {gql} = require('apollo-server');
 module.exports.typeDefs = gql`
 	type Order {
 		id:ID!
+		user:User!
 		payment_fee:Float!
-		name:String!
 		delivery_price:Float!
 		price:Float!
+		type:String!
 		discount:Float!
 		status:String!
 		message:String!

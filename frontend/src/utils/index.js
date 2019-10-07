@@ -134,6 +134,14 @@ export const setPageTitle = (new_title) => {
 	return document.title = `Flakery`;
 }
 
+export const createEmptyOrderProduct = (overwrite={}) => {
+	return {
+		action:'new_empty',
+		options_groups: [],
+		...overwrite
+	}
+}
+
 export const createEmptyOptionsGroup = (overwrite={}) => {
 	return {
 		name:'',

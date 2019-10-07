@@ -1,4 +1,5 @@
 const sequelize = require('../services/connection');
+const Op = require('sequelize').Op;
 const Users = require('../model/users');
 const UsersMeta = require('../model/users_meta');
 const Companies = require('../model/companies');
@@ -37,6 +38,8 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		metas:[UserMeta]!
+
+		addresses:[Address]!
 		
 		branch_relation:BranchRelation!
 		company(company_id:ID!): Company!
@@ -96,6 +99,7 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		user(id:ID!): User! @hasRole(permission:"users_read", scope:"adm")
+		searchCompanyUsers(search:String!):[User]!
 		me:User! @isAuthenticated
 	}
 
@@ -113,9 +117,13 @@ module.exports.resolvers = {
 			return Users.findByPk(id)
 			.then(user => {
 				if (!user) throw new Error('Usuário não encontrada');
-
 				return user;
 			});
+		},
+		searchCompanyUsers: (parent, {search}, ctx) => {
+			return ctx.company.getUsers({where:{
+				[Op.or] : [{first_name:{[Op.like]:`%${search}%`}}, {last_name:{[Op.like]:`%${search}%`}}, {email:{[Op.like]:`%${search}%`}}]
+			}})
 		}
 	},
 	Mutation : {
@@ -219,6 +227,17 @@ module.exports.resolvers = {
 		},
 	},
 	User: {
+		addresses : (parent, args, ctx) => {
+			return parent.getMetas({where:{meta_type:'address'}})
+			.then(metas=>{
+				return metas.map(meta=> {
+					return {
+						id: meta.id,
+						...JSON.parse(meta.meta_value)
+					}
+				});
+			})
+		},
 		full_name : (parent, args, ctx) => {
 			return `${parent.first_name} ${parent.last_name}`;
 		},
