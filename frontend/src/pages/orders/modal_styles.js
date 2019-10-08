@@ -4,6 +4,8 @@ import { Paper } from '@material-ui/core';
 export const ModalPaper = styled(Paper)`
 	width:40%;
 	max-width:730px;
+	/* max-height:80%;
+	overflow-y:auto !important; */
 `;
 
 export const ModalHeader = styled.div`

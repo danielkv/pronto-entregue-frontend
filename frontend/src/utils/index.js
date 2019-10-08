@@ -135,8 +135,19 @@ export const setPageTitle = (new_title) => {
 }
 
 export const createEmptyOrderProduct = (overwrite={}) => {
+	if (overwrite.options_groups) {
+		overwrite.options_groups = overwrite.options_groups.map(group=>{
+			if (group.options) {
+				group.options = group.options.map(option=>{
+					return {...option, selected:false}
+				})
+			}
+			return group;
+		})
+	}
 	return {
 		action:'new_empty',
+		message:'',
 		options_groups: [],
 		...overwrite
 	}

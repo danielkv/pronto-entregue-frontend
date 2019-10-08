@@ -2,6 +2,7 @@ import React, { useState, Fragment, useRef } from 'react';
 import {Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem} from '@material-ui/core';
 import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
 import Icon from '@mdi/react';
+import numeral from 'numeral';
 import {mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
 import { Formik, FieldArray, Form, Field} from 'formik';
 import * as Yup from 'yup';
@@ -10,7 +11,7 @@ import Downshift from 'downshift';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, Loading, tField} from '../../layout/components';
 import ProductModal from './product_modal';
 import { SEARCH_USERS } from '../../graphql/users';
-import { SEARCH_BRANCH_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
+import { SEARCH_BRANCH_PRODUCTS, LOAD_PRODUCT_FULL } from '../../graphql/products';
 import { createEmptyOrderProduct } from '../../utils';
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
@@ -31,9 +32,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 
 	//carregamento inicial
 	const client = useApolloClient();
-	const [modalOpen, setModalOpen] = useState(false);
 	const [editingProductIndex, setEditingProductIndex] = useState(null);
-	const [editingProduct, setEditingProduct] = useState(null);
 	const [loadingProduct, setLoadingProduct] = useState(false);
 	const formRef = useRef(null);
 
@@ -77,6 +76,17 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		})
 	}
 
+	const handleSaveProductModal = (data) => {
+		formRef.current.setFieldValue(`products.${editingProductIndex}`, data);
+	}
+
+	const handleOpenProductModal = (productIndex) => {
+		setEditingProductIndex(productIndex);
+	}
+	const handleCloseProductModal = () => {
+		setEditingProductIndex(null);
+	}
+
 	return (
 		<Formik
 			ref={formRef}
@@ -88,7 +98,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		>
 			{({values:{user, type, products}, setFieldValue, handleChange, isSubmitting, errors}) => {
 			return (<Form>
-				<ProductModal open={modalOpen} onClose={()=>setModalOpen(false)} />
+				<ProductModal prod={products[editingProductIndex]} open={editingProductIndex!==null} onSave={handleSaveProductModal} onClose={handleCloseProductModal} />
 				<Content>
 					<Block>
 						<BlockHeader>
@@ -102,7 +112,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 											onChange={(item)=>{setFieldValue('user', item)}}
 											itemToString={(item => item ? item.full_name : '')}
 											onInputValueChange={(value)=>{handleSearchCustomer(value)}}
-											initialSelectedItem={user && user.id ? user.id : null}
+											initialSelectedItem={user && user.id ? user : null}
 										>
 											{({
 												getInputProps,
@@ -239,9 +249,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															getProductFromItem(item)
 															.then(product=>{
 																insert(0, product);
-																setModalOpen(true);
-																setEditingProduct(product);
-																setEditingProductIndex(0);
+																handleOpenProductModal(0);
 																clearSelection();
 															})
 														}}
@@ -303,15 +311,36 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												</TableRow>
 											</TableHead>
 											<TableBody>
-												{products.map(row => (
-													<TableRow key={row.name}>
+												{products.map((row, index) => {
+													let price = row.options_groups.reduce((totalGroup, group)=>{
+														let optionsPrice = group.options.reduce((totalOption, option)=> {
+															return (option.selected) ?  totalOption + option.price : totalOption;
+														}, 0);
+														return totalGroup + optionsPrice;
+													}, row.price);
+													let selected_options = (row.options_groups.filter(group=>{
+														return group.options.some(option=>option.selected);
+													})
+													.map(group=>{
+														let options = group.options.filter(option=>option.selected).map(option=>option.name);
+														return (options.length) ? options.join(', ') : '';
+													}));
+													return(
+													<TableRow key={`${row.id}.${index}`}>
 														<TableCell style={{width:80, paddingRight:10}}><ProductImage src={row.image} alt={row.name} /></TableCell>
-														<TableCell>{row.name}</TableCell>
 														<TableCell>
-															<TextField value={row.price} InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
+															<div>{row.name}</div>
+															{!!selected_options.length &&
+																<FormHelperText>
+																	{selected_options.join(', ')}
+																</FormHelperText>
+															}
 														</TableCell>
 														<TableCell>
-															<IconButton>
+															{numeral(price).format('$0,0.00')}
+														</TableCell>
+														<TableCell>
+															<IconButton disabled={isSubmitting} onClick={()=>handleOpenProductModal(index)}>
 																<Icon path={mdiPencil} size='18' color='#363E5E' />
 															</IconButton>
 															<IconButton>
@@ -322,7 +351,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															</IconButton>
 														</TableCell>
 													</TableRow>
-												))}
+												)})}
 											</TableBody>
 										</Table>
 									</BlockSeparator>

@@ -1,3 +1,4 @@
+import { hot } from 'react-hot-loader/root';
 import React, { useState } from 'react';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 
@@ -37,7 +38,7 @@ import Settings from './pages/settings';
 //import { LoadingBlock } from './layout/blocks';
 import { Loading } from './layout/components';
 
-export default function Router(props) {
+const Routes = (props)  => {
 	const [loading, setLoading] = useState(true);
 
 	function load() {
@@ -91,3 +92,5 @@ export default function Router(props) {
 		</BrowserRouter>
 	);
 }
+
+export default hot(Routes);

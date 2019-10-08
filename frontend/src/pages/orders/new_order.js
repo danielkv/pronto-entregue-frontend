@@ -47,7 +47,7 @@ function Page (props) {
 			setSubmitting(false);
 		})
 	}
-	
+
 	return (
 		<Layout>
 			<PageForm
