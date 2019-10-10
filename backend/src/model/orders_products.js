@@ -47,6 +47,6 @@ OrdersProducts.init({
 	name: Sequelize.STRING,
 	price: Sequelize.DECIMAL(10,2),
 	message: Sequelize.STRING,
-}, {modelName:'product_relation', tableName:'orders_products', underscored:true, sequelize});
+}, { tableName:'orders_products', underscored:true, sequelize});
 
 module.exports = OrdersProducts;

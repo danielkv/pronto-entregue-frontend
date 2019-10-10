@@ -180,6 +180,48 @@ export const createEmptyOption = (overwrite={}) => {
 	}
 }
 
+export const sanitizeOrderData = (data) => {
+	return {
+		user_id: data.user.id,
+		type: data.type,
+		status: data.status,
+		payment_method_id: data.payment_method,
+
+		payment_fee: data.payment_fee,
+		delivery_price: data.delivery_price,
+		discount: data.discount,
+		price: data.price,
+		message: data.message,
+		
+		street: data.street,
+		number: data.number,
+		complement: data.complement,
+		city: data.city,
+		state: data.state,
+		district: data.district,
+		zipcode: data.zipcode,
+		
+		products: data.products.map(product => ({
+			name: product.name,
+			price: product.price,
+			message: product.message,
+			product_id: product.id,
+
+			optionsGroups: product.options_groups.filter(group=>group.options.some(option=>option.selected)).map(group =>({
+				name: group.name,
+				options_group_id: group.id,
+
+				options: group.options.filter(option=>option.selected).map(option => ({
+					name: option.name,
+					price: option.price,
+					item_id: option.item ? option.item.id : null,
+					option_id: option.id,
+				}))
+			}))
+		}))
+	}
+}
+
 export const sanitizeProductData = (data) => {
 	return {
 		name: data.name,

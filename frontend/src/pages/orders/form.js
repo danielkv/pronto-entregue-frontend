@@ -21,6 +21,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
 		price: Yup.number().required('Obrigatório'),
 		message: Yup.string().notRequired(),
+		payment_method: Yup.string().required('Obrigatório'),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
 	});
@@ -112,8 +113,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{user, type, products, delivery_price, payment_fee, discount}, setFieldValue, handleChange, isSubmitting, errors}) => {
-
+			{({values:{user, type, products, delivery_price, payment_fee, discount, status, payment_method}, setFieldValue, handleChange, isSubmitting, errors}) => {
+				console.log(errors);
 				//INFO
 				const orderPrice = calculateOrderPrice(products, payment_fee + delivery_price - discount);
 				
@@ -387,7 +388,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
-										<TextField select label='Status' value='delivering'>
+										<TextField select label='Status' value={status} onChange={(e)=>{setFieldValue('status', e.target.value)}}>
 											<MenuItem value='waiting'>Aguardando</MenuItem>
 											<MenuItem value='preparing'>Preparando</MenuItem>
 											<MenuItem value='delivering'>Na entrega</MenuItem>
@@ -407,7 +408,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<FieldControl>
 										<Field
 											label='Valor da entrega'
-											name='discount'
+											name='delivery_price'
 											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
 											component={tField}
 											/>
@@ -425,15 +426,20 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 								</FormRow>
 								<FormRow>
 									<FieldControl>
-										<TextField label='Valor total' value={orderPrice} name='price' InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>, readOnly:true}} />
+										<TextField
+											label='Valor total'
+											value={orderPrice}
+											name='price'
+											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>, readOnly:true}}
+											/>
 									</FieldControl>
 								</FormRow>
 								<FormRow>
 									<FieldControl>
 										{!loadingSelectedData && !!paymentMethods.length &&
-										<TextField select label='Forma de pagamento' value='money'>
+										<TextField helperText={errors.payment_method} error={!!errors.payment_method} select label='Forma de pagamento' value={payment_method || ''} onChange={(e)=>setFieldValue('payment_method', e.target.value)}>
 											{paymentMethods.map(row=>(
-												<MenuItem key={row.id} value={row.id}>{row.display_name}</MenuItem>												
+												<MenuItem key={row.id} value={row.id}>{row.display_name}</MenuItem>
 											))}
 										</TextField>}
 									</FieldControl>

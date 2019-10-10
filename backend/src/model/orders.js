@@ -20,8 +20,10 @@ Orders.init({
 		defaultValue : 'takeout',
 		comment: 'takeout | delivery',
 		validate : {
-			isIn : [['takeout', 'delivery']],
-			msg: 'Esse tipo de pedido não é válido'
+			isIn : {
+				args: [['takeout', 'delivery']],
+				msg: 'Esse tipo de pedido não é válido',
+			}
 		}
 	},
 	price: {

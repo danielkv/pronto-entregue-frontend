@@ -41,12 +41,7 @@ OrdersOptionsGroups.init({
 	type: {
 		type: Sequelize.STRING(50),
 		comment: 'single | multiple',
-		validate: {
-			isIn : {
-				args : [['single', 'multiple']],
-				msg: 'Tipo de grupo inválido'
-			}
-		}
+		
 	},
 }, {modelName:'orders_options_groups', underscored:true, sequelize});
 

@@ -1,4 +1,8 @@
 const {gql} = require('apollo-server');
+const sequelize = require('../services/connection');
+const OrderProducts = require('../model/orders_products');
+const OrderOptionsGroups = require('../model/orders_options_groups');
+const OrderOptions = require('../model/orders_options');
 
 module.exports.typeDefs = gql`
 	type Order {
@@ -24,39 +28,54 @@ module.exports.typeDefs = gql`
 		payment_method:PaymentMethod!
 	}
 
+	input OrderInput {
+		user_id:ID!
+		type:String!
+		status:String!
+		payment_method_id:ID
+
+		payment_fee:Float!
+		delivery_price:Float!
+		discount:Float!
+		price:Float!
+		message:String!
+		
+		street:String!
+		number:String!
+		complement:String!
+		city:String!
+		state:String!
+		district:String!
+		zipcode:String!
+
+		products:[OrderProductInput!]
+	}
+
 	input OrderProductInput {
-		name:String
-		action:String! #create | update | delete
-		file:Upload
-		type:String
-		price:Float
-		active:Boolean
+		name:String!
+		price:Float!
+		message:String!
 		product_id:ID
-		options_groups:[OrderOptionsGroupInput]
+		optionsGroups:[OrderOptionsGroupInput!]
 	}
 
 	input OrderOptionsGroupInput {
-		id:ID
-		action:String! #create | update | delete
-		name:String
-		type:String
-		min_select:Int
-		max_select:Int
-		active:Boolean
-		options_group_id:ID
-		options:[OrderOptionInput]
-		max_select_restricted_by:ID
+		name:String!
+		options_group_id:ID!
+		
+		options:[OrderOptionInput!]
 	}
 
 	input OrderOptionInput {
-		id:ID
-		action:String! #create | update | delete
-		name:String
-		order:Int
-		active:Boolean
-		price:Float
-		max_select_restrain_other:Int
+		name:String!
+		price:Float!
 		item_id:ID
+		option_id:ID!
+	}
+
+	extend type Mutation {
+		createOrder(data:OrderInput!):Order!
+		updateOrder(data:OrderInput!):Order!
 	}
 `;
 
@@ -68,5 +87,23 @@ module.exports.resolvers = {
 		payment_method: (parent, args, ctx) => {
 			return parent.getPaymentMethod();
 		},
+	},
+	Mutation : {
+		createOrder: (parent, {data}, ctx) => {
+			return sequelize.transaction(transaction => {
+				return ctx.branch.createOrder(data, {include:[{
+					model: OrderProducts,
+					as:'products',
+					include:[{
+						model: OrderOptionsGroups,
+						as:'optionsGroups',
+						include: [{
+							model: OrderOptions,
+							as: 'options',
+						}]
+					}]
+				}], transaction})
+			});
+		}
 	}
 }

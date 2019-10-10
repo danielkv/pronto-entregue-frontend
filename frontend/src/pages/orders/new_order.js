@@ -2,10 +2,10 @@ import React from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import PageForm from './form';
-import {setPageTitle, sanitizeProductData} from '../../utils';
+import {setPageTitle, sanitizeOrderData} from '../../utils';
 import Layout from '../../layout';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
-import { CREATE_PRODUCT, GET_BRANCHES_PRODUCTS } from '../../graphql/products';
+import { CREATE_ORDER } from '../../graphql/orders';
 
 function Page (props) {
 	setPageTitle('Novo pedido');
@@ -19,7 +19,7 @@ function Page (props) {
 		price:0,
 		type:'',
 		discount:0,
-		status:'',
+		status:'waiting',
 		message:'',
 		street:'',
 		number:'',
@@ -33,13 +33,14 @@ function Page (props) {
 	};
 
 	function onSubmit(data, {setSubmitting}) {
-		const dataSave = sanitizeProductData(data);
+		console.log(data);
+		const dataSave = sanitizeOrderData(data);
 		const {selectedBranch} = client.readQuery({query:GET_SELECTED_BRANCH});
 
-		client.mutate({mutation:CREATE_PRODUCT, variables:{data:dataSave}, refetchQueries:[{query:GET_BRANCHES_PRODUCTS, variables:{id:selectedBranch}}]})
-		.then(({data:{createItem}})=>{
+		client.mutate({mutation:CREATE_ORDER, variables:{data:dataSave}/* , refetchQueries:[{query:GET_BRANCHES_PRODUCTS, variables:{id:selectedBranch}}] */})
+		/* .then(({data:{createItem}})=>{
 			props.history.push(`/estoque/alterar/${createItem.id}`);
-		})
+		}) */
 		.catch((err)=>{
 			console.error(err);
 		})
