@@ -3,7 +3,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Icon from '@mdi/react';
 import {mdiDrag, mdiDelete, mdiRadioboxMarked, mdiFormatListBulleted, mdiPlusCircle, mdiPencil, mdiAlertCircle} from '@mdi/js'
-import {FieldArray, Field } from 'formik';
+import {FieldArray } from 'formik';
 import {TextField, Switch, FormControl, FormLabel,  MenuItem, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, IconButton, Checkbox, FormControlLabel} from '@material-ui/core';
 import { Droppable, Draggable} from 'react-beautiful-dnd';
 
@@ -15,7 +15,6 @@ import {
 } from './options_styles';
 import Options from './options';
 import {createEmptyOption} from '../../utils';
-import { tField } from '../../layout/components';
 
 export default function Block ({groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, items, isSubmitting, sanitizeOptionsGroupsOrder, sanitizeOptionsOrder}) {
 	const inputName = useRef(null);
@@ -29,6 +28,8 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 	}, [editing]);
 
 	const nameError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].name ? errors.options_groups[groupIndex].name : '';
+	const minSelectError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].min_select ? errors.options_groups[groupIndex].min_select : '';
+	const maxSelectError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].max_select ? errors.options_groups[groupIndex].max_select : '';
 	const groupRestrained = group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : '';
 	const restrainedBy = group.restrainedBy && group.restrainedBy.id;
 	
@@ -101,10 +102,10 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 													}}
 													aria-label="text alignment"
 												>
-													<ToggleButton disabled={isSubmitting || !!groupRestrained || restrainedBy} value="single" title="Única" aria-label="left aligned">
+													<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="single" title="Única" aria-label="left aligned">
 														<Icon path={mdiRadioboxMarked} size='16' color='#707070' />
 													</ToggleButton>
-													<ToggleButton disabled={isSubmitting || !!groupRestrained || restrainedBy} value="multiple" title="Múltipla" aria-label="left aligned">
+													<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="multiple" title="Múltipla" aria-label="left aligned">
 														<Icon path={mdiFormatListBulleted} size='16' color='#707070' />
 													</ToggleButton>
 												</ToggleButtonGroup>
@@ -143,11 +144,45 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 										</TableCell>}
 										{group.type === 'multiple' &&
 										<TableCell style={{width:150}}>
-											<Field type='number' onChange={()=>{if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');}} component={tField} name={`options_groups.${groupIndex}.min_select`} label='Seleção mínima' />
+											<TextField
+												label='Seleção mínima'
+												name={`options_groups.${groupIndex}.min_select`}
+												value={group.min_select}
+												type='number'
+												onClick={(e)=>{e.stopPropagation();}}
+												onChange={(e)=>{
+													let new_group = {
+														...group,
+														min_select: parseInt(e.target.value),
+													}
+													if (new_group.action === 'editable') new_group.action = 'update';
+													setFieldValue(`options_groups.${groupIndex}`, new_group);
+												}}
+												error={!!minSelectError}
+												helperText={minSelectError}
+												disabled={isSubmitting}
+												/>
 										</TableCell>}
 										{group.type === 'multiple' && !restrainedBy &&
 										<TableCell style={{width:150}}>
-											<Field type='number' onChange={()=>{if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');}} component={tField} name={`options_groups.${groupIndex}.max_select`} label='Seleção máxima' />
+											<TextField
+												label='Seleção máxima'
+												name={`options_groups.${groupIndex}.max_select`}
+												value={group.min_select}
+												type='number'
+												onClick={(e)=>{e.stopPropagation();}}
+												onChange={(e)=>{
+													let new_group = {
+														...group,
+														max_select: parseInt(e.target.value),
+													}
+													if (new_group.action === 'editable') new_group.action = 'update';
+													setFieldValue(`options_groups.${groupIndex}`, new_group);
+												}}
+												error={!!maxSelectError}
+												helperText={maxSelectError}
+												disabled={isSubmitting}
+												/>
 										</TableCell>}
 										{!!filteredGroups.length &&
 										<TableCell style={{width:210}}>

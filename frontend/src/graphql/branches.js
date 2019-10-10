@@ -61,3 +61,20 @@ export const GET_COMPANY_BRANCHES = gql`
 		selectedBranch @client
 	}
  `;
+
+/**
+  * Retorna métodos de pagamento da filial selecionada
+  */
+ 
+ export const LOAD_BRANCH_PAYMENT_METHODS = gql`
+	query ($id:ID!) {
+		branch (id:$id) {
+			id
+			payment_methods {
+				id
+				name
+				display_name
+			}
+		}
+	}
+ `;

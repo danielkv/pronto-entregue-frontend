@@ -28,6 +28,10 @@ const typeDefs = gql`
 
 	scalar Upload
 
+	input Filter {
+		showInactive:Boolean
+	}
+
 	type File {
 		filename: String!
 		mimetype: String!

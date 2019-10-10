@@ -31,7 +31,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 			name
 		}
 		action @client
-		options {
+		options (filter:$filter) {
 			id
 			name
 			price
@@ -48,7 +48,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 `;
 
 export const LOAD_OPTION_GROUP = gql`
-	query ($id: ID!) {
+	query ($id: ID!, $filter:Filter) {
 		optionsGroup (id:$id) {
 			...OptionsGroupFields
 		}
@@ -57,7 +57,7 @@ export const LOAD_OPTION_GROUP = gql`
 `;
 
 export const LOAD_PRODUCT = gql`
-	query ($id: ID!) {
+	query ($id: ID!, $filter:Filter) {
 		product (id: $id) {
 			id
 			name
@@ -70,7 +70,7 @@ export const LOAD_PRODUCT = gql`
 			}
 			image
 			active
-			options_groups {
+			options_groups(filter:$filter) {
 				...OptionsGroupFields
 			}
 		}
@@ -90,10 +90,10 @@ export const CREATE_PRODUCT = gql`
 `;
 
 export const GET_BRANCHES_PRODUCTS = gql`
-	query ($id:ID!) {
+	query ($id:ID!, $filter:Filter) {
 		branch (id:$id) {
 			id
-			products {
+			products (filter:$filter) {
 				id
 				name
 				image
@@ -111,7 +111,7 @@ export const GET_BRANCHES_PRODUCTS = gql`
 `;
 
 export const UPDATE_PRODUCT = gql`
-	mutation ($id:ID!, $data:ProductInput!) {
+	mutation ($id:ID!, $data:ProductInput!, $filter:Filter) {
 		updateProduct (id:$id, data:$data) {
 			id
 			name
@@ -124,7 +124,7 @@ export const UPDATE_PRODUCT = gql`
 			}
 			image
 			active
-			options_groups {
+			options_groups (filter:$filter) {
 				...OptionsGroupFields
 			}
 		}

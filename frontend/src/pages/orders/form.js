@@ -11,28 +11,24 @@ import Downshift from 'downshift';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, Loading, tField} from '../../layout/components';
 import ProductModal from './product_modal';
 import { SEARCH_USERS } from '../../graphql/users';
-import { SEARCH_BRANCH_PRODUCTS, LOAD_PRODUCT_FULL } from '../../graphql/products';
+import { SEARCH_BRANCH_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
+import { GET_SELECTED_BRANCH, LOAD_BRANCH_PAYMENT_METHODS } from '../../graphql/branches';
 import { createEmptyOrderProduct } from '../../utils';
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
 	const productSchema = Yup.object().shape({
-		type: Yup.string().required('Obrigatório'),
-		user: Yup.object().required('Obrigatório'),
+		status : Yup.string().required('Obrigatório'),
+		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
 		price: Yup.number().required('Obrigatório'),
-		message: Yup.string().required('Obrigatório'),
-		
-		options_groups: Yup.array().of(Yup.object().shape({
-			name: Yup.string().required('Obrigatório'),
-			options: Yup.array().of(Yup.object().shape({
-				name: Yup.string().required('Obrigatório'),
-				price: Yup.number().required('Obrigatório'),
-			})),
-		})),
+		message: Yup.string().notRequired(),
+
+		products: Yup.array().min(1, 'O pedido não tem produtos'),
 	});
 
 	//carregamento inicial
 	const client = useApolloClient();
 	const [editingProductIndex, setEditingProductIndex] = useState(null);
+	const [productModalCancel, setProductModalCancel] = useState(false);
 	const [loadingProduct, setLoadingProduct] = useState(false);
 	const formRef = useRef(null);
 
@@ -43,6 +39,13 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 	//Query de busca de produto
 	const [searchProducts, {data:productsData, loading:loadingProducts}] = useLazyQuery(SEARCH_BRANCH_PRODUCTS, {fetchPolicy:'no-cache'});
 	const productsFound = productsData && !loadingProducts ? productsData.searchBranchProducts : [];
+
+	//Carrega filial selecionada
+	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+
+	//Query formas de pagamento
+	const {data:methodsData, loading:loadingMethods} = useQuery(LOAD_BRANCH_PAYMENT_METHODS, {variables:{id:selectedBranchData.selectedBranch}});
+	const paymentMethods = methodsData && !loadingMethods ? methodsData.branch.payment_methods : [];
 
 	const handleSearchCustomer = (value) => {
 		searchUsers({variables:{search: value}});
@@ -80,11 +83,24 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		formRef.current.setFieldValue(`products.${editingProductIndex}`, data);
 	}
 
-	const handleOpenProductModal = (productIndex) => {
-		setEditingProductIndex(productIndex);
-	}
 	const handleCloseProductModal = () => {
+		setProductModalCancel(null);
 		setEditingProductIndex(null);
+	}
+
+	const calculateProductPrice = (product) => {
+		return product.options_groups.reduce((totalGroup, group)=>{
+			let optionsPrice = group.options.reduce((totalOption, option)=> {
+				return (option.selected) ?  totalOption + option.price : totalOption;
+			}, 0);
+			return totalGroup + optionsPrice;
+		}, product.price);
+	}
+
+	const calculateOrderPrice = (products, initialValue=0) => {
+		return products.reduce((totalProduct, product) => {
+			return totalProduct + calculateProductPrice(product);
+		}, initialValue);
 	}
 
 	return (
@@ -96,9 +112,13 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{user, type, products}, setFieldValue, handleChange, isSubmitting, errors}) => {
+			{({values:{user, type, products, delivery_price, payment_fee, discount}, setFieldValue, handleChange, isSubmitting, errors}) => {
+
+				//INFO
+				const orderPrice = calculateOrderPrice(products, payment_fee + delivery_price - discount);
+				
 			return (<Form>
-				<ProductModal prod={products[editingProductIndex]} open={editingProductIndex!==null} onSave={handleSaveProductModal} onClose={handleCloseProductModal} />
+				<ProductModal onCancel={productModalCancel} prod={products[editingProductIndex]} open={editingProductIndex!==null} onSave={handleSaveProductModal} onClose={handleCloseProductModal} />
 				<Content>
 					<Block>
 						<BlockHeader>
@@ -124,7 +144,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 											})=>{
 												return (
 													<div>
-														<TextField disabled={isSubmitting} {...getInputProps({error:!!errors.user})} />
+														<TextField disabled={isSubmitting} {...getInputProps({error:!!errors.user, label:'Cliente'})} />
 														{isOpen && (
 															<List {...getMenuProps()} className="dropdown">
 																{loadingUsers ? <div style={{padding:20}}><Loading /></div>
@@ -147,7 +167,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												)
 											}}
 										</Downshift>
-										<FormHelperText error={!!errors.user}>Digite para buscar um cliente</FormHelperText>
+										<FormHelperText error={!!errors.user}>{errors.user || 'Digite para buscar um cliente'}</FormHelperText>
 									</FormControl>
 								</FieldControl>
 							</FormRow>
@@ -237,7 +257,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 						</BlockHeader>
 						<Paper>
 							<FieldArray name='products'>
-								{({insert, remove}) =>
+								{({remove}) =>
 								(<Fragment>
 									<BlockSeparator>
 										<FormRow>
@@ -248,8 +268,11 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															if (!item) return;
 															getProductFromItem(item)
 															.then(product=>{
-																insert(0, product);
-																handleOpenProductModal(0);
+																let newProducts = [...products];
+																newProducts.unshift(product);
+																setFieldValue('products', newProducts);
+																setProductModalCancel(()=>()=>{remove(0);});
+																setEditingProductIndex(0);
 																clearSelection();
 															})
 														}}
@@ -295,7 +318,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															)
 														}}
 													</Downshift>
-													<FormHelperText>Digite para buscar produtos</FormHelperText>
+													<FormHelperText error={!!errors.products}>{errors.products || 'Digite para buscar produtos'}</FormHelperText>
 												</FormControl>
 											</FieldControl>
 										</FormRow>
@@ -312,12 +335,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 											</TableHead>
 											<TableBody>
 												{products.map((row, index) => {
-													let price = row.options_groups.reduce((totalGroup, group)=>{
-														let optionsPrice = group.options.reduce((totalOption, option)=> {
-															return (option.selected) ?  totalOption + option.price : totalOption;
-														}, 0);
-														return totalGroup + optionsPrice;
-													}, row.price);
+													let productPrice = calculateProductPrice(row);
 													let selected_options = (row.options_groups.filter(group=>{
 														return group.options.some(option=>option.selected);
 													})
@@ -337,10 +355,10 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															}
 														</TableCell>
 														<TableCell>
-															{numeral(price).format('$0,0.00')}
+															{numeral(productPrice).format('$0,0.00')}
 														</TableCell>
 														<TableCell>
-															<IconButton disabled={isSubmitting} onClick={()=>handleOpenProductModal(index)}>
+															<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(index)}>
 																<Icon path={mdiPencil} size='18' color='#363E5E' />
 															</IconButton>
 															<IconButton>
@@ -387,20 +405,37 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
-										<TextField label='Desconto' value={0} InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
+										<Field
+											label='Valor da entrega'
+											name='discount'
+											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
+											component={tField}
+											/>
 									</FieldControl>
 								</FormRow>
 								<FormRow>
 									<FieldControl>
-										<TextField label='Valor total' value={0} InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}} />
+										<Field
+											label='Desconto'
+											name='discount'
+											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
+											component={tField}
+											/>
 									</FieldControl>
 								</FormRow>
 								<FormRow>
 									<FieldControl>
+										<TextField label='Valor total' value={orderPrice} name='price' InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>, readOnly:true}} />
+									</FieldControl>
+								</FormRow>
+								<FormRow>
+									<FieldControl>
+										{!loadingSelectedData && !!paymentMethods.length &&
 										<TextField select label='Forma de pagamento' value='money'>
-											<MenuItem value='credit_debit'>Cartão de crédito/débito</MenuItem>
-											<MenuItem value='money'>Dinheiro</MenuItem>
-										</TextField>
+											{paymentMethods.map(row=>(
+												<MenuItem key={row.id} value={row.id}>{row.display_name}</MenuItem>												
+											))}
+										</TextField>}
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

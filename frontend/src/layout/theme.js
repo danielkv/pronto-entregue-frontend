@@ -29,7 +29,6 @@ export default createMuiTheme({
 
 				'& .MuiExpansionPanelSummary-content' : {
 					margin:'0 !important',
-					borderBottom: '1px solid #dfdfdf',
 				},
 
 				'&.MuiPaper-root' : {

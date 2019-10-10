@@ -16,13 +16,16 @@ import { GET_BRANCHES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 function Page (props) {
 	setPageTitle('Produtos');
 
-	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
-
-	const {data:productsData, loading:loadingProductsData, error} = useQuery(GET_BRANCHES_PRODUCTS, {variables:{id:selectedBranchData.selectedBranch}});
-	const products = productsData && productsData.branch.products.length ? productsData.branch.products : [];
-
+	const [showInactive, setShowInactive] = useState(false);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
+
+	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+
+	const {data:productsData, loading:loadingProductsData, error} = useQuery(GET_BRANCHES_PRODUCTS, {variables:{id:selectedBranchData.selectedBranch, filter:{showInactive}}});
+	const products = productsData && productsData.branch.products.length ? productsData.branch.products : [];
+
+
 
 	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_PRODUCT);
 
@@ -67,7 +70,7 @@ function Page (props) {
 											<Switch
 												disabled={loading}
 												checked={row.active}
-												onChange={()=>{setCompanyEnabled({variables:{id:row.id, data:{active:!row.active}}})}}
+												onChange={()=>{setCompanyEnabled({variables:{filter:{showInactive}, id:row.id, data:{active:!row.active}}})}}
 												value="checkedB"
 												size='small'
 												color="secondary"
@@ -102,7 +105,7 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+								<Switch size='small' color='primary' checked={showInactive} onChange={()=>{setShowInactive(!showInactive)}} value="includeDisabled" />
 							}
 							label="Incluir inativos"
 						/>

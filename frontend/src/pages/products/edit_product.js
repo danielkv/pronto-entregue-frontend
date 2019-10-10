@@ -17,7 +17,7 @@ function Page (props) {
 	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_PRODUCT, {variables:{id:edit_id}});
+	const {data, loading:loadingGetData, error} = useQuery(LOAD_PRODUCT, {variables:{id:edit_id, filter:{showInactive:true}}});
 	const client = useApolloClient();
 
 	if (error) return <ErrorBlock error={error} />
@@ -37,7 +37,6 @@ function Page (props) {
 
 	function onSubmit(data, {setSubmitting}) {
 		const saveData = sanitizeProductData(data);
-		console.log(saveData);
 
 		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data:saveData}})
 		.then(()=>{

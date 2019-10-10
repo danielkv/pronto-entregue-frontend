@@ -18,12 +18,13 @@ module.exports.typeDefs = gql`
 		order:Int!
 		type:String!
 		price:Float!
-		category:Category!
 		active:Boolean!
-		options_qty:Int!
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
-		options_groups:[OptionsGroup]!
+
+		options_qty(filter:Filter):Int!
+		options_groups(filter:Filter):[OptionsGroup]!
+		category:Category!
 	}
 
 	input ProductInput {
@@ -63,7 +64,7 @@ module.exports.typeDefs = gql`
 
 	extend type Query {
 		product(id:ID!): Product!
-		searchBranchProducts(search:String!):[Product]!
+		searchBranchProducts(search:String!, filter:Filter):[Product]!
 	}
 
 	extend type Mutation {
@@ -139,9 +140,11 @@ module.exports.resolvers = {
 				return product;
 			})
 		},
-		searchBranchProducts: (parent, {search}, ctx) => {
+		searchBranchProducts: (parent, {search, filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active;
 			return Products.findAll({
-				where:{name:{[Op.like]:`%${search}%`}, ['$category.branch_id$']: ctx.branch.get('id')},
+				where:{...where, name:{[Op.like]:`%${search}%`}, ['$category.branch_id$']: ctx.branch.get('id')},
 				include: [{
 					model:ProductsCategories
 				}]
@@ -149,11 +152,16 @@ module.exports.resolvers = {
 		},
 	},
 	Product: {
-		options_qty : (parent, args, ctx) => {
-			return Options.count({where:{active:true}, include:[{model:OptionsGroups, where:{product_id:parent.get('id')}}]});
+		options_qty : (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active;
+
+			return Options.count({where, include:[{model:OptionsGroups, where:{product_id:parent.get('id')}}]});
 		},
-		options_groups: (parent, args, ctx) => {
-			return parent.getOptionsGroups({order:[['order', 'ASC']]});
+		options_groups: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+			return parent.getOptionsGroups({where, order:[['order', 'ASC']]});
 		},
 		category : (parent, args, ctx) => {
 			return parent.getCategory();

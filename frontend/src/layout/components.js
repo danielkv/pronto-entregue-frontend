@@ -215,7 +215,7 @@ export const ProductImage = styled.div`
 	border-radius:30px;
 `;
 
-export function tField({field, label, action=false, type='text', form:{isSubmitting, errors, setFieldValue, values}, form}) {
+export function tField({field, label, action=false, type='text', inputProps, InputProps, form:{isSubmitting, errors, setFieldValue, values}, form}) {
 	let error = '';
 	const nesting = field.name.split('.');
 	
@@ -235,7 +235,7 @@ export function tField({field, label, action=false, type='text', form:{isSubmitt
 
 
 	return (
-		<TextField {...field} onClick={(e)=>{e.stopPropagation();}} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
+		<TextField {...field} inputProps={inputProps} InputProps={InputProps} onClick={(e)=>{e.stopPropagation();}} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
 	)
 }
 

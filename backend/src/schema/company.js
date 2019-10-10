@@ -20,13 +20,13 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		metas:[CompanyMeta]!
-		branches:[Branch]! @hasRole(permission:"branches_read", scope:"adm")
-		users:[User]! @hasRole(permission:"users_read", scope:"adm")
 		last_month_revenue:Float!
 		user_relation: CompanyRelation!
 
+		users(filter:Filter):[User]! @hasRole(permission:"users_read", scope:"adm")
+		branches(filter:Filter):[Branch]! @hasRole(permission:"branches_read", scope:"adm")
 		assigned_branches: [Branch]! @hasRole(permission:"users_edit", scope:"adm")
-		items:[Item]!
+		items (filter:Filter):[Item]!
 	}
 	
 	input CompanyMetaInput {
@@ -98,8 +98,10 @@ module.exports.resolvers = {
 		}
 	},
 	Company: {
-		items : (parent, args, ctx) => {
-			return parent.getItems();
+		items : (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+			return parent.getItems({where});
 		},
 		user_relation : (parent, args, ctx) => {
 			if (!parent.company_relation) throw new Error('Nenhum usuário selecionado');
@@ -116,25 +118,30 @@ module.exports.resolvers = {
 				return user.getBranches({where:{company_id:parent.get('id')}});
 			})
 		},
-		branches: (parent, args, ctx) => {
-			if (!parent.company_relation) return parent.getBranches();
+		branches: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+
+			if (!parent.company_relation) return parent.getBranches({where});
 			
 			return Users.findByPk(parent.company_relation.get('user_id'))
 			.then(user=>{
 				//se Usuário for master pode buscar todas as filiais mesmo desativadas
-				if (user.get('role') === 'master') return parent.getBranches({where:{company_id:parent.get('id')}});
+				if (user.get('role') === 'master') return parent.getBranches({where:{...where, company_id:parent.get('id')}});
 				
 				//se Usuário for adm pode buscar todas as filiais ativas
-				if (user.get('role') === 'adm') return parent.getBranches({where:{company_id:parent.get('id')}});
+				if (user.get('role') === 'adm') return parent.getBranches({where:{...where, company_id:parent.get('id')}});
 
 				//caso chegue aqui usuário verá a lista de filiais que estão ativas e estão vinculadas a ele
 				return user.getBranches({where:{active:true, company_id:parent.get('id')}, through:{where:{active:true}}})
 			});
 		},
-		users: (parent, args, ctx) => {
-			return parent.getUsers();
+		users: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+			return parent.getUsers({where});
 		},
-		metas: (parent, args, ctx) => {
+		metas: (parent) => {
 			return parent.getMetas();
 		},
 		last_month_revenue: (parent, args, ctx) => {

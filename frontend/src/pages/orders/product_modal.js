@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio} from '@material-ui/core';
+import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography} from '@material-ui/core';
 import {cloneDeep} from 'lodash';
 
 import {ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductImage, ProductInfo } from './modal_styles';
@@ -14,16 +14,33 @@ const CustomTextInput = withStyles({
 	}
 })(TextField);
 
-export default function ProductModal ({prod, open, onClose, onSave}) {
+export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 	const [product, setProduct] = useState(null);
+	const [errors, setErrors] = useState(null);
 
-	const handleClose = ()=> {
-		setProduct(null);
-		onClose();
+	const handleCancel = ()=> {
+		if (onCancel && typeof onCancel === 'function') onCancel();
+		close();
 	}
 
-	const handleOptionCheckboxSelect = (groupIndex, optionIndex) => (e) =>{
+	const close = ()=> {
+		setProduct(null);
+		setErrors(null);
+		onClose();
+	}
+	const handleSave = () => {
+		if (validateAllBeforeSave()) {
+			onSave(product);
+			close();
+		}
+	}
+
+	const handleOptionCheckboxSelect = (groupIndex, optionIndex, max_select) => (e) =>{
 		let newProd = {...product};
+		if (e.target.checked) {
+			const selectedOptions = countSelectedOptions(newProd.options_groups[groupIndex]);
+			if (selectedOptions >= max_select) return alert(`Você pode selecionar apenas ${max_select} ${max_select > 1 ? 'opções' : 'opção'}`)
+		}
 		newProd.options_groups[groupIndex].options[optionIndex].selected = e.target.checked;
 		setProduct(newProd);
 	}
@@ -38,13 +55,73 @@ export default function ProductModal ({prod, open, onClose, onSave}) {
 		setProduct(newProd);
 	}
 
+	const countSelectedOptions = (group) => {
+		return group.options.filter(row=>row.selected).length;
+	}
+
+	const isRestrainingOptionSelected = (sourceGroup) => {
+		let restrainingGroup = product.options_groups.find(row=>row.id===sourceGroup.restrainedBy.id);
+		if (restrainingGroup) return restrainingGroup.options.find(row=>row.selected);
+
+		return false;
+	}
+
+	const getGroupMaxSelect = (group) => {
+		let max_select = group.max_select;
+		if (group.restrainedBy && group.restrainedBy.id) {
+			let restrainingOption = isRestrainingOptionSelected(group);
+			if (restrainingOption) max_select = restrainingOption.max_select_restrain_other;
+		}
+		return max_select;
+	}
+
+	const getGroupInitalMessage = (group) => {
+		let message;
+		const max_select = getGroupMaxSelect(group);
+		const min_select = group.min_select;
+
+		if (group.type === 'single') {
+			message = (min_select >= 1) ? 'Selecione 1 opção' : '';
+		} else {
+			message = `Selecione até ${max_select} ${max_select > 1 ? 'opções' : 'opção'}`;
+		}
+
+		return message;
+	}
+
+	const validateGroup = (group) => {
+		const max_select = getGroupMaxSelect(group);
+		const min_select = group.min_select;
+		const selected_options = countSelectedOptions(group);
+		if (selected_options < group.min_select) {
+			return `Você deve selecionar no mínimo ${min_select} ${min_select > 1 ? 'opções' : 'opção'}`;
+		}
+		if (selected_options > max_select) {
+			return `Você deve selecionar no máximo ${max_select} ${max_select > 1 ? 'opções' : 'opção'}`;
+		}
+
+		return false;
+	}
+
+	const validateAllBeforeSave = () => {
+		let errors = {}
+		const verifying = product.options_groups.every((group, index)=>{
+			let validation = validateGroup(group);
+			if (validation) errors[index] = validation;
+			return !validation;
+		});
+		setErrors(errors);
+
+		return verifying;
+	}
+
 	useEffect(()=>{
 		if (prod)
 			setProduct(cloneDeep(prod));
 	}, [prod]);
 
 	return (
-		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} open={open} onClose={handleClose}>
+		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} open={open} onClose={close}>
 			<Fade in={open}>
 				<ModalPaper>
 				{!!product &&
@@ -76,10 +153,25 @@ export default function ProductModal ({prod, open, onClose, onSave}) {
 							</FormRow>
 						</BlockSeparator>
 						<BlockSeparator style={{maxHeight:400, overflowY:'auto'}}>
-							{product.options_groups.map((group, groupIndex)=>(
-							<ExpansionPanel key={`${group.id}.${groupIndex}`} square expanded={open} /* onChange={()=>setOpen(!open)} */>
+							{product.options_groups.map((group, groupIndex)=>{
+								let disabled = false;
+								let max_select = getGroupMaxSelect(group);
+								let max_select_msg = getGroupInitalMessage(group);
+								let error = errors && errors[groupIndex] ? errors[groupIndex] : false;
+
+								if (group.restrainedBy && group.restrainedBy.id && !isRestrainingOptionSelected(group)) {
+									disabled = true;
+									max_select_msg = `Selecione o ${group.restrainedBy.name}`;
+								}
+
+								if (!!error) max_select_msg = error;
+								
+							return (<ExpansionPanel key={`${group.id}.${groupIndex}`} square expanded={open} /* onChange={()=>setOpen(!open)} */>
 								<ExpansionPanelSummary aria-controls="panel1d-content" id="panel1d-header">
-									{group.name}
+									<Typography>{group.name}</Typography>
+									<FormHelperText error={!!error} style={{marginLeft:'auto'}}>
+										{max_select_msg}
+									</FormHelperText>
 								</ExpansionPanelSummary>
 								<ExpansionPanelDetails style={{padding:0}}>
 									<Table>
@@ -92,14 +184,26 @@ export default function ProductModal ({prod, open, onClose, onSave}) {
 															group.type === 'single' ?
 															<Radio
 																value={option.name}
-																checked={!!option.selected}
-																onChange={handleOptionRadioSelect(groupIndex, optionIndex)}
+																checked={option.selected}
+																onChange={(e)=>{
+																	if (disabled) {
+																		alert(`Você deve primeiro selecionar ${group.restrainedBy.name}`);
+																		return;
+																	}
+																	handleOptionRadioSelect(groupIndex, optionIndex)(e);
+																}}
 																/>
 															:
 															<Checkbox
 																value={option.name}
-																checked={!!option.selected}
-																onChange={handleOptionCheckboxSelect(groupIndex, optionIndex)}
+																checked={option.selected}
+																onChange={(e)=>{
+																	if (disabled) {
+																		alert(`Você deve primeiro selecionar ${group.restrainedBy.name}`);
+																		return;
+																	}
+																	handleOptionCheckboxSelect(groupIndex, optionIndex, max_select)(e);
+																}}
 																/>
 														}
 														label={option.name}
@@ -122,7 +226,7 @@ export default function ProductModal ({prod, open, onClose, onSave}) {
 										</TableBody>
 									</Table>
 								</ExpansionPanelDetails>
-							</ExpansionPanel>))}
+							</ExpansionPanel>)})}
 						</BlockSeparator>
 						<BlockSeparator>
 							<FormRow>
@@ -133,13 +237,10 @@ export default function ProductModal ({prod, open, onClose, onSave}) {
 								</FieldControl>
 								<FieldControl style={{flex:.3}}>
 									<ButtonGroup style={{marginLeft:'auto'}}>
-										<Button onClick={()=>{handleClose();}} color='secondary'>Cancelar</Button>
-										<Button onClick={()=>{onSave(product); handleClose();}} variant="contained" color='secondary'>Salvar</Button>
+										<Button onClick={handleCancel} color='secondary'>Cancelar</Button>
+										<Button onClick={handleSave} variant="contained" color='secondary'>Salvar</Button>
 									</ButtonGroup>
 								</FieldControl>
-							</FormRow>
-							<FormRow>
-								
 							</FormRow>
 						</BlockSeparator>
 					</Block>}

@@ -17,10 +17,12 @@ module.exports.typeDefs = gql`
 		createdAt:String!
 		updatedAt:String!
 		product:Product!
-		options:[Option]!
-		options_qty:Int!
+		options_qty(filter:Filter):Int!
+
 		groupRestrained:OptionsGroup
 		restrainedBy:OptionsGroup
+
+		options(filter:Filter):[Option]!
 	}
 
 	extend type Query {
@@ -48,11 +50,17 @@ module.exports.resolvers = {
 		},
 	},
 	OptionsGroup: {
-		options: (parent, args, ctx) => {
-			return parent.getOptions({order:[['order', 'ASC']]});
+		options: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+
+			return parent.getOptions({where, order:[['order', 'ASC']]});
 		},
-		options_qty: (parent, argss, ctx) => {
-			return parent.getOptions()
+		options_qty: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+
+			return parent.getOptions({where})
 			.then(options=>{
 				return options.length;
 			})

@@ -14,8 +14,9 @@ module.exports.typeDefs = gql`
 		order:Int!
 		createdAt:String!
 		updatedAt:String!
-		products:[Product]!
-		products_qty:Int!
+		products_qty(filter:Filter):Int!
+
+		products(filter:Filter):[Product]!
 	}
 
 	input CategoryInput {
@@ -92,14 +93,20 @@ module.exports.resolvers = {
 		},
 	},
 	Category : {
-		products: (parent) => {
-			return parent.getProducts();
+		products: (parent, {filter}) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+
+			return parent.getProducts({where});
 		},
 		branch : (parent) => {
 			return parent.getBranch();
 		},
-		products_qty : (parent) => {
-			return parent.getProducts()
+		products_qty : (parent, {filter}) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active; 
+
+			return parent.getProducts({where})
 			.then (products=>products.length);
 		}
 	}

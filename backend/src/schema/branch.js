@@ -26,16 +26,17 @@ module.exports.typeDefs = gql`
 		createdAt:String! @dateTime
 		updatedAt:String! @dateTime
 		company:Company!
-		users:[User]!
 		metas:[BranchMeta]!
-		categories:[Category]!
-		products:[Product]!
 		payment_methods:[PaymentMethod]!
 		delivery_areas:[DeliveryArea]!
 		business_hours:[BusinessHour]!
 		orders:[Order]!
 		user_relation:BranchRelation!
 		last_month_revenue:Float!
+
+		users(filter:Filter):[User]!
+		categories(filter:Filter):[Category]!
+		products(filter:Filter):[Product]!
 	}
 
 	input BranchMetaInput {
@@ -120,17 +121,26 @@ module.exports.resolvers = {
 		
 	},
 	Branch: {
-		users: (parent, args, ctx) => {
-			return parent.getUsers();
+		users: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active;
+
+			return parent.getUsers({where});
 		},
 		metas: (parent, args, ctx) => {
 			return parent.getMetas();
 		},
-		categories: (parent, args, ctx) => {
-			return parent.getCategories();
+		categories: (parent, {filter}, ctx) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active;
+
+			return parent.getCategories({where});
 		},
-		products : (parent) => {
-			return Products.findAll({include:[{model:ProductsCategories, where:{branch_id:parent.get('id')}}]})
+		products : (parent, {filter}) => {
+			let where = {active: true};
+			if (filter && filter.showInactive) delete where.active;
+
+			return Products.findAll({where, include:[{model:ProductsCategories, where:{branch_id:parent.get('id')}}]})
 		},
 		payment_methods: (parent, args, ctx) => {
 			return parent.getPaymentMethods();
