@@ -9,87 +9,23 @@ import {setPageTitle, getStatusIcon} from '../../utils';
 import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar} from '../../layout/components';
 import {OrderCreated, OrderDate, OrderTime} from './styles';
+import { useQuery } from '@apollo/react-hooks';
+import { GET_SELECTED_BRANCH } from '../../graphql/branches';
+import { GET_BANCH_ORDERS } from '../../graphql/orders';
+import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 
-function Page () {
+function Page (props) {
 	setPageTitle('Pedidos');
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const orders = [
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Ivandro Cardoso',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'waiting',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Maria José Almeida',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'preparing',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Carlos antonio',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'delivered',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Ivandro Cardoso',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'waiting',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Maria José Almeida',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'preparing',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Carlos antonio',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'delivered',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Ivandro Cardoso',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'waiting',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Maria José Almeida',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'preparing',
-		},
-		{
-			created_at:{date:'25/08', time:'15:35'},
-			user: 'Carlos antonio',
-			address: 'Rua João Quartieiro, 43',
-			price:72.32,
-			products_qty:15,
-			status: 'delivered',
-		},
-	];
+	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+	const {data:ordersData, loading:loadingOrdersData, error} = useQuery(GET_BANCH_ORDERS, {variables:{id:selectedBranchData.selectedBranch}})
+	const orders = ordersData && !loadingOrdersData && !loadingSelectedData ? ordersData.branch.orders : [];
+
+	if (error) return <ErrorBlock error={error} />
+	if (loadingOrdersData || loadingSelectedData) return (<LoadingBlock />);
 
 	return (
 		<Layout>
@@ -115,20 +51,20 @@ function Page () {
 							</TableHead>
 							<TableBody>
 								{orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
-									<TableRow key={row.user}>
+									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:30}}>
 											<OrderCreated>
-												<OrderDate>{row.created_at.date}</OrderDate>
-												<OrderTime>{row.created_at.time}</OrderTime>
+												<OrderDate>{row.createdDate}</OrderDate>
+												<OrderTime>{row.createdTime}</OrderTime>
 											</OrderCreated>
 										</TableCell>
-										<TableCell>{row.user}</TableCell>
-										<TableCell>{row.address}</TableCell>
+										<TableCell>{row.user.full_name}</TableCell>
+										<TableCell>{`${row.street}, ${row.number}`}</TableCell>
 										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 										<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
 										<TableCell style={{width:30, textAlign:'center'}}>{getStatusIcon(row.status)}</TableCell>
 										<TableCell style={{width:100}}>
-											<IconButton>
+											<IconButton onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<IconButton>

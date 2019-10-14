@@ -11,25 +11,27 @@ class OrdersProducts extends Sequelize.Model {
 		return Promise.all(
 			products.map(product => {
 				return new Promise(async (resolve, reject)=>{
+					let product_model;
 					try {
-						let order_product, options_groups = [];
-						if (!product.id) throw new Error('Esse produto não existe');
-						
-						[order_product] = await order.getProducts({where:{id:product.id}});
+						if (!['create', 'remove', 'update'].includes(product.action)) return resolve(product);
 
-						if (!order_product) {
-							let product_id = product.id;
-							delete product.id;
-							order_product = await order.createProduct({...product, product_id}, {transaction});
-						} else {
-							if (product.action === "remove") await order.removeProduct(product, {transaction});
-							else if (product.action === 'update') order_product = await order_product.update(product, {fields:['message', 'price'], transaction});
+						
+						if (product.id && product.action === "remove") {
+							product_model = await order.removeProduct(product_model, {transaction});
+							return resolve(product_model);
+						} else if (product.action === 'create') {
+							product_model = await order.createProduct(product, {transaction})
+						} else if (product.id && product.action === 'update') {
+							[product_model] = await order.getProducts({where:{id:product.id}});
+							product_model = await product_model.update(product, {fields:['name'], transaction});
 						}
 						
-						if (!product.remove && product.options_groups)
-							options_groups = await OrdersOptionsGroups.updateAll(product.options_groups, order_product, transaction);
-
-						return resolve({...order_product.get(), options_groups});
+						if (product_model) {
+							if (!product.remove && product.options_groups) product.options_groups = await OrdersOptionsGroups.updateAll(product.options_groups, product_model, transaction);
+							return resolve({...product_model.get(), options_groups: product.options_groups});
+						} else {
+							return reject('O Produto não foi encontrado');
+						}
 					} catch (err) {
 						return reject(err);
 					}

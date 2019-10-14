@@ -5,17 +5,19 @@ module.exports.typeDefs = gql`
 		id:ID!
 		name:String!
 		price:Float!
-		message:Int!
-		createdAt:String!
-		updatedAt:String!
-		order_options_groups:[OrderOptionsGroup]
+		message:String!
+		product_related:Product!
+		options_groups: [OrderOptionsGroup]!
 	}
 `;
 
 module.exports.resolvers = {
 	OrderProduct: {
-		order_options_groups: (parent, args, ctx) => {
-			return parent.getOrderOptionsGroups();
+		options_groups : (parent) => {
+			return parent.getOptionsGroups();
+		},
+		product_related : (parent, {id}, ctx) => {
+			return parent.getProductRelated();
 		},
 	}
 }

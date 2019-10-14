@@ -152,7 +152,7 @@ module.exports.resolvers = {
 
 		},
 		orders: (parent, args, ctx) => {
-			return parent.getOrders();
+			return parent.getOrders({order:[['createdAt', 'DESC']]});
 		},
 		user_relation: (parent, args, ctx) => {
 			if (!parent.branch_relation) throw new Error('Nenhum usuário selecionado');

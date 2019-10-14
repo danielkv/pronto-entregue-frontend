@@ -8,41 +8,38 @@ const OrdersOptions = require('./orders_options');
 
 class OrdersOptionsGroups extends Sequelize.Model {
 	static updateAll (groups, product, transaction=null) {
-		return Promise.all(
-			groups.map((group) => {
-				return new Promise(async (resolve, reject) => {
-					let group_model;
-					try {
-						if (!group.id) throw new Error('Esse grupo de opções não existe');
-						
-						[group_model] = await product.getOptionsGroups({where:{id:group.id}});
-						
-						if (group_model) {
-							if (group.remove === true) await product.removeOptionsGroup(group_model, {transaction});
-						} else {
-							let options_group_id = group.id;
+
+
+		//deleta grupos e opções antigas
+		return OrdersOptionsGroups.destroy({where:{order_product_id: product.get('id')}, transaction})
+
+		//cria novos grupos
+		.then (()=> {
+			return Promise.all(
+				groups.map((group) => {
+					return new Promise(async (resolve, reject) => {
+						try {
 							delete group.id;
-							group_model = await product.createOptionsGroup({...group, options_group_id}, {transaction});
+							let group_model = await product.createOptionsGroup(group, {transaction});
+
+							if (group_model) {
+								if (group.options) group.options = await OrdersOptions.updateAll(group.options, group_model, transaction);
+								return resolve({...group_model.get(), options: group.options});
+							} else {
+								return reject('Grupo não foi encontrado');
+							}
+						} catch (err) {
+							return reject(err);
 						}
-						
-						if (!group.remove && group.options) group.options = await OrdersOptions.updateAll(group.options, group_model, transaction);
-						
-						return resolve({...group_model.get(), options: group.options});
-					} catch (err) {
-						return reject(err);
-					}
-				});
-			})
-		);
+					});
+				})
+			);
+		})
+		
 	}
 };
 OrdersOptionsGroups.init({
 	name: Sequelize.STRING,
-	type: {
-		type: Sequelize.STRING(50),
-		comment: 'single | multiple',
-		
-	},
 }, {modelName:'orders_options_groups', underscored:true, sequelize});
 
 module.exports = OrdersOptionsGroups;

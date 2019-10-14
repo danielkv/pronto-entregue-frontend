@@ -21,6 +21,7 @@ import EditItem from './pages/storage/edit_item';
 
 import Orders from './pages/orders';
 import NewOrder from './pages/orders/new_order';
+import EditOrder from './pages/orders/edit_order';
 
 import Categories from './pages/categories';
 import NewCategory from './pages/categories/new_category';
@@ -35,7 +36,6 @@ import NewUser from './pages/users/new_user';
 import EditUser from './pages/users/edit_user';
 
 import Settings from './pages/settings';
-//import { LoadingBlock } from './layout/blocks';
 import { Loading } from './layout/components';
 
 const Routes = (props)  => {
@@ -74,6 +74,7 @@ const Routes = (props)  => {
 				
 				<Route exact path='/pedidos' component={Orders} />
 				<Route path='/pedidos/novo' component={NewOrder} />
+				<Route path='/pedidos/alterar/:id' component={EditOrder} />
 				
 				<Route exact path='/categorias' component={Categories} />
 				<Route path='/categorias/novo' component={NewCategory} />

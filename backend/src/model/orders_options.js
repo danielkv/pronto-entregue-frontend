@@ -7,21 +7,15 @@ const Sequelize = require('sequelize');
 
 class OrdersOptions extends Sequelize.Model {
 	static updateAll (options, group_model, transaction=null) {
+
+		//cria novas opções
 		return Promise.all(
-			options.map(async (option) => {
-				let option_model;
-				if (!option.id) throw new Error('Essa opção não existe');
-				
-				[option_model] = await group_model.getOptions({where:{id:option.id}});
-	
-				if (option_model) {
-					if (option.remove === true) return group_model.removeOption(option_model, {transaction});
-				} else {
-					delete option.id;
-					return group_model.createOption(option, {transaction});
-				}
+			options.map((option) => {
+				delete option.id;
+				return group_model.createOption(option, {transaction});
 			})
 		);
+		
 	}
 };
 OrdersOptions.init({

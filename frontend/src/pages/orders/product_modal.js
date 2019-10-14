@@ -42,6 +42,7 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 			if (selectedOptions >= max_select) return alert(`Você pode selecionar apenas ${max_select} ${max_select > 1 ? 'opções' : 'opção'}`)
 		}
 		newProd.options_groups[groupIndex].options[optionIndex].selected = e.target.checked;
+		if (newProd.action === 'editable') newProd.action = 'update';
 		setProduct(newProd);
 	}
 
@@ -52,6 +53,7 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 			return row;
 		});
 		newProd.options_groups[groupIndex].options[optionIndex].selected = e.target.checked;
+		if (newProd.action === 'editable') newProd.action = 'update';
 		setProduct(newProd);
 	}
 
@@ -60,7 +62,7 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 	}
 
 	const isRestrainingOptionSelected = (sourceGroup) => {
-		let restrainingGroup = product.options_groups.find(row=>row.id===sourceGroup.restrainedBy.id);
+		let restrainingGroup = product.options_groups.find(row=>row.group_related.id===sourceGroup.restrainedBy.id);
 		if (restrainingGroup) return restrainingGroup.options.find(row=>row.selected);
 
 		return false;
@@ -119,6 +121,10 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 		if (prod)
 			setProduct(cloneDeep(prod));
 	}, [prod]);
+	
+	useEffect(()=>{
+		console.log(product);
+	}, [product]);
 
 	return (
 		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} open={open} onClose={close}>
@@ -140,6 +146,7 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 											onChange={(e)=>{
 												let newProd = {...product};
 												newProd.price = parseFloat(e.target.value.replace(',', '.'));
+												if (newProd.action === 'editable') newProd.action = 'update';
 												setProduct(newProd);
 											}}
 											/>
@@ -218,6 +225,7 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 														onChange={(e)=>{
 															let newProd = {...product};
 															newProd.options_groups[groupIndex].options[optionIndex].price = parseFloat(e.target.value.replace(',', '.'));
+															if (newProd.action === 'editable') newProd.action = 'update';
 															setProduct(newProd);
 														}}
 														/>

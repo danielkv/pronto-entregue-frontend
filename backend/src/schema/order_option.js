@@ -5,16 +5,18 @@ module.exports.typeDefs = gql`
 		id:ID!
 		name:String!
 		price:Float!
-		createdAt:String!
-		updatedAt:String!
-		item:Item
+		option_related:Option!
+		item_related:Item!
 	}
 `;
 
 module.exports.resolvers = {
 	OrderOption: {
-		item: (parent, args, ctx) => {
-			return parent.getItems();
+		option_related : (parent) => {
+			return parent.getOptionRelated();
+		},
+		item_related: (parent) => {
+			return parent.getItemRelated();
 		},
 	}
 }

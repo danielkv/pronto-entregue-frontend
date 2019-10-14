@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from '@mdi/react';
 import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle } from '@mdi/js';
+import {uniqueId} from 'lodash';
 
 import numeral from 'numeral';
 
@@ -137,15 +138,28 @@ export const setPageTitle = (new_title) => {
 export const createEmptyOrderProduct = (overwrite={}) => {
 	if (overwrite.options_groups) {
 		overwrite.options_groups = overwrite.options_groups.map(group=>{
+			if (group.id) group.group_related = {id:group.id};
+			//group.id = uniqueId();
+			group.action = 'create';
+
 			if (group.options) {
 				group.options = group.options.map(option=>{
-					return {...option, selected:false}
+					if (option.id) option.option_related = {id: option.id};
+					group.id = uniqueId();
+					option.action = 'create';
+
+					return {...option, selected:option.selected || false}
 				})
 			}
 			return group;
 		})
 	}
+	if (overwrite.id) {
+		overwrite.product_related = {id: overwrite.id};
+		delete overwrite.id;
+	}
 	return {
+		id: uniqueId(),
 		action:'new_empty',
 		message:'',
 		options_groups: [],
@@ -180,45 +194,74 @@ export const createEmptyOption = (overwrite={}) => {
 	}
 }
 
+export const calculateProductPrice = (product) => {
+	return product.options_groups.reduce((totalGroup, group)=>{
+		let optionsPrice = group.options.reduce((totalOption, option)=> {
+			return (option.selected) ?  totalOption + option.price : totalOption;
+		}, 0);
+		return totalGroup + optionsPrice;
+	}, product.price);
+}
+
+export const calculateOrderPrice = (products, initialValue=0) => {
+	if (!products || !products.length) return initialValue;
+	return products.reduce((totalProduct, product) => {
+		return totalProduct + calculateProductPrice(product);
+	}, initialValue).toFixed(2);
+}
+
 export const sanitizeOrderData = (data) => {
 	return {
 		user_id: data.user.id,
 		type: data.type,
 		status: data.status,
-		payment_method_id: data.payment_method,
+		payment_method_id: data.payment_method && data.payment_method.id ? data.payment_method.id : '',
 
 		payment_fee: data.payment_fee,
 		delivery_price: data.delivery_price,
 		discount: data.discount,
-		price: data.price,
+		price: calculateOrderPrice(data.products, data.payment_fee + data.delivery_price - data.discount),
 		message: data.message,
 		
 		street: data.street,
-		number: data.number,
+		number: data.number || null,
 		complement: data.complement,
 		city: data.city,
 		state: data.state,
 		district: data.district,
 		zipcode: data.zipcode,
 		
-		products: data.products.map(product => ({
-			name: product.name,
-			price: product.price,
-			message: product.message,
-			product_id: product.id,
+		products: data.products.map(product => {
+			let new_product = {
+				action: product.action,
+				name: product.name,
+				price: product.price,
+				message: product.message || '',
+				product_id: product.product_related.id,
 
-			optionsGroups: product.options_groups.filter(group=>group.options.some(option=>option.selected)).map(group =>({
-				name: group.name,
-				options_group_id: group.id,
+				options_groups: product.options_groups.filter(group=>group.options.some(option=>option.selected)).map(group =>{
+					let new_group = {
+						name: group.name,
+						options_group_id: group.group_related.id,
 
-				options: group.options.filter(option=>option.selected).map(option => ({
-					name: option.name,
-					price: option.price,
-					item_id: option.item ? option.item.id : null,
-					option_id: option.id,
-				}))
-			}))
-		}))
+						options: group.options.filter(option=>option.selected).map(option => {
+							let new_option = {
+								name: option.name,
+								price: option.price,
+								item_id: option.item ? option.item.id : null,
+								option_id: option.option_related.id,
+							};
+							if (option.id) new_option.id = option.id;
+							return new_option;
+						})
+					}
+					if (group.id) new_group.id = group.id;
+					return new_group;
+				})
+			};
+			if (product.id) new_product.id = product.id;
+			return new_product;
+		})
 	}
 }
 

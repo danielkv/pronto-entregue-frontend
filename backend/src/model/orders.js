@@ -42,12 +42,12 @@ Orders.init({
 		type: Sequelize.DECIMAL(10, 2),
 		set (val) {
 			if (typeof val == 'string')
-				this.setDataValue('price', parseFloat(val.replace(/\,/g, '.')));
+				this.setDataValue('discount', parseFloat(val.replace(/\,/g, '.')));
 			else
-				this.setDataValue('price', val);
+				this.setDataValue('discount', val);
 		},
 		get () {
-			return parseFloat(this.getDataValue('price'));
+			return parseFloat(this.getDataValue('discount'));
 		}
 	},
 	status: {
@@ -69,6 +69,7 @@ Orders.init({
 	state: Sequelize.STRING,
 	district: Sequelize.STRING,
 	zipcode: Sequelize.STRING,
+	
 }, {modelName:'orders', underscored:true, sequelize});
 
 module.exports = Orders;

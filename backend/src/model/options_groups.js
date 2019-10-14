@@ -29,7 +29,7 @@ class OptionsGroups extends Sequelize.Model {
 							if (!group.remove && group.options) group.options = await Options.updateAll(group.options, group_model, transaction);
 							return resolve({...group_model.get(), options: group.options});
 						} else {
-							reject('Grupo não foi encontrado');
+							return reject('Grupo não foi encontrado');
 						}
 					} catch (err) {
 						return reject(err);

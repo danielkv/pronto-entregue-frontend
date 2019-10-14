@@ -89,14 +89,14 @@ Options.belongsTo(Items, {foreignKey:'item_id'});
 Orders.belongsTo(Users, {foreignKey:'user_id'});
 Orders.belongsTo(Branches, {foreignKey:'branch_id'});
 Orders.hasMany(OrdersProducts, {foreignKey:'order_id', as:'products'});
-OrdersProducts.hasMany(OrdersOptionsGroups, {foreignKey:'order_product_id', as:'optionsGroups'});
-OrdersOptionsGroups.hasMany(OrdersOptions, {foreignKey:'order_options_group_id', as:'options'});
+OrdersProducts.hasMany(OrdersOptionsGroups, {foreignKey:'order_product_id', as:'optionsGroups', onDelete: 'cascade'});
+OrdersOptionsGroups.hasMany(OrdersOptions, {foreignKey:'order_options_group_id', as:'options', onDelete: 'cascade'});
 OrdersOptions.belongsTo(Items, {foreignKey:'item_id'});
 Orders.belongsTo(PaymentMethods, {foreignKey:'payment_method_id'});
 
-OrdersProducts.belongsTo(Products, {foreignKey:'product_id'});
-OrdersOptionsGroups.belongsTo(OptionsGroups, {foreignKey:'options_group_id'});
-OrdersOptions.belongsTo(Options, {foreignKey:'option_id'});
+OrdersProducts.belongsTo(Products, {foreignKey:'product_id', as:'productRelated'});
+OrdersOptionsGroups.belongsTo(OptionsGroups, {foreignKey:'options_group_id', as:'optionsGroupRelated'});
+OrdersOptions.belongsTo(Options, {foreignKey:'option_id', as:'optionRelated'});
 
 //Items relations
 Items.hasMany(Options, {foreignKey:'item_id'});

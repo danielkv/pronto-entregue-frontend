@@ -13,15 +13,22 @@ import ProductModal from './product_modal';
 import { SEARCH_USERS } from '../../graphql/users';
 import { SEARCH_BRANCH_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { GET_SELECTED_BRANCH, LOAD_BRANCH_PAYMENT_METHODS } from '../../graphql/branches';
-import { createEmptyOrderProduct } from '../../utils';
+import { createEmptyOrderProduct, calculateProductPrice, calculateOrderPrice } from '../../utils';
 
 export default function PageForm ({initialValues, onSubmit, pageTitle, validateOnChange, edit}) {
 	const productSchema = Yup.object().shape({
 		status : Yup.string().required('Obrigatório'),
 		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
-		price: Yup.number().required('Obrigatório'),
 		message: Yup.string().notRequired(),
-		payment_method: Yup.string().required('Obrigatório'),
+		payment_method: Yup.string().typeError('Obrigatório').required('Obrigatório'),
+
+		street: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.string().required('Obrigatório') : Yup.notRequired(); }),
+		number: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.number().typeError('Não é um número').required('Obrigatório') : Yup.notRequired(); }),
+		complement: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.string().required('Obrigatório') : Yup.notRequired(); }),
+		city: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.string().required('Obrigatório') : Yup.notRequired(); }),
+		state: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.string().required('Obrigatório') : Yup.notRequired(); }),
+		district: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.string().required('Obrigatório') : Yup.notRequired(); }),
+		zipcode: Yup.lazy(value=>{ return formRef.current.state.values.type === 'delivery' ? Yup.string().required('Obrigatório') : Yup.notRequired(); }),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
 	});
@@ -89,21 +96,6 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 		setEditingProductIndex(null);
 	}
 
-	const calculateProductPrice = (product) => {
-		return product.options_groups.reduce((totalGroup, group)=>{
-			let optionsPrice = group.options.reduce((totalOption, option)=> {
-				return (option.selected) ?  totalOption + option.price : totalOption;
-			}, 0);
-			return totalGroup + optionsPrice;
-		}, product.price);
-	}
-
-	const calculateOrderPrice = (products, initialValue=0) => {
-		return products.reduce((totalProduct, product) => {
-			return totalProduct + calculateProductPrice(product);
-		}, initialValue);
-	}
-
 	return (
 		<Formik
 			ref={formRef}
@@ -113,10 +105,9 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{user, type, products, delivery_price, payment_fee, discount, status, payment_method}, setFieldValue, handleChange, isSubmitting, errors}) => {
-				console.log(errors);
-				//INFO
-				const orderPrice = calculateOrderPrice(products, payment_fee + delivery_price - discount);
+			{({values:{user, type, products, status, payment_method, payment_fee, discount, delivery_price}, setFieldValue, handleChange, isSubmitting, errors}) => {
+			//INFO
+			const orderPrice = calculateOrderPrice(products, delivery_price + payment_fee - discount);
 				
 			return (<Form>
 				<ProductModal onCancel={productModalCancel} prod={products[editingProductIndex]} open={editingProductIndex!==null} onSave={handleSaveProductModal} onClose={handleCloseProductModal} />
@@ -140,7 +131,6 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												getItemProps,
 												getMenuProps,
 												isOpen,
-												inputValue,
 												highlightedIndex,
 											})=>{
 												return (
@@ -218,7 +208,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												id: 'user_addresses',
 											}}
 											>
-											{!!user && user.addresses.map((address, index)=>(
+											{!!user && !!user.addresses && user.addresses.map((address, index)=>(
 												<MenuItem key={index} value={index}>{`${address.street}, ${address.number} (${address.city} ${address.state})`}</MenuItem>
 											))}
 										</Select>
@@ -335,7 +325,8 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												</TableRow>
 											</TableHead>
 											<TableBody>
-												{products.map((row, index) => {
+												{products.filter(row=>row.action !== 'remove').map((row, index) => {
+													let productIndex = products.findIndex(r=>r.id===row.id);
 													let productPrice = calculateProductPrice(row);
 													let selected_options = (row.options_groups.filter(group=>{
 														return group.options.some(option=>option.selected);
@@ -345,7 +336,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 														return (options.length) ? options.join(', ') : '';
 													}));
 													return(
-													<TableRow key={`${row.id}.${index}`}>
+													<TableRow key={`${row.id}.${productIndex}`}>
 														<TableCell style={{width:80, paddingRight:10}}><ProductImage src={row.image} alt={row.name} /></TableCell>
 														<TableCell>
 															<div>{row.name}</div>
@@ -359,13 +350,21 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 															{numeral(productPrice).format('$0,0.00')}
 														</TableCell>
 														<TableCell>
-															<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(index)}>
+															<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
 																<Icon path={mdiPencil} size='18' color='#363E5E' />
 															</IconButton>
 															<IconButton>
 																<Icon path={mdiContentDuplicate} size='18' color='#363E5E' />
 															</IconButton>
-															<IconButton>
+															<IconButton
+																disabled={isSubmitting} 
+																onClick={()=>{
+																	if (row.action === 'create') remove(productIndex);
+																	else {
+																		setFieldValue(`products.${productIndex}.action`, 'remove');
+																	}
+																}}
+																>
 																<Icon path={mdiDelete} size='20' color='#707070' />
 															</IconButton>
 														</TableCell>
@@ -408,6 +407,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<FieldControl>
 										<Field
 											label='Valor da entrega'
+											type='number'
 											name='delivery_price'
 											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
 											component={tField}
@@ -418,6 +418,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<FieldControl>
 										<Field
 											label='Desconto'
+											type='number'
 											name='discount'
 											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
 											component={tField}
@@ -428,6 +429,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 									<FieldControl>
 										<TextField
 											label='Valor total'
+											type='number'
 											value={orderPrice}
 											name='price'
 											InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>, readOnly:true}}
@@ -437,7 +439,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 								<FormRow>
 									<FieldControl>
 										{!loadingSelectedData && !!paymentMethods.length &&
-										<TextField helperText={errors.payment_method} error={!!errors.payment_method} select label='Forma de pagamento' value={payment_method || ''} onChange={(e)=>setFieldValue('payment_method', e.target.value)}>
+										<TextField helperText={errors.payment_method} error={!!errors.payment_method} select label='Forma de pagamento' value={payment_method && payment_method.id ? payment_method.id : ''} onChange={(e)=>setFieldValue('payment_method.id', e.target.value)}>
 											{paymentMethods.map(row=>(
 												<MenuItem key={row.id} value={row.id}>{row.display_name}</MenuItem>
 											))}
