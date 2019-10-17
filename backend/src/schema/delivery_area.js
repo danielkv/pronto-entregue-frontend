@@ -1,4 +1,6 @@
 const {gql} = require('apollo-server');
+const {Op, col, where,  literal, fn, and, escape:Escape} = require('sequelize');
+const {ZipcodeError} = require('../utilities/errors');
 
 module.exports.typeDefs = gql`
 	type DeliveryArea {
@@ -6,7 +8,8 @@ module.exports.typeDefs = gql`
 		name:String!
 		type:String!
 		price:Float!
-		zipcodes:String!
+		zipcode_a:Int!
+		zipcode_b:Int
 		createdAt:String!
 		updatedAt:String!
 	}
@@ -15,19 +18,44 @@ module.exports.typeDefs = gql`
 		name:String
 		type:String
 		price:Float
-		zipcodes:String
+		zipcode_a:Int
+		zipcode_b:Int
+	}
+
+	extend type Query {
+		calculateDeliveryPrice(zipcode:Int!): DeliveryArea!
 	}
 
 	extend type Mutation {
-		addDeliveryArea(data:DeliveryAreaInput!):DeliveryArea!
+		createDeliveryArea(data:DeliveryAreaInput!):DeliveryArea!
 		updateDeliveryArea(id:ID!, data:DeliveryAreaInput!):DeliveryArea!
 		removeDeliveryArea(id:ID!):DeliveryArea!
 	}
 `;
 
 module.exports.resolvers = {
+	Query: {
+		calculateDeliveryPrice: (parent, {zipcode}, ctx) => {
+			return ctx.branch.getDeliveryAreas({
+				order:[['price', 'DESC']],
+				limit: 1,
+				where: {
+					[Op.or] : [
+						{type: 'single', zipcode_a: zipcode},
+						{type: 'set', zipcode_a: {[Op.lte]: zipcode}, zipcode_b: {[Op.gte]: zipcode}},
+						{type: 'joker', zipcode_a: fn('substring', zipcode, 1, fn('char_length', col('zipcode_a')))},
+					]
+				}
+			})
+			.then(([area])=>{
+				if (!area) throw new ZipcodeError('Não há entregas para esse local');
+
+				return area;
+			})
+		},
+	},
 	Mutation : {
-		addDeliveryArea: (parent, {data}, ctx) => {
+		createDeliveryArea: (parent, {data}, ctx) => {
 			return ctx.branch.createDeliveryArea(data);
 		},
 		updateDeliveryArea: (parent, {id, data}, ctx) => {

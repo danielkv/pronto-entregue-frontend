@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import styled, {keyframes} from 'styled-components';
-import { Paper, TextField, TableRow, TableCell } from '@material-ui/core';
+import { Paper, TextField, TableCell } from '@material-ui/core';
 
 import Icon from '@mdi/react';
 import {mdiLoading} from '@mdi/js';
@@ -42,14 +42,7 @@ export const ErrorTitle = styled.div`
 	margin-top:18px;
 	color:rgb(206, 17, 38);
 `
-export const DraggableRow = styled(TableRow)`
-	/* width:${({selected})=>{ return (selected ? '100%' : 'auto')}};
-	display:${({selected})=>{ return (selected ? 'table' : 'table-column')}}; */
-	/* display:table-column */
-	& td {
-		${props=>{console.log(props.innerRef())}}
-	}
-`
+
 export function DraggableCell (props) {
 	const ref = useRef();
 	let styles = {...props.style};

@@ -159,11 +159,11 @@ export const createEmptyOrderProduct = (overwrite={}) => {
 		delete overwrite.id;
 	}
 	return {
-		id: uniqueId(),
 		action:'new_empty',
 		message:'',
 		options_groups: [],
-		...overwrite
+		...overwrite,
+		id: uniqueId(),
 	}
 }
 
@@ -205,14 +205,14 @@ export const calculateProductPrice = (product) => {
 
 export const calculateOrderPrice = (products, initialValue=0) => {
 	if (!products || !products.length) return initialValue;
-	return products.reduce((totalProduct, product) => {
+	return parseFloat(products.filter(row=>row.action !== 'remove').reduce((totalProduct, product) => {
 		return totalProduct + calculateProductPrice(product);
-	}, initialValue).toFixed(2);
+	}, initialValue).toFixed(2).replace(',', '.'));
 }
 
 export const sanitizeOrderData = (data) => {
 	return {
-		user_id: data.user.id,
+		user_id: data.user.id || null,
 		type: data.type,
 		status: data.status,
 		payment_method_id: data.payment_method && data.payment_method.id ? data.payment_method.id : '',

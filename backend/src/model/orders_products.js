@@ -20,6 +20,7 @@ class OrdersProducts extends Sequelize.Model {
 							product_model = await order.removeProduct(product_model, {transaction});
 							return resolve(product_model);
 						} else if (product.action === 'create') {
+							if (product.id) delete product.id;
 							product_model = await order.createProduct(product, {transaction})
 						} else if (product.id && product.action === 'update') {
 							[product_model] = await order.getProducts({where:{id:product.id}});

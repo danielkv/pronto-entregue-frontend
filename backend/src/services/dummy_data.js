@@ -69,6 +69,7 @@ const branches_create = [
 		]
 	},
 ]
+
 const users_create = [
 	{
 		first_name:"Diego",
@@ -211,6 +212,28 @@ const create_options_groups = [
 	},
 ];
 
+const deliveryAreas = [
+	{
+		name: 'Sombrio',
+		type: 'single',
+		price: 3,
+		zipcode_a: 88960000,
+	},
+	{
+		name: 'Gaivota',
+		type: 'single',
+		price: 5,
+		zipcode_a: 88955000
+	},
+	{
+		name: 'Fora de Sombrio',
+		type: 'set',
+		price: 10,
+		zipcode_a: 88960001,
+		zipcode_b: 88960010
+	}
+]
+
 Promise.all([
 	Companies.create(companies_create[0], {include:[CompaniesMeta]}),
 	Companies.create(companies_create[1], {include:[CompaniesMeta]}),
@@ -232,6 +255,19 @@ Promise.all([
 		result.companies[0].createBranch(branches_create[1], {include:[BranchesMeta]}),
 		result.companies[1].createBranch(branches_create[2], {include:[BranchesMeta]}),
 	]);
+
+	//payment methods
+	await branches[0].setPaymentMethods([1,2]);
+	await branches[1].setPaymentMethods([2]);
+	await branches[2].setPaymentMethods([1]);
+	
+	//delivery areas
+	await branches[0].createDeliveryArea(deliveryAreas[0]);
+	await branches[0].createDeliveryArea(deliveryAreas[1]);
+	await branches[0].createDeliveryArea(deliveryAreas[2]);
+	await branches[1].createDeliveryArea(deliveryAreas[1]);
+	await branches[2].createDeliveryArea(deliveryAreas[1]);
+	
 
 	await branches[0].addUser(result.users[0], {through:{role_id:1}});
 	await branches[1].addUser(result.users[0], {through:{role_id:3}});

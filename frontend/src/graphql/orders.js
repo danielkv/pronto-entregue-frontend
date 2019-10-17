@@ -81,6 +81,16 @@ export const ORDER_FRAGMENT = gql`
 	${ORDER_PRODUCT_RELATED_FRAGMENT}
 `;
 
+export const CALCULATE_DELIVERY_PRICE = gql`
+	query ($zipcode:Int!) {
+		calculateDeliveryPrice(zipcode: $zipcode) {
+			id
+			name
+			price
+		}
+	}
+`;
+
 export const CREATE_ORDER = gql`
 	mutation ($data:OrderInput!) {
 		createOrder(data:$data) {
@@ -114,6 +124,7 @@ export  const GET_BANCH_ORDERS = gql`
 			id
 			orders {
 				id
+				type
 				user {
 					id
 					full_name

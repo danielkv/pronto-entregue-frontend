@@ -121,10 +121,6 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 		if (prod)
 			setProduct(cloneDeep(prod));
 	}, [prod]);
-	
-	useEffect(()=>{
-		console.log(product);
-	}, [product]);
 
 	return (
 		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} open={open} onClose={close}>

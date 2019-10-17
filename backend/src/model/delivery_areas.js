@@ -18,6 +18,7 @@ DeliveryAreas.init({
 	type: {
 		type: Sequelize.STRING,
 		allowNull:false,
+		comment : 'single | joker | set',
 		validate: {
 			notEmpty:{msg:'O tipo do local de entrega não pode ser vazio'},
 			notNull:{msg:'O tipo do local de entrega não pode ser vazio'},
@@ -27,13 +28,19 @@ DeliveryAreas.init({
 			}
 		}
 	},
-	zipcodes: {
-		type: Sequelize.STRING,
+	zipcode_a: {
+		type: Sequelize.INTEGER,
 		allowNull:false,
 		validate : {
-			notEmpty:{msg:'Você deve definir os CEps para o local de entrega'},
-			notNull:{msg:'Você deve definir os CEPs para o local de entrega'},
+			notEmpty:{msg:'Você deve definir o CEP para o local de entrega'},
+			notNull:{msg:'Você deve definir o CEP para o local de entrega'},
 		}
+	},
+	zipcode_b: {
+		type: Sequelize.INTEGER,
+		allowNull:true,
+		defaultValue:null,
+		comment: "In case of type is 'set'"
 	},
 	price: {
 		type: Sequelize.DECIMAL(10,2),

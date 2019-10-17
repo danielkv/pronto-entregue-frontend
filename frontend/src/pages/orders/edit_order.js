@@ -1,7 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import PageForm from './form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import {setPageTitle, sanitizeOrderData} from '../../utils';
 import Layout from '../../layout';
@@ -12,6 +15,7 @@ function Page (props) {
 	setPageTitle('Alterar pedido');
 
 	const edit_id = props.match.params.id;
+	const formRef = useRef(null);
 
 	//erro e confirmação
 	const [displayError, setDisplayError] = useState('');
@@ -33,7 +37,7 @@ function Page (props) {
 		status: data.order.status,
 		message: data.order.message,
 		street: data.order.street,
-		number: data.order.number,
+		number: data.order.number || '',
 		city: data.order.city,
 		state: data.order.state,
 		district: data.order.district,
@@ -85,6 +89,54 @@ function Page (props) {
 		})
 	}
 
+	const test_address = (type) => (value) => {
+		if (formRef.current.state.values.type === 'takeout') 
+			return Yup.mixed().notRequired();
+		
+		return (type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
+	}
+	
+	function test_zipcode_ok (value) {
+		const state = formRef.current.state;
+
+		if (state.values.type)
+			return true;
+
+		if (!state.values.zipcode && !state.errors.zipcode)
+			return true;
+
+		return !!value;
+	}
+
+	function test_zipcode (value) {
+		if (formRef.current.state.values.type === 'takeout')
+			return Yup.mixed().notRequired();
+
+		return Yup.mixed().required('Obrigatório').test('zipcode_test', 'CEP inválido', value=> /^([\d]{5})-?([\d]{3})$/.test(value) );
+			
+	}
+
+	const productSchema = Yup.object().shape({
+		status : Yup.string().required('Obrigatório'),
+		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
+		message: Yup.string().notRequired(),
+		type: Yup.string().required('Obrigatório'),
+		payment_method: Yup.string().typeError('Obrigatório').required('Obrigatório'),
+
+		street: Yup.lazy(test_address('string')),
+		number: Yup.lazy(test_address('number')),
+		city: Yup.lazy(test_address('string')),
+		state: Yup.lazy(test_address('string')),
+		district: Yup.lazy(test_address('string')),
+		
+		zipcode: Yup.lazy(test_zipcode),
+		zipcode_ok: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', test_zipcode_ok),
+
+		products: Yup.array().min(1, 'O pedido não tem produtos'),
+		delivery_price: Yup.number().typeError('Digite um número').required('Obrigatório'),
+		discount: Yup.number().typeError('Digite um número').required('Obrigatório')
+	});
+
 	return (
 		<Layout>
 			<Snackbar
@@ -109,11 +161,15 @@ function Page (props) {
 			>
 				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
 			</Snackbar>
-			<PageForm
-				pageTitle='Alterar pedido'
+
+			<Formik
+				ref={formRef}
+				validationSchema={productSchema}
 				initialValues={order}
 				onSubmit={onSubmit}
-				edit={true}
+				validateOnChange={true}
+				validateOnBlur={false}
+				component={PageForm}
 				/>
 		</Layout>
 	)

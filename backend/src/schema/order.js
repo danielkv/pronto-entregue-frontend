@@ -21,7 +21,7 @@ module.exports.typeDefs = gql`
 		payment_method:PaymentMethod!
 		
 		street:String
-		number:String
+		number:Int
 		complement:String
 		city:String
 		state:String
@@ -31,11 +31,7 @@ module.exports.typeDefs = gql`
 		products_qty:Int!
 		createdDate:String!
 		createdTime:String!
-	}
-
-	
-	
-	
+	}	
 
 	input OrderInput {
 		user_id:ID!
@@ -50,7 +46,7 @@ module.exports.typeDefs = gql`
 		message:String!
 		
 		street:String
-		number:String
+		number:Int
 		complement:String
 		city:String
 		state:String

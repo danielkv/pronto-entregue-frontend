@@ -59,7 +59,7 @@ function Page (props) {
 											</OrderCreated>
 										</TableCell>
 										<TableCell>{row.user.full_name}</TableCell>
-										<TableCell>{`${row.street}, ${row.number}`}</TableCell>
+										<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
 										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 										<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
 										<TableCell style={{width:30, textAlign:'center'}}>{getStatusIcon(row.status)}</TableCell>
