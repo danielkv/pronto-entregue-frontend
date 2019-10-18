@@ -38,7 +38,7 @@ export default function PageForm ({values, setValues, setFieldValue, handleChang
 
 	//Query formas de pagamento
 	const {data:methodsData, loading:loadingMethods} = useQuery(LOAD_BRANCH_PAYMENT_METHODS, {variables:{id:selectedBranchData.selectedBranch}});
-	const paymentMethods = methodsData && !loadingMethods ? methodsData.branch.payment_methods : [];
+	const paymentMethods = methodsData && !loadingMethods ? methodsData.branch.paymentMethods : [];
 
 	const handleSearchCustomer = (value) => {
 		searchUsers({variables:{search: value}});

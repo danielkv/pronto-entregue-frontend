@@ -70,7 +70,7 @@ export const GET_COMPANY_BRANCHES = gql`
 	query ($id:ID!) {
 		branch (id:$id) {
 			id
-			payment_methods {
+			paymentMethods {
 				id
 				name
 				display_name
@@ -78,3 +78,21 @@ export const GET_COMPANY_BRANCHES = gql`
 		}
 	}
  `;
+
+export const ENABLE_PAYMENT_METHOD = gql`
+	mutation ($id:ID!) {
+		enablePaymentMethod (id:$id) {
+			id
+			name
+		}
+	}
+`;
+
+export const DISABLE_PAYMENT_METHOD = gql`
+	mutation ($id:ID!) {
+		disablePaymentMethod (id:$id) {
+			id
+			name
+		}
+	}
+`;

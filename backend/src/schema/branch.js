@@ -27,12 +27,12 @@ module.exports.typeDefs = gql`
 		updatedAt:String! @dateTime
 		company:Company!
 		metas:[BranchMeta]!
-		payment_methods:[PaymentMethod]!
 		business_hours:[BusinessHour]!
 		orders:[Order]!
 		user_relation:BranchRelation!
 		last_month_revenue:Float!
 
+		paymentMethods:[PaymentMethod]!
 		deliveryAreas:[DeliveryArea]!
 		users(filter:Filter):[User]!
 		categories(filter:Filter):[Category]!
@@ -60,8 +60,8 @@ module.exports.typeDefs = gql`
 		createBranch(data:BranchInput!):Branch! @hasRole(permission:"branches_edit", scope:"adm")
 		updateBranch(id:ID!, data:BranchInput!): Branch! @hasRole(permission:"branches_edit", scope:"adm")
 
-		addPaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
-		removePaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
+		enablePaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
+		disablePaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
 	}
 `;
 
@@ -100,21 +100,23 @@ module.exports.resolvers = {
 				})
 			})
 		},
-		addPaymentMethod : (parent, {id}, ctx) => {
+		enablePaymentMethod : (parent, {id}, ctx) => {
 			return PaymentMethods.findByPk(id)
 			.then (async (payment_method) => {
 				if (!payment_method) throw new Error('Método de pagamento não encontrado');
 
-				await ctx.branch.addPaymentMethods(payment_method);
+				const [method] = await ctx.branch.addPaymentMethods(payment_method);
+				
 				return ctx.branch;
 			})
 		},
-		removePaymentMethod : (parent, {id}, ctx) => {
-			return ctx.branch.getPaymentMethods({where:{id}})
-			.then (async ([payment_method]) => {
+		disablePaymentMethod : (parent, {id}, ctx) => {
+			return PaymentMethods.findByPk(id)
+			.then (async (payment_method) => {
 				if (!payment_method) throw new Error('Método de pagamento não encontrado');
 
-				await ctx.branch.removePaymentMethod(payment_method);
+				const method = await ctx.branch.removePaymentMethod(payment_method);
+
 				return ctx.branch;
 			})
 		},
@@ -142,7 +144,7 @@ module.exports.resolvers = {
 
 			return Products.findAll({where, include:[{model:ProductsCategories, where:{branch_id:parent.get('id')}}]})
 		},
-		payment_methods: (parent, args, ctx) => {
+		paymentMethods: (parent, args, ctx) => {
 			return parent.getPaymentMethods();
 		},
 		deliveryAreas: (parent, args, ctx) => {

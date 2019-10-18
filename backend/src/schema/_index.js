@@ -40,7 +40,6 @@ const typeDefs = gql`
 
 	type Query {
 		companies:[Company]! @hasRole(permission:"master")
-		payment_methods:[PaymentMethod]! @hasRole(permission:"payment_methods_read", scope:"adm")
 		roles:[Role]! @hasRole(permission:"roles_edit", scope:"adm")
 		users:[User]! @hasRole(permission:"master")
 	}
