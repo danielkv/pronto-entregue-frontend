@@ -1,5 +1,6 @@
 const {gql} = require('apollo-server');
-const {Op, col, where,  literal, fn, and, escape:Escape} = require('sequelize');
+const sequelize = require('../services/connection');
+const {Op, col, fn} = require('sequelize');
 const {ZipcodeError} = require('../utilities/errors');
 
 module.exports.typeDefs = gql`
@@ -15,6 +16,7 @@ module.exports.typeDefs = gql`
 	}
 
 	input DeliveryAreaInput {
+		id:ID
 		name:String
 		type:String
 		price:Float
@@ -27,8 +29,7 @@ module.exports.typeDefs = gql`
 	}
 
 	extend type Mutation {
-		createDeliveryArea(data:DeliveryAreaInput!):DeliveryArea!
-		updateDeliveryArea(id:ID!, data:DeliveryAreaInput!):DeliveryArea!
+		modifyDeliveryAreas(data:[DeliveryAreaInput]!):[DeliveryArea]!
 		removeDeliveryArea(id:ID!):DeliveryArea!
 	}
 `;
@@ -55,16 +56,27 @@ module.exports.resolvers = {
 		},
 	},
 	Mutation : {
-		createDeliveryArea: (parent, {data}, ctx) => {
-			return ctx.branch.createDeliveryArea(data);
-		},
-		updateDeliveryArea: (parent, {id, data}, ctx) => {
-			return ctx.branch.getDeliveryAreas({where:{id}})
-			.then (([delivery_area]) => {
-				if (!delivery_area) throw new Error('Área de entrega não encontrada');
+		modifyDeliveryAreas: (parent, {data}, ctx) => {
+			const update = data.filter(row=>row.id);
+			const create = data.filter(row=>!row.id);
 
-				return delivery_area.update(data, {fields:['name', 'type', 'zipcodes', 'price']});
-			});
+			return sequelize.transaction(async (transaction) => {
+
+				const resultCreate = await Promise.all(create.map(area=>{
+					return ctx.branch.createDeliveryArea(area, {transaction});
+				}))
+				
+				const resultUpdate = await Promise.all(update.map(area=>{
+					return ctx.branch.getDeliveryAreas({where:{id:area.id}})
+					.then(([area_found])=>{
+						if (!area_found) throw new Error('Área de entrega não encontrada');
+						
+						return area_found.update(area, {field:['name', 'type', 'zipcode_a', 'zipcode_b', 'price'], transaction});
+					})
+				}));
+
+				return [...resultCreate, ...resultUpdate];
+			})
 		},
 		removeDeliveryArea: (parent, {id}, ctx) => {
 			return ctx.branch.getDeliveryAreas({where:{id}})

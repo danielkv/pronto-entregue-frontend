@@ -3,7 +3,6 @@ const Sequelize = require('sequelize');
 const Op = require('sequelize').Op;
 const Products = require('../model/products');
 const ProductsCategories = require('../model/products_categories');
-const Branches = require('../model/branches');
 const Options = require('../model/options');
 const OptionsGroups = require('../model/options_groups');
 const { gql} = require('apollo-server');

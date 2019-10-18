@@ -31,7 +31,7 @@ function Page (props) {
 							<MenuLink className={isSelected('impressoras')} to='/configuracoes/impressoras'>Impressoras</MenuLink>
 						</Paper>
 					</Grid>
-					<Grid item xs={6}>
+					<Grid item xs={7}>
 						<Route path={`${props.match.path}/horarios`} component={BusinessHours} />
 						<Route path={`${props.match.path}/locais`} component={DeliveryAreas} />
 						<Route path={`${props.match.path}/pagamentos`} component={PaymentMethods} />

@@ -24,7 +24,6 @@ export default function PageForm ({values, setValues, setFieldValue, handleChang
 	const [productModalCancel, setProductModalCancel] = useState(false);
 	const [loadingProduct, setLoadingProduct] = useState(false);
 	const [loadingDeliveryPrice, setLoadingDeliveryPrice] = useState(false);
-	//const [zipcodeError, setZipcodeError] = useState(null);
 
 	//Query de busca de usuário
 	const [searchUsers, {data:usersData, loading:loadingUsers}] = useLazyQuery(SEARCH_USERS, {fetchPolicy:'no-cache'});

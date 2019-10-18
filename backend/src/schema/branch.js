@@ -28,12 +28,12 @@ module.exports.typeDefs = gql`
 		company:Company!
 		metas:[BranchMeta]!
 		payment_methods:[PaymentMethod]!
-		delivery_areas:[DeliveryArea]!
 		business_hours:[BusinessHour]!
 		orders:[Order]!
 		user_relation:BranchRelation!
 		last_month_revenue:Float!
 
+		deliveryAreas:[DeliveryArea]!
 		users(filter:Filter):[User]!
 		categories(filter:Filter):[Category]!
 		products(filter:Filter):[Product]!
@@ -145,7 +145,7 @@ module.exports.resolvers = {
 		payment_methods: (parent, args, ctx) => {
 			return parent.getPaymentMethods();
 		},
-		delivery_areas: (parent, args, ctx) => {
+		deliveryAreas: (parent, args, ctx) => {
 			return parent.getDeliveryAreas();
 		},
 		business_hours: (parent, args, ctx) => {

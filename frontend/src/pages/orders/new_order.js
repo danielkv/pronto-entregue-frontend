@@ -39,7 +39,6 @@ function Page (props) {
 
 	function onSubmit(data, {setSubmitting}) {
 		const dataSave = sanitizeOrderData(data);
-		console.log(dataSave);
 
 		const {selectedBranch} = client.readQuery({query:GET_SELECTED_BRANCH});
 
