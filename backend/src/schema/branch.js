@@ -14,9 +14,25 @@ module.exports.typeDefs = gql`
 		createdAt:String!
 	}
 
+	type BusinessTime {
+		from:String
+		to:String
+	}
+
+
 	type BusinessHour {
 		day_of_week:String!
-		hours:String!
+		hours:[BusinessTime]!
+	}
+
+	input BusinessTimeInput {
+		from:String
+		to:String
+	}
+	
+	input BusinessHourInput {
+		day_of_week:String!
+		hours:[BusinessTimeInput!]!
 	}
 
 	type Branch {
@@ -62,6 +78,8 @@ module.exports.typeDefs = gql`
 
 		enablePaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
 		disablePaymentMethod(id:ID!):Branch! @hasRole(permission:"payment_methods_edit", scope:"adm")
+
+		updateBusinessHours(data:[BusinessHourInput]!):[BusinessHour]! @hasRole(permission:"branches_edit", scope:"adm")
 	}
 `;
 
@@ -76,6 +94,21 @@ module.exports.resolvers = {
 		},
 	},
 	Mutation:{
+		updateBusinessHours: (parent, {data}, ctx) => {
+			return ctx.branch.getMetas({where:{meta_type:'business_hours'}})
+			.then(async ([business_hours])=>{
+				const meta_value = JSON.stringify(data);
+				if (!business_hours) {
+					//create
+					await ctx.branch.createMeta({meta_type: 'business_hours', meta_value});
+				} else {
+					//update
+					await business_hours.update({meta_value});
+				
+				}
+				return data;
+			})
+		},
 		createBranch: (parent, {data}, ctx) => {
 			return sequelize.transaction(transaction => {
 				return Branches.create(data, {include:[BranchesMeta], transaction})
@@ -151,7 +184,43 @@ module.exports.resolvers = {
 			return parent.getDeliveryAreas();
 		},
 		business_hours: (parent, args, ctx) => {
-
+			return parent.getMetas({where:{meta_type:'business_hours'}})
+			.then(([business_hours])=>{
+				if (!business_hours) {
+					return [
+						{
+							day_of_week:'Domingo',
+							hours:[{from:'', to:''}]
+						},
+						{
+							day_of_week:'Segunda-Feira',
+							hours:[{from:'', to:''}]
+						},
+						{
+							day_of_week:'Terça-Feira',
+							hours:[{from:'', to:''}]
+						},
+						{
+							day_of_week:'Quarta-Feira',
+							hours:[{from:'', to:''}]
+						},
+						{
+							day_of_week:'Quinta-Feira',
+							hours:[{from:'', to:''}]
+						},
+						{
+							day_of_week:'Sexta-Feira',
+							hours:[{from:'', to:''}]
+						},
+						{
+							day_of_week:'Sábado',
+							hours:[{from:'', to:''}]
+						},
+					]
+				} else {
+					return JSON.parse(business_hours.meta_value);
+				}
+			})
 		},
 		orders: (parent, args, ctx) => {
 			return parent.getOrders({order:[['createdAt', 'DESC']]});

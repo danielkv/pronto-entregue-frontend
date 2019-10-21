@@ -208,27 +208,31 @@ export const ProductImage = styled.div`
 	border-radius:30px;
 `;
 
-export function tField({field, label, action=false, type='text', inputProps, InputProps, form:{isSubmitting, errors, setFieldValue, values}, form}) {
+//export function tField({field, label, action=false, type='text', inputProps, InputProps, form:{isSubmitting, errors, setFieldValue, values}, form}) {
+export function tField(props) {
+	let {field, form:{isSubmitting, errors, setFieldValue, values}} = props;
 	let error = '';
 	const nesting = field.name.split('.');
+	let controlDisabled = typeof props.controlDisabled !== "undefined" ? props.controlDisabled : isSubmitting;
 	
 	if (errors[nesting[0]]) error = nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, errors);
 
-	if (action) {
-		let action_nesting = action.split('.');
+	if (props.action) {
+		let action_nesting = props.action.split('.');
 		let action_value = action_nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, values);
 
 		let onChange = field.onChange;
 		field.onChange = (e) => {
 			onChange(e);
-			if (action_value === 'new_empty') setFieldValue(action, 'create');
-			else if (action_value === 'editable') setFieldValue(action, 'update');
+			if (action_value === 'new_empty') setFieldValue(props.action, 'create');
+			else if (action_value === 'editable') setFieldValue(props.action, 'update');
 		}
 	} 
 
 
 	return (
-		<TextField {...field} inputProps={inputProps} InputProps={InputProps} onClick={(e)=>{e.stopPropagation();}} type={type} label={label} error={!!error} helperText={error} disabled={isSubmitting}  />
+//		<TextField {...field} inputProps={inputProps} InputProps={InputProps} onClick={(e)=>{e.stopPropagation();}} type={type} label={label}  helperText={error} disabled={isSubmitting}  />
+		<TextField {...props} {...field} disabled={controlDisabled} error={!!error} helperText={error}  />
 	)
 }
 
