@@ -1,6 +1,8 @@
 const sequelize = require('../services/connection');
+const Sequelize = require('sequelize');
 const Branches = require('../model/branches');
 const Products = require('../model/products');
+const OrdersProducts = require('../model/orders_products');
 const ProductsCategories = require('../model/products_categories');
 const BranchesMeta = require('../model/branches_meta');
 const PaymentMethods = require('../model/payment_methods');
@@ -35,6 +37,13 @@ module.exports.typeDefs = gql`
 		hours:[BusinessTimeInput!]!
 	}
 
+	type ProductBestSeller {
+		id:ID!
+		name:String!
+		image:String!
+		qty:Int!
+	}
+
 	type Branch {
 		id:ID!
 		name:String!
@@ -44,7 +53,7 @@ module.exports.typeDefs = gql`
 		company:Company!
 		metas:[BranchMeta]!
 		business_hours:[BusinessHour]!
-		orders:[Order]!
+		orders (limit:Int, filter:Filter):[Order]!
 		user_relation:BranchRelation!
 		last_month_revenue:Float!
 
@@ -53,6 +62,9 @@ module.exports.typeDefs = gql`
 		users(filter:Filter):[User]!
 		categories(filter:Filter):[Category]!
 		products(filter:Filter):[Product]!
+
+		orders_qty(filter:Filter):Int!
+		best_sellers (limit:Int!, createdAt:String): [ProductBestSeller]!
 	}
 
 	input BranchMetaInput {
@@ -91,7 +103,7 @@ module.exports.resolvers = {
 				if (!branch) throw new Error('Filial não encontrada');
 				return branch;
 			})
-		},
+		}
 	},
 	Mutation:{
 		updateBusinessHours: (parent, {data}, ctx) => {
@@ -222,8 +234,39 @@ module.exports.resolvers = {
 				}
 			})
 		},
-		orders: (parent, args, ctx) => {
-			return parent.getOrders({order:[['createdAt', 'DESC']]});
+		orders_qty: (parent, {filter}) => {
+			let where = filter;
+
+			if (filter.createdAt) {
+				const createdAt = filter.createdAt;
+				delete filter.createdAt;
+				where = {
+					[Sequelize.Op.and] : [
+						filter,
+						Sequelize.where(Sequelize.fn('date', Sequelize.col('created_at')), Sequelize.fn(createdAt)),
+					]
+				}
+			}
+			return parent.getOrders({where})
+			.then((orders)=>{
+				return orders.length;
+			})
+		},
+		orders: (parent, {limit, filter}, ctx) => {
+			let where = filter;
+
+			if (filter && filter.createdAt) {
+				const createdAt = filter.createdAt;
+				delete filter.createdAt;
+				where = {
+					[Sequelize.Op.and] : [
+						filter,
+						Sequelize.where(Sequelize.fn('date', Sequelize.col('created_at')), Sequelize.fn(createdAt)),
+					]
+				}
+			}
+
+			return parent.getOrders({where, limit, order:[['createdAt', 'DESC']]});
 		},
 		user_relation: (parent, args, ctx) => {
 			if (!parent.branch_relation) throw new Error('Nenhum usuário selecionado');
@@ -237,6 +280,35 @@ module.exports.resolvers = {
 		},
 		last_month_revenue : (parent, args, ctx) => {
 			return 0;
+		},
+		best_sellers: (parent, {limit, createdAt}) => {
+			let where = {};
+
+			if (createdAt) {
+				where = Sequelize.where(Sequelize.fn('date', Sequelize.col('OrdersProducts.created_at')), Sequelize.fn(createdAt));
+			}
+
+			return OrdersProducts.findAll({
+				attributes:[
+					[Sequelize.col('product_id'), 'id'],
+					[Sequelize.col('productRelated.name'), 'name'],
+					[Sequelize.col('productRelated.image'), 'image'],
+					[Sequelize.fn('COUNT', Sequelize.col('product_id')), 'qty']
+				],
+				group: ['product_id'],
+				order: [[Sequelize.fn('COUNT', Sequelize.col('product_id')), 'DESC'], [Sequelize.col('name'), 'ASC']],
+
+				limit,
+				where,
+
+				include:[{
+					model: Products,
+					as:'productRelated'
+				}]
+			})
+			.then (products=> {
+				return products.map(row=>row.get());
+			})
 		}
 	}
 }

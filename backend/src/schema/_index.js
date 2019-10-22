@@ -30,6 +30,8 @@ const typeDefs = gql`
 
 	input Filter {
 		showInactive:Boolean
+		status:String
+		createdAt:String
 	}
 
 	type File {

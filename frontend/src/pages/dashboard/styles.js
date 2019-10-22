@@ -14,7 +14,7 @@ export const OrdersTodayContainer = styled.div`
 	grid-area:orders;
 `;
 
-export const TopSalesContainer = styled.div`
+export const BestSellersContainer = styled.div`
 	grid-area:topsales;
 `;
 

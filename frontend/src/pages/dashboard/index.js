@@ -3,40 +3,21 @@ import {Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@materia
 
 import {getStatusIcon, setPageTitle} from '../../utils';
 import Layout from '../../layout';
-import {Content, BlockTitle, CircleNumber, ProductImage} from '../../layout/components';
-import {OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, TopSalesContainer, LastSalesContainer} from './styles';
+import {Content, BlockTitle, CircleNumber, ProductImage, Loading} from '../../layout/components';
+import {OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer} from './styles';
 
 import OrdersAwaiting from '../../assets/images/orders-awaiting.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
 import OrdersDelivering from '../../assets/images/orders-delivering.png';
 import OrdersDelivered from '../../assets/images/orders-delivered.png';
 import OrdersCanceled from '../../assets/images/orders-canceled.png';
+import { GET_BRANCH_ORDERS_QTY, GET_SELECTED_BRANCH, GET_BRANCH_BEST_SELLERS, GET_BRANCH_LAST_ORDERS } from '../../graphql/branches';
+import { useQuery } from '@apollo/react-hooks';
 
 function Page () {
 	setPageTitle('Dashboard');
-	const topSales = [
-		{
-			image:'https://media-manager.noticiasaominuto.com/1920/1509039392/naom_59bfa667ce128.jpg',
-			name:'Hambúrguer de Siri',
-			qty : 4,
-		},
-		{
-			image:'https://www.tropicalishotel.com.br/wp-content/uploads/bodegadosertao_59365197_598901567288489_8009772026720440913_n-950x600.jpg',
-			name:'Hambúrguer de Costela',
-			qty : 4,
-		},
-		{
-			image:'https://img.elo7.com.br/product/main/258B7CB/adesivo-parede-restaurante-prato-feito-comida-caseira-lenha-adesivo-restaurante-fritas-salada.jpg',
-			name:'Top Pão com arroz',
-			qty : 3,
-		},
-		{
-			image:'https://www.turismoouropreto.com/wp-content/uploads/culin%C3%A1ria-mineira.jpg',
-			name:'Panelada Mineira',
-			qty : 2,
-		},
-	];
-	const lastOrders = [
+
+	/* const lastOrders = [
 		{
 			created_at: {date:'26/08', time:'19:03'},
 			user:'João Antonio de Melo',
@@ -65,7 +46,25 @@ function Page () {
 			products_qty : 4,
 			status: 'delivered'
 		},
-	];
+	]; */
+
+	//get selected branch
+	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
+
+	//get branch best sellers
+	const {data:bestSellersData, loading:loadingBestSellers} = useQuery(GET_BRANCH_BEST_SELLERS, {variables:{id:selectedBranchData.selectedBranch, limit:4, createdAt:'curdate'}});
+	const bestSellers = !loadingBestSellers && bestSellersData ? bestSellersData.branch.best_sellers : [];
+	
+	//get branch last orders
+	const {data:lastOrdersData, loading:loadingLastOrders} = useQuery(GET_BRANCH_LAST_ORDERS, {variables:{id:selectedBranchData.selectedBranch, limit:4}});
+	const lastOrders = !loadingLastOrders && lastOrdersData ? lastOrdersData.branch.orders : [];
+	
+	//load order qtys
+	const {data:ordersWaitingData, loading:loadingOrdersWaiting} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'waiting', createdAt:'CURDATE'}}});
+	const {data:ordersPreparingData, loading:loadingOrdersPreparing} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'preparing', createdAt:'CURDATE'}}});
+	const {data:ordersDeliveryData, loading:loadingOrdersDelivery} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'delivery', createdAt:'CURDATE'}}});
+	const {data:ordersDeliveredData, loading:loadingOrdersDelivered} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'delivered', createdAt:'CURDATE'}}});
+	const {data:ordersCanceledData, loading:loadingOrdersCanceled} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'canceled', createdAt:'CURDATE'}}});
 
 	return (
 		<Layout>
@@ -76,38 +75,38 @@ function Page () {
 						<OrdersToday>
 							<OrderStatus>
 								<img src={OrdersAwaiting} alt='Pedidos aguardando' />
-								<h4>8</h4>
+								{loadingOrdersWaiting ? <Loading /> : <h4>{ordersWaitingData.branch.orders_qty}</h4>}
 								<div>Pedidos aguardando</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersPreparing} alt='Pedidos em preparo' />
-								<h4>8</h4>
+								{loadingOrdersPreparing ? <Loading /> : <h4>{ordersPreparingData.branch.orders_qty}</h4>}
 								<div>Pedidos em preparo</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersDelivering} alt='Pedidos na entrega' />
-								<h4>8</h4>
+								{loadingOrdersDelivery ? <Loading /> : <h4>{ordersDeliveryData.branch.orders_qty}</h4>}
 								<div>Pedidos na entrega</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersDelivered} alt='Pedidos entregues' />
-								<h4>8</h4>
+								{loadingOrdersDelivered ? <Loading /> : <h4>{ordersDeliveredData.branch.orders_qty}</h4>}
 								<div>Pedidos entregues</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersCanceled} alt='Pedidos cancelados' />
-								<h4>8</h4>
+								{loadingOrdersCanceled ? <Loading /> : <h4>{ordersCanceledData.branch.orders_qty}</h4>}
 								<div>Pedidos cancelados</div>
 							</OrderStatus>
 						</OrdersToday>
 					</OrdersTodayContainer>
-					<TopSalesContainer>
+					<BestSellersContainer>
 						<BlockTitle>Mais vendidos hoje</BlockTitle>
 						<Paper>
 							<Table>
 								<TableBody>
-									{topSales.map(row => (
-										<TableRow>
+									{bestSellers.map((row, index) => (
+										<TableRow key={index}>
 											<TableCell style={{width:80, paddingRight:10}}><ProductImage src={row.image} alt={row.name} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell style={{width:70}}><CircleNumber>{row.qty}</CircleNumber></TableCell>
@@ -116,7 +115,7 @@ function Page () {
 								</TableBody>
 							</Table>
 						</Paper>
-					</TopSalesContainer>
+					</BestSellersContainer>
 					<LastSalesContainer>
 						<BlockTitle>Últimos pedidos</BlockTitle>
 						<Paper>
@@ -131,11 +130,16 @@ function Page () {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{lastOrders.map(row => (
-										<TableRow>
-											<TableCell><OrderCreated><OrderDate></OrderDate>{row.created_at.date}<OrderTime>{row.created_at.time}</OrderTime></OrderCreated></TableCell>
-											<TableCell>{row.user}</TableCell>
-											<TableCell>{row.address}</TableCell>
+									{lastOrders.map((row, index) => (
+										<TableRow key={index}>
+											<TableCell>
+												<OrderCreated>
+													<OrderDate>{row.createdDate}</OrderDate>
+													<OrderTime>{row.createdTime}</OrderTime>
+												</OrderCreated>
+											</TableCell>
+											<TableCell>{row.user.full_name}</TableCell>
+											<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.street}, ${row.number}`}</TableCell>
 											<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
 											<TableCell>{getStatusIcon(row.status)}</TableCell>
 										</TableRow>
