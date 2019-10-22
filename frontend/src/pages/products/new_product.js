@@ -3,7 +3,6 @@ import { useApolloClient } from '@apollo/react-hooks';
 
 import PageForm from './form';
 import {setPageTitle, sanitizeProductData} from '../../utils';
-import Layout from '../../layout';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { CREATE_PRODUCT, GET_BRANCHES_PRODUCTS } from '../../graphql/products';
 
@@ -41,14 +40,12 @@ function Page (props) {
 	}
 	
 	return (
-		<Layout>
-			<PageForm
-				onSubmit={onSubmit}
-				initialValues={product}
-				pageTitle='Novo produto'
-				validateOnChange={false}
-			/>
-		</Layout>
+		<PageForm
+			onSubmit={onSubmit}
+			initialValues={product}
+			pageTitle='Novo produto'
+			validateOnChange={false}
+		/>
 	)
 }
 

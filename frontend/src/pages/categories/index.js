@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiDrag , mdiPencil, mdiFilter} from '@mdi/js';
@@ -8,7 +8,6 @@ import { useMutation, useQuery } from '@apollo/react-hooks';
 import { DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 import {setPageTitle} from '../../utils';
-import Layout from '../../layout';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, Loading, DraggableCell} from '../../layout/components';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
@@ -59,13 +58,11 @@ function Page (props) {
 		const new_order = reorder(categories, result.source.index, result.destination.index);
 
 		const save_new_order = new_order.map((cat, index) => ({id: cat.id, order:index}));
-		console.table(new_order)
-		console.table(save_new_order)
 		updateCategoriesOrder({variables:{data:save_new_order}});
 	}
 
 	return (
-		<Layout>
+		<Fragment>
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -189,7 +186,7 @@ function Page (props) {
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
-		</Layout>
+		</Fragment>
 	)
 }
 

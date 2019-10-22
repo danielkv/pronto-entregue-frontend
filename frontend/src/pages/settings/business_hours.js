@@ -10,6 +10,7 @@ import {Form, Field, FieldArray, Formik} from 'formik';
 import {setPageTitle} from '../../utils';
 import { LOAD_BUSINESS_HOURS, UPDATE_BUSINESS_HOURS } from '../../graphql/business_hours';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
+import { LoadingBlock } from '../../layout/blocks';
 
 function Page () {
 	setPageTitle('Configurações - Horário de atendimento');
@@ -21,7 +22,7 @@ function Page () {
 	//Mutate business_hour
 	const [updateBusinessHours, {loading: loadingUpdateBusinessHours}] = useMutation(UPDATE_BUSINESS_HOURS);
 
-	if (loadingSelectedData || loadingBusinessHours || !businessHoursData) return <Loading />;
+	if (loadingSelectedData || loadingBusinessHours || !businessHoursData) return <LoadingBlock />;
 
 	const onSubmit = ({business_hours}) => {
 		const dataSave = business_hours.map(day=>{

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiInbox , mdiPencil, mdiFilter} from '@mdi/js';
@@ -6,7 +6,6 @@ import {Link} from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import {setPageTitle} from '../../utils';
-import Layout from '../../layout';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -29,7 +28,7 @@ function Page (props) {
 	if (loadingSelectedData || loadingItemsData) return (<LoadingBlock />);
 
 	return (
-		<Layout>
+		<Fragment>
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -125,7 +124,7 @@ function Page (props) {
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
-		</Layout>
+		</Fragment>
 	)
 }
 

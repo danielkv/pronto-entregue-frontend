@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import {Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter, mdiDotsVertical} from '@mdi/js';
@@ -6,7 +6,6 @@ import {Link} from 'react-router-dom';
 import numeral from 'numeral'
 
 import {setPageTitle, getStatusIcon} from '../../utils';
-import Layout from '../../layout';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar} from '../../layout/components';
 import {OrderCreated, OrderDate, OrderTime} from './styles';
 import { useQuery } from '@apollo/react-hooks';
@@ -28,7 +27,7 @@ function Page (props) {
 	if (loadingOrdersData || loadingSelectedData) return (<LoadingBlock />);
 
 	return (
-		<Layout>
+		<Fragment>
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -161,7 +160,7 @@ function Page (props) {
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
-		</Layout>
+		</Fragment>
 	)
 }
 

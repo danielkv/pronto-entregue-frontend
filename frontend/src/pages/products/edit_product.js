@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import PageForm from './form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import {setPageTitle, sanitizeProductData} from '../../utils';
-import Layout from '../../layout';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
 
@@ -52,7 +51,7 @@ function Page (props) {
 	}
 
 	return (
-		<Layout>
+		<Fragment>
 			<Snackbar
 				open={!!displayError}
 				anchorOrigin={{
@@ -81,7 +80,7 @@ function Page (props) {
 				onSubmit={onSubmit}
 				edit={true}
 				/>
-		</Layout>
+		</Fragment>
 	)
 }
 

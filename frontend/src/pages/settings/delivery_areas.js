@@ -11,6 +11,7 @@ import {setPageTitle} from '../../utils';
 import { FormRow, FieldControl, tField, Loading } from '../../layout/components';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BRANCH_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/delivery_areas';
+import { LoadingBlock } from '../../layout/blocks';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
@@ -28,7 +29,7 @@ function Page () {
 	const [modifyDeliveryAreas, {loading:loadingModifyDeliveryAreas}] = useMutation(MODIFY_DELIVERY_AREA, {refetchQueries:[{query:GET_BRANCH_DELIVERY_AREAS, variables:{id:selectedBranchData.selectedBranch}}]})
 	
 	//still loading displays loading
-	if (loadingSelectedData || loadingDeliveryAreas || !deliveryAreasData) return <Loading />;
+	if (loadingSelectedData || loadingDeliveryAreas || !deliveryAreasData) return <LoadingBlock />;
 	const deliveryAreasInitial = deliveryAreasData.branch.deliveryAreas;
 
 	//form schema

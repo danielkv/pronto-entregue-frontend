@@ -4,7 +4,6 @@ import gql from 'graphql-tag';
 
 import PageForm from './form';
 import {setPageTitle} from '../../utils';
-import Layout from '../../layout';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ITEMS } from '../../graphql/items';
 
@@ -46,14 +45,12 @@ function Page (props) {
 	}
 	
 	return (
-		<Layout>
-			<PageForm
-				onSubmit={onSubmit}
-				initialValues={item}
-				pageTitle='Novo item de estoque'
-				validateOnChange={false}
-			/>
-		</Layout>
+		<PageForm
+			onSubmit={onSubmit}
+			initialValues={item}
+			pageTitle='Novo item de estoque'
+			validateOnChange={false}
+		/>
 	)
 }
 

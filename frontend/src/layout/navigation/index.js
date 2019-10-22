@@ -3,7 +3,7 @@ import Icon from '@mdi/react';
 import { mdiViewDashboard, mdiStore, mdiSourceBranch, mdiViewList,  mdiShape, mdiBasket, mdiAccountMultiple, mdiSettings, mdiInboxMultiple } from '@mdi/js';
 import {Popper, Paper} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
-import {withRouter } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import {NavigationContainer, NavItem} from './styles';
 
@@ -20,6 +20,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function Navigation(props) {
+
+	const location = useLocation();
 	
 	const [popperOpen, setPopperOpen] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -32,9 +34,11 @@ function Navigation(props) {
 		setPopperText(event.currentTarget.getAttribute('alt'));
 	};
 
-	function isSelected(location) {
-		const current_location = props.match.path.substr(1).split('/')[0];
-		return current_location === location ? 'selected' : '';
+	
+	function isSelected(match) {
+		if (!location.pathname) return '';
+		const current_location = location.pathname.substr(1).split('/')[0];
+		return current_location === match ? 'selected' : '';
 	}
 
 	return (
@@ -45,7 +49,7 @@ function Navigation(props) {
 				</Paper>
 			</Popper>
 			<nav>
-				<NavItem to='/' className={isSelected('')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Dashboard'>
+				<NavItem to='/dashboard' className={isSelected('dashboard')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Dashboard'>
 					<Icon className='teste' path={mdiViewDashboard} size='22' color='#707070' />
 				</NavItem>
 				<NavItem to='/empresas' className={isSelected('empresas')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Empresas'>
@@ -78,4 +82,4 @@ function Navigation(props) {
 	)
 }
 
-export default withRouter(Navigation);
+export default Navigation;

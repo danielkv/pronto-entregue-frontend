@@ -5,10 +5,11 @@ import {mdiSourceBranch, mdiMapMarker, mdiCloseCircle, mdiPlusCircle, mdiDelete 
 import * as Yup from 'yup';
 import {Formik, FieldArray, Form, Field} from 'formik';
 import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import {meta_model} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading} from '../../layout/components';
-import gql from 'graphql-tag';
+import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField} from '../../layout/components';
+import { LoadingBlock } from '../../layout/blocks';
 
 const GET_ROLES = gql`
 	query  {
@@ -52,7 +53,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 
 	const {data:rolesData, loading:loadingRoles} = useQuery(GET_ROLES);
 
-	if (loadingRoles) return <Loading />
+	if (loadingRoles) return <LoadingBlock />
 
 	return (
 		<Formik

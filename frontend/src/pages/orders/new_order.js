@@ -6,7 +6,6 @@ import * as Yup from 'yup';
 
 import PageForm from './form';
 import {setPageTitle, sanitizeOrderData} from '../../utils';
-import Layout from '../../layout';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { CREATE_ORDER, GET_BANCH_ORDERS } from '../../graphql/orders';
 
@@ -104,17 +103,15 @@ function Page (props) {
 	});
 
 	return (
-		<Layout>
-			<Formik
-				ref={formRef}
-				validationSchema={productSchema}
-				initialValues={order}
-				onSubmit={onSubmit}
-				validateOnChange={false}
-				validateOnBlur={false}
-				component={PageForm}
-				/>
-		</Layout>
+		<Formik
+			ref={formRef}
+			validationSchema={productSchema}
+			initialValues={order}
+			onSubmit={onSubmit}
+			validateOnChange={false}
+			validateOnBlur={false}
+			component={PageForm}
+			/>
 	)
 }
 

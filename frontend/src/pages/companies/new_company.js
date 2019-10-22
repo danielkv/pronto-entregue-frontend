@@ -4,7 +4,6 @@ import gql from 'graphql-tag';
 
 import PageForm from './form';
 import {setPageTitle, joinMetas, initialMetas} from '../../utils';
-import Layout from '../../layout';
 import { GET_USER_COMPANIES } from '../../graphql/companies';
 
 const CREATE_COMPANY = gql`
@@ -51,14 +50,12 @@ function Page (props) {
 	}
 	
 	return (
-		<Layout>
-			<PageForm
-				onSubmit={onSubmit}
-				initialValues={company}
-				pageTitle='Nova empresa'
-				validateOnChange={false}
-			/>
-		</Layout>
+		<PageForm
+			onSubmit={onSubmit}
+			initialValues={company}
+			pageTitle='Nova empresa'
+			validateOnChange={false}
+		/>
 	)
 }
 

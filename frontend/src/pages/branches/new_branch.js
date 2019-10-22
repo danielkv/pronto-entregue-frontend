@@ -4,7 +4,6 @@ import gql from 'graphql-tag';
 
 import PageForm from './form';
 import {setPageTitle, joinMetas, initialMetas} from '../../utils';
-import Layout from '../../layout';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_BRANCHES } from '../../graphql/branches';
 
@@ -28,7 +27,7 @@ function Page (props) {
 	const branch = {
 		name:'',
 		active:true,
-		...initialMetas(['address', 'document', 'phone', 'email'])
+		...initialMetas(['address', 'document', 'phones', 'emails'])
 	};
 
 	function onSubmit(values, {setSubmitting}) {
@@ -50,14 +49,12 @@ function Page (props) {
 	}
 	
 	return (
-		<Layout>
-			<PageForm
-				onSubmit={onSubmit}
-				initialValues={branch}
-				pageTitle='Nova filial'
-				validateOnChange={false}
-			/>
-		</Layout>
+		<PageForm
+			onSubmit={onSubmit}
+			initialValues={branch}
+			pageTitle='Nova filial'
+			validateOnChange={false}
+		/>
 	)
 }
 

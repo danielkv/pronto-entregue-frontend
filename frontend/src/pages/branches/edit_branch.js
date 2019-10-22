@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import PageForm from './form';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
-import Layout from '../../layout';
 import { UPDATE_BRANCH } from '../../graphql/branches';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 
@@ -69,7 +68,7 @@ function Page (props) {
 	}
 
 	return (
-		<Layout>
+		<Fragment>
 			<Snackbar
 				open={!!displayError}
 				anchorOrigin={{
@@ -97,7 +96,7 @@ function Page (props) {
 				initialValues={branch}
 				onSubmit={onSubmit}
 				/>
-		</Layout>
+		</Fragment>
 	)
 }
 

@@ -27,6 +27,7 @@ export const Loading = styled(Icon).attrs(({size})=>{
 `
 export const BlockContainer = styled.div`
 	display:flex;
+	flex:1;
 	height:100%;
 	flex-direction:column;
 	justify-content:center;

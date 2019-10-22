@@ -18,7 +18,7 @@ import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContaine
 import OptionsGroups from './options_groups';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { LOAD_OPTION_GROUP } from '../../graphql/products';
-import { DropzoneBlock } from '../../layout/blocks';
+import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BRANCH_CATEGORIES } from '../../graphql/categories';
 
@@ -98,7 +98,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 	const groups = groupsData ? groupsData.searchOptionsGroups : [];
 	const client = useApolloClient();
 	
-	if (loadingSelectedCompany || loadingItems || loadingcategoriesData || loadingSelectedData) return <Loading />;
+	if (loadingSelectedCompany || loadingItems || loadingcategoriesData || loadingSelectedData) return <LoadingBlock />;
 
 	const sanitizeOptionsGroupsOrder = (groups) => {
 		return groups.map((row, index) => {

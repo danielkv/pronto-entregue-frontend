@@ -1,9 +1,7 @@
 import React, { Fragment } from 'react';
-import Layout from '.';
 import Dropzone from 'react-dropzone';
 import {
 	Loading,
-	Content, 
 	BlockContainer, 
 	LoadingText, 
 	ErrorTitle, 
@@ -14,27 +12,19 @@ import {
 import imagePlaceHolderPng from '../assets/images/select_image.png';
 
 export const LoadingBlock = () => (
-	<Layout>
-		<Content>
-			<BlockContainer>
-				<Loading size='40' />
-				<LoadingText>Carregando...</LoadingText>
-			</BlockContainer>
-		</Content>
-	</Layout>
+	<BlockContainer>
+		<Loading size='40' />
+		<LoadingText>Carregando...</LoadingText>
+	</BlockContainer>
 )
 
 export const ErrorBlock = ({error}) => {
 	if (process.env.NODE_ENV !== 'production') console.error(error);
 	return (
-		<Layout>
-			<Content>
-				<BlockContainer>
-					<ErrorTitle>Ocorreu um erro</ErrorTitle>
-					<ErrorSubtitle>{error.message}</ErrorSubtitle>
-				</BlockContainer>
-			</Content>
-		</Layout>
+		<BlockContainer>
+			<ErrorTitle>Ocorreu um erro</ErrorTitle>
+			<ErrorSubtitle>{error.message}</ErrorSubtitle>
+		</BlockContainer>
 	)
 }
 

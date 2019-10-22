@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, Fragment} from 'react';
 import PageForm from './form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
@@ -7,7 +7,6 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import {setPageTitle, sanitizeOrderData} from '../../utils';
-import Layout from '../../layout';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
 
@@ -138,7 +137,7 @@ function Page (props) {
 	});
 
 	return (
-		<Layout>
+		<Fragment>
 			<Snackbar
 				open={!!displayError}
 				anchorOrigin={{
@@ -171,7 +170,7 @@ function Page (props) {
 				validateOnBlur={false}
 				component={PageForm}
 				/>
-		</Layout>
+		</Fragment>
 	)
 }
 

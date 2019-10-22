@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core';
 
 import {getStatusIcon, setPageTitle} from '../../utils';
-import Layout from '../../layout';
 import {Content, BlockTitle, CircleNumber, ProductImage, Loading} from '../../layout/components';
 import {OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer} from './styles';
 
@@ -16,37 +15,6 @@ import { useQuery } from '@apollo/react-hooks';
 
 function Page () {
 	setPageTitle('Dashboard');
-
-	/* const lastOrders = [
-		{
-			created_at: {date:'26/08', time:'19:03'},
-			user:'João Antonio de Melo',
-			address:'Padre João Reitz, 1057',
-			products_qty : 4,
-			status: 'waiting'
-		},
-		{
-			created_at: {date:'26/08', time:'18:56'},
-			user:'Marina Carla de Melo',
-			address:'Padre João Reitz, 1057',
-			products_qty : 4,
-			status: 'waiting'
-		},
-		{
-			created_at: {date:'26/08', time:'18:53'},
-			user:'Tonia Simão Scheffer',
-			address:'Padre João Reitz, 1057',
-			products_qty : 4,
-			status: 'preparing'
-		},
-		{
-			created_at: {date:'26/08', time:'18:35'},
-			user:'Joana Maria de Lucca',
-			address:'Padre João Reitz, 1057',
-			products_qty : 4,
-			status: 'delivered'
-		},
-	]; */
 
 	//get selected branch
 	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
@@ -67,7 +35,7 @@ function Page () {
 	const {data:ordersCanceledData, loading:loadingOrdersCanceled} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'canceled', createdAt:'CURDATE'}}});
 
 	return (
-		<Layout>
+		<Fragment>
 			<Content>
 				<DashContainer>
 					<OrdersTodayContainer>
@@ -150,7 +118,7 @@ function Page () {
 					</LastSalesContainer>
 				</DashContainer>
 			</Content>
-		</Layout>
+		</Fragment>
 	)
 }
 

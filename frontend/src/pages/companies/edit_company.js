@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import PageForm from './form';
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
-import Layout from '../../layout';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { UPDATE_COMPANY } from '../../graphql/companies';
 
@@ -75,7 +74,7 @@ function Page (props) {
 	}
 	
 	return (
-		<Layout>
+		<Fragment>
 			<Snackbar
 				open={!!displayError}
 				anchorOrigin={{
@@ -103,7 +102,7 @@ function Page (props) {
 				initialValues={company}
 				pageTitle='Alterar empresa'
 			/>
-		</Layout>
+		</Fragment>
 	)
 }
 

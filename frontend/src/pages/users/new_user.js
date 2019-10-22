@@ -3,7 +3,6 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import PageForm from './form';
-import Layout from '../../layout';
 import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
@@ -90,16 +89,14 @@ function Page (props) {
 	}
 	
 	return (
-		<Layout>
-			<PageForm
-				onSubmit={onSubmit}
-				initialValues={user}
-				assignBranch={assignBranch}
-				selectedBranch={selectedBranchData.selectedBranch}
-				pageTitle='Novo usuário'
-				validateOnChange={false}
-			/>
-		</Layout>
+		<PageForm
+			onSubmit={onSubmit}
+			initialValues={user}
+			assignBranch={assignBranch}
+			selectedBranch={selectedBranchData.selectedBranch}
+			pageTitle='Novo usuário'
+			validateOnChange={false}
+		/>
 	)
 }
 

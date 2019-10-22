@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React, {useState, Fragment} from 'react';
 import PageForm from './form';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import {setPageTitle, extractMetas, joinMetas} from '../../utils';
-import Layout from '../../layout';
 import { UPDATE_USER } from '../../graphql/users';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -122,7 +121,7 @@ function Page (props) {
 	}
 
 	return (
-		<Layout>
+		<Fragment>
 			<Snackbar
 				open={!!displayError}
 				anchorOrigin={{
@@ -153,7 +152,7 @@ function Page (props) {
 				assignBranch={assignBranch}
 				edit={true}
 				/>
-		</Layout>
+		</Fragment>
 	)
 }
 

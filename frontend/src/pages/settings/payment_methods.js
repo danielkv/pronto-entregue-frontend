@@ -3,11 +3,11 @@ import { Paper, Table, TableBody, TableHead, TableCell, TableRow, Switch } from 
 import Icon from '@mdi/react';
 import {mdiCreditCardOutline} from '@mdi/js';
 import {useQuery, useMutation} from '@apollo/react-hooks';
-import { Loading } from '../../layout/components';
 
 import {setPageTitle} from '../../utils';
 import { GET_PAYMENT_METHODS } from '../../graphql/payment_methods';
 import { GET_SELECTED_BRANCH, LOAD_BRANCH_PAYMENT_METHODS, ENABLE_PAYMENT_METHOD, DISABLE_PAYMENT_METHOD } from '../../graphql/branches';
+import { LoadingBlock } from '../../layout/blocks';
 
 function Page () {
 	setPageTitle('Configurações - Formas de pagamento');
@@ -22,7 +22,7 @@ function Page () {
 	const [enablePaymentMethod, {loading:loadingEnablePaymentMethod}] = useMutation(ENABLE_PAYMENT_METHOD, {refetchQueries:[{query:LOAD_BRANCH_PAYMENT_METHODS, variables:{id:selectedBranchData.selectedBranch}}]})
 	const [disablePaymentMethod, {loading:loadingDisablePaymentMethod}] = useMutation(DISABLE_PAYMENT_METHOD, {refetchQueries:[{query:LOAD_BRANCH_PAYMENT_METHODS, variables:{id:selectedBranchData.selectedBranch}}]})
 
-	if (loadingPaymentMethods || loadingSelectedData || loadingBranchPaymentMethods) return <Loading />;
+	if (loadingPaymentMethods || loadingSelectedData || loadingBranchPaymentMethods) return <LoadingBlock />;
 
 	const paymentMethods = paymentMethodsData.paymentMethods.map(method => {
 		return {

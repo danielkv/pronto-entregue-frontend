@@ -1,56 +1,32 @@
 import { hot } from 'react-hot-loader/root';
 import React, { useState } from 'react';
-import {BrowserRouter, Switch, Route} from 'react-router-dom';
+import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 import {init} from './services/init';
 
 import Login from './pages/login';
-import Dashboard from './pages/dashboard';
+import RoutesFrame from './routes-frame';
 
-import Companies from './pages/companies';
-import NewCompany from './pages/companies/new_company';
-import EditCompany from './pages/companies/edit_company';
-
-import Branches from './pages/branches';
-import NewBranch from './pages/branches/new_branch';
-import EditBranch from './pages/branches/edit_branch';
-
-import Storage from './pages/storage';
-import NewItem from './pages/storage/new_item';
-import EditItem from './pages/storage/edit_item';
-
-import Orders from './pages/orders';
-import NewOrder from './pages/orders/new_order';
-import EditOrder from './pages/orders/edit_order';
-
-import Categories from './pages/categories';
-import NewCategory from './pages/categories/new_category';
-import EditCategory from './pages/categories/edit_category';
-
-import Products from './pages/products';
-import NewProduct from './pages/products/new_product';
-import EditProduct from './pages/products/edit_product';
-
-import Users from './pages/users';
-import NewUser from './pages/users/new_user';
-import EditUser from './pages/users/edit_user';
-
-import Settings from './pages/settings';
-import { Loading } from './layout/components';
+//import { Loading } from './layout/components';
+import { LoadingBlock } from './layout/blocks';
+import { IS_USER_LOGGED_IN } from './graphql/authentication';
 
 const Routes = (props)  => {
-	const [loading, setLoading] = useState(true);
+	const [loaded, setLoaded] = useState(false);
+
+	const {data:userLoggedInData} = useQuery(IS_USER_LOGGED_IN);
 
 	function load() {
 		init()
 		.then(()=>{
-			setLoading(false);
+			setLoaded(true);
 		})
 	}
 
-	if (loading) {
+	if (!loaded) {
 		load();
-		return <Loading />
+		return <LoadingBlock />;
 	}
 
 	return (
@@ -58,37 +34,7 @@ const Routes = (props)  => {
 			<Switch>
 				<Route path='/login' component={Login} />
 
-				<Route exact path='/' component={Dashboard} />
-
-				<Route exact path='/empresas' component={Companies} />
-				<Route path='/empresas/novo' component={NewCompany} />
-				<Route path='/empresas/alterar/:id' component={EditCompany} />
-				
-				<Route exact path='/filiais' component={Branches} />
-				<Route path='/filiais/novo' component={NewBranch} />
-				<Route path='/filiais/alterar/:id' component={EditBranch} />
-
-				<Route exact path='/estoque' component={Storage} />
-				<Route path='/estoque/novo' component={NewItem} />
-				<Route path='/estoque/alterar/:id' component={EditItem} />
-				
-				<Route exact path='/pedidos' component={Orders} />
-				<Route path='/pedidos/novo' component={NewOrder} />
-				<Route path='/pedidos/alterar/:id' component={EditOrder} />
-				
-				<Route exact path='/categorias' component={Categories} />
-				<Route path='/categorias/novo' component={NewCategory} />
-				<Route path='/categorias/alterar/:id' component={EditCategory} />
-				
-				<Route exact path='/produtos' component={Products} />
-				<Route path='/produtos/novo' component={NewProduct} />
-				<Route path='/produtos/alterar/:id' component={EditProduct} />
-				
-				<Route exact path='/usuarios' component={Users} />
-				<Route path='/usuarios/novo' component={NewUser} />
-				<Route path='/usuarios/alterar/:id' component={EditUser} />
-				
-				<Route path='/configuracoes' component={Settings} />
+				<Route path='/' component={userLoggedInData.isUserLoggedIn === true ? RoutesFrame : <Redirect to='/login' />} />				
 			</Switch>
 		</BrowserRouter>
 	);
