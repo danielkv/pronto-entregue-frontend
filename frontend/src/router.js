@@ -11,7 +11,7 @@ import RoutesFrame from './routes-frame';
 import { LoadingBlock } from './layout/blocks';
 
 const Routes = ()  => {
-	const {loading, initialized, isUserLoggedIn} = useInitialize(true);
+	const {loading, isUserLoggedIn} = useInitialize(true);
 
 	if (loading) return <LoadingBlock />;
 

@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 
 import client from './server';
 
-import {AUTHENTICATION, IS_USER_LOGGED_IN} from '../graphql/authentication';
+import {LOGGED_USER, IS_USER_LOGGED_IN} from '../graphql/authentication';
 import {SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY} from '../graphql/companies';
 
 
@@ -63,7 +63,7 @@ export function logUserOut () {
 
 
 async function authenticate () {
-	const {data:userData} = await client.query({query:AUTHENTICATION});
+	const {data:userData} = await client.query({query:LOGGED_USER});
 	
 	if (!userData.me) return false;
 

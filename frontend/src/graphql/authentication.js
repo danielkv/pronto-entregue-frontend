@@ -43,7 +43,7 @@ export const LOGIN = gql`
  * GRAPHQL para autenticação do usuário
  */
 
-export const AUTHENTICATION = gql`
+export const LOGGED_USER = gql`
 	query {
 		me {
 			id
