@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import {TextField, Button, Snackbar, SnackbarContent} from '@material-ui/core';
 import {ThemeProvider} from '@material-ui/styles';
 import {useApolloClient} from '@apollo/react-hooks';
-import {LOGIN} from '../../graphql/authentication';
+import {useHistory} from 'react-router-dom';
 
+import {LOGIN} from '../../graphql/authentication';
 import theme from '../../layout/theme';
 import imageLogo from '../../assets/images/logo-full.png';
 import {setPageTitle} from '../../utils';
@@ -12,6 +13,7 @@ import { FormRow, FieldControl } from '../../layout/components';
 
 import * as Yup from 'yup';
 import {Formik} from 'formik';
+import { logUserIn } from '../../services/init';
 
 const backgrounds = [
 	require('../../assets/images/bg1.jpg'),
@@ -33,6 +35,8 @@ const LoginSchema = Yup.object().shape({
 function Page () {
 	setPageTitle('Login');
 
+	const history = useHistory();
+
 	const client = useApolloClient();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
@@ -48,9 +52,10 @@ function Page () {
 		client.mutate({mutation:LOGIN, variables:{email, password}})
 		.then(({data})=>{
 			if (data.login.token) {
-				localStorage.setItem('@flakery/userToken', data.login.token);
+				logUserIn(data.login.token);
 				
 				client.writeData({data:{user: data.login.user}});
+				history.push('/');
 			}
 		})
 		.catch(e=>{

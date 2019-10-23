@@ -14,6 +14,7 @@ const cache = new InMemoryCache({});
 const uploadLink = createUploadLink({ uri: host });
 
 const initialData = {
+	initialized : false,
 	isUserLoggedIn : false,
 	userToken:null,
 	selectedCompany: localStorage.getItem('@flakery/selectedCompany') || '',

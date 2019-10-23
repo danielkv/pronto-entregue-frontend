@@ -25,3 +25,13 @@ export const SelectContainer = styled.div`
 		margin-right:8px;
 	}
 `;
+
+export const RightSide = styled.div`
+	display:flex;
+	align-self:center;
+	margin-right:35px;
+	margin-left:auto;
+	& svg {
+		margin-right:8px;
+	}
+`;

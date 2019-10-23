@@ -1,40 +1,30 @@
 import { hot } from 'react-hot-loader/root';
-import React, { useState } from 'react';
+import React from 'react';
 import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
 
-import {init} from './services/init';
+import {useInitialize} from './services/init';
 
 import Login from './pages/login';
 import RoutesFrame from './routes-frame';
 
 //import { Loading } from './layout/components';
 import { LoadingBlock } from './layout/blocks';
-import { IS_USER_LOGGED_IN } from './graphql/authentication';
 
-const Routes = (props)  => {
-	const [loaded, setLoaded] = useState(false);
+const Routes = ()  => {
+	const {loading, initialized, isUserLoggedIn} = useInitialize(true);
 
-	const {data:userLoggedInData} = useQuery(IS_USER_LOGGED_IN);
-
-	function load() {
-		init()
-		.then(()=>{
-			setLoaded(true);
-		})
-	}
-
-	if (!loaded) {
-		load();
-		return <LoadingBlock />;
-	}
+	if (loading) return <LoadingBlock />;
 
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route path='/login' component={Login} />
+				<Route path='/login'>
+					{isUserLoggedIn !== true ? <Login /> : <Redirect to='/' />}
+				</Route>
 
-				<Route path='/' component={userLoggedInData.isUserLoggedIn === true ? RoutesFrame : <Redirect to='/login' />} />				
+				<Route path='/' >
+					{isUserLoggedIn === true ? <RoutesFrame /> : <Redirect to='/login' />}
+				</Route>
 			</Switch>
 		</BrowserRouter>
 	);

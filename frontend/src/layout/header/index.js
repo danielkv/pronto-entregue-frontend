@@ -1,15 +1,19 @@
 import React from 'react';
-import { FormControl, Select, MenuItem } from '@material-ui/core';
+import { FormControl, Select, MenuItem, Fab } from '@material-ui/core';
 import Icon from '@mdi/react';
-import { mdiStore, mdiSourceBranch  } from '@mdi/js';
+import { mdiStore, mdiSourceBranch, mdiLogout } from '@mdi/js';
 import {useQuery, useMutation} from '@apollo/react-hooks';
+import {useHistory} from 'react-router-dom';
 
-import {HeaderContainer, LogoContainer, SelectContainer} from './styles';
+import {HeaderContainer, LogoContainer, SelectContainer, RightSide} from './styles';
 import mainLogo from '../../assets/images/logo.png';
 import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SELECT_COMPANY} from '../../graphql/companies';
 import { GET_SELECTED_BRANCH, SELECT_BRANCH, GET_COMPANY_BRANCHES} from '../../graphql/branches';
+import { logUserOut } from '../../services/init';
 
 export default function Header () {
+
+	const history = useHistory();
 
 	const {data:companiesData} = useQuery(GET_USER_COMPANIES);
 	const {data:selectedCompanyData} = useQuery(GET_SELECTED_COMPANY);
@@ -19,6 +23,11 @@ export default function Header () {
 
 	const [selectCompany] = useMutation(SELECT_COMPANY);
 	const [selectBranch] = useMutation(SELECT_BRANCH);
+
+	function handleLogout () {
+		logUserOut();
+		history.push('/login');
+	}
 
 	return (
 		<HeaderContainer>
@@ -67,6 +76,9 @@ export default function Header () {
 					</Select>}
 				</FormControl>
 			</SelectContainer>
+			<RightSide>
+				<Fab onClick={handleLogout} variant='extended' size='medium' color='secondary'><Icon path={mdiLogout} size='20' color='#fff' /> Logout</Fab>
+			</RightSide>
 		</HeaderContainer>
 	)
 }
