@@ -28,10 +28,17 @@ export const SelectContainer = styled.div`
 
 export const RightSide = styled.div`
 	display:flex;
-	align-self:center;
+	align-items:center;
 	margin-right:35px;
 	margin-left:auto;
 	& svg {
 		margin-right:8px;
 	}
+`;
+
+export const LoggedUser = styled.div`
+	display:flex;
+	align-items:center;
+	margin-right:15px;
+	color:#999;
 `;
