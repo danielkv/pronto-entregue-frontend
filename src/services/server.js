@@ -21,7 +21,6 @@ const initialData = {
 	userToken:null,
 	selectedCompany: localStorage.getItem('@flakery/selectedCompany') || '',
 	selectedBranch: localStorage.getItem('@flakery/selectedBranch') || '',
-	user: '',
 }
 
 cache.writeData({data:initialData});

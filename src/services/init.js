@@ -70,9 +70,7 @@ export function logUserIn (token) {
 }
 
 export function logUserOut () {
-	client.writeData({data:{isUserLoggedIn:false}});
-	client.writeData({data:{initialized:false}});
-	client.writeData({data:{authenticated:false}});
+	client.resetStore();
 	localStorage.removeItem('@flakery/userToken');
 	localStorage.removeItem('@flakery/selectedCompany');
 	localStorage.removeItem('@flakery/selectedBranch');
