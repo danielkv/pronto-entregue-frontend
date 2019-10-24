@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {TextField, Button, Snackbar, SnackbarContent} from '@material-ui/core';
 import {ThemeProvider} from '@material-ui/styles';
 import {useApolloClient} from '@apollo/react-hooks';
-import {useHistory} from 'react-router-dom';
+//import {useHistory} from 'react-router-dom';
 
 import {LOGIN} from '../../graphql/authentication';
 import theme from '../../layout/theme';
@@ -35,7 +35,7 @@ const LoginSchema = Yup.object().shape({
 function Page () {
 	setPageTitle('Login');
 
-	const history = useHistory();
+	//const history = useHistory();
 
 	const client = useApolloClient();
 	const [loading, setLoading] = useState(false);
@@ -54,8 +54,7 @@ function Page () {
 			if (data.login.token) {
 				logUserIn(data.login.token);
 				
-				client.writeData({data:{user: data.login.user}});
-				history.push('/');
+				//client.writeData({data:{user: data.login.user}});
 			}
 		})
 		.catch(e=>{

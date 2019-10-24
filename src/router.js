@@ -5,22 +5,23 @@ import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
 import {useInitialize} from './services/init';
 import Login from './pages/login';
 import RoutesFrame from './routes-frame';
-import { LoadingBlock } from './layout/blocks';
+import { LoadingBlock, ErrorBlock } from './layout/blocks';
 
 const Routes = ()  => {
-	const {loading, isUserLoggedIn} = useInitialize(true);
+	const {error, loading, authenticated} = useInitialize(true);
 
 	if (loading) return <LoadingBlock />;
+	if (error) return <ErrorBlock error={error} />;
 
 	return (
 		<BrowserRouter>
 			<Switch>
 				<Route path='/login'>
-					{isUserLoggedIn !== true ? <Login /> : <Redirect to='/' />}
+					{authenticated !== true ? <Login /> : <Redirect to='/' />}
 				</Route>
 
 				<Route path='/' >
-					{isUserLoggedIn === true ? <RoutesFrame /> : <Redirect to='/login' />}
+					{authenticated === true ? <RoutesFrame /> : <Redirect to='/login' />}
 				</Route>
 			</Switch>
 		</BrowserRouter>

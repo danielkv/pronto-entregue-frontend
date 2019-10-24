@@ -81,7 +81,7 @@ export default function Header () {
 					</FormControl>
 				</SelectContainer>
 			</Fragment>}
-			{loadingLoggedUser ? <Loading /> :
+			{loadingLoggedUser || (!loggedUserData && !loggedUserData) ? <Loading /> :
 			<RightSide>
 				<LoggedUser>
 					<Icon path={mdiAccountCircle} color='#999' size='24' />

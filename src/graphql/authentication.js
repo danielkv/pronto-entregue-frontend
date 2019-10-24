@@ -12,6 +12,15 @@ export const GET_USER_TOKEN = gql`
 /**
  * Recupera o Token do usuário salvo em cache 
  */
+export const IS_USER_AUTHENTICATED = gql`
+	{
+		authenticated @client
+	}
+`;
+
+/**
+ * Recupera o Token do usuário salvo em cache 
+ */
 export const IS_USER_LOGGED_IN = gql`
 	{
 		isUserLoggedIn @client
