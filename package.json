@@ -2,6 +2,7 @@
   "name": "flakery-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://danielkv.github.io/flakery-frontend",
   "dependencies": {
     "@apollo/react-hooks": "^3.1.0",
     "@hot-loader/react-dom": "^16.9.0",
@@ -32,10 +33,13 @@
     "yup": "^0.27.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "react-scripts start",
+    "dev": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -54,6 +58,7 @@
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
+    "gh-pages": "^2.1.1",
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-app-rewired": "^2.1.3"
   },
