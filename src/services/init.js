@@ -43,8 +43,7 @@ export function useInitialize() {
 }
 
 async function init() {
-	/* try { */
-		
+	try {
 		const token = localStorage.getItem('@flakery/userToken');
 		
 		if (!token) return false;
@@ -57,23 +56,23 @@ async function init() {
 		if (!initialData) throw new Error('Não foi possível carregar os dados iniciais');
 
 		return true;
-	/* } catch (e) {
+	} catch (e) {
 		logUserOut();
 		throw e;
-	}; */
+	};
 }
 
 export function logUserIn (token) {
 	localStorage.setItem('@flakery/userToken', token);
-	client.writeData({data:{userToken:token}});
-	client.writeData({data:{isUserLoggedIn:true}});
+	client.writeData({data:{isUserLoggedIn:true, userToken:token}});	
 }
 
 export function logUserOut () {
-	client.resetStore();
 	localStorage.removeItem('@flakery/userToken');
 	localStorage.removeItem('@flakery/selectedCompany');
 	localStorage.removeItem('@flakery/selectedBranch');
+	client.writeData({data:{userToken:null, authenticated:false, isUserLoggedIn:false}});
+	client.resetStore();
 }
 
 
@@ -82,8 +81,7 @@ async function authenticate () {
 	
 	if (!userData.me) return false;
 
-	client.writeData({data:{isUserLoggedIn:true}});
-	client.writeData({data:{authenticated:true}});
+	client.writeData({data:{isUserLoggedIn:true, authenticated:true}});
 	return true;
 }
 

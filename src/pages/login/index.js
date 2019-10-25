@@ -42,8 +42,8 @@ function Page () {
 	const [error, setError] = useState(null);
 
 	const initialValues = {
-		email : 'daniel_kv@hotmail.com',
-		password : '123456',
+		email : process.env.NODE_ENV === 'production' ? '' : 'daniel_kv@hotmail.com',
+		password : process.env.NODE_ENV === 'production' ? '' : '123456',
 	}
 
 	function handleLogin ({email, password}) {
