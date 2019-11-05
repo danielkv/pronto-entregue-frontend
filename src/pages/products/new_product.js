@@ -15,7 +15,7 @@ function Page (props) {
 		name:'',
 		description:'',
 		active:true,
-		type:'single',
+		type:'inline',
 		price:'',
 		file:'',
 		preview:'',

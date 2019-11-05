@@ -398,10 +398,10 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												}}
 												aria-label="text alignment"
 												>
-												<ToggleButton disabled={isSubmitting} value="single" title="Normal" aria-label="left aligned">
+												<ToggleButton disabled={isSubmitting} value="inline" title="Normal" aria-label="left aligned">
 													<Icon path={mdiCheckDecagram} size='16' color='#707070' />
 												</ToggleButton>
-												<ToggleButton disabled={isSubmitting} value="multiple" title="Painel" aria-label="left aligned">
+												<ToggleButton disabled={isSubmitting} value="panel" title="Painel" aria-label="left aligned">
 													<Icon path={mdiFormatListChecks} size='16' color='#707070' />
 												</ToggleButton>
 											</ToggleButtonGroup>
