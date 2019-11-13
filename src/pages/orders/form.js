@@ -329,6 +329,7 @@ export default function PageForm ({values, setValues, setFieldValue, handleChang
 											<TableRow>
 												<TableCell style={{width:70, paddingRight:10}}></TableCell>
 												<TableCell>Produto</TableCell>
+												<TableCell style={{width:110}}>Quantidade</TableCell>
 												<TableCell style={{width:110}}>Valor</TableCell>
 												<TableCell style={{width:130}}>Ações</TableCell>
 											</TableRow>
@@ -354,6 +355,9 @@ export default function PageForm ({values, setValues, setFieldValue, handleChang
 																{selected_options.join(', ')}
 															</FormHelperText>
 														}
+													</TableCell>
+													<TableCell>
+														{row.quantity}
 													</TableCell>
 													<TableCell>
 														{numeral(productPrice).format('$0,0.00')}

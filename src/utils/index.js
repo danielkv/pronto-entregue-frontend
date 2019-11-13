@@ -161,6 +161,7 @@ export const createEmptyOrderProduct = (overwrite={}) => {
 	return {
 		action:'new_empty',
 		message:'',
+		quantity: 1,
 		options_groups: [],
 		...overwrite,
 		id: uniqueId(),
@@ -236,6 +237,7 @@ export const sanitizeOrderData = (data) => {
 				action: product.action,
 				name: product.name,
 				price: product.price,
+				quantity: product.quantity,
 				message: product.message || '',
 				product_id: product.product_related.id,
 

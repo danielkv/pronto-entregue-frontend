@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography} from '@material-ui/core';
+import {Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography, IconButton} from '@material-ui/core';
 import {cloneDeep} from 'lodash';
 
-import {ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductImage, ProductInfo } from './modal_styles';
+import {ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductImage, ProductInfo, QuantityContainer } from './modal_styles';
 import { FormRow, FieldControl, Block, BlockSeparator } from '../../layout/components';
 import { withStyles } from '@material-ui/core/styles';
+import { mdiPlusCircleOutline, mdiMinusCircleOutline } from '@mdi/js';
+import Icon from '@mdi/react';
 
 const CustomTextInput = withStyles({
 	root : {
@@ -123,7 +125,7 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 	}, [prod]);
 
 	return (
-		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} open={open} onClose={close}>
+		<Modal style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} onBackdropClick={handleCancel} open={open} onClose={close}>
 			<Fade in={open}>
 				<ModalPaper>
 				{!!product &&
@@ -132,7 +134,18 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 							<ModalHeader>
 								<ProductImage src={product.image} />
 								<ProductInfo>
-									<ProductTitle>{product.name}</ProductTitle>
+									<ProductTitle>
+										<div>{product.name}</div>
+										<QuantityContainer>
+											<IconButton onClick={()=>{if (product.quantity > 1) setProduct({...product, quantity: product.quantity-1, action: product.action === 'editable' ? 'update' : product.action })}}>
+												<Icon path={mdiMinusCircleOutline} size='24' />
+											</IconButton>
+											<div>{product.quantity}</div>
+											<IconButton onClick={()=>{setProduct({...product, quantity: product.quantity+1, action: product.action === 'editable' ? 'update' : product.action })}}>
+												<Icon path={mdiPlusCircleOutline} size='24' />
+											</IconButton>
+										</QuantityContainer>
+									</ProductTitle>
 									<ProductPrice>
 										<TextField
 											type='number'
@@ -151,7 +164,13 @@ export default function ProductModal ({prod, open, onClose, onSave, onCancel}) {
 							</ModalHeader>
 							<FormRow>
 								<FieldControl>
-									<TextField label='Observações' value={product.message} />
+									<TextField
+										label='Observações'
+										value={product.message}
+										onChange={(e)=>{
+											setProduct({...product, message: e.target.value});
+										}}
+									/>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

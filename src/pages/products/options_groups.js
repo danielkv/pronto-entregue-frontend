@@ -105,7 +105,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 													<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="single" title="Única" aria-label="left aligned">
 														<Icon path={mdiRadioboxMarked} size='16' color='#707070' />
 													</ToggleButton>
-													<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="multiple" title="Múltipla" aria-label="left aligned">
+													<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="multi" title="Múltipla" aria-label="left aligned">
 														<Icon path={mdiFormatListBulleted} size='16' color='#707070' />
 													</ToggleButton>
 												</ToggleButtonGroup>
@@ -142,7 +142,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 												label="Obrigatório"
 											/>
 										</TableCell>}
-										{group.type === 'multiple' &&
+										{group.type === 'multi' &&
 										<TableCell style={{width:150}}>
 											<TextField
 												label='Seleção mínima'
@@ -163,12 +163,12 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 												disabled={isSubmitting}
 												/>
 										</TableCell>}
-										{group.type === 'multiple' && !restrainedBy &&
+										{group.type === 'multi' && !restrainedBy &&
 										<TableCell style={{width:150}}>
 											<TextField
 												label='Seleção máxima'
 												name={`options_groups.${groupIndex}.max_select`}
-												value={group.min_select}
+												value={group.max_select}
 												type='number'
 												onClick={(e)=>{e.stopPropagation();}}
 												onChange={(e)=>{
@@ -204,7 +204,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 
 														let groupOtherIndex = groups.findIndex(row=>row.id === e.target.value);
 														groups[groupOtherIndex].restrainedBy = {id: group.id};
-														groups[groupOtherIndex].type = 'multiple';
+														groups[groupOtherIndex].type = 'multi';
 													}
 
 													setFieldValue(`options_groups`, groups);

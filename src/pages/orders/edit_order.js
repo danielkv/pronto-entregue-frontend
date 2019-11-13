@@ -47,10 +47,11 @@ function Page (props) {
 				...product.product_related,
 
 				id: product.id,
-				price:product.price,
-				name:product.name,
-				action:'editable',
-				product_related:{id: product.product_related.id},
+				price: product.price,
+				name: product.name,
+				quantity: product.quantity,
+				action: 'editable',
+				product_related: { id: product.product_related.id },
 
 				options_groups:product.product_related.options_groups.map(group=>{
 					let order_group = product.options_groups.find(row=>row.options_group_related.id===group.id);
@@ -74,6 +75,7 @@ function Page (props) {
 
 	function onSubmit(data, {setSubmitting}) {
 		const saveData = sanitizeOrderData(data);
+		console.log(saveData);
 
 		client.mutate({mutation:UPDATE_ORDER, variables:{id:edit_id, data:saveData}})
 		.then(()=>{

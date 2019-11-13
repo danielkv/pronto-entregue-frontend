@@ -24,6 +24,21 @@ export const ProductTitle = styled.div`
 	margin-bottom:8px;
 	font-weight:bold;
 	color:#707070;
+	display:flex;
+	flex-direction: row;
+	align-items:center;
+`;
+
+export const QuantityContainer = styled.span`
+	float:right;
+	display: flex;
+	flex-direction: row;
+	margin-left:10px;
+	align-items:center;
+
+	& > div {
+		margin: 0 8px;
+	}
 `;
 
 export const ProductPrice = styled.div`
