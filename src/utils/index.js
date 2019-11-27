@@ -273,6 +273,7 @@ export const sanitizeProductData = (data) => {
 		file: data.file,
 		description: data.description,
 		type: data.type,
+		featured: data.featured,
 		price: data.price,
 		active: data.active,
 		category_id: data.category.id,

@@ -193,7 +193,7 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({values:{active, price, type, preview, category, options_groups}, values, setFieldValue, handleChange, isSubmitting, errors}) => {
+			{({values:{active, featured, price, type, preview, category, options_groups}, values, setFieldValue, handleChange, isSubmitting, errors}) => {
 			return (<Form>
 				<Dialog
 					open={dragAlertOpen}
@@ -375,6 +375,17 @@ export default function PageForm ({initialValues, onSubmit, pageTitle, validateO
 												<Switch size='small' color='primary' checked={active} onChange={()=>{setFieldValue('active', !active)}} value="includeDisabled" />
 											}
 											label="Ativo"
+										/>
+									</FieldControl>
+								</FormRow>
+								<FormRow>
+									<FieldControl style={{justifyContent:'flex-end', paddingRight:7}}>
+										<FormControlLabel
+											labelPlacement='start'
+											control={
+												<Switch size='small' color='secondary' checked={featured} onChange={()=>{setFieldValue('featured', !featured)}} value="includeDisabled" />
+											}
+											label="Destaque"
 										/>
 									</FieldControl>
 								</FormRow>

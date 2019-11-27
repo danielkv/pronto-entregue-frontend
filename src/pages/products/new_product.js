@@ -18,6 +18,7 @@ function Page (props) {
 		type:'inline',
 		price:'',
 		file:'',
+		featured: false, 
 		preview:'',
 		category:{id:''},
 		options_groups: []

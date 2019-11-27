@@ -24,6 +24,7 @@ function Page (props) {
 
 	const product = {
 		name: data.product.name,
+		featured: data.product.featured,
 		description: data.product.description,
 		active: data.product.active,
 		category: data.product.category,

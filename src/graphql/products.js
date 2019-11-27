@@ -63,6 +63,7 @@ export const LOAD_PRODUCT = gql`
 			name
 			type
 			price
+			featured
 			description
 			category {
 				id

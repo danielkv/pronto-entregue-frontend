@@ -5,7 +5,6 @@ import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import {setPageTitle} from '../../utils';
-import Layout from '../../layout';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { UPDATE_CATEGORY } from '../../graphql/categories';
 
@@ -64,7 +63,7 @@ function Page (props) {
 	}
 
 	return (
-		<Layout>
+		<>
 			<Snackbar
 				open={!!displayError}
 				anchorOrigin={{
@@ -93,7 +92,7 @@ function Page (props) {
 				onSubmit={onSubmit}
 				edit={edit_id}
 				/>
-		</Layout>
+		</>
 	)
 }
 
