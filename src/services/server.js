@@ -7,7 +7,9 @@ import {GET_USER_TOKEN, IS_USER_LOGGED_IN} from '../graphql/authentication';
 import { GET_SELECTED_COMPANY } from "../graphql/companies";
 import { GET_SELECTED_BRANCH } from "../graphql/branches";
 
-const host = process.env.NODE_ENV === 'production' ? 'https://flakery-backend.herokuapp.com/graphql' : 'http://localhost:4000/graphql';
+const host = process.env.NODE_ENV === 'development' ? 'http://localhost:4000/graphql' : 'https://flakery-backend.herokuapp.com/graphql';
+console.log('server', host);
+console.log('enviroment', process.env.NODE_ENV);
 //const host = 'https://flakery-backend.herokuapp.com/graphql';
 
 const cache = new InMemoryCache({});
