@@ -60,7 +60,7 @@
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.6",
     "gh-pages": "^2.1.1",
-    "react-app-rewire-hot-loader": "^2.0.1",
+    "react-app-rewire-hot-loader": "^2.0.1"
   },
   "plugins": [
     "babel-plugin-styled-components"
