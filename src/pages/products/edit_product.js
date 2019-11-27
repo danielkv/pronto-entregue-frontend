@@ -1,6 +1,6 @@
 import React, {useState, Fragment} from 'react';
 import PageForm from './form';
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import {setPageTitle, sanitizeProductData} from '../../utils';
@@ -16,8 +16,11 @@ function Page (props) {
 	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_PRODUCT, { variables:{ id:edit_id, filter:{ showInactive:true } } });
-	const client = useApolloClient();
+	const {data, loading:loadingGetData, error} = useQuery(LOAD_PRODUCT, { variables:{ id: edit_id, filter:{ showInactive:true } } });
+	const [updateProduct] = useMutation(UPDATE_PRODUCT, {
+		variables: { id:edit_id },
+		refetchQueries: [{ query: LOAD_PRODUCT, variables:{ id: edit_id, filter: { showInactive:true } } }]
+	});
 
 	if (error) return <ErrorBlock error={error} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
@@ -35,20 +38,18 @@ function Page (props) {
 		options_groups: data.product.options_groups
 	};
 
-	function onSubmit(data, {setSubmitting}) {
+	async function onSubmit(data, {setSubmitting}) {
 		const saveData = sanitizeProductData(data);
 
-		client.mutate({mutation:UPDATE_PRODUCT, variables:{id:edit_id, data:saveData}})
+		await updateProduct({variables: { data:saveData } })
 		.then(()=>{
 			setDisplaySuccess('O produto foi salvo');
 		})
 		.catch((err)=>{
 			setDisplayError(err.message);
 			console.error(err.graphQLErrors, err.networkError, err.operation);
-		})
-		.finally(() => {
-			setSubmitting(false);
-		})
+		});
+
 	}
 
 	return (
