@@ -112,7 +112,7 @@ export const GET_BRANCHES_PRODUCTS = gql`
 `;
 
 export const UPDATE_PRODUCT = gql`
-	mutation ($id:ID!, $data:ProductInput!, $filter:Filter) {
+	mutation updateProduct ($id:ID!, $data:ProductInput!, $filter:Filter) {
 		updateProduct (id:$id, data:$data) {
 			id
 			name

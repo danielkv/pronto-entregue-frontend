@@ -26,11 +26,11 @@ export default function PageForm ({values, setValues, setFieldValue, handleChang
 	const [loadingDeliveryPrice, setLoadingDeliveryPrice] = useState(false);
 
 	//Query de busca de usuário
-	const [searchUsers, {data:usersData, loading:loadingUsers}] = useLazyQuery(SEARCH_USERS, {fetchPolicy:'no-cache'});
+	const [searchUsers, {data:usersData, loading:loadingUsers}] = useLazyQuery(SEARCH_USERS, { fetchPolicy:'no-cache' });
 	const usersFound = usersData && !loadingUsers ? usersData.searchCompanyUsers : [];
 	
 	//Query de busca de produto
-	const [searchProducts, {data:productsData, loading:loadingProducts}] = useLazyQuery(SEARCH_BRANCH_PRODUCTS, {fetchPolicy:'no-cache'});
+	const [searchProducts, {data:productsData, loading:loadingProducts}] = useLazyQuery(SEARCH_BRANCH_PRODUCTS, { fetchPolicy:'no-cache' });
 	const productsFound = productsData && !loadingProducts ? productsData.searchBranchProducts : [];
 
 	//Carrega filial selecionada
