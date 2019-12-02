@@ -38,7 +38,7 @@ function Page (props) {
 		options_groups: data.product.options_groups
 	};
 
-	function onSubmit(data, {setSubmitting}) {
+	function onSubmit(data) {
 		const saveData = sanitizeProductData(data);
 
 		return updateProduct({variables: { data:saveData } })
