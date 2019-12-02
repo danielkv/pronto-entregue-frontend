@@ -38,17 +38,17 @@ function Page (props) {
 		options_groups: data.product.options_groups
 	};
 
-	async function onSubmit(data, {setSubmitting}) {
+	function onSubmit(data, {setSubmitting}) {
 		const saveData = sanitizeProductData(data);
 
-		await updateProduct({variables: { data:saveData } })
-		.then(()=>{
-			setDisplaySuccess('O produto foi salvo');
-		})
-		.catch((err)=>{
-			setDisplayError(err.message);
-			console.error(err.graphQLErrors, err.networkError, err.operation);
-		});
+		return updateProduct({variables: { data:saveData } })
+			.then(()=>{
+				setDisplaySuccess('O produto foi salvo');
+			})
+			.catch((err)=>{
+				setDisplayError(err.message);
+				console.error(err.graphQLErrors, err.networkError, err.operation);
+			});
 
 	}
 
