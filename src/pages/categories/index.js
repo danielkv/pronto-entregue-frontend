@@ -23,15 +23,20 @@ const sort = (a, b) => {
 function Page (props) {
 	setPageTitle('Categorias');
 
-	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
 	
+	const [showInactive, setShowInactive] = useState(false);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	
 	const [setCategoryEnabled, {loading}] = useMutation(UPDATE_CATEGORY);
-	const [updateCategoriesOrder, {loading:loadingCategoriesOrder}] = useMutation(UPDATE_CATEGORIES_ORDER, {refetchQueries:[{query:GET_BRANCH_CATEGORIES, variables:{id:selectedBranchData.selectedBranch}}]});
+	const [updateCategoriesOrder, {loading:loadingCategoriesOrder}] = useMutation(UPDATE_CATEGORIES_ORDER, {
+		refetchQueries: [{ query: GET_BRANCH_CATEGORIES, variables:{ id: selectedBranch } }]
+	});
 	
-	const {data:categoriesData, loading:loadingItemsData, error} = useQuery(GET_BRANCH_CATEGORIES, {variables:{id:selectedBranchData.selectedBranch}});
+	const {data:categoriesData, loading:loadingItemsData, error} = useQuery(GET_BRANCH_CATEGORIES, {
+		variables: { id: selectedBranch, filter: { showInactive } }
+	});
 
 	//filter, order, pages
 	let categories = [];
@@ -155,7 +160,7 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+								<Switch size='small' color='primary' checked={showInactive} onChange={(e)=>{console.log(e.target.value); setShowInactive(!showInactive)}} value={showInactive} />
 							}
 							label="Incluir inativos"
 						/>

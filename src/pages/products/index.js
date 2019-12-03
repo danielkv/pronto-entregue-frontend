@@ -19,12 +19,15 @@ function Page (props) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
+	const { data: { selectedBranch }, loading:loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
 
-	const {data:productsData, loading:loadingProductsData, error} = useQuery(GET_BRANCHES_PRODUCTS, {variables:{id:selectedBranchData.selectedBranch, filter:{showInactive}}});
+	const {data:productsData, loading:loadingProductsData, error} = useQuery(GET_BRANCHES_PRODUCTS, {
+		variables: {
+			id: selectedBranch,
+			filter: { showInactive }
+		} 
+	});
 	const products = productsData && productsData.branch.products.length ? productsData.branch.products : [];
-
-
 
 	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_PRODUCT);
 

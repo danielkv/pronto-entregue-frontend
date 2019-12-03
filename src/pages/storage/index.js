@@ -14,9 +14,15 @@ import { GET_COMPANY_ITEMS, UPDATE_ITEM } from '../../graphql/items';
 function Page (props) {
 	setPageTitle('Estoque');
 
-	const {data:selectedCompanyData, loading:loadingSelectedData} = useQuery(GET_SELECTED_COMPANY);
+	const {data: { selectedCompany }, loading:loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 
-	const {data:itemsData, loading:loadingItemsData, error} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
+	const [showInactive, setShowInactive] = useState(false);
+	const { data: itemsData, loading:loadingItemsData, error } = useQuery(GET_COMPANY_ITEMS, {
+		variables: {
+			id: selectedCompany,
+			filter : { showInactive },
+		},
+	});
 	const items = itemsData && itemsData.company.items.length ? itemsData.company.items : [];
 
 	const [page, setPage] = useState(0);
@@ -93,7 +99,7 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+								<Switch size='small' color='primary' checked={showInactive} onChange={()=>setShowInactive(!showInactive)} value={showInactive} />
 							}
 							label="Incluir inativos"
 						/>

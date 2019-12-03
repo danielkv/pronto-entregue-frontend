@@ -15,15 +15,20 @@ import { GET_COMPANY_BRANCHES, UPDATE_BRANCH } from '../../graphql/branches';
 function Page (props) {
 	setPageTitle('Filiais');
 
-	const {data:selectedCompanyData, loading:loadingSelectedData} = useQuery(GET_SELECTED_COMPANY);
+	const [showInactive, setShowInactive] = useState(false);
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 
-	const {data:branchesData, loading:loadingBranchesData, error} = useQuery(GET_COMPANY_BRANCHES, {variables:{id:selectedCompanyData.selectedCompany}});
-	const branches = branchesData && branchesData.company.branches.length ? branchesData.company.branches : [];
+	const { data: { company: { branches = [] } = {} } = {}, loading: loadingBranchesData, error } = useQuery(GET_COMPANY_BRANCHES, {
+		variables:{
+			id: selectedCompany,
+			filter: { showInactive },
+		},
+	});
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	
-	const [setBranchEnabled, {loading}] = useMutation(UPDATE_BRANCH);
+	const [setBranchEnabled, { loading }] = useMutation(UPDATE_BRANCH);
 	
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedData || loadingBranchesData) return (<LoadingBlock />);
@@ -99,7 +104,7 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+								<Switch size='small' color='primary' checked={showInactive} onChange={()=>setShowInactive(!showInactive)} value={showInactive} />
 							}
 							label="Incluir inativos"
 						/>

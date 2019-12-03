@@ -1,5 +1,5 @@
 import React, {useState, Fragment} from 'react';
-import {Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
+import {Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter, mdiDotsVertical} from '@mdi/js';
 import {Link} from 'react-router-dom';
@@ -19,8 +19,8 @@ function Page (props) {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
-	const {data:ordersData, loading:loadingOrdersData, error} = useQuery(GET_BANCH_ORDERS, {variables:{id:selectedBranchData.selectedBranch}})
+	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
+	const { data: ordersData, loading: loadingOrdersData, error } = useQuery(GET_BANCH_ORDERS, { variables: { id: selectedBranch } })
 	const orders = ordersData && !loadingOrdersData && !loadingSelectedData ? ordersData.branch.orders : [];
 
 	if (error) return <ErrorBlock error={error} />
@@ -96,12 +96,6 @@ function Page (props) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
-						<FormControlLabel
-							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
-							}
-							label="Incluir inativos"
-						/>
 					</BlockHeader>
 					<Sidebar>
 						<form noValidate>

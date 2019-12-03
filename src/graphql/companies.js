@@ -38,10 +38,10 @@ export const UPDATE_COMPANY = gql`
  */
 
 export const GET_USER_COMPANIES = gql`
-	query ($id: ID!) {
+	query ($id: ID!, $filter: Filter) {
 		user (id: $id) {
 			id
-			companies {
+			companies (filter: $filter) {
 				id
 				name
 				display_name

@@ -15,18 +15,18 @@ import { LOGGED_USER_ID } from '../../graphql/authentication';
 function Page (props) {
 	setPageTitle('Empresas');
 
-	// const [showInactive, setShowInactive] = useState(false);
+	const [showInactive, setShowInactive] = useState(false);
 	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
 	const {
 		data: { user: { companies = [] } = {} } = {},
 		loading: loadingCompaniesData,
 		error
-	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId } });
+	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId, filter: { showInactive } } });
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_COMPANY);
+	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY);
 
 	if (error) return <ErrorBlock error={error} />
 	if (loadingCompaniesData) return (<LoadingBlock />);
@@ -102,7 +102,7 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+								<Switch size='small' color='primary' checked={showInactive} onChange={()=>setShowInactive(!showInactive)} value={showInactive} />
 							}
 							label="Incluir inativos"
 						/>

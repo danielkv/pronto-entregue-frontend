@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
 
 export const GET_COMPANY_ITEMS = gql`
-	query ($id:ID!) {
+	query ($id:ID!, $filter: Filter) {
 		company (id:$id) {
 			id
-			items {
+			items (filter: $filter) {
 				id
 				name
 				active

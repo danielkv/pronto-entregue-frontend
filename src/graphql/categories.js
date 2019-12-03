@@ -15,10 +15,10 @@ export const GET_CATEGORY = gql`
 
 
 export const GET_BRANCH_CATEGORIES = gql`
-	query ($id:ID!) {
+	query ($id:ID!, $filter: Filter!) {
 		branch (id:$id) {
 			id
-			categories {
+			categories (filter: $filter) {
 				id
 				name
 				image
