@@ -10,12 +10,18 @@ import { GET_USER_COMPANIES, UPDATE_COMPANY} from '../../graphql/companies';
 import {setPageTitle} from '../../utils';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+import { LOGGED_USER_ID } from '../../graphql/authentication';
 
 function Page (props) {
 	setPageTitle('Empresas');
 
-	const {data:companiesData, loading:loadingCompaniesData, error} = useQuery(GET_USER_COMPANIES);
-	const companies = companiesData && companiesData.userCompanies.length ? companiesData.userCompanies : [];
+	// const [showInactive, setShowInactive] = useState(false);
+	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
+	const {
+		data: { user: { companies = [] } = {} } = {},
+		loading: loadingCompaniesData,
+		error
+	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId } });
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);

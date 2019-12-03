@@ -4,17 +4,16 @@ import gql from "graphql-tag";
 
 import client from './server';
 
-import {LOGGED_USER, IS_USER_LOGGED_IN, IS_USER_AUTHENTICATED} from '../graphql/authentication';
-import {SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY} from '../graphql/companies';
+import { IS_USER_LOGGED_IN, IS_USER_AUTHENTICATED, AUTHENTICATE, LOGGED_USER_ID } from '../graphql/authentication';
+import { SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../graphql/companies';
 
 
 export function useInitialize() {
-
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const {data:initializedData} = useQuery(gql`{initialized @client}`);
-	const {data:userLoggedInData} = useQuery(IS_USER_LOGGED_IN);
-	const {data:authenticatedData} = useQuery(IS_USER_AUTHENTICATED);
+	const { data: initializedData } = useQuery(gql`{initialized @client}`);
+	const { data: userLoggedInData } = useQuery(IS_USER_LOGGED_IN);
+	const { data: authenticatedData } = useQuery(IS_USER_AUTHENTICATED);
 
 	const isUserLoggedIn = userLoggedInData.isUserLoggedIn;
 	const initialized = initializedData.initialized;
@@ -47,10 +46,10 @@ async function init() {
 		const token = localStorage.getItem('@flakery/userToken');
 		
 		if (!token) return false;
-		client.writeData({data:{userToken:token}});
+		client.writeData({ data: { userToken: token } });
 		
-		const authentication = await authenticate(token);
-		if (!authentication) throw new Error('Não foi possível autenticar usuário');
+		const { data } = await client.mutate({ mutation: AUTHENTICATE, variables: { token } });
+		logUserIn(data.authenticate, token);
 		
 		const initialData = await loadInitialData();
 		if (!initialData) throw new Error('Não foi possível carregar os dados iniciais');
@@ -62,39 +61,30 @@ async function init() {
 	};
 }
 
-export function logUserIn (token) {
+export function logUserIn (user, token) {
 	localStorage.setItem('@flakery/userToken', token);
-	client.writeData({data:{isUserLoggedIn:true, userToken:token}});	
+	client.writeData({ data: { authenticated: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });	
 }
 
 export function logUserOut () {
 	localStorage.removeItem('@flakery/userToken');
 	localStorage.removeItem('@flakery/selectedCompany');
 	localStorage.removeItem('@flakery/selectedBranch');
-	client.writeData({data:{userToken:null, authenticated:false, isUserLoggedIn:false}});
+	client.writeData({ data: { userToken: null, authenticated: false, isUserLoggedIn: false } });
 	client.resetStore();
 }
 
-
-async function authenticate () {
-	const {data:userData} = await client.query({query:LOGGED_USER});
-	
-	if (!userData.me) return false;
-
-	client.writeData({data:{isUserLoggedIn:true, authenticated:true}});
-	return true;
-}
-
 function loadInitialData() {
-	return client.query({query:GET_USER_COMPANIES})
-	.then (async ({data})=> {
-		const {selectedCompany} = client.readQuery({query:GET_SELECTED_COMPANY});
-		const selectCompany_id = selectedCompany || data.userCompanies[0].id;
+	const { loggedUserId } = client.readQuery({ query: LOGGED_USER_ID });
+	return client.query({ query: GET_USER_COMPANIES, variables: { id: loggedUserId } })
+		.then (async ({ data: { user: { companies = [] } = {} } = {} }) => {
+			const { selectedCompany } = client.readQuery({ query: GET_SELECTED_COMPANY });
+			const selectCompany_id = selectedCompany || companies[0].id;
 
-		client.writeData({data:{initialized:true}});
+			client.writeData({ data:  { initialized: true } });
 
-		await client.mutate({mutation:SELECT_COMPANY, variables:{id:selectCompany_id}});
+			await client.mutate({ mutation: SELECT_COMPANY, variables: { id: selectCompany_id } });
 
-		return true;
-	});
+			return true;
+		});
 }

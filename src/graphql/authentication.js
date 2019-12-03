@@ -1,13 +1,24 @@
 import gql from "graphql-tag";
 
+export const AUTHENTICATE = gql`
+	mutation Authenticate($token: String!) {
+		authenticate (token: $token) {
+			id
+			full_name
+			email
+		}
+	}
+`;
+
 /**
  * Recupera o Token do usuário salvo em cache 
  */
 export const GET_USER_TOKEN = gql`
-	{
+	query UserToken {
 		userToken @client
 	}
 `;
+
 
 /**
  * Recupera o Token do usuário salvo em cache 
@@ -63,5 +74,25 @@ export const LOGGED_USER = gql`
 			role
 			active
 		}
+	}
+`;
+
+export const GET_USER = gql`
+	query GetUser ($id: ID!) {
+		user (id: $id) {
+			id
+			full_name
+			first_name
+			last_name
+			email
+			role
+			active
+		}
+	}
+`;
+
+export const LOGGED_USER_ID = gql`
+	query LoggedUserId {
+		loggedUserId @client
 	}
 `;

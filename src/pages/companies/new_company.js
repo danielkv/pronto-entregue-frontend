@@ -1,10 +1,12 @@
 import React from 'react';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import PageForm from './form';
 import {setPageTitle, joinMetas, initialMetas} from '../../utils';
+
 import { GET_USER_COMPANIES } from '../../graphql/companies';
+import { LOGGED_USER_ID } from '../../graphql/authentication';
 
 const CREATE_COMPANY = gql`
 	mutation ($data:CompanyInput!) {
@@ -23,6 +25,8 @@ function Page (props) {
 	setPageTitle('Nova empresa');
 	
 	const client = useApolloClient();
+	const { loggedUserId } = client.readQuery({ query: LOGGED_USER_ID });
+	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_USER_COMPANIES, variables: { id: loggedUserId } }] });
 
 	const metas = ['address', 'document', 'contact', 'phones', 'emails'];
 	const company = {
@@ -32,7 +36,7 @@ function Page (props) {
 		...initialMetas(metas)
 	};
 
-	function onSubmit(values, {setSubmitting}) {
+	function onSubmit(values) {
 		const data = {...values, metas:joinMetas(metas, values)};
 		delete data.address;
 		delete data.contact;
@@ -40,13 +44,10 @@ function Page (props) {
 		delete data.emails;
 		delete data.document;
 
-		client.mutate({mutation:CREATE_COMPANY, variables:{data}, refetchQueries:[{query:GET_USER_COMPANIES}]})
-		.catch((err)=>{
-			console.error(err);
-		})
-		.finally(()=>{
-			setSubmitting(false);
-		})
+		return createCompany({ variables: { data } })
+			.catch((err)=>{
+				console.error(err);
+			})
 	}
 	
 	return (

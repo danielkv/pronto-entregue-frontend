@@ -49,12 +49,10 @@ function Page () {
 	function handleLogin ({email, password}) {
 		setLoading(true);
 
-		client.mutate({mutation:LOGIN, variables:{email, password}})
+		client.mutate({ mutation: LOGIN, variables: { email, password } })
 		.then(({data})=>{
 			if (data.login.token) {
-				logUserIn(data.login.token);
-				
-				//client.writeData({data:{user: data.login.user}});
+				logUserIn(data.login.user, data.login.token);
 			}
 		})
 		.catch(e=>{

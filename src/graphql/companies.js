@@ -38,14 +38,17 @@ export const UPDATE_COMPANY = gql`
  */
 
 export const GET_USER_COMPANIES = gql`
-	query {
-		userCompanies {
+	query ($id: ID!) {
+		user (id: $id) {
 			id
-			name
-			display_name
-			createdAt
-			last_month_revenue
-			active
+			companies {
+				id
+				name
+				display_name
+				createdAt
+				last_month_revenue
+				active
+			}
 		}
 	}
 `;

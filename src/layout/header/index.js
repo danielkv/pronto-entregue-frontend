@@ -6,23 +6,31 @@ import {useQuery, useMutation} from '@apollo/react-hooks';
 import {useHistory} from 'react-router-dom';
 
 import {Loading} from '../components';
+import { logUserOut } from '../../services/init';
 import {HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser} from './styles';
 import mainLogo from '../../assets/images/logo.png';
+
 import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SELECT_COMPANY} from '../../graphql/companies';
 import { GET_SELECTED_BRANCH, SELECT_BRANCH, GET_COMPANY_BRANCHES} from '../../graphql/branches';
-import { logUserOut } from '../../services/init';
-import { LOGGED_USER } from '../../graphql/authentication';
+import { LOGGED_USER, LOGGED_USER_ID } from '../../graphql/authentication';
 
 export default function Header () {
+	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
 
 	const history = useHistory();
 	const {data:loggedUserData, loading:loadingLoggedUser} = useQuery(LOGGED_USER);
 
-	const {data:companiesData, loading:loadingCompanies} = useQuery(GET_USER_COMPANIES);
-	const {data:selectedCompanyData} = useQuery(GET_SELECTED_COMPANY);
+	const {
+		data: { user: { companies = [] } = {} } = {},
+		loading: loadingCompanies,
+	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId } });
+	const {data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
 
-	const {data:branchesData, loading:loadingBranches} = useQuery(GET_COMPANY_BRANCHES, {variables:{id:selectedCompanyData.selectedCompany}});
-	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
+	const {
+		data: { company: { branches = [] } = {} } = {},
+		loading: loadingBranches,
+	} = useQuery(GET_COMPANY_BRANCHES, {variables:{id: selectedCompany}});
+	const {data: { selectedBranch } } = useQuery(GET_SELECTED_BRANCH);
 
 	const [selectCompany] = useMutation(SELECT_COMPANY);
 	const [selectBranch] = useMutation(SELECT_BRANCH);
@@ -42,18 +50,18 @@ export default function Header () {
 				<SelectContainer>
 					<Icon path={mdiStore} size='24' color='#D41450' />
 					<FormControl fullWidth={false}>
-						{(!selectedCompanyData || !companiesData || !companiesData.userCompanies.length) ? 'Nenhuma empresa' : 
+						{(!selectedCompany || !companies.length) ? 'Nenhuma empresa' : 
 						<Select
 							disableUnderline={true}
-							value={selectedCompanyData ? selectedCompanyData.selectedCompany : ''}
-							onChange={(e)=>selectCompany({variables:{id:e.target.value}})}
+							value={selectedCompany || ''}
+							onChange={(e)=>selectCompany({ variables: { id: e.target.value } })}
 							inputProps={{
 								name: 'company',
 								id: 'company',
 							}}
 						>	
 							{
-								companiesData.userCompanies.map(company=>{
+								companies.map(company=>{
 									return <MenuItem key={company.id} value={company.id}>{company.display_name}</MenuItem>;
 								})
 							}
@@ -63,17 +71,17 @@ export default function Header () {
 				<SelectContainer>
 					<Icon path={mdiSourceBranch} size='24' color='#D41450' />
 					<FormControl fullWidth={false}>
-						{(!selectedBranchData || !branchesData || !branchesData.company.branches.length) ? 'Nenhuma filial' : 
+						{(!selectedBranch || !branches.length) ? 'Nenhuma filial' : 
 						<Select
 							disableUnderline={true}
-							value={selectedBranchData ? selectedBranchData.selectedBranch : ''}
-							onChange={(e)=>selectBranch({variables:{id:e.target.value}})}
+							value={selectedBranch || ''}
+							onChange={(e)=>selectBranch({ variables: { id: e.target.value } })}
 							inputProps={{
 								name: 'Filial',
 								id: 'Filial',
 							}}>
 							{
-								branchesData.company.branches.map(branch=>{
+								branches.map(branch=>{
 									return <MenuItem key={branch.id} value={branch.id}>{branch.name}</MenuItem>;
 								})
 							}
