@@ -6,6 +6,7 @@ import {mdiDrag, mdiDelete, mdiRadioboxMarked, mdiFormatListBulleted, mdiPlusCir
 import {FieldArray } from 'formik';
 import {TextField, Switch, FormControl, FormLabel,  MenuItem, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, IconButton, Checkbox, FormControlLabel} from '@material-ui/core';
 import { Droppable, Draggable} from 'react-beautiful-dnd';
+import { isEqual } from 'lodash';
 
 import {
 	OptionsContainer,
@@ -16,7 +17,7 @@ import {
 import Options from './options';
 import {createEmptyOption} from '../../utils';
 
-export default function Block ({groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, items, isSubmitting, sanitizeOptionsGroupsOrder, sanitizeOptionsOrder}) {
+function OptionGroup ({groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, items, isSubmitting, sanitizeOptionsGroupsOrder, sanitizeOptionsOrder}) {
 	const inputName = useRef(null);
 	const editing = !!group.editing;
 	
@@ -49,7 +50,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 			{(provided, snapshot)=>(
 			<FieldArray name={`options_groups.${groupIndex}.options`}>
 				{({insert, remove}) => (
-					<ExpansionPanel {...provided.draggableProps} ref={provided.innerRef} key={group.id} square expanded={group.open} onChange={(e, value)=>{setFieldValue(`options_groups.${groupIndex}.open`, value)}}>
+					<ExpansionPanel {...provided.draggableProps} ref={provided.innerRef} key={group.id} square expanded={!!group.open} onChange={(e, value)=>{setFieldValue(`options_groups.${groupIndex}.open`, value)}}>
 						<ExpansionPanelSummary style={{minHeight:0, padding:0}}>
 							<Table>
 								<TableBody>
@@ -307,3 +308,7 @@ export default function Block ({groups, group, groupIndex, setFieldValue, remove
 		</Draggable>
 	);
 }
+
+export default React.memo(OptionGroup, (prevPros, nextProps) => {
+	return isEqual(prevPros, nextProps);
+})

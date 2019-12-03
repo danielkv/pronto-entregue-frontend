@@ -2,10 +2,26 @@ import React, {useState, Fragment} from 'react';
 import PageForm from './form';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import {setPageTitle, sanitizeProductData} from '../../utils';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
+
+const productSchema = Yup.object().shape({
+	name: Yup.string().required('Obrigatório'),
+	price: Yup.number().required('Obrigatório'),
+	description: Yup.string().required('Obrigatório'),
+	file: Yup.mixed().notRequired(),
+	options_groups: Yup.array().of(Yup.object().shape({
+		name: Yup.string().required('Obrigatório'),
+		options: Yup.array().of(Yup.object().shape({
+			name: Yup.string().required('Obrigatório'),
+			price: Yup.number().required('Obrigatório'),
+		})),
+	})),
+});
 
 function Page (props) {
 	setPageTitle('Alterar produto');
@@ -25,7 +41,7 @@ function Page (props) {
 	if (error) return <ErrorBlock error={error} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
-	const product = {
+	const initialValues = {
 		name: data.product.name,
 		featured: data.product.featured,
 		description: data.product.description,
@@ -76,12 +92,14 @@ function Page (props) {
 			>
 				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
 			</Snackbar>
-			<PageForm
-				pageTitle='Alterar produto'
-				initialValues={product}
+			<Formik
+				validationSchema={productSchema}
+				initialValues={initialValues}
 				onSubmit={onSubmit}
-				edit={true}
-				/>
+				validateOnChange={true}
+				validateOnBlur={false}
+				component={PageForm}
+			/>
 		</Fragment>
 	)
 }

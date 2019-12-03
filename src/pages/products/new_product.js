@@ -1,10 +1,29 @@
 import React from 'react';
 import { useMutation, useApolloClient } from '@apollo/react-hooks';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 
 import PageForm from './form';
 import {setPageTitle, sanitizeProductData} from '../../utils';
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { CREATE_PRODUCT, GET_BRANCHES_PRODUCTS } from '../../graphql/products';
+
+const FILE_SIZE = 500 * 1024;
+
+const productSchema = Yup.object().shape({
+	name: Yup.string().required('Obrigatório'),
+	price: Yup.number().required('Obrigatório'),
+	description: Yup.string().required('Obrigatório'),
+	file: Yup.mixed().required('Selecione uma imagem')
+			.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
+	options_groups: Yup.array().of(Yup.object().shape({
+		name: Yup.string().required('Obrigatório'),
+		options: Yup.array().of(Yup.object().shape({
+			name: Yup.string().required('Obrigatório'),
+			price: Yup.number().required('Obrigatório'),
+		})),
+	})),
+});
 
 function Page (props) {
 	setPageTitle('Novo produto');
@@ -13,7 +32,7 @@ function Page (props) {
 	const { selectedBranch } = client.readQuery({ query: GET_SELECTED_BRANCH });
 	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_BRANCHES_PRODUCTS, variables: { id: selectedBranch } }] });
 
-	const product = {
+	const initialValues = {
 		name:'',
 		description:'',
 		active:true,
@@ -39,11 +58,13 @@ function Page (props) {
 	}
 	
 	return (
-		<PageForm
+		<Formik
+			validationSchema={productSchema}
+			initialValues={initialValues}
 			onSubmit={onSubmit}
-			initialValues={product}
-			pageTitle='Novo produto'
-			validateOnChange={false}
+			validateOnChange={true}
+			validateOnBlur={false}
+			component={PageForm}
 		/>
 	)
 }

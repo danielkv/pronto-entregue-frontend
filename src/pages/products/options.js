@@ -4,6 +4,7 @@ import Icon from '@mdi/react';
 import {mdiDrag, mdiDelete, mdiInbox, mdiPencil, mdiBorderNoneVariant } from '@mdi/js'
 import { Draggable} from 'react-beautiful-dnd';
 import Downshift from "downshift";
+import { isEqual } from 'lodash';
 
 import {TextField, InputAdornment, IconButton, Switch, ListItem, ListItemIcon, ListItemText, List} from '@material-ui/core';
 import {
@@ -20,7 +21,7 @@ const CustomTextInput = withStyles({
 	}
 })(TextField);
 
-export default function Block ({group, option, groupIndex, optionIndex, setFieldValue, removeOption, items, errors, isSubmitting, groupRestrained}) {
+function Option ({group, option, groupIndex, optionIndex, setFieldValue, removeOption, items, errors, isSubmitting, groupRestrained}) {
 	const inputName = useRef(null);
 	const editing = !!option.editing;
 	
@@ -182,3 +183,7 @@ export default function Block ({group, option, groupIndex, optionIndex, setField
 		</Draggable>
 	)
 }
+
+export default React.memo(Option, (prevPros, nextProps) => {
+	return isEqual(prevPros, nextProps);
+})
