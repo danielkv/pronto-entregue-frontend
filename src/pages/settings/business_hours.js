@@ -20,7 +20,9 @@ function Page () {
 	const {data: businessHoursData, loading: loadingBusinessHours} = useQuery(LOAD_BUSINESS_HOURS, {variables:{id:selectedBranchData.selectedBranch}});
 
 	//Mutate business_hour
-	const [updateBusinessHours, {loading: loadingUpdateBusinessHours}] = useMutation(UPDATE_BUSINESS_HOURS);
+	const [updateBusinessHours, {loading: loadingUpdateBusinessHours}] = useMutation(UPDATE_BUSINESS_HOURS, {
+		refetchQueries: [{ query: LOAD_BUSINESS_HOURS,variables: { id:selectedBranchData.selectedBranch } }]
+	});
 
 	if (loadingSelectedData || loadingBusinessHours || !businessHoursData) return <LoadingBlock />;
 
@@ -33,7 +35,7 @@ function Page () {
 			})
 			return day;
 		})
-		updateBusinessHours({variables:{data:dataSave}});
+		return updateBusinessHours({variables:{data:dataSave}});
 	}
 
 	const business_hours = businessHoursData.branch.business_hours || [];
