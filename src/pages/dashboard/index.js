@@ -17,22 +17,24 @@ function Page () {
 	setPageTitle('Dashboard');
 
 	//get selected branch
-	const {data:selectedBranchData} = useQuery(GET_SELECTED_BRANCH);
+	const {data: { selectedBranch }} = useQuery(GET_SELECTED_BRANCH);
 
 	//get branch best sellers
-	const {data:bestSellersData, loading:loadingBestSellers} = useQuery(GET_BRANCH_BEST_SELLERS, {variables:{id:selectedBranchData.selectedBranch, limit:4, createdAt:'curdate'}});
+	const {data:bestSellersData, loading:loadingBestSellers} = useQuery(GET_BRANCH_BEST_SELLERS, {variables:{id:selectedBranch, limit:4, createdAt:'curdate'}});
 	const bestSellers = !loadingBestSellers && bestSellersData ? bestSellersData.branch.best_sellers : [];
 	
 	//get branch last orders
-	const {data:lastOrdersData, loading:loadingLastOrders} = useQuery(GET_BRANCH_LAST_ORDERS, {variables:{id:selectedBranchData.selectedBranch, limit:4}});
+	const {data:lastOrdersData, loading:loadingLastOrders} = useQuery(GET_BRANCH_LAST_ORDERS, {variables:{id:selectedBranch, limit:4}});
 	const lastOrders = !loadingLastOrders && lastOrdersData ? lastOrdersData.branch.orders : [];
 	
 	//load order qtys
-	const {data:ordersWaitingData, loading:loadingOrdersWaiting} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'waiting', createdAt:'CURDATE'}}});
-	const {data:ordersPreparingData, loading:loadingOrdersPreparing} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'preparing', createdAt:'CURDATE'}}});
-	const {data:ordersDeliveryData, loading:loadingOrdersDelivery} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'delivery', createdAt:'CURDATE'}}});
-	const {data:ordersDeliveredData, loading:loadingOrdersDelivered} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'delivered', createdAt:'CURDATE'}}});
-	const {data:ordersCanceledData, loading:loadingOrdersCanceled} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranchData.selectedBranch, filter:{status:'canceled', createdAt:'CURDATE'}}});
+	const {data:ordersWaitingData, loading:loadingOrdersWaiting, error} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'waiting', createdAt:'CURDATE'}}});
+	const {data:ordersPreparingData, loading:loadingOrdersPreparing} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'preparing', createdAt:'CURDATE'}}});
+	const {data:ordersDeliveryData, loading:loadingOrdersDelivery} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'delivery', createdAt:'CURDATE'}}});
+	const {data:ordersDeliveredData, loading:loadingOrdersDelivered} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'delivered', createdAt:'CURDATE'}}});
+	const {data:ordersCanceledData, loading:loadingOrdersCanceled} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'canceled', createdAt:'CURDATE'}}});
+
+	if (error) console.log(error);
 
 	return (
 		<Fragment>

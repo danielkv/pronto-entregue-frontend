@@ -8,7 +8,7 @@ import RoutesFrame from './routes-frame';
 import { LoadingBlock, ErrorBlock } from './layout/blocks';
 
 const Routes = ()  => {
-	const {error, loading, authenticated} = useInitialize(true);
+	const {error, loading, isUserLoggedIn} = useInitialize(true);
 
 	if (loading) return <LoadingBlock />;
 	if (error) return <ErrorBlock error={error} />;
@@ -17,11 +17,11 @@ const Routes = ()  => {
 		<BrowserRouter>
 			<Switch>
 				<Route path='/login'>
-					{authenticated !== true ? <Login /> : <Redirect to='/' />}
+					{isUserLoggedIn !== true ? <Login /> : <Redirect to='/' />}
 				</Route>
 
 				<Route path='/' >
-					{authenticated === true ? <RoutesFrame /> : <Redirect to='/login' />}
+					{isUserLoggedIn === true ? <RoutesFrame /> : <Redirect to='/login' />}
 				</Route>
 			</Switch>
 		</BrowserRouter>

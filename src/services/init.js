@@ -4,44 +4,41 @@ import gql from "graphql-tag";
 
 import client from './server';
 
-import { IS_USER_LOGGED_IN, IS_USER_AUTHENTICATED, AUTHENTICATE, LOGGED_USER_ID } from '../graphql/authentication';
+import { IS_USER_LOGGED_IN, AUTHENTICATE, LOGGED_USER_ID } from '../graphql/authentication';
 import { SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../graphql/companies';
 
 
 export function useInitialize() {
-	const [loading, setLoading] = useState(true);
+	//const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [called, setCalled] = useState(false);
+	
+	const { data: { loadingInit: loading } } = useQuery(gql`{loadingInit @client}`);
 	const { data: initializedData } = useQuery(gql`{initialized @client}`);
 	const { data: userLoggedInData } = useQuery(IS_USER_LOGGED_IN);
-	const { data: authenticatedData } = useQuery(IS_USER_AUTHENTICATED);
 
 	const isUserLoggedIn = userLoggedInData.isUserLoggedIn;
 	const initialized = initializedData.initialized;
-	const authenticated = authenticatedData.authenticated;
 
 	useEffect(()=>{
-		if (!isUserLoggedIn || !initialized) setLoading(true);
-	}, [isUserLoggedIn, initialized])
+		if (loading) setCalled(false);
+	}, [loading])
 
-	if ((!authenticated || !initialized) && !called) {
+	if (!called) {
 		setCalled(true);
 		init()
-			.then(()=>{
-				setLoading(false);
+			.finally(()=>{
+				setTimeout(()=>client.writeData({ data: { loadingInit: false } }), 100);
 			})
 			.catch((err)=>{
 				setError(err);
-			})
-			.finally(() => {
-				setCalled(false);
 			})
 	}
 	
 	return {
 		error,
 		loading,
-		authenticated,
+		isUserLoggedIn,
 		initialized
 	}
 }
@@ -50,14 +47,21 @@ async function init() {
 	try {
 		const token = localStorage.getItem('@flakery/userToken');
 		
-		if (!token) return false;
-		client.writeData({ data: { userToken: token } });
-		
-		const { data } = await client.mutate({ mutation: AUTHENTICATE, variables: { token } });
-		logUserIn(data.authenticate, token);
-		
-		const initialData = await loadInitialData();
-		if (!initialData) throw new Error('Não foi possível carregar os dados iniciais');
+		if (token) {
+			
+			const { data } = await client.mutate({ mutation: AUTHENTICATE, variables: { token } })
+			/* 	.catch((err)=>{
+					console.error(err, token);
+				}); */
+			logUserIn(data.authenticate, token);
+			
+			const initialData = await loadInitialData();
+			if (!initialData) throw new Error('Não foi possível carregar os dados iniciais');
+
+			client.writeData({ data: { userToken: token } });
+		}
+
+		client.writeData({ data:  { initialized: true } });
 
 		return true;
 	} catch (e) {
@@ -68,14 +72,14 @@ async function init() {
 
 export function logUserIn (user, token) {
 	localStorage.setItem('@flakery/userToken', token);
-	client.writeData({ data: { authenticated: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });	
+	client.writeData({ data: { loadingInit: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });	
 }
 
 export function logUserOut () {
 	localStorage.removeItem('@flakery/userToken');
 	localStorage.removeItem('@flakery/selectedCompany');
 	localStorage.removeItem('@flakery/selectedBranch');
-	client.writeData({ data: { userToken: null, authenticated: false, isUserLoggedIn: false } });
+	client.writeData({ data: { userToken: null, loadingInit: true, isUserLoggedIn: false } });
 	client.resetStore();
 }
 
@@ -85,8 +89,6 @@ function loadInitialData() {
 		.then (async ({ data: { user: { companies = [] } = {} } = {} }) => {
 			const { selectedCompany } = client.readQuery({ query: GET_SELECTED_COMPANY });
 			const selectCompany_id = selectedCompany || companies[0].id;
-
-			client.writeData({ data:  { initialized: true } });
 
 			await client.mutate({ mutation: SELECT_COMPANY, variables: { id: selectCompany_id } });
 

@@ -15,7 +15,7 @@ const uploadLink = createUploadLink({ uri: host });
 
 const initialData = {
 	loggedUserId: null,
-	authenticated: false,
+	loadingInit: true,
 	initialized : false,
 	isUserLoggedIn : false,
 	userToken:null,
