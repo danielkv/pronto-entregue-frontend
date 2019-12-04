@@ -12,13 +12,13 @@ import mainLogo from '../../assets/images/logo.png';
 
 import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SELECT_COMPANY} from '../../graphql/companies';
 import { GET_SELECTED_BRANCH, SELECT_BRANCH, GET_COMPANY_BRANCHES} from '../../graphql/branches';
-import { LOGGED_USER, LOGGED_USER_ID } from '../../graphql/authentication';
+import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
 
 export default function Header () {
-	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
-
 	const history = useHistory();
-	const {data:loggedUserData, loading:loadingLoggedUser} = useQuery(LOGGED_USER);
+	
+	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
+	const {data: { user = {} } = {}, loading:loadingLoggedUser} = useQuery(GET_USER, { variables: { id: loggedUserId } });
 
 	const {
 		data: { user: { companies = [] } = {} } = {},
@@ -89,11 +89,11 @@ export default function Header () {
 					</FormControl>
 				</SelectContainer>
 			</Fragment>}
-			{loadingLoggedUser || (!loggedUserData && !loggedUserData) ? <Loading /> :
+			{loadingLoggedUser || !user ? <Loading /> :
 			<RightSide>
 				<LoggedUser>
 					<Icon path={mdiAccountCircle} color='#999' size='24' />
-					<span>{loggedUserData.me.full_name} <small>({loggedUserData.me.email})</small></span>
+					<span>{user.full_name} <small>({user.email})</small></span>
 				</LoggedUser>
 				<Fab onClick={handleLogout} variant='extended' size='medium' color='secondary'><Icon path={mdiLogout} size='20' color='#fff' /> Logout</Fab>
 			</RightSide>}
