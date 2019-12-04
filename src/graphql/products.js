@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const SEARCH_BRANCH_PRODUCTS = gql`
-	query ($search:String!) {
+	query SearchProducts ($search:String!) {
 		searchBranchProducts(search:$search) {
 			id
 			name
@@ -57,7 +57,7 @@ export const LOAD_OPTION_GROUP = gql`
 `;
 
 export const LOAD_PRODUCT = gql`
-	query ($id: ID!, $filter:Filter) {
+	query LoadProduct ($id: ID!, $filter:Filter) {
 		product (id: $id) {
 			id
 			name
@@ -80,7 +80,7 @@ export const LOAD_PRODUCT = gql`
 `;
 
 export const CREATE_PRODUCT = gql`
-	mutation ($data:ProductInput!) {
+	mutation CreateProduct ($data:ProductInput!) {
 		createProduct (data:$data) {
 			id
 			name
@@ -91,7 +91,7 @@ export const CREATE_PRODUCT = gql`
 `;
 
 export const GET_BRANCHES_PRODUCTS = gql`
-	query ($id:ID!, $filter:Filter) {
+	query GetProducts ($id:ID!, $filter:Filter) {
 		branch (id:$id) {
 			id
 			products (filter:$filter) {
@@ -112,7 +112,7 @@ export const GET_BRANCHES_PRODUCTS = gql`
 `;
 
 export const UPDATE_PRODUCT = gql`
-	mutation updateProduct ($id:ID!, $data:ProductInput!, $filter:Filter) {
+	mutation UpdateProduct ($id:ID!, $data:ProductInput!, $filter:Filter) {
 		updateProduct (id:$id, data:$data) {
 			id
 			name

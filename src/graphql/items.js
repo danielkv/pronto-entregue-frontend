@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_COMPANY_ITEMS = gql`
-	query ($id:ID!, $filter: Filter) {
+	query GetItems ($id:ID!, $filter: Filter) {
 		company (id:$id) {
 			id
 			items (filter: $filter) {
@@ -16,7 +16,7 @@ export const GET_COMPANY_ITEMS = gql`
 `;
 
 export const UPDATE_ITEM = gql`
-	mutation ($id:ID!, $data:ItemInput!) {
+	mutation UpdateItem ($id:ID!, $data:ItemInput!) {
 		updateItem(id:$id, data:$data) {
 			id
 			name

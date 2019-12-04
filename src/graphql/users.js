@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const SEARCH_USERS = gql`
-	query ($search:String!) {
+	query SearchUsers ($search:String!) {
 		searchCompanyUsers(search:$search) {
 			id
 			full_name
@@ -19,29 +19,8 @@ export const SEARCH_USERS = gql`
 	}
 `;
 
-/**
- * Carrega todas infomações ao acessar
- * 
- * companies, branches, 
- */
-export const LOAD_INITIAL_DATA = gql`
-	query init {
-		me {
-			id
-			companies {
-				id
-				name
-				display_name
-				last_month_revenue
-				createdAt
-				active
-			}
-		}
-	}
-`;
-
 export const GET_COMPANY_USERS = gql`
-	query ($id:ID!) {
+	query GetUsers ($id:ID!) {
 		company (id:$id) {
 			id
 			users {
@@ -56,7 +35,7 @@ export const GET_COMPANY_USERS = gql`
 `;
 
 export const UPDATE_USER = gql`
-	mutation ($id:ID!, $data:UserInput!) {
+	mutation UpdateUser ($id:ID!, $data:UserInput!) {
 		updateUser (id: $id, data:$data) {
 			id
 			first_name
@@ -88,7 +67,3 @@ export const UPDATE_USER = gql`
 		}
 	}
 `;
-
-
-
-

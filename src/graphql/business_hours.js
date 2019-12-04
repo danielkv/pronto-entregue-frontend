@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const LOAD_BUSINESS_HOURS = gql`
-	query ($id:ID!) {
+	query LoadBusinessHours ($id:ID!) {
 		branch (id:$id) {
 			id
 			business_hours {
@@ -16,7 +16,7 @@ export const LOAD_BUSINESS_HOURS = gql`
 `;
 
 export const UPDATE_BUSINESS_HOURS = gql`
-	mutation ($data: [BusinessHourInput]!) {
+	mutation UpdateBusinessHours ($data: [BusinessHourInput]!) {
 		updateBusinessHours(data:$data) {
 			day_of_week
 			hours {

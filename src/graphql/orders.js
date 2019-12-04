@@ -83,7 +83,7 @@ export const ORDER_FRAGMENT = gql`
 `;
 
 export const CALCULATE_DELIVERY_PRICE = gql`
-	query ($zipcode:Int!) {
+	query CalculateDeliveryPrice ($zipcode:Int!) {
 		calculateDeliveryPrice(zipcode: $zipcode) {
 			id
 			name
@@ -93,7 +93,7 @@ export const CALCULATE_DELIVERY_PRICE = gql`
 `;
 
 export const CREATE_ORDER = gql`
-	mutation ($data:OrderInput!) {
+	mutation CreateOrder ($data:OrderInput!) {
 		createOrder(data:$data) {
 			id
 			price
@@ -102,7 +102,7 @@ export const CREATE_ORDER = gql`
 `;
 
 export const UPDATE_ORDER = gql`
-	mutation ($id:ID!, $data:OrderInput!, $filter:Filter) {
+	mutation UpdateOrder ($id:ID!, $data:OrderInput!, $filter:Filter) {
 		updateOrder(id:$id, data:$data) {
 			...OrderFields
 		}
@@ -111,7 +111,7 @@ export const UPDATE_ORDER = gql`
 `;
 
 export const LOAD_ORDER = gql`
-	query ($id:ID!, $filter:Filter) {
+	query LoadOrder ($id:ID!, $filter:Filter) {
 		order (id:$id) {
 			...OrderFields
 		}
@@ -120,7 +120,7 @@ export const LOAD_ORDER = gql`
 `;
 
 export  const GET_BANCH_ORDERS = gql`
-	query ($id:ID!) {
+	query GetOrders ($id:ID!) {
 		branch (id:$id) {
 			id
 			orders {

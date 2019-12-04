@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_BRANCH_DELIVERY_AREAS = gql`
-	query ($id:ID!) {
+	query GetDeliveryAreas ($id:ID!) {
 		branch (id:$id) {
 			id
 			deliveryAreas {
@@ -17,7 +17,7 @@ export const GET_BRANCH_DELIVERY_AREAS = gql`
 `;
 
 export const REMOVE_DELIVERY_AREA = gql`
-	mutation ($id:ID!) {
+	mutation RemoveDeliveryArea ($id:ID!) {
 		removeDeliveryArea (id:$id) {
 			id
 			type
@@ -30,7 +30,7 @@ export const REMOVE_DELIVERY_AREA = gql`
 `;
 
 export const MODIFY_DELIVERY_AREA = gql`
-	mutation ($data:[DeliveryAreaInput]!) {
+	mutation ModifyDeliveryArea ($data:[DeliveryAreaInput]!) {
 		modifyDeliveryAreas (data:$data) {
 			id
 			type

@@ -1,11 +1,7 @@
 import gql from "graphql-tag";
 
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
 export const GET_BRANCH_LAST_ORDERS = gql`
-	query ($id:ID!, $limit:Int!, $filter:Filter) {
+	query GetLastOrders ($id:ID!, $limit:Int!, $filter:Filter) {
 		branch(id: $id) {
 			id
 			orders (limit: $limit, filter:$filter) {
@@ -27,12 +23,8 @@ export const GET_BRANCH_LAST_ORDERS = gql`
 
 `;
 
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
 export const GET_BRANCH_BEST_SELLERS = gql`
-	query ($id:ID!, $limit:Int!, $createdAt:String) {
+	query BestSellers($id:ID!, $limit:Int!, $createdAt:String) {
 		branch(id: $id) {
 			id
 			best_sellers(limit: $limit, createdAt:$createdAt) {
@@ -46,12 +38,8 @@ export const GET_BRANCH_BEST_SELLERS = gql`
 
 `;
 
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
 export const GET_BRANCH_ORDERS_QTY = gql`
-	query ($id: ID!, $filter:Filter) {
+	query OrdersQty($id: ID!, $filter:Filter) {
 		branch (id: $id) {
 			id
 			orders_qty (filter:$filter)
@@ -59,12 +47,8 @@ export const GET_BRANCH_ORDERS_QTY = gql`
 	}
 `;
 
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
 export const UPDATE_BRANCH = gql`
-	mutation ($id: ID!, $data:BranchInput!) {
+	mutation UpdateBranch ($id: ID!, $data:BranchInput!) {
 		updateBranch (id: $id, data:$data) {
 			id
 			name
@@ -79,12 +63,8 @@ export const UPDATE_BRANCH = gql`
 	}
 `;
 
-/**
- * Seleciona filial
- */
-
 export const SELECT_BRANCH = gql`
-	mutation ($id:ID!) {
+	mutation SetSelectedBranch ($id:ID!) {
 		selectBranch (id:$id) @client {
 			id
 			name
@@ -92,12 +72,8 @@ export const SELECT_BRANCH = gql`
 	}
 `;
 
-/**
- * Retorna filiais selecionaveis
- */
-
 export const GET_COMPANY_BRANCHES = gql`
-	query ($id:ID!, $filter: Filter) {
+	query Branches ($id:ID!, $filter: Filter) {
 		company (id:$id) {
 			id
 			branches (filter: $filter) {
@@ -110,23 +86,15 @@ export const GET_COMPANY_BRANCHES = gql`
 		}
 	}
 `;
-
-/**
-  * Retorna filial selecionada
-  */
  
  export const GET_SELECTED_BRANCH = gql`
-	query {
+	query GetSelectedBranch {
 		selectedBranch @client
 	}
  `;
-
-/**
-  * Retorna métodos de pagamento da filial selecionada
-  */
  
  export const LOAD_BRANCH_PAYMENT_METHODS = gql`
-	query ($id:ID!) {
+	query LoadPaymentMethods ($id:ID!) {
 		branch (id:$id) {
 			id
 			paymentMethods {
@@ -139,7 +107,7 @@ export const GET_COMPANY_BRANCHES = gql`
  `;
 
 export const ENABLE_PAYMENT_METHOD = gql`
-	mutation ($id:ID!) {
+	mutation EnablePaymentMethod ($id:ID!) {
 		enablePaymentMethod (id:$id) {
 			id
 			name
@@ -148,7 +116,7 @@ export const ENABLE_PAYMENT_METHOD = gql`
 `;
 
 export const DISABLE_PAYMENT_METHOD = gql`
-	mutation ($id:ID!) {
+	mutation DisablePaymentMethod ($id:ID!) {
 		disablePaymentMethod (id:$id) {
 			id
 			name

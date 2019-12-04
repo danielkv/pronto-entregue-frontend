@@ -24,7 +24,7 @@ export const GET_USER_TOKEN = gql`
  * Recupera o Token do usuário salvo em cache 
  */
 export const IS_USER_AUTHENTICATED = gql`
-	{
+	query Authenticated {
 		authenticated @client
 	}
 `;
@@ -33,7 +33,7 @@ export const IS_USER_AUTHENTICATED = gql`
  * Recupera o Token do usuário salvo em cache 
  */
 export const IS_USER_LOGGED_IN = gql`
-	{
+	query IsUserLoggedIn{
 		isUserLoggedIn @client
 	}
 `;
@@ -55,24 +55,6 @@ export const LOGIN = gql`
 				active
 			}
 			token
-		}
-	}
-`;
-
-/**
- * GRAPHQL para autenticação do usuário
- */
-
-export const LOGGED_USER = gql`
-	query {
-		me {
-			id
-			full_name
-			first_name
-			last_name
-			email
-			role
-			active
 		}
 	}
 `;

@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_CATEGORY = gql`
-	query ($id:ID!) {
+	query LoadCategory ($id:ID!) {
 		category (id:$id) {
 			id
 			name
@@ -15,7 +15,7 @@ export const GET_CATEGORY = gql`
 
 
 export const GET_BRANCH_CATEGORIES = gql`
-	query ($id:ID!, $filter: Filter!) {
+	query GetCategories ($id:ID!, $filter: Filter!) {
 		branch (id:$id) {
 			id
 			categories (filter: $filter) {
@@ -32,7 +32,7 @@ export const GET_BRANCH_CATEGORIES = gql`
 `;
 
 export const UPDATE_CATEGORY = gql`
-	mutation ($id:ID!, $data:CategoryInput!) {
+	mutation UpdateCategory ($id:ID!, $data:CategoryInput!) {
 		updateCategory (id:$id, data:$data) {
 			id
 			name
@@ -44,7 +44,7 @@ export const UPDATE_CATEGORY = gql`
 `;
 
 export const CREATE_CATEGORY = gql`
-	mutation ($data:CategoryInput!) {
+	mutation CreateCategory ($data:CategoryInput!) {
 		createCategory (data:$data) {
 			id
 			name
@@ -59,7 +59,7 @@ export const CREATE_CATEGORY = gql`
 `;
 
 export const UPDATE_CATEGORIES_ORDER = gql`
-	mutation ($data:[CategoryInput!]!) {
+	mutation UpdateCategoriesOrder ($data:[CategoryInput!]!) {
 		updateCategoriesOrder (data:$data) {
 			id
 			name

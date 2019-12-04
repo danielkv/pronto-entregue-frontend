@@ -5,7 +5,7 @@ import gql from "graphql-tag";
  * 
  */
 export const UPDATE_COMPANY = gql`
-	mutation ($id: ID!, $data:CompanyInput!) {
+	mutation UpdateCompany ($id: ID!, $data:CompanyInput!) {
 		updateCompany (id: $id, data:$data) {
 			id
 			name
@@ -21,24 +21,8 @@ export const UPDATE_COMPANY = gql`
 	}
 `;
 
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
-/* export const CREATE_USER_COMPANY = gql`
-	mutation ($data:CompanyInput!) {
-		createUserCompany (data:$data) @client {
-			id
-		}
-	}
-`; */
-
-/**
- * Retorna empresas selecionaveis
- */
-
 export const GET_USER_COMPANIES = gql`
-	query ($id: ID!, $filter: Filter) {
+	query GetCompanies ($id: ID!, $filter: Filter) {
 		user (id: $id) {
 			id
 			companies (filter: $filter) {
@@ -53,14 +37,8 @@ export const GET_USER_COMPANIES = gql`
 	}
 `;
 
-
-
-/**
- * Retorna empresa selecionada
- */
-
 export const GET_SELECTED_COMPANY = gql`
-	{
+	query GetSelectedCompany{
 		selectedCompany @client
 	}
 `;
@@ -70,7 +48,7 @@ export const GET_SELECTED_COMPANY = gql`
  */
 
 export const SELECT_COMPANY = gql`
-	mutation ($id:ID!) {
+	mutation SetSelectedCompany($id:ID!) {
 		selectCompany (id:$id) @client {
 			id
 			name
