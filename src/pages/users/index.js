@@ -14,17 +14,22 @@ import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 function Page (props) {
 	setPageTitle('Usuários');
 
+	const [showInactive, setShowInactive] = useState(false);
+
 	//carrega empresa selecionada
-	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
+	const {data: { selectedCompany }, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
 
 	//carrega usuários
-	const {data:usersData, loading:loadingUsersData, error} = useQuery(GET_COMPANY_USERS, {variables:{id:selectedCompanyData.selectedCompany}});
-	const users = usersData && usersData.company.users.length ? usersData.company.users : [];
+	const {
+		data: { company: { id: company_id = '0', users = [] } = {} } = {},
+		loading:loadingUsersData,
+		error
+	} = useQuery(GET_COMPANY_USERS, { variables: { id: selectedCompany, filter: { showInactive } } });
 
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-	const [setUserEnabled, {loading}] = useMutation(UPDATE_USER);
+	const [setUserEnabled, { loading }] = useMutation(UPDATE_USER, { variables: { company_id } });
 
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedCompany || loadingUsersData) return (<LoadingBlock />);
@@ -62,7 +67,7 @@ function Page (props) {
 											</IconButton>
 											<Switch
 												checked={row.active}
-												onChange={()=>setUserEnabled({variables:{id:row.id, data:{active:!row.active}}})}
+												onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
 												value="checkedB"
 												disabled={loading} 
 												size='small'
@@ -98,7 +103,7 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel	
 							control={
-								<Switch size='small' color='primary' checked={false} onChange={()=>{}} value="includeDisabled" />
+								<Switch size='small' color='primary' checked={showInactive} onChange={()=>setShowInactive(!showInactive)} value={showInactive} />
 							}
 							label="Incluir inativos"
 						/>

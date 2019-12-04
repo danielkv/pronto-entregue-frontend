@@ -11,6 +11,7 @@ import { SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../gra
 export function useInitialize() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [called, setCalled] = useState(false);
 	const { data: initializedData } = useQuery(gql`{initialized @client}`);
 	const { data: userLoggedInData } = useQuery(IS_USER_LOGGED_IN);
 	const { data: authenticatedData } = useQuery(IS_USER_AUTHENTICATED);
@@ -23,14 +24,18 @@ export function useInitialize() {
 		if (!isUserLoggedIn || !initialized) setLoading(true);
 	}, [isUserLoggedIn, initialized])
 
-	if (!authenticated || !initialized) {
+	if ((!authenticated || !initialized) && !called) {
+		setCalled(true);
 		init()
-		.then(()=>{
-			setLoading(false);
-		})
-		.catch((err)=>{
-			setError(err);
-		})
+			.then(()=>{
+				setLoading(false);
+			})
+			.catch((err)=>{
+				setError(err);
+			})
+			.finally(() => {
+				setCalled(false);
+			})
 	}
 	
 	return {

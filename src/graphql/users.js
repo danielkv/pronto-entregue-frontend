@@ -20,10 +20,10 @@ export const SEARCH_USERS = gql`
 `;
 
 export const GET_COMPANY_USERS = gql`
-	query GetUsers ($id:ID!) {
+	query GetUsers ($id:ID!, $filter: Filter) {
 		company (id:$id) {
 			id
-			users {
+			users (filter: $filter) {
 				id
 				full_name
 				role
@@ -35,8 +35,8 @@ export const GET_COMPANY_USERS = gql`
 `;
 
 export const UPDATE_USER = gql`
-	mutation UpdateUser ($id:ID!, $data:UserInput!) {
-		updateUser (id: $id, data:$data) {
+	mutation UpdateUser ($id: ID!, $data: UserInput!, $company_id: ID!) {
+		updateUser (id: $id, data: $data) {
 			id
 			first_name
 			last_name
@@ -44,7 +44,7 @@ export const UPDATE_USER = gql`
 			createdAt
 			active
 			role
-			company(company_id:$company_id) {
+			company(company_id: $company_id) {
 				id
 				user_relation {
 					active

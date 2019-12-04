@@ -72,7 +72,7 @@ function Page (props) {
 											<Switch
 												disabled={loading}
 												checked={row.active}
-												onChange={()=>{setCompanyEnabled({variables:{filter:{showInactive}, id:row.id, data:{active:!row.active}}})}}
+												onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } }) }
 												value="checkedB"
 												size='small'
 												color="secondary"
