@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, { useState, Fragment, useRef, useEffect } from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiInbox , mdiPencil, mdiFilter} from '@mdi/js';
@@ -8,34 +8,64 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import {setPageTitle} from '../../utils';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ITEMS, UPDATE_ITEM } from '../../graphql/items';
 
+const initialFilter = {
+	showInactive: false,
+	search: '',
+}
+
 function Page (props) {
 	setPageTitle('Estoque');
+	
+	const searchRef = useRef(null);
+	const [filter, setFilter] = useState(initialFilter);
+	const [pagination, setPagination] = useState({
+		page: 0,
+		rowsPerPage: 10,
+	});
+
+	useEffect(()=>{
+		setPagination((pagination) => ({ ...pagination, page: 0 }));
+	}, [filter]);
+
+	const submitFilterForm = (e) => {
+		e.preventDefault();
+
+		setFilter({
+			...filter,
+			search: searchRef.current.value
+		})
+	}
+	const clearFilterForm = (e) => {
+		setFilter(initialFilter);
+	}
 
 	const {data: { selectedCompany }, loading:loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
-
-	const [showInactive, setShowInactive] = useState(false);
-	const { data: itemsData, loading:loadingItemsData, error } = useQuery(GET_COMPANY_ITEMS, {
+	const { 
+		data: { company: { items: { count = 0, rows: items = [] } = {} } = {} } = {},
+		loading:loadingItems,
+		error,
+		called,
+	} = useQuery(GET_COMPANY_ITEMS, {
 		variables: {
 			id: selectedCompany,
-			filter : { showInactive },
+			filter,
+			pagination,
 		},
 	});
-	const items = itemsData && itemsData.company.items.length ? itemsData.company.items : [];
-
-	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
 	
 	const [setItemEnabled, {loading}] = useMutation(UPDATE_ITEM);
 	
 	if (error) return <ErrorBlock error={error} />
-	if (loadingSelectedData || loadingItemsData) return (<LoadingBlock />);
+	if (loadingSelectedData || (loadingItems && !called)) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
 			<Content>
+				{loadingItems ? <LoadingBlock /> :
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Estoque</BlockTitle>
@@ -53,7 +83,7 @@ function Page (props) {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								{items.map(row => (
 									<TableRow key={row.name}>
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiInbox} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
@@ -77,21 +107,22 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={items.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
+							count={count}
+							
 							backIconButtonProps={{
 								'aria-label': 'previous page',
 							}}
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
-							onChangePage={(e, newPage)=>{setPage(newPage)}}
-							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 					</Paper>
 					<NumberOfRows>{items.length} itens</NumberOfRows>
-				</Block>
+				</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -99,19 +130,25 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={showInactive} onChange={()=>setShowInactive(!showInactive)} value={showInactive} />
+								<Switch
+									size='small'
+									color='primary'
+									checked={filter.showInactive}
+									onChange={()=>setFilter({ ...filter, showInactive: !filter.showInactive })}
+									value={filter.showInactive}
+								/>
 							}
 							label="Incluir inativos"
 						/>
 					</BlockHeader>
 					<Sidebar>
-						<form noValidate>
+						<form noValidate onSubmit={submitFilterForm}>
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
 										<TextField
 											label='Buscar'
-											onChange={(event)=>{}}
+											inputRef={searchRef}
 											/>
 									</FieldControl>
 								</FormRow>
@@ -120,8 +157,12 @@ function Page (props) {
 								<FormRow>
 									<FieldControl>
 										<ButtonGroup fullWidth>
-											<Button color='primary'>Limpar</Button>
-											<Button variant="contained" color='primary'>Aplicar</Button>
+											<Button type='reset' onClick={clearFilterForm} color='primary'>Limpar</Button>
+											<Button
+												type='submit'
+												variant="contained"
+												color='primary'
+											>Aplicar</Button>
 										</ButtonGroup>
 									</FieldControl>
 								</FormRow>

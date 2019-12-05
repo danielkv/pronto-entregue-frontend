@@ -1,15 +1,18 @@
 import gql from "graphql-tag";
 
 export const GET_COMPANY_ITEMS = gql`
-	query GetItems ($id:ID!, $filter: Filter) {
+	query GetItems ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		company (id:$id) {
 			id
-			items (filter: $filter) {
-				id
-				name
-				active
-				description
-				createdAt
+			items (filter: $filter, pagination: $pagination) {
+				count
+				rows {
+					id
+					name
+					active
+					description
+					createdAt
+				}
 			}
 		}
 	}

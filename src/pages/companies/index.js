@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, Fragment, useEffect} from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
@@ -15,16 +15,25 @@ import { LOGGED_USER_ID } from '../../graphql/authentication';
 function Page (props) {
 	setPageTitle('Empresas');
 
-	const [showInactive, setShowInactive] = useState(false);
+	const [filter, setFilter] = useState({
+		showInactive: false,
+		search: '',
+	});
+	const [pagination, setPagination] = useState({
+		page: 0,
+		rowsPerPage: 10,
+	});
+
+	useEffect(()=>{
+		setPagination((pagination)=>({ ...pagination, page: 0 }));
+	}, [filter])
+
 	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
 	const {
 		data: { user: { companies = [] } = {} } = {},
 		loading: loadingCompaniesData,
 		error
-	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId, filter: { showInactive } } });
-
-	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
+	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId, filter, pagination } });
 
 	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY);
 
@@ -53,7 +62,7 @@ function Page (props) {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{companies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								{companies.map(row => (
 									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
@@ -81,16 +90,16 @@ function Page (props) {
 						<TablePagination
 							component="div"
 							count={companies.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
 							backIconButtonProps={{
 								'aria-label': 'previous page',
 							}}
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
-							onChangePage={(e, newPage)=>{setPage(newPage)}}
-							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({...pagination, rowsPerPage: e.target.value });}}
 							/>
 					</Paper>
 					<NumberOfRows>{companies.length} empresas</NumberOfRows>
@@ -102,7 +111,13 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={showInactive} onChange={()=>setShowInactive(!showInactive)} value={showInactive} />
+								<Switch
+									size='small'
+									color='primary'
+									checked={filter.showInactive}
+									onChange={()=>setFilter({ ...filter, showInactive: !filter.showInactive })}
+									value={filter.showInactive}
+								/>
 							}
 							label="Incluir inativos"
 						/>
