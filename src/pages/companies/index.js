@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect} from 'react';
+import React, {useState, Fragment, useEffect, useRef} from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiStore, mdiPencil, mdiFilter} from '@mdi/js';
@@ -6,19 +6,23 @@ import {Link} from 'react-router-dom';
 import numeral from 'numeral';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
-import { GET_USER_COMPANIES, UPDATE_COMPANY} from '../../graphql/companies';
 import {setPageTitle} from '../../utils';
 import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
 import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+
+import { GET_USER_COMPANIES, UPDATE_COMPANY} from '../../graphql/companies';
 import { LOGGED_USER_ID } from '../../graphql/authentication';
+
+const initialFilter = {
+	showInactive: false,
+	search: '',
+}
 
 function Page (props) {
 	setPageTitle('Empresas');
 
-	const [filter, setFilter] = useState({
-		showInactive: false,
-		search: '',
-	});
+	const searchRef = useRef(null);
+	const [filter, setFilter] = useState(initialFilter);
 	const [pagination, setPagination] = useState({
 		page: 0,
 		rowsPerPage: 10,
@@ -130,6 +134,7 @@ function Page (props) {
 										<TextField
 											label='Buscar'
 											onChange={(event)=>{}}
+											inputRef={searchRef}
 											/>
 									</FieldControl>
 								</FormRow>

@@ -230,7 +230,7 @@ export const sanitizeOrderData = (data) => {
 		city: data.city,
 		state: data.state,
 		district: data.district,
-		zipcode: data.zipcode,
+		zipcode: data.zipcode || null,
 		
 		products: data.products.map(product => {
 			let new_product = {
