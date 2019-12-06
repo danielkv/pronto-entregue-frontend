@@ -107,7 +107,6 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={countItems}
 							
 							backIconButtonProps={{
 								'aria-label': 'previous page',
@@ -115,6 +114,7 @@ function Page (props) {
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
+							count={countItems}
 							rowsPerPage={pagination.rowsPerPage}
 							page={pagination.page}
 							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}

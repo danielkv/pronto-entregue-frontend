@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, Fragment, useRef, useEffect} from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiDrag , mdiPencil, mdiFilter} from '@mdi/js';
@@ -20,34 +20,53 @@ const sort = (a, b) => {
 	return 0;
 }
 
+const initialFilter = {
+	showInactive: false,
+	search: '',
+}
+
 function Page (props) {
 	setPageTitle('Categorias');
 
-	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
-	
-	const [showInactive, setShowInactive] = useState(false);
-	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
-	
-	const [setCategoryEnabled, {loading}] = useMutation(UPDATE_CATEGORY);
-	const [updateCategoriesOrder, {loading:loadingCategoriesOrder}] = useMutation(UPDATE_CATEGORIES_ORDER, {
-		refetchQueries: [{ query: GET_BRANCH_CATEGORIES, variables:{ id: selectedBranch } }]
-	});
-	
-	const {data:categoriesData, loading:loadingItemsData, error} = useQuery(GET_BRANCH_CATEGORIES, {
-		variables: { id: selectedBranch, filter: { showInactive } }
+	const searchRef = useRef(null);
+	const [filter, setFilter] = useState(initialFilter);
+	const [pagination, setPagination] = useState({
+		page: 0,
+		rowsPerPage: 10,
 	});
 
-	//filter, order, pages
-	let categories = [];
-	if (categoriesData && categoriesData.branch.categories.length) {
-		categories = categoriesData.branch.categories
-		.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-		.sort(sort);
+	useEffect(()=>{
+		setPagination((pagination) => ({ ...pagination, page: 0 }));
+	}, [filter]);
+
+	const submitFilterForm = (e) => {
+		e.preventDefault();
+
+		setFilter({
+			...filter,
+			search: searchRef.current.value
+		})
 	}
+	const clearFilterForm = (e) => {
+		setFilter(initialFilter);
+	}
+
+	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
+	
+	const [setCategoryEnabled, {loading}] = useMutation(UPDATE_CATEGORY);
+	const [updateCategoriesOrder, {loading: loadingCategoriesOrder}] = useMutation(UPDATE_CATEGORIES_ORDER, {
+		refetchQueries: [{ query: GET_BRANCH_CATEGORIES, variables: { id: selectedBranch, filter, pagination } }]
+	});
+	
+	const {data: { branch: { countCategories = 0, categories = [] } = {} } = {}, loading: loadingCategories, error, called} = useQuery(GET_BRANCH_CATEGORIES, {
+		variables: { id: selectedBranch, filter, pagination }
+	});
+
+	//temp order
+	if (categories.length) categories.sort(sort);
 	
 	if (error) return <ErrorBlock error={error} />
-	if (loadingSelectedData || loadingItemsData) return (<LoadingBlock />);
+	if (loadingSelectedData || (!called && loadingCategories)) return (<LoadingBlock />);
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -62,8 +81,8 @@ function Page (props) {
 
 		const new_order = reorder(categories, result.source.index, result.destination.index);
 
-		const save_new_order = new_order.map((cat, index) => ({id: cat.id, order:index}));
-		updateCategoriesOrder({variables:{data:save_new_order}});
+		const save_new_order = new_order.map((cat, index) => ({ id: cat.id, order:index }));
+		updateCategoriesOrder({ variables: { data: save_new_order } });
 	}
 
 	return (
@@ -73,7 +92,7 @@ function Page (props) {
 					<BlockHeader>
 						<BlockTitle>Categorias</BlockTitle>
 						<Button size='small' variant="contained" color='secondary' to='/categorias/novo' component={Link}>Adicionar</Button> {(loading || loadingCategoriesOrder) && <Loading />}
-						<NumberOfRows>{categories.length} categorias</NumberOfRows>
+						<NumberOfRows>{countCategories} categorias</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table style={{tableLayout:'auto', width:'100%'}}>
@@ -138,20 +157,20 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={categories.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
 							backIconButtonProps={{
 								'aria-label': 'previous page',
 							}}
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
-							onChangePage={(e, newPage)=>{setPage(newPage)}}
-							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
+							count={countCategories}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 					</Paper>
-					<NumberOfRows>{categories.length} categorias</NumberOfRows>
+					<NumberOfRows>{countCategories} categorias</NumberOfRows>
 				</Block>
 			</Content>
 			<SidebarContainer>
@@ -160,20 +179,26 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={showInactive} onChange={(e)=>{console.log(e.target.value); setShowInactive(!showInactive)}} value={showInactive} />
+								<Switch
+									size='small'
+									color='primary'
+									checked={filter.showInactive}
+									onChange={(e)=>setFilter({ ...filter, showInactive: !filter.showInactive })}
+									value={filter.showInactive}
+								/>
 							}
 							label="Incluir inativos"
 						/>
 					</BlockHeader>
 					<Sidebar>
-						<form noValidate>
+						<form noValidate onSubmit={submitFilterForm}>
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
 										<TextField
 											label='Buscar'
-											onChange={(event)=>{}}
-											/>
+											inputRef={searchRef}
+										/>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
@@ -181,8 +206,8 @@ function Page (props) {
 								<FormRow>
 									<FieldControl>
 										<ButtonGroup fullWidth>
-											<Button color='primary'>Limpar</Button>
-											<Button variant="contained" color='primary'>Aplicar</Button>
+											<Button type='reset' onClick={clearFilterForm} color='primary'>Limpar</Button>
+											<Button variant="contained" type='submit' color='primary'>Aplicar</Button>
 										</ButtonGroup>
 									</FieldControl>
 								</FormRow>
