@@ -1,4 +1,4 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment } from 'react';
 import { Paper, Table, TableBody, TableHead, TableCell, TextField, IconButton, TableRow, MenuItem, ButtonGroup, Button, InputAdornment } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiCashMarker, mdiDelete, mdiPlusCircle} from '@mdi/js';
@@ -15,8 +15,6 @@ import { LoadingBlock } from '../../layout/blocks';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
-
-	const formRef = useRef(null);
 
 	//Query load delivery_areas
 	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
@@ -67,7 +65,6 @@ function Page () {
 
 	return (
 		<Formik
-			ref={formRef}
 			onSubmit={handleSave}
 			enableReinitialize={true}
 			validationSchema={areasSchema}
