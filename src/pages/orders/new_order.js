@@ -76,7 +76,6 @@ function Page (props) {
 			return Yup.mixed().notRequired();
 
 		return Yup.mixed().required('Obrigatório').test('zipcode_test', 'CEP inválido', value=> /^([\d]{5})-?([\d]{3})$/.test(value) );
-			
 	}
 
 	const productSchema = Yup.object().shape({

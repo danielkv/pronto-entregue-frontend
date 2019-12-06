@@ -120,10 +120,11 @@ export const LOAD_ORDER = gql`
 `;
 
 export  const GET_BANCH_ORDERS = gql`
-	query GetOrders ($id:ID!) {
+	query GetOrders ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		branch (id:$id) {
 			id
-			orders {
+			countOrders(filter: $filter)
+			orders(filter: $filter, pagination: $pagination) {
 				id
 				type
 				user {

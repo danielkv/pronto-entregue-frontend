@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, Fragment, useRef, useEffect} from 'react';
 import {Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter, mdiDotsVertical} from '@mdi/js';
@@ -13,27 +13,57 @@ import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BANCH_ORDERS } from '../../graphql/orders';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 
+const initialFilter = {
+	search: '',
+}
+
 function Page (props) {
 	setPageTitle('Pedidos');
+	
+	const searchRef = useRef(null);
+	const [filter, setFilter] = useState(initialFilter);
+	const [pagination, setPagination] = useState({
+		page: 0,
+		rowsPerPage: 10,
+	});
 
-	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
+	useEffect(()=>{
+		setPagination((pagination) => ({ ...pagination, page: 0 }));
+	}, [filter]);
+
+	const submitFilterForm = (e) => {
+		e.preventDefault();
+
+		setFilter({
+			...filter,
+			search: searchRef.current.value
+		})
+	}
+	const clearFilterForm = (e) => {
+		setFilter(initialFilter);
+	}
 
 	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
-	const { data: ordersData, loading: loadingOrdersData, error } = useQuery(GET_BANCH_ORDERS, { variables: { id: selectedBranch } })
-	const orders = ordersData && !loadingOrdersData && !loadingSelectedData ? ordersData.branch.orders : [];
+	const { data: { branch: { countOrders = 0, orders = [] } = {} } = {}, loading: loadingOrders, error, called } = useQuery(GET_BANCH_ORDERS, {
+		variables: {
+			id: selectedBranch,
+			filter,
+			pagination,
+		}
+	})
 
 	if (error) return <ErrorBlock error={error} />
-	if (loadingOrdersData || loadingSelectedData) return (<LoadingBlock />);
+	if ((!called && loadingOrders) || loadingSelectedData) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
 			<Content>
+				{loadingOrders ? <LoadingBlock /> :
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Pedidos</BlockTitle>
 						<Button size='small' variant="contained" color='secondary' to='/pedidos/novo' component={Link}>Adicionar</Button>
-						<NumberOfRows>{orders.length} pedidos</NumberOfRows>
+						<NumberOfRows>{countOrders} pedidos</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table>
@@ -49,7 +79,7 @@ function Page (props) {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								{orders.map(row => (
 									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:30}}>
 											<OrderCreated>
@@ -76,21 +106,21 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={orders.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
 							backIconButtonProps={{
 								'aria-label': 'previous page',
 							}}
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
-							onChangePage={(e, newPage)=>{setPage(newPage)}}
-							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
+							count={countOrders}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 					</Paper>
-					<NumberOfRows>{orders.length} pedidos</NumberOfRows>
-				</Block>
+					<NumberOfRows>{countOrders} pedidos</NumberOfRows>
+				</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -98,14 +128,14 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 					</BlockHeader>
 					<Sidebar>
-						<form noValidate>
+						<form noValidate onSubmit={submitFilterForm}>
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
 										<TextField
 											label='Buscar'
-											onChange={(event)=>{}}
-											/>
+											inputRef={searchRef}
+										/>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
@@ -144,8 +174,8 @@ function Page (props) {
 								<FormRow>
 									<FieldControl>
 										<ButtonGroup fullWidth>
-											<Button color='primary'>Limpar</Button>
-											<Button variant="contained" color='primary'>Aplicar</Button>
+											<Button type='reset' onClick={clearFilterForm} color='primary'>Limpar</Button>
+											<Button type='submit' variant="contained" color='primary'>Aplicar</Button>
 										</ButtonGroup>
 									</FieldControl>
 								</FormRow>
