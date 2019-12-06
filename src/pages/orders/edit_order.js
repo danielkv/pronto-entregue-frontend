@@ -1,4 +1,4 @@
-import React, {useState, useRef, Fragment} from 'react';
+import React, {useState, Fragment} from 'react';
 import PageForm from './form';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
@@ -14,7 +14,6 @@ function Page (props) {
 	setPageTitle('Alterar pedido');
 
 	const edit_id = props.match.params.id;
-	const formRef = useRef(null);
 
 	//erro e confirmação
 	const [displayError, setDisplayError] = useState('');
@@ -90,30 +89,29 @@ function Page (props) {
 		})
 	}
 
-	const test_address = (type) => (value) => {
-		if (formRef.current.state.values.type === 'takeout') 
+	const test_address = (_type) => (type) => {
+		if (type === 'takeout') 
 			return Yup.mixed().notRequired();
 		
-		return (type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
+		return (_type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
 	}
 	
 	function test_zipcode_ok (value) {
-		const state = formRef.current.state;
+		const { type, zipcode } = this.parent
 
-		if (state.values.type)
+		if (type)
 			return true;
 
-		if (!state.values.zipcode && !state.errors.zipcode)
-			return true;
+		if (zipcode) return true;
 
 		return !!value;
 	}
 
 	function test_zipcode (value) {
-		if (formRef.current.state.values.type === 'takeout')
-			return Yup.mixed().notRequired();
+		if (this.parent.type === 'takeout')
+			return true;
 
-		return Yup.mixed().required('Obrigatório').test('zipcode_test', 'CEP inválido', value=> /^([\d]{5})-?([\d]{3})$/.test(value) );
+		return  /^([\d]{5})-?([\d]{3})$/.test(value);
 			
 	}
 
@@ -124,13 +122,13 @@ function Page (props) {
 		type: Yup.string().required('Obrigatório'),
 		payment_method: Yup.string().typeError('Obrigatório').required('Obrigatório'),
 
-		street: Yup.lazy(test_address('string')),
-		number: Yup.lazy(test_address('number')),
-		city: Yup.lazy(test_address('string')),
-		state: Yup.lazy(test_address('string')),
-		district: Yup.lazy(test_address('string')),
-		
-		zipcode: Yup.lazy(test_zipcode),
+		street: Yup.mixed().when('type', test_address('string')),
+		number: Yup.mixed().when('type', test_address('number')),
+		city: Yup.mixed().when('type', test_address('string')),
+		state: Yup.mixed().when('type', test_address('string')),
+		district: Yup.mixed().when('type', test_address('string')),
+
+		zipcode: Yup.mixed().test('test_zipcode', 'Obrigatório', test_zipcode),
 		zipcode_ok: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', test_zipcode_ok),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
@@ -164,14 +162,13 @@ function Page (props) {
 			</Snackbar>
 
 			<Formik
-				ref={formRef}
 				validationSchema={productSchema}
 				initialValues={order}
 				onSubmit={onSubmit}
 				validateOnChange={true}
 				validateOnBlur={false}
 				component={PageForm}
-				/>
+			/>
 		</Fragment>
 	)
 }

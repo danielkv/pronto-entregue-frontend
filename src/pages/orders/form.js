@@ -243,7 +243,7 @@ export default function PageForm ({values, setValues, setFieldValue, handleChang
 								</FieldControl>
 								<FieldControl style={{flex:.3}}>
 									<FormControl>
-										<Field name='zipcode' component={tField} label='CEP (apenas número)' />
+										<Field name='zipcode' type='number' component={tField} label='CEP (apenas número)' />
 										{!!errors.zipcode_ok && <FormHelperText error>{errors.zipcode_ok}</FormHelperText>}
 									</FormControl>
 								</FieldControl>

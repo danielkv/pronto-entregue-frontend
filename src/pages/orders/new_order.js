@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 
 import { Formik } from 'formik';
@@ -13,7 +13,6 @@ function Page (props) {
 	setPageTitle('Novo pedido');
 	
 	const client = useApolloClient();
-	const formRef = useRef(null);
 
 	const order = {
 		user:null,
@@ -42,8 +41,8 @@ function Page (props) {
 		const {selectedBranch} = client.readQuery({query:GET_SELECTED_BRANCH});
 
 		client.mutate({mutation:CREATE_ORDER, variables:{data:dataSave} , refetchQueries:[{query:GET_BANCH_ORDERS, variables:{id:selectedBranch}}] })
-		.then(({data:{createItem}})=>{
-			props.history.push(`/estoque/alterar/${createItem.id}`);
+		.then(({data:{createOrder}})=>{
+			props.history.push(`/pedidos/alterar/${createOrder.id}`);
 		})
 		.catch((err)=>{
 			console.error(err);
@@ -54,27 +53,26 @@ function Page (props) {
 	}
 
 	
-	const test_address = (type) => (value) => {
-		if (formRef.current.state.values.type === 'takeout') 
+	const test_address = (_type) => (type) => {
+		if (type === 'takeout') 
 			return Yup.mixed().notRequired();
 		
-		return (type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
+		return (_type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
 	}
 	
 	function test_zipcode_ok (value) {
-		const state = formRef.current.state;
+		const { type, zipcode } = this.parent
 
-		if (state.values.type)
+		if (type)
 			return true;
 
-		if (!state.values.zipcode && !state.errors.zipcode)
-			return true;
+		if (zipcode) return true;
 
 		return !!value;
 	}
 
 	function test_zipcode (value) {
-		if (formRef.current.state.values.type === 'takeout')
+		if (this.parent.type === 'takeout')
 			return Yup.mixed().notRequired();
 
 		return Yup.mixed().required('Obrigatório').test('zipcode_test', 'CEP inválido', value=> /^([\d]{5})-?([\d]{3})$/.test(value) );
@@ -88,13 +86,13 @@ function Page (props) {
 		type: Yup.string().required('Obrigatório'),
 		payment_method: Yup.string().typeError('Obrigatório').required('Obrigatório'),
 
-		street: Yup.lazy(test_address('string')),
-		number: Yup.lazy(test_address('number')),
-		city: Yup.lazy(test_address('string')),
-		state: Yup.lazy(test_address('string')),
-		district: Yup.lazy(test_address('string')),
+		street: Yup.mixed().when('type', test_address('string')),
+		number: Yup.mixed().when('type', test_address('number')),
+		city: Yup.mixed().when('type', test_address('string')),
+		state: Yup.mixed().when('type', test_address('string')),
+		district: Yup.mixed().when('type', test_address('string')),
 
-		zipcode: Yup.lazy(test_zipcode),
+		zipcode: Yup.mixed().test({test: test_zipcode}),
 		zipcode_ok: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', test_zipcode_ok),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
@@ -104,14 +102,13 @@ function Page (props) {
 
 	return (
 		<Formik
-			ref={formRef}
 			validationSchema={productSchema}
 			initialValues={order}
 			onSubmit={onSubmit}
 			validateOnChange={false}
 			validateOnBlur={false}
 			component={PageForm}
-			/>
+		/>
 	)
 }
 
