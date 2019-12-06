@@ -60,7 +60,6 @@ function Page (props) {
 										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 										<TableCell>{row.name}</TableCell>
 										<TableCell>{numeral(row.revenue).format('$0,0.00')}</TableCell>
-										{/* <TableCell><CircleNumber>{row.orders_qty}</CircleNumber></TableCell> */}
 										<TableCell>{row.createdAt}</TableCell>
 										<TableCell>
 											<IconButton disabled={loading} onClick={()=>{props.history.push(`/filiais/alterar/${row.id}`)}}>

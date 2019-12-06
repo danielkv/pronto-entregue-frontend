@@ -42,7 +42,7 @@ export const GET_BRANCH_ORDERS_QTY = gql`
 	query OrdersQty($id: ID!, $filter:Filter) {
 		branch (id: $id) {
 			id
-			orders_qty (filter:$filter)
+			ordersCount (filter:$filter)
 		}
 	}
 `;

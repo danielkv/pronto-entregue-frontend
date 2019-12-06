@@ -1,17 +1,19 @@
 import React, { Fragment } from 'react';
+import { useQuery } from '@apollo/react-hooks';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core';
 
 import {getStatusIcon, setPageTitle} from '../../utils';
 import {Content, BlockTitle, CircleNumber, ProductImage, Loading} from '../../layout/components';
 import {OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer} from './styles';
+import { ErrorBlock } from '../../layout/blocks';
 
 import OrdersAwaiting from '../../assets/images/orders-awaiting.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
 import OrdersDelivering from '../../assets/images/orders-delivering.png';
 import OrdersDelivered from '../../assets/images/orders-delivered.png';
 import OrdersCanceled from '../../assets/images/orders-canceled.png';
+
 import { GET_BRANCH_ORDERS_QTY, GET_SELECTED_BRANCH, GET_BRANCH_BEST_SELLERS, GET_BRANCH_LAST_ORDERS } from '../../graphql/branches';
-import { useQuery } from '@apollo/react-hooks';
 
 function Page () {
 	setPageTitle('Dashboard');
@@ -28,47 +30,51 @@ function Page () {
 	const lastOrders = !loadingLastOrders && lastOrdersData ? lastOrdersData.branch.orders : [];
 	
 	//load order qtys
-	const {data:ordersWaitingData, loading:loadingOrdersWaiting, error} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'waiting', createdAt:'CURDATE'}}});
-	const {data:ordersPreparingData, loading:loadingOrdersPreparing} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'preparing', createdAt:'CURDATE'}}});
-	const {data:ordersDeliveryData, loading:loadingOrdersDelivery} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'delivery', createdAt:'CURDATE'}}});
-	const {data:ordersDeliveredData, loading:loadingOrdersDelivered} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'delivered', createdAt:'CURDATE'}}});
-	const {data:ordersCanceledData, loading:loadingOrdersCanceled} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'canceled', createdAt:'CURDATE'}}});
-
-	if (error) console.log(error);
+	const {data: ordersWaitingData, loading:loadingOrdersWaiting, error: waitingError} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'waiting', createdAt:'CURDATE'}}});
+	const {data: ordersPreparingData, loading:loadingOrdersPreparing, error: preparingError} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'preparing', createdAt:'CURDATE'}}});
+	const {data: ordersDeliveryData, loading:loadingOrdersDelivery, error: deliveryError} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'delivery', createdAt:'CURDATE'}}});
+	const {data: ordersDeliveredData, loading:loadingOrdersDelivered, error: deliveredError} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'delivered', createdAt:'CURDATE'}}});
+	const {data: ordersCanceledData, loading:loadingOrdersCanceled, error: canceledError} = useQuery(GET_BRANCH_ORDERS_QTY, {variables:{id:selectedBranch, filter:{status:'canceled', createdAt:'CURDATE'}}});
 
 	return (
 		<Fragment>
 			<Content>
 				<DashContainer>
 					<OrdersTodayContainer>
-						<BlockTitle>Pedidos de hoje</BlockTitle>
-						<OrdersToday>
-							<OrderStatus>
-								<img src={OrdersAwaiting} alt='Pedidos aguardando' />
-								{loadingOrdersWaiting ? <Loading /> : <h4>{ordersWaitingData.branch.orders_qty}</h4>}
-								<div>Pedidos aguardando</div>
-							</OrderStatus>
-							<OrderStatus>
-								<img src={OrdersPreparing} alt='Pedidos em preparo' />
-								{loadingOrdersPreparing ? <Loading /> : <h4>{ordersPreparingData.branch.orders_qty}</h4>}
-								<div>Pedidos em preparo</div>
-							</OrderStatus>
-							<OrderStatus>
-								<img src={OrdersDelivering} alt='Pedidos na entrega' />
-								{loadingOrdersDelivery ? <Loading /> : <h4>{ordersDeliveryData.branch.orders_qty}</h4>}
-								<div>Pedidos na entrega</div>
-							</OrderStatus>
-							<OrderStatus>
-								<img src={OrdersDelivered} alt='Pedidos entregues' />
-								{loadingOrdersDelivered ? <Loading /> : <h4>{ordersDeliveredData.branch.orders_qty}</h4>}
-								<div>Pedidos entregues</div>
-							</OrderStatus>
-							<OrderStatus>
-								<img src={OrdersCanceled} alt='Pedidos cancelados' />
-								{loadingOrdersCanceled ? <Loading /> : <h4>{ordersCanceledData.branch.orders_qty}</h4>}
-								<div>Pedidos cancelados</div>
-							</OrderStatus>
-						</OrdersToday>
+						{(waitingError || preparingError || deliveryError || deliveredError || canceledError)
+						? <ErrorBlock error={waitingError || preparingError || deliveryError || deliveredError || canceledError} />
+						: (
+							<>
+								<BlockTitle>Pedidos de hoje</BlockTitle>
+								<OrdersToday>
+									<OrderStatus>
+										<img src={OrdersAwaiting} alt='Pedidos aguardando' />
+										{loadingOrdersWaiting ? <Loading /> : <h4>{ordersWaitingData.branch.ordersCount}</h4>}
+										<div>Pedidos aguardando</div>
+									</OrderStatus>
+									<OrderStatus>
+										<img src={OrdersPreparing} alt='Pedidos em preparo' />
+										{loadingOrdersPreparing ? <Loading /> : <h4>{ordersPreparingData.branch.ordersCount}</h4>}
+										<div>Pedidos em preparo</div>
+									</OrderStatus>
+									<OrderStatus>
+										<img src={OrdersDelivering} alt='Pedidos na entrega' />
+										{loadingOrdersDelivery ? <Loading /> : <h4>{ordersDeliveryData.branch.ordersCount}</h4>}
+										<div>Pedidos na entrega</div>
+									</OrderStatus>
+									<OrderStatus>
+										<img src={OrdersDelivered} alt='Pedidos entregues' />
+										{loadingOrdersDelivered ? <Loading /> : <h4>{ordersDeliveredData.branch.ordersCount}</h4>}
+										<div>Pedidos entregues</div>
+									</OrderStatus>
+									<OrderStatus>
+										<img src={OrdersCanceled} alt='Pedidos cancelados' />
+										{loadingOrdersCanceled ? <Loading /> : <h4>{ordersCanceledData.branch.ordersCount}</h4>}
+										<div>Pedidos cancelados</div>
+									</OrderStatus>
+								</OrdersToday>
+							</>
+						)}
 					</OrdersTodayContainer>
 					<BestSellersContainer>
 						<BlockTitle>Mais vendidos hoje</BlockTitle>
