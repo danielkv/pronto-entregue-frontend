@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, { useRef, useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Icon from '@mdi/react';
 import {mdiDrag, mdiDelete, mdiInbox, mdiPencil, mdiBorderNoneVariant } from '@mdi/js'
