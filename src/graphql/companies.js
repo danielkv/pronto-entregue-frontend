@@ -25,6 +25,7 @@ export const GET_USER_COMPANIES = gql`
 	query GetCompanies ($id: ID!, $filter: Filter, $pagination: Pagination) {
 		user (id: $id) {
 			id
+			countCompanies(filter: $filter)
 			companies (filter: $filter, pagination: $pagination) {
 				id
 				name

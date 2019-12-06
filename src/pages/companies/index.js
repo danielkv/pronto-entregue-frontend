@@ -29,29 +29,43 @@ function Page (props) {
 	});
 
 	useEffect(()=>{
-		setPagination((pagination)=>({ ...pagination, page: 0 }));
-	}, [filter])
+		setPagination((pagination) => ({ ...pagination, page: 0 }));
+	}, [filter]);
+
+	const submitFilterForm = (e) => {
+		e.preventDefault();
+
+		setFilter({
+			...filter,
+			search: searchRef.current.value
+		})
+	}
+	const clearFilterForm = (e) => {
+		setFilter(initialFilter);
+	}
 
 	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
 	const {
-		data: { user: { companies = [] } = {} } = {},
-		loading: loadingCompaniesData,
-		error
+		data: { user: { countCompanies = 0, companies = [] } = {} } = {},
+		loading: loadingCompanies,
+		error,
+		called,
 	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId, filter, pagination } });
 
-	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY);
+	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY, { refetchQueries: [{ query: GET_USER_COMPANIES, variables: { id: loggedUserId, filter, pagination } }] });
 
 	if (error) return <ErrorBlock error={error} />
-	if (loadingCompaniesData) return (<LoadingBlock />);
+	if (loadingCompanies && !called) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
 			<Content>
+				{loadingCompanies ? <LoadingBlock /> :
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Empresas</BlockTitle>
 						<Button size='small' variant="contained" color='secondary' to='/empresas/novo' component={Link}>Adicionar</Button>{loading && <Loading />}
-						<NumberOfRows>{companies.length} empresas</NumberOfRows>
+						<NumberOfRows>{countCompanies} empresas</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table>
@@ -93,21 +107,21 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={companies.length}
 							backIconButtonProps={{
 								'aria-label': 'previous page',
 							}}
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
+							count={countCompanies}
 							rowsPerPage={pagination.rowsPerPage}
 							page={pagination.page}
 							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({...pagination, rowsPerPage: e.target.value });}}
+							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 					</Paper>
 					<NumberOfRows>{companies.length} empresas</NumberOfRows>
-				</Block>
+				</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -127,15 +141,14 @@ function Page (props) {
 						/>
 					</BlockHeader>
 					<Sidebar>
-						<form noValidate>
+						<form noValidate onSubmit={submitFilterForm}>
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
 										<TextField
 											label='Buscar'
-											onChange={(event)=>{}}
 											inputRef={searchRef}
-											/>
+										/>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
@@ -143,8 +156,8 @@ function Page (props) {
 								<FormRow>
 									<FieldControl>
 										<ButtonGroup fullWidth>
-											<Button color='primary'>Limpar</Button>
-											<Button variant="contained" color='primary'>Aplicar</Button>
+											<Button type='reset' onClick={clearFilterForm} color='primary'>Limpar</Button>
+											<Button type='submit' variant="contained" color='primary'>Aplicar</Button>
 										</ButtonGroup>
 									</FieldControl>
 								</FormRow>
