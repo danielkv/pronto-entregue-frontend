@@ -20,10 +20,11 @@ export const SEARCH_USERS = gql`
 `;
 
 export const GET_COMPANY_USERS = gql`
-	query GetUsers ($id:ID!, $filter: Filter) {
+	query GetUsers ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		company (id:$id) {
 			id
-			users (filter: $filter) {
+			countUsers (filter: $filter)
+			users (filter: $filter, pagination: $pagination) {
 				id
 				full_name
 				role
