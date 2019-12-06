@@ -49,27 +49,27 @@ function Page () {
 								<OrdersToday>
 									<OrderStatus>
 										<img src={OrdersAwaiting} alt='Pedidos aguardando' />
-										{loadingOrdersWaiting ? <Loading /> : <h4>{ordersWaitingData.branch.ordersCount}</h4>}
+										{loadingOrdersWaiting ? <Loading /> : <h4>{ordersWaitingData.branch.countOrders}</h4>}
 										<div>Pedidos aguardando</div>
 									</OrderStatus>
 									<OrderStatus>
 										<img src={OrdersPreparing} alt='Pedidos em preparo' />
-										{loadingOrdersPreparing ? <Loading /> : <h4>{ordersPreparingData.branch.ordersCount}</h4>}
+										{loadingOrdersPreparing ? <Loading /> : <h4>{ordersPreparingData.branch.countOrders}</h4>}
 										<div>Pedidos em preparo</div>
 									</OrderStatus>
 									<OrderStatus>
 										<img src={OrdersDelivering} alt='Pedidos na entrega' />
-										{loadingOrdersDelivery ? <Loading /> : <h4>{ordersDeliveryData.branch.ordersCount}</h4>}
+										{loadingOrdersDelivery ? <Loading /> : <h4>{ordersDeliveryData.branch.countOrders}</h4>}
 										<div>Pedidos na entrega</div>
 									</OrderStatus>
 									<OrderStatus>
 										<img src={OrdersDelivered} alt='Pedidos entregues' />
-										{loadingOrdersDelivered ? <Loading /> : <h4>{ordersDeliveredData.branch.ordersCount}</h4>}
+										{loadingOrdersDelivered ? <Loading /> : <h4>{ordersDeliveredData.branch.countOrders}</h4>}
 										<div>Pedidos entregues</div>
 									</OrderStatus>
 									<OrderStatus>
 										<img src={OrdersCanceled} alt='Pedidos cancelados' />
-										{loadingOrdersCanceled ? <Loading /> : <h4>{ordersCanceledData.branch.ordersCount}</h4>}
+										{loadingOrdersCanceled ? <Loading /> : <h4>{ordersCanceledData.branch.countOrders}</h4>}
 										<div>Pedidos cancelados</div>
 									</OrderStatus>
 								</OrdersToday>
