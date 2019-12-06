@@ -70,7 +70,7 @@ function Page (props) {
 					<BlockHeader>
 						<BlockTitle>Estoque</BlockTitle>
 						<Button size='small' variant="contained" color='secondary' to='/estoque/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
-						<NumberOfRows>{items.length} itens</NumberOfRows>
+						<NumberOfRows>{countItems} itens</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table>
@@ -121,7 +121,7 @@ function Page (props) {
 							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 					</Paper>
-					<NumberOfRows>{items.length} itens</NumberOfRows>
+					<NumberOfRows>{countItems} itens</NumberOfRows>
 				</Block>}
 			</Content>
 			<SidebarContainer>
