@@ -45,7 +45,7 @@ function Page (props) {
 
 	const {data: { selectedCompany }, loading:loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 	const { 
-		data: { company: { items: { count = 0, rows: items = [] } = {} } = {} } = {},
+		data: { company: { countItems = 0, items = [] } = {} } = {},
 		loading:loadingItems,
 		error,
 		called,
@@ -107,7 +107,7 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={count}
+							count={countItems}
 							
 							backIconButtonProps={{
 								'aria-label': 'previous page',
