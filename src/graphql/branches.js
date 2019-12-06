@@ -73,10 +73,11 @@ export const SELECT_BRANCH = gql`
 `;
 
 export const GET_COMPANY_BRANCHES = gql`
-	query Branches ($id:ID!, $filter: Filter) {
+	query Branches ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		company (id:$id) {
 			id
-			branches (filter: $filter) {
+			countBranches(filter: $filter)
+			branches (filter: $filter, pagination: $pagination) {
 				id
 				name
 				active
