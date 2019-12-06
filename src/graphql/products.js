@@ -91,10 +91,11 @@ export const CREATE_PRODUCT = gql`
 `;
 
 export const GET_BRANCHES_PRODUCTS = gql`
-	query GetProducts ($id:ID!, $filter:Filter) {
+	query GetProducts ($id:ID!, $filter:Filter, $pagination: Pagination) {
 		branch (id:$id) {
 			id
-			products (filter:$filter) {
+			countProducts(filter: $filter)
+			products(filter: $filter, pagination: $pagination) {
 				id
 				name
 				image

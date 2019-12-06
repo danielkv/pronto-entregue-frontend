@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, Fragment, useRef, useEffect} from 'react';
 import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup} from '@material-ui/core';
 import Icon from '@mdi/react';
 import {mdiPencil, mdiFilter} from '@mdi/js';
@@ -12,36 +12,66 @@ import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldC
 import { GET_SELECTED_BRANCH } from '../../graphql/branches';
 import { GET_BRANCHES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
+const initialFilter = {
+	showInactive: false,
+	search: '',
+}
+
 function Page (props) {
 	setPageTitle('Produtos');
 
-	const [showInactive, setShowInactive] = useState(false);
-	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(10);
+	const searchRef = useRef(null);
+	const [filter, setFilter] = useState(initialFilter);
+	const [pagination, setPagination] = useState({
+		page: 0,
+		rowsPerPage: 10,
+	});
+
+	useEffect(()=>{
+		setPagination((pagination) => ({ ...pagination, page: 0 }));
+	}, [filter]);
+
+	const submitFilterForm = (e) => {
+		e.preventDefault();
+
+		setFilter({
+			...filter,
+			search: searchRef.current.value
+		})
+	}
+	const clearFilterForm = (e) => {
+		setFilter(initialFilter);
+	}
 
 	const { data: { selectedBranch }, loading:loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
 
-	const {data:productsData, loading:loadingProductsData, error} = useQuery(GET_BRANCHES_PRODUCTS, {
+	const {
+		data: { branch: { countProducts = 0, products = [] } = {} } = {},
+		loading: loadingProducts,
+		error,
+		called,
+	} = useQuery(GET_BRANCHES_PRODUCTS, {
 		variables: {
 			id: selectedBranch,
-			filter: { showInactive }
+			filter,
+			pagination
 		} 
 	});
-	const products = productsData && productsData.branch.products.length ? productsData.branch.products : [];
 
 	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_PRODUCT);
 
 	if (error) return <ErrorBlock error={error} />
-	if (loadingProductsData || loadingSelectedData) return (<LoadingBlock />);
+	if ((loadingProducts && !called) || loadingSelectedData) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
 			<Content>
+				{loadingProducts ? <LoadingBlock /> :
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Produtos</BlockTitle>
 						<Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
-						<NumberOfRows>{products.length} produtos</NumberOfRows>
+						<NumberOfRows>{countProducts} produtos</NumberOfRows>
 					</BlockHeader>
 					<Paper>
 						<Table>
@@ -57,7 +87,7 @@ function Page (props) {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{products.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+								{products.map(row => (
 									<TableRow key={row.id}>
 										<TableCell style={{width:30, paddingLeft:30, paddingRight:10}}><ProductImage src={row.image} /></TableCell>
 										<TableCell>{row.name}</TableCell>
@@ -85,21 +115,21 @@ function Page (props) {
 						</Table>
 						<TablePagination
 							component="div"
-							count={products.length}
-							rowsPerPage={rowsPerPage}
-							page={page}
 							backIconButtonProps={{
 								'aria-label': 'previous page',
 							}}
 							nextIconButtonProps={{
 								'aria-label': 'next page',
 							}}
-							onChangePage={(e, newPage)=>{setPage(newPage)}}
-							onChangeRowsPerPage={(e)=>{setRowsPerPage(e.target.value); setPage(0);}}
-							/>
+							count={countProducts}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
+						/>
 					</Paper>
-					<NumberOfRows>{products.length} produtos</NumberOfRows>
-				</Block>
+					<NumberOfRows>{countProducts} produtos</NumberOfRows>
+				</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -107,20 +137,26 @@ function Page (props) {
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
-								<Switch size='small' color='primary' checked={showInactive} onChange={()=>{setShowInactive(!showInactive)}} value="includeDisabled" />
+								<Switch
+									size='small'
+									color='primary'
+									checked={filter.showInactive}
+									onChange={()=>setFilter({ ...filter, showInactive: !filter.showInactive })}
+									value={filter.showInactive}
+								/>
 							}
 							label="Incluir inativos"
 						/>
 					</BlockHeader>
 					<Sidebar>
-						<form noValidate>
+						<form noValidate onSubmit={submitFilterForm}>
 							<BlockSeparator>
 								<FormRow>
 									<FieldControl>
 										<TextField
 											label='Buscar'
-											onChange={(event)=>{}}
-											/>
+											inputRef={searchRef}
+										/>
 									</FieldControl>
 								</FormRow>
 								<FormRow>
@@ -134,7 +170,6 @@ function Page (props) {
 											<MenuItem value='2'>Lanches</MenuItem>
 											<MenuItem value='3'>Porções</MenuItem>
 										</TextField> */}
-
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
@@ -173,8 +208,8 @@ function Page (props) {
 								<FormRow>
 									<FieldControl>
 										<ButtonGroup fullWidth>
-											<Button color='primary'>Limpar</Button>
-											<Button variant="contained" color='primary'>Aplicar</Button>
+											<Button type='reset' onClick={clearFilterForm} color='primary'>Limpar</Button>
+											<Button variant="contained" type='submit' color='primary'>Aplicar</Button>
 										</ButtonGroup>
 									</FieldControl>
 								</FormRow>
