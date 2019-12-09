@@ -3,7 +3,7 @@ import { ApolloLink, from } from 'apollo-link'
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { createUploadLink } from 'apollo-upload-client';
 import resolvers from '../resolvers';
-import {GET_USER_TOKEN, IS_USER_LOGGED_IN} from '../graphql/authentication';
+import { GET_USER_TOKEN, IS_USER_LOGGED_IN } from '../graphql/authentication';
 import { GET_SELECTED_COMPANY } from "../graphql/companies";
 import { GET_SELECTED_BRANCH } from "../graphql/branches";
 
