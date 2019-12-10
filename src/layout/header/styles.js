@@ -22,7 +22,7 @@ export const SelectContainer = styled.div`
 	align-items:center;
 	margin-right:30px;
 	& > svg {
-		margin-right:8px;
+		margin-right: 8px;
 	}
 `;
 
@@ -31,9 +31,7 @@ export const RightSide = styled.div`
 	align-items:center;
 	margin-right:35px;
 	margin-left:auto;
-	& svg {
-		margin-right:8px;
-	}
+	
 `;
 
 export const LoggedUser = styled.div`
@@ -41,4 +39,7 @@ export const LoggedUser = styled.div`
 	align-items:center;
 	margin-right:15px;
 	color:#999;
+	& > svg {
+		margin-right:8px;
+	}
 `;

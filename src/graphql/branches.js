@@ -1,10 +1,10 @@
 import gql from "graphql-tag";
 
 export const GET_BRANCH_LAST_ORDERS = gql`
-	query GetLastOrders ($id:ID!, $limit:Int!, $filter:Filter) {
+	query GetLastOrders ($id:ID!, $filter:Filter, $pagination: Pagination) {
 		branch(id: $id) {
 			id
-			orders (limit: $limit, filter:$filter) {
+			orders (filter: $filter, pagination: $pagination) {
 				id
 				user {
 					id
@@ -24,10 +24,10 @@ export const GET_BRANCH_LAST_ORDERS = gql`
 `;
 
 export const GET_BRANCH_BEST_SELLERS = gql`
-	query BestSellers($id:ID!, $limit:Int!, $createdAt:String) {
+	query BestSellers ($id:ID!, $filter:Filter, $pagination: Pagination) {
 		branch(id: $id) {
 			id
-			best_sellers(limit: $limit, createdAt:$createdAt) {
+			best_sellers (filter: $filter, pagination: $pagination) {
 				id
 				name
 				image

@@ -18,15 +18,18 @@ import { GET_BRANCH_ORDERS_QTY, GET_SELECTED_BRANCH, GET_BRANCH_BEST_SELLERS, GE
 function Page () {
 	setPageTitle('Dashboard');
 
+	const filter = { createdAt: 'curdate' };
+	const pagination = { page: 0, rowsPerPage: 4 };
+
 	//get selected branch
 	const {data: { selectedBranch }} = useQuery(GET_SELECTED_BRANCH);
 
 	//get branch best sellers
-	const {data:bestSellersData, loading:loadingBestSellers} = useQuery(GET_BRANCH_BEST_SELLERS, {variables:{id:selectedBranch, limit:4, createdAt:'curdate'}});
+	const {data: bestSellersData, loading:loadingBestSellers} = useQuery(GET_BRANCH_BEST_SELLERS, {variables:{id:selectedBranch, pagination, filter } });
 	const bestSellers = !loadingBestSellers && bestSellersData ? bestSellersData.branch.best_sellers : [];
 	
 	//get branch last orders
-	const {data:lastOrdersData, loading:loadingLastOrders} = useQuery(GET_BRANCH_LAST_ORDERS, {variables:{id:selectedBranch, limit:4}});
+	const {data: lastOrdersData, loading:loadingLastOrders} = useQuery(GET_BRANCH_LAST_ORDERS, { variables: { id: selectedBranch, pagination } });
 	const lastOrders = !loadingLastOrders && lastOrdersData ? lastOrdersData.branch.orders : [];
 	
 	//load order qtys

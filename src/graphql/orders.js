@@ -142,3 +142,16 @@ export  const GET_BANCH_ORDERS = gql`
 		}
 	}
 `;
+
+export const SUBSCRIBE_ORDER_CREATED = gql`
+	subscription ($branch_id: ID!) {
+		orderCreated(branch_id: $branch_id) {
+			id
+			user {
+				id
+				first_name
+				last_name
+			}
+		}
+	}
+`;

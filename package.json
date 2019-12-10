@@ -18,6 +18,7 @@
     "apollo-client": "^2.6.4",
     "apollo-link-context": "^1.0.19",
     "apollo-link-http": "^1.5.16",
+    "apollo-link-ws": "^1.0.19",
     "apollo-upload-client": "^11.0.0",
     "dotenv": "^8.2.0",
     "downshift": "^3.3.4",
@@ -39,6 +40,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.2.0",
     "styled-components": "^4.3.2",
+    "subscriptions-transport-ws": "^0.9.16",
     "yup": "^0.27.0"
   },
   "scripts": {

@@ -1,6 +1,8 @@
 import { ApolloClient } from "apollo-client";
-import { ApolloLink, from } from 'apollo-link'
+import { ApolloLink, split, from } from 'apollo-link'
+import { WebSocketLink } from 'apollo-link-ws';
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { getMainDefinition } from 'apollo-utilities';
 import { createUploadLink } from 'apollo-upload-client';
 import resolvers from '../resolvers';
 import { GET_USER_TOKEN, IS_USER_LOGGED_IN } from '../graphql/authentication';
@@ -12,6 +14,13 @@ const host = process.env.NODE_ENV === 'development' ? 'http://localhost:4000/gra
 const cache = new InMemoryCache({});
 
 const uploadLink = createUploadLink({ uri: host });
+
+const wsLink = new WebSocketLink({
+	uri: `ws://localhost:4000/graphql`,
+	options: {
+	  reconnect: true
+	}
+});
 
 const initialData = {
 	loggedUserId: null,
@@ -49,7 +58,17 @@ const authLink = new ApolloLink((operation, forward)=> {
 
 const client = new ApolloClient({
 	cache,
-	link : from([authLink, uploadLink]),
+	link : split(
+		({ query }) => {
+			const definition = getMainDefinition(query);
+			return (
+			  definition.kind === 'OperationDefinition' &&
+			  definition.operation === 'subscription'
+			);
+		},
+		wsLink,
+		from([authLink, uploadLink])
+	),
 	resolvers,
 	defaultOptions: {
 		watchQuery: {

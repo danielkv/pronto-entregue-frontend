@@ -5,10 +5,11 @@ import { mdiStore, mdiSourceBranch, mdiLogout, mdiAccountCircle } from '@mdi/js'
 import {useQuery, useMutation} from '@apollo/react-hooks';
 import {useHistory} from 'react-router-dom';
 
-import {Loading} from '../components';
+import { Loading } from '../components';
 import { logUserOut } from '../../services/init';
-import {HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser} from './styles';
+import { HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser } from './styles';
 import mainLogo from '../../assets/images/logo.png';
+import Notification from '../notification';
 
 import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SELECT_COMPANY} from '../../graphql/companies';
 import { GET_SELECTED_BRANCH, SELECT_BRANCH, GET_COMPANY_BRANCHES} from '../../graphql/branches';
@@ -18,7 +19,7 @@ export default function Header () {
 	const history = useHistory();
 	
 	const { data: { loggedUserId }} = useQuery(LOGGED_USER_ID);
-	const {data: { user = {} } = {}, loading:loadingLoggedUser} = useQuery(GET_USER, { variables: { id: loggedUserId } });
+	const { data: { user = {} } = {}, loading: loadingLoggedUser} = useQuery(GET_USER, { variables: { id: loggedUserId } });
 
 	const {
 		data: { user: { companies = [] } = {} } = {},
@@ -91,6 +92,7 @@ export default function Header () {
 			</Fragment>}
 			{loadingLoggedUser || !user ? <Loading /> :
 			<RightSide>
+				<Notification />
 				<LoggedUser>
 					<Icon path={mdiAccountCircle} color='#999' size='24' />
 					<span>{user.full_name} <small>({user.email})</small></span>
