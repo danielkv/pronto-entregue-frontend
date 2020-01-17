@@ -13,8 +13,8 @@ import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle, getStatusIcon } from '../../utils';
 import { OrderCreated, OrderDate, OrderTime } from './styles';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/branches';
-import { GET_BANCH_ORDERS } from '../../graphql/orders';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_COMPANY_ORDERS } from '../../graphql/orders';
 
 const initialFilter = {
 	search: '',
@@ -46,10 +46,13 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 
-	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
-	const { data: { branch: { countOrders = 0, orders = [] } = {} } = {}, loading: loadingOrders, error, called } = useQuery(GET_BANCH_ORDERS, {
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const {
+		data: { company: { countOrders = 0, orders = [] } = {} } = {},
+		loading: loadingOrders, error, called
+	} = useQuery(GET_COMPANY_ORDERS, {
 		variables: {
-			id: selectedBranch,
+			id: selectedCompany,
 			filter,
 			pagination,
 		}

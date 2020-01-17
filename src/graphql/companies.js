@@ -79,12 +79,8 @@ export const GET_SELECTED_COMPANY = gql`
  * Seleciona empresa
  */
 
-export const SELECT_COMPANY = gql`
+export const SET_SELECTED_COMPANY = gql`
 	mutation SetSelectedCompany($id:ID!) {
-		selectCompany (id:$id) @client {
-			id
-			name
-			display_name
-		}
+		setSelectCompany (id: $id) @client
 	}
 `;

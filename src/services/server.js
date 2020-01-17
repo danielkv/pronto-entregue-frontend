@@ -30,7 +30,6 @@ const initialData = {
 	isUserLoggedIn: false,
 	userToken: null,
 	selectedCompany: localStorage.getItem('@flakery/selectedCompany') || '',
-	selectedBranch: localStorage.getItem('@flakery/selectedBranch') || '',
 }
 
 cache.writeData({ data: initialData });

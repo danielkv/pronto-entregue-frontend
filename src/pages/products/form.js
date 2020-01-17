@@ -9,8 +9,6 @@ import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram } from '@mdi/
 import Icon from '@mdi/react';
 import Downshift from "downshift";
 import { FieldArray, Form, Field, ErrorMessage } from 'formik';
-import gql from 'graphql-tag';
-
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading } from '../../layout/components';
 
@@ -18,60 +16,14 @@ import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
 import { createEmptyOptionsGroup } from '../../utils';
 import OptionsGroups from './optionsGroups';
 
-import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
-import { LOAD_OPTION_GROUP } from '../../graphql/products';
-
-const GET_COMPANY_ITEMS = gql`
-	query ($id:ID!) {
-		company (id:$id) {
-			id
-			items {
-				id
-				name
-			}
-		}
-	}
-`;
-
-const SEARCH_OPTIONS_GROUPS = gql`
-	query ($search:String!) {
-		searchOptionsGroups(search: $search) {
-			id
-			name
-			options_qty
-			product {
-				id
-				name
-				category {
-					id
-					name
-					branch {
-						id
-						name
-					}
-				}
-			}
-		}
-	}
-`;
+import { GET_CATEGORIES } from '../../graphql/categories';
+import { LOAD_OPTION_GROUP, SEARCH_OPTIONS_GROUPS } from '../../graphql/products';
 
 export default function PageForm ({ values: { active, featured, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isSubmitting, errors }) {
-	console.log('product')
-
 	const [loadingCopy, setLoadingCopy] = useState(false);
 	const [dragAlertOpen, setDragAlertOpen] = useState(false);
 	
-	const { data: selectedBranchData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
-	const { data: categoriesData, loading: loadingcategoriesData } = useQuery(GET_COMPANY_CATEGORIES, { variables: { id: selectedBranchData.selectedBranch } });
-
-	const { data: selectedCompanyData, loading: loadingSelectedCompany } = useQuery(GET_SELECTED_COMPANY);
-	const { data: itemsData, loading: loadingItems } = useQuery(GET_COMPANY_ITEMS, { variables: { id: selectedCompanyData.selectedCompany } });
-	let items = [];
-	if (itemsData) {
-		items = itemsData.company.items;
-		if (!items.length || items[0].id !== 'none') items.unshift({ id: 'none', name: 'Sem vínculo' })
-	}
+	const { data: { categories = [] } = {}, loading: loadingcategories } = useQuery(GET_CATEGORIES);
 
 	const [searchOptionsGroups, { data: groupsData, loading: loadingGroups }] = useLazyQuery(SEARCH_OPTIONS_GROUPS, { fetchPolicy: 'no-cache' });
 	const groups = groupsData ? groupsData.searchOptionsGroups : [];
@@ -165,7 +117,7 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 
 	const handleChangeCallback = useCallback(handleChange, []);
 
-	if (loadingSelectedCompany || loadingItems || loadingcategoriesData || loadingSelectedData) return <LoadingBlock />;
+	if (loadingcategories) return <LoadingBlock />;
 	
 	return (
 		<Form>
@@ -219,7 +171,7 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 							</FieldControl>
 							<FieldControl>
 								<TextField select value={category.id} label='Categoria' name='category.id' onChange={handleChange}>
-									{categoriesData && categoriesData.branch.categories.map(categoryItem=>(
+									{!!categories.length && categories.map(categoryItem=>(
 										<MenuItem key={categoryItem.id} value={categoryItem.id}>{categoryItem.name}</MenuItem>
 									))}
 								</TextField>
@@ -271,16 +223,16 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 																		<List {...getMenuProps()} className="dropdown">
 																			{loadingGroups && <div style={{ padding: 20 }}><Loading /></div>}
 																		
-																			{groups.map((item, index) => {
-																				let icon = item.action && item.action === 'create' ? mdiPlus : mdiBasket;
-																				let text = item.action && item.action === 'create' ? inputValue : <span>{`${item.name} `}<small>{`(${item.options_qty})`}</small></span>;
-																				let secondary = item.action && item.action === 'create' ? 'criar novo grupo' : `copiar de ${item.product.name} em ${item.product.category.branch.name}`;
+																			{groups.map((group, index) => {
+																				let icon = group.action && group.action === 'create' ? mdiPlus : mdiBasket;
+																				let text = group.action && group.action === 'create' ? inputValue : <span>{`${group.name} `}<small>{`(${group.options_qty})`}</small></span>;
+																				let secondary = group.action && group.action === 'create' ? 'criar novo grupo' : `copiar de ${group.product.name}`;
 
 																				return (<ListItem
 																					className="dropdown-item"
 																					selected={highlightedIndex === index}
-																					key={item.id}
-																					{...getItemProps({ key: item.id, index, item })}
+																					key={group.id}
+																					{...getItemProps({ key: group.id, index, group })}
 																				>
 																					<ListItemIcon><Icon path={icon} color='#707070' size='22' /></ListItemIcon>
 																					<ListItemText>{text}</ListItemText>
@@ -314,7 +266,6 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 																/* insertGroup:insert,
 																removeGroup:remove, */
 																isSubmitting,
-																items,
 
 																setFieldValue,
 																handleChangeCallback,

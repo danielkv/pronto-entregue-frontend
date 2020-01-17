@@ -1,29 +1,16 @@
 import React, { useState, Fragment } from 'react';
 
-import { useQuery } from '@apollo/react-hooks';
 import { Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid, FormLabel } from '@material-ui/core';
-import { mdiSourceBranch, mdiMapMarker, mdiCloseCircle, mdiPlusCircle, mdiDelete } from '@mdi/js'
+import { mdiMapMarker, mdiPlusCircle, mdiDelete } from '@mdi/js'
 import Icon from '@mdi/react';
 import { Formik, FieldArray, Form, Field } from 'formik';
-import gql from 'graphql-tag';
 import * as Yup from 'yup';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
-import { LoadingBlock } from '../../layout/blocks';
 import { metaModel } from '../../utils';
 
-const GET_ROLES = gql`
-	query  {
-		roles {
-			id
-			name
-			display_name
-		}
-	}
-`;
-
-export default function PageForm ({ initialValues, onSubmit, pageTitle, validateOnChange, edit, selectedBranch, assignBranch }) {
+export default function PageForm ({ initialValues, onSubmit, pageTitle, validateOnChange, edit }) {
 
 	const userSchema = Yup.object().shape({
 		firstName: Yup.string().required('Obrigatório'),
@@ -33,15 +20,6 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 			if (forcePassword)
 				return Yup.string().required('Obrigatório');
 			return Yup.string().notRequired();
-		}),
-		assignedBranches: Yup.lazy(value => {
-			if (Array.isArray(value))
-				return Yup.array().of(Yup.object().shape({
-					userRelation: Yup.object().shape({
-						roleId: Yup.string().required('Obrigatório')
-					})
-				}));
-			return Yup.mixed().notRequired();
 		}),
 		document: Yup.object().shape({
 			value: Yup.string().required('Obrigatório')
@@ -53,10 +31,6 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 
 	const [forcePassword, setForcePassword] = useState(false);
 
-	const { data: rolesData, loading: loadingRoles } = useQuery(GET_ROLES);
-
-	if (loadingRoles) return <LoadingBlock />
-
 	return (
 		<Formik
 			validationSchema={userSchema}
@@ -65,7 +39,7 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({ values: { active, phones, role, assignedBranches, assignedCompany, addresses }, errors, setFieldValue, handleChange, isSubmitting }) => {
+			{({ values: { active, phones, role, assignedCompany, addresses }, setFieldValue, handleChange, isSubmitting }) => {
 				return (
 					<Form>
 						<Content>
@@ -153,83 +127,6 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 										</FieldArray>
 									</BlockSeparator>
 								</Paper>
-							</Block>
-							<Block>
-								<BlockHeader>
-									<BlockTitle>Filiais vinculadas</BlockTitle>
-								</BlockHeader>
-								<FieldArray name='assignedBranches'>
-									{({ insert, remove }) => (
-										<Paper>
-											<BlockSeparator>
-												<Table>
-													<TableHead>
-														<TableRow>
-															<TableCell style={{ width: 30 }}></TableCell>
-															<TableCell>Filial</TableCell>
-															<TableCell style={{ width: 200 }}>Função</TableCell>
-															<TableCell style={{ width: 100 }}>Ações</TableCell>
-														</TableRow>
-													</TableHead>
-													<TableBody>
-														{assignedBranches.filter((row)=>row.action !== 'unassign').map((branch, index) => {
-															return (
-																<TableRow key={branch.id}>
-																	<TableCell><Icon path={mdiSourceBranch} color='#BCBCBC' size='18' /></TableCell>
-																	<TableCell>{branch.name}</TableCell>
-																	<TableCell>
-																		<TextField select disabled={isSubmitting}
-																			error={!!errors.assignedBranches && !!errors.assignedBranches[index] && !!errors.assignedBranches[index].userRelation.roleId}
-																			helperText={errors.assignedBranches && !!errors.assignedBranches[index] ? errors.assignedBranches[index].userRelation.roleId : ''}
-																			value={branch.userRelation.roleId}
-																			name={`assignedBranches.${index}.userRelation.roleId`}
-																			onChange={(e)=>{
-																				handleChange(e);
-																				if (branch.action === '') setFieldValue(`assignedBranches.${index}.action`, 'update');
-																			}}
-																		>
-																			{rolesData.roles.map(role=>
-																				<MenuItem key={role.id} value={role.id}>{role.display_name}</MenuItem>
-																			)}
-																		</TextField>
-																	</TableCell>
-																	<TableCell>
-																		<Switch
-																			checked={branch.userRelation.active}
-																			disabled={isSubmitting}
-																			onChange={()=>{
-																				setFieldValue(`assignedBranches.${index}.userRelation.active`, !branch.userRelation.active);
-																				if (branch.action === '') setFieldValue(`assignedBranches.${index}.action`, 'update');
-																			}}
-																			size='small'
-																		/>
-																		<IconButton
-																			disabled={isSubmitting}
-																			onClick={()=>{
-																				if (branch.action === '')
-																					setFieldValue(`assignedBranches.${index}.action`, 'unassign');
-																				else
-																					remove(index);
-																			}}
-																		>
-																			<Icon path={mdiCloseCircle} color='#BCBCBC' size='18' />
-																		</IconButton>
-																	</TableCell>
-																</TableRow>)
-														})}
-													</TableBody>
-												</Table>
-											</BlockSeparator>
-											{!assignedBranches.some(branch=> branch.id === selectedBranch) &&
-								<BlockSeparator>
-									<FormRow>
-										<FieldControl>
-											<Button disabled={isSubmitting} onClick={()=>{insert(assignedBranches.length, assignBranch)}} variant='contained'>Vincular filial selecionada</Button>
-										</FieldControl>
-									</FormRow>
-								</BlockSeparator>}
-										</Paper>)}
-								</FieldArray>
 							</Block>
 							{!!edit &&
 						<Block>

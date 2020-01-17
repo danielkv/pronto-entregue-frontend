@@ -28,14 +28,6 @@ const LOAD_USER = gql`
 				userRelation {
 					active
 				}
-				assigned_branches {
-					id
-					name
-					userRelation {
-						active
-						roleId
-					}
-				}
 			}
 			metas {
 				id
@@ -43,15 +35,6 @@ const LOAD_USER = gql`
 				value
 				action @client
 			}
-		}
-	}
-`;
-
-const LOAD_USER_COMPANY = gql`
-	query ($id: ID!) {
-		branch (id: $id) {
-			id
-			name
 		}
 	}
 `;
@@ -66,12 +49,12 @@ function Page (props) {
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
 	//busca usuário para edição
-	const { data: selectedCompanyData, loading: loadingSelectedCompany } = useQuery(GET_SELECTED_COMPANY);
+	const { data: selectedCompanyData } = useQuery(GET_SELECTED_COMPANY);
 	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompanyData.selectedCompany } });
 
 	//busca filial selecionada para ser vincular
-	const { data: selectedBranchData, loading: loadingSelectedBranch } = useQuery(GET_SELECTED_COMPANY);
-	const { data: userBranchData, loading: loadingUserBranch } = useQuery(LOAD_USER_COMPANY, { variables: { id: selectedBranchData.selectedBranch } });
+	/* const { data: { selectedCompany }, loading: loadingselectedCompany } = useQuery(GET_SELECTED_COMPANY);
+	const { data: userBranchData, loading: loadingUserBranch } = useQuery(LOAD_USER_COMPANY, { variables: { id: selectedCompany } });
 	
 	//normaliza filial para ser vinculada
 	const assignBranch = userBranchData ? userBranchData.branch : '';
@@ -79,12 +62,12 @@ function Page (props) {
 		delete assignBranch.__typename;
 		assignBranch.action = 'assign';
 		assignBranch.userRelation = { roleId: '', active: true };
-	}
+	} */
 
 	const client = useApolloClient();
 
 	if (errorGetData) return <ErrorBlock error={errorGetData} />
-	if (!data || loadingGetData || loadingSelectedCompany || loadingSelectedBranch || loadingUserBranch) return (<LoadingBlock />);
+	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const metas = ['document', 'addresses', 'phones'];
 	const user = {
@@ -149,8 +132,8 @@ function Page (props) {
 				pageTitle='Alterar usuário'
 				initialValues={user}
 				onSubmit={onSubmit}
-				selectedBranch={selectedBranchData.selectedBranch}
-				assignBranch={assignBranch}
+				selectedCompany={selectedCompanyData.selectedCompany}
+				// assignBranch={assignBranch}
 				edit={true}
 			/>
 		</Fragment>

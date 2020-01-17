@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import { setPageTitle, sanitizeProductData } from '../../utils';
 import PageForm from './form';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/branches';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { CREATE_PRODUCT, GET_COMPANYES_PRODUCTS } from '../../graphql/products';
 
 const FILE_SIZE = 500 * 1024;
@@ -31,8 +31,8 @@ function Page (props) {
 	setPageTitle('Novo produto');
 
 	const client = useApolloClient();
-	const { selectedBranch } = client.readQuery({ query: GET_SELECTED_COMPANY });
-	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANYES_PRODUCTS, variables: { id: selectedBranch } }] });
+	const { selectedCompany } = client.readQuery({ query: GET_SELECTED_COMPANY });
+	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANYES_PRODUCTS, variables: { id: selectedCompany } }] });
 
 	const initialValues = {
 		name: '',

@@ -12,25 +12,27 @@ import { FormRow, FieldControl, tField, Loading } from '../../layout/components'
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/branches';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/delivery_areas';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
 
-	//Query load delivery_areas
-	const { data: selectedBranchData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
-	const { data: deliveryAreasData, loading: loadingDeliveryAreas } = useQuery(GET_COMPANY_DELIVERY_AREAS, { variables: { id: selectedBranchData.selectedBranch } });
+	// query load delivery_areas
+	const { data: selectedCompanyData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const {
+		data: { company: { deliveryAreas: deliveryAreasInitial = [] } = {} } = {},
+		loading: loadingDeliveryAreas
+	} = useQuery(GET_COMPANY_DELIVERY_AREAS, { variables: { id: selectedCompanyData.selectedCompany } });
 
-	//Remove delivery_area
-	const [removeDeliveryArea, { loading: loadingRemoveDeliveryArea }] = useMutation(REMOVE_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedBranchData.selectedBranch } }] })
+	// remove delivery_area
+	const [removeDeliveryArea, { loading: loadingRemoveDeliveryArea }] = useMutation(REMOVE_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompanyData.selectedCompany } }] })
 
-	//Mutate delivery_area
-	const [modifyDeliveryAreas, { loading: loadingModifyDeliveryAreas }] = useMutation(MODIFY_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedBranchData.selectedBranch } }] })
+	// mutate delivery_area
+	const [modifyDeliveryAreas, { loading: loadingModifyDeliveryAreas }] = useMutation(MODIFY_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompanyData.selectedCompany } }] })
 	
-	//still loading displays loading
-	if (loadingSelectedData || loadingDeliveryAreas || !deliveryAreasData) return <LoadingBlock />;
-	const deliveryAreasInitial = deliveryAreasData.branch.deliveryAreas;
+	// still loading displays loading
+	if (loadingSelectedData || loadingDeliveryAreas) return <LoadingBlock />;
 
 	//form schema
 	const areasSchema = Yup.object().shape({

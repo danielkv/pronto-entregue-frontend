@@ -1,5 +1,17 @@
 import gql from "graphql-tag";
 
+export const CREATE_USER = gql`
+	mutation ($data:UserInput!) {
+		createUser (data:$data) {
+			id
+			full_name
+			role
+			createdAt
+			active
+		}
+	}
+`;
+
 export const SEARCH_USERS = gql`
 	query SearchUsers ($search:String!) {
 		searchCompanyUsers(search:$search) {

@@ -7,7 +7,7 @@ import gql from "graphql-tag";
 import client from './server';
 
 import { IS_USER_LOGGED_IN, AUTHENTICATE, LOGGED_USER_ID } from '../graphql/authentication';
-import { SELECT_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../graphql/companies';
+import { SET_SELECTED_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../graphql/companies';
 
 
 export function useInitialize() {
@@ -80,7 +80,7 @@ export function logUserIn (user, token) {
 export function logUserOut () {
 	localStorage.removeItem('@flakery/userToken');
 	localStorage.removeItem('@flakery/selectedCompany');
-	localStorage.removeItem('@flakery/selectedBranch');
+	localStorage.removeItem('@flakery/selectedCompany');
 	client.writeData({ data: { userToken: null, loadingInit: true, isUserLoggedIn: false } });
 	client.resetStore();
 }
@@ -92,7 +92,7 @@ function loadInitialData() {
 			const { selectedCompany } = client.readQuery({ query: GET_SELECTED_COMPANY });
 			const selectCompanyId = selectedCompany || companies[0].id;
 
-			await client.mutate({ mutation: SELECT_COMPANY, variables: { id: selectCompanyId } });
+			await client.mutate({ mutation: SET_SELECTED_COMPANY, variables: { id: selectCompanyId } });
 
 			return true;
 		});

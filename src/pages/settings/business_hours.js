@@ -11,22 +11,23 @@ import { tField, FormRow, FieldControl, Loading } from '../../layout/components'
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/branches';
 import { LOAD_BUSINESS_HOURS, UPDATE_BUSINESS_HOURS } from '../../graphql/business_hours';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 
 function Page () {
 	setPageTitle('Configurações - Horário de atendimento');
 
 	//Carrega horas de trabalho
-	const { data: selectedBranchData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
-	const { data: businessHoursData, loading: loadingBusinessHours } = useQuery(LOAD_BUSINESS_HOURS, { variables: { id: selectedBranchData.selectedBranch } });
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const {
+		data: { company: { businessHours = [] } = {} } = {},
+		loading: loadingBusinessHours
+	} = useQuery(LOAD_BUSINESS_HOURS, { variables: { id: selectedCompany } });
 
-	//Mutate business_hour
+	// mutate business_hour
 	const [updateBusinessHours, { loading: loadingUpdateBusinessHours }] = useMutation(UPDATE_BUSINESS_HOURS, {
-		refetchQueries: [{ query: LOAD_BUSINESS_HOURS,variables: { id: selectedBranchData.selectedBranch } }]
+		refetchQueries: [{ query: LOAD_BUSINESS_HOURS, variables: { id: selectedCompany } }]
 	});
-
-	if (loadingSelectedData || loadingBusinessHours || !businessHoursData) return <LoadingBlock />;
 
 	const onSubmit = ({ businessHours }) => {
 		const dataSave = businessHours.map(day=>{
@@ -39,9 +40,9 @@ function Page () {
 		})
 		return updateBusinessHours({ variables: { data: dataSave } });
 	}
-
-	const businessHours = businessHoursData.branch.businessHours || [];
 	
+	if (loadingSelectedData || loadingBusinessHours) return <LoadingBlock />;
+
 	return (
 		<Paper>
 			<Formik

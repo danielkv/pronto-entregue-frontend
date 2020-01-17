@@ -11,8 +11,9 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, Field
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/branches';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANYES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
 const initialFilter = {
@@ -46,16 +47,16 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 
-	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 
 	const {
-		data: { branch: { countProducts = 0, products = [] } = {} } = {},
+		data: { company: { countProducts = 0, products = [] } = {} } = {},
 		loading: loadingProducts,
-		error,
+		error: productsError,
 		called,
 	} = useQuery(GET_COMPANYES_PRODUCTS, {
 		variables: {
-			id: selectedBranch,
+			id: selectedCompany,
 			filter,
 			pagination
 		}
@@ -63,7 +64,7 @@ function Page (props) {
 
 	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_PRODUCT);
 
-	if (error) return <ErrorBlock error={error} />
+	if (productsError) return <ErrorBlock error={getErrors(productsError)} />
 	if ((loadingProducts && !called) || loadingSelectedData) return (<LoadingBlock />);
 
 	return (

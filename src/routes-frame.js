@@ -8,9 +8,6 @@ import { Container, HeaderArea, NavigationArea, Main } from './layout/components
 import Header from './layout/header';
 import Navigation from './layout/navigation';
 import theme from './layout/theme';
-import Branches from './pages/branches';
-import EditBranch from './pages/branches/edit_branch';
-import NewBranch from './pages/branches/new_branch';
 import Categories from './pages/categories';
 import EditCategory from './pages/categories/edit_category';
 import NewCategory from './pages/categories/new_category';
@@ -51,10 +48,6 @@ export default function Layout () {
 						<Route exact path='/empresas' component={Companies} />
 						<Route path='/empresas/novo' component={NewCompany} />
 						<Route path='/empresas/alterar/:id' component={EditCompany} />
-						
-						<Route exact path='/filiais' component={Branches} />
-						<Route path='/filiais/novo' component={NewBranch} />
-						<Route path='/filiais/alterar/:id' component={EditBranch} />
 
 						<Route exact path='/estoque' component={Storage} />
 						<Route path='/estoque/novo' component={NewItem} />

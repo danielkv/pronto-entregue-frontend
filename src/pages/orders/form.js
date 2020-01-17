@@ -19,7 +19,7 @@ import { SEARCH_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { SEARCH_USERS } from '../../graphql/users';
 
 export default function PageForm ({ values, setValues, setFieldValue, handleChange, isSubmitting, errors }) {
-	//carregamento inicial
+	// carregamento inicial
 	const { user, type, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
 	const { zipcode } = values;
 	const client = useApolloClient();
@@ -28,20 +28,23 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 	const [loadingProduct, setLoadingProduct] = useState(false);
 	const [loadingdeliveryPrice, setLoadingdeliveryPrice] = useState(false);
 
+	//Carrega filial selecionada
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+
 	//Query de busca de usuário
 	const [searchUsers, { data: usersData, loading: loadingUsers }] = useLazyQuery(SEARCH_USERS, { fetchPolicy: 'no-cache' });
 	const usersFound = usersData && !loadingUsers ? usersData.searchCompanyUsers : [];
 	
 	//Query de busca de produto
-	const [searchProducts, { data: productsData, loading: loadingProducts }] = useLazyQuery(SEARCH_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache' });
-	const productsFound = productsData && !loadingProducts ? productsData.searchBranchProducts : [];
+	const [searchProducts, {
+		data: { company: { products: productsFound = [] } = {} } = {}, loading: loadingProducts
+	}] = useLazyQuery(SEARCH_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache', variables: { id: selectedCompany } });
 
-	//Carrega filial selecionada
-	const { data: selectedBranchData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 
 	//Query formas de pagamento
-	const { data: methodsData, loading: loadingMethods } = useQuery(GET_COMPANY_PAYMENT_METHODS, { variables: { id: selectedBranchData.selectedBranch } });
-	const paymentMethods = methodsData && !loadingMethods ? methodsData.branch.paymentMethods : [];
+	const {
+		data: { company: { paymentMethods = [] } = {} } = {},
+	} = useQuery(GET_COMPANY_PAYMENT_METHODS, { variables: { id: selectedCompany } });
 
 	const handleSearchCustomer = (value) => {
 		searchUsers({ variables: { search: value } });

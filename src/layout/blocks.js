@@ -25,7 +25,7 @@ export const ErrorBlock = ({ error }) => {
 	return (
 		<BlockContainer>
 			<ErrorTitle>Ocorreu um erro</ErrorTitle>
-			<ErrorSubtitle>{error.message}</ErrorSubtitle>
+			<ErrorSubtitle>{error}</ErrorSubtitle>
 		</BlockContainer>
 	)
 }

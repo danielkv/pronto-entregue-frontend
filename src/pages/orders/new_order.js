@@ -1,19 +1,22 @@
 import React from 'react';
 
-import { useApolloClient } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle, sanitizeOrderData } from '../../utils';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/branches';
-import { CREATE_ORDER, GET_BANCH_ORDERS } from '../../graphql/orders';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+import { CREATE_ORDER, GET_COMPANY_ORDERS } from '../../graphql/orders';
 
 function Page (props) {
 	setPageTitle('Novo pedido');
-	
-	const client = useApolloClient();
+
+	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const [createOrder, { error: errorSaving }] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
 
 	const order = {
 		user: null,
@@ -36,20 +39,12 @@ function Page (props) {
 		zipcodeOk: false,
 	};
 
-	function onSubmit(data, { setSubmitting }) {
+	function onSubmit(data) {
 		const dataSave = sanitizeOrderData(data);
 
-		const { selectedBranch } = client.readQuery({ query: GET_SELECTED_COMPANY });
-
-		client.mutate({ mutation: CREATE_ORDER, variables: { data: dataSave } , refetchQueries: [{ query: GET_BANCH_ORDERS, variables: { id: selectedBranch } }] })
+		return createOrder({ variables: { data: dataSave } })
 			.then(({ data: { createOrder } })=>{
 				props.history.push(`/pedidos/alterar/${createOrder.id}`);
-			})
-			.catch((err)=>{
-				console.error(err);
-			})
-			.finally(()=>{
-				setSubmitting(false);
 			})
 	}
 
@@ -99,6 +94,8 @@ function Page (props) {
 		deliveryPrice: Yup.number().typeError('Digite um número').required('Obrigatório'),
 		discount: Yup.number().typeError('Digite um número').required('Obrigatório')
 	});
+
+	if (errorSaving) return <ErrorBlock error={getErrors(errorSaving)} />
 
 	return (
 		<Formik

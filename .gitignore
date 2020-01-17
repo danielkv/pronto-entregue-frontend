@@ -25,3 +25,5 @@ yarn-error.log*
 # build mappers
 build/static/css/*.map
 build/static/js/*.map
+
+.lintcache

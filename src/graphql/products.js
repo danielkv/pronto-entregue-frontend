@@ -135,3 +135,21 @@ export const GET_COMPANY_BEST_SELLERS = gql`
 	}
 
 `;
+
+export const SEARCH_OPTIONS_GROUPS = gql`
+	query ($search:String!) {
+		searchOptionsGroups(search: $search) {
+			id
+			name
+			options_qty
+			product {
+				id
+				name
+				category {
+					id
+					name
+				}
+			}
+		}
+	}
+`;

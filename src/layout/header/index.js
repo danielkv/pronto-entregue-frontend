@@ -14,7 +14,7 @@ import Notification from '../notification';
 import { HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser } from './styles';
 
 import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
-import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SELECT_COMPANY } from '../../graphql/companies';
+import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SET_SELECTED_COMPANY } from '../../graphql/companies';
 
 export default function Header () {
 	const history = useHistory();
@@ -28,7 +28,7 @@ export default function Header () {
 	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId } });
 	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
 
-	const [selectCompany] = useMutation(SELECT_COMPANY);
+	const [selectCompany] = useMutation(SET_SELECTED_COMPANY);
 
 	function handleLogout () {
 		logUserOut();
