@@ -1,14 +1,14 @@
-import { hot } from 'react-hot-loader/root';
 import React from 'react';
-import {BrowserRouter, Switch, Route, Redirect} from 'react-router-dom';
+import { hot } from 'react-hot-loader/root';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
-import {useInitialize} from './services/init';
+import { LoadingBlock, ErrorBlock } from './layout/blocks';
 import Login from './pages/login';
 import RoutesFrame from './routes-frame';
-import { LoadingBlock, ErrorBlock } from './layout/blocks';
+import { useInitialize } from './services/init';
 
 const Routes = ()  => {
-	const {error, loading, isUserLoggedIn} = useInitialize(true);
+	const { error, loading, isUserLoggedIn } = useInitialize(true);
 
 	if (loading) return <LoadingBlock />;
 	if (error) return <ErrorBlock error={error} />;

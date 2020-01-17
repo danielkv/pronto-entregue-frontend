@@ -1,11 +1,13 @@
-import React, {useState, Fragment} from 'react';
-import gql from 'graphql-tag';
+import React, { useState, Fragment } from 'react';
+
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+import gql from 'graphql-tag';
 
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle, extractMetas, joinMetas } from '../../utils';
 import PageForm from './form';
-import {setPageTitle, extractMetas, joinMetas} from '../../utils';
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+
 import { UPDATE_COMPANY } from '../../graphql/companies';
 
 
@@ -14,13 +16,13 @@ export const LOAD_COMPANY = gql`
 		company (id: $id) {
 			id
 			name
-			display_name
+			displayName
 			createdAt
 			active
 			metas {
 				id
-				meta_type
-				meta_value
+				key
+				value
 				action @client
 			}
 		}
@@ -30,14 +32,14 @@ export const LOAD_COMPANY = gql`
 function Page (props) {
 	setPageTitle('Alterar empresa');
 
-	const edit_id = props.match.params.id;
+	const editId = props.match.params.id;
 
 	//erro e confirmação
 	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
 	//carrega empresa
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_COMPANY, {variables:{id:edit_id}});
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_COMPANY, { variables: { id: editId } });
 	const client = useApolloClient();
 
 	if (error) return <ErrorBlock error={error} />
@@ -47,30 +49,30 @@ function Page (props) {
 
 	const company = {
 		name: data.company.name,
-		display_name: data.company.display_name,
+		displayName: data.company.displayName,
 		active: data.company.active,
 		...extractMetas(metas, data.company.metas)
 	};
 
-	function onSubmit(values, {setSubmitting}) {
-		const data = {...values, metas:joinMetas(metas, values)};
+	function onSubmit(values, { setSubmitting }) {
+		const data = { ...values, metas: joinMetas(metas, values) };
 		delete data.address;
 		delete data.contact;
 		delete data.phones;
 		delete data.emails;
 		delete data.document;
 
-		client.mutate({mutation:UPDATE_COMPANY, variables:{id:edit_id, data}})
-		.then(()=>{
-			setDisplaySuccess('A empresa foi salva');
-		})
-		.catch((err)=>{
-			setDisplayError(err.message);
-			console.error(err.graphQLErrors, err.networkError, err.operation);
-		})
-		.finally(() => {
-			setSubmitting(false);
-		})
+		client.mutate({ mutation: UPDATE_COMPANY, variables: { id: editId, data } })
+			.then(()=>{
+				setDisplaySuccess('A empresa foi salva');
+			})
+			.catch((err)=>{
+				setDisplayError(err.message);
+				console.error(err.graphQLErrors, err.networkError, err.operation);
+			})
+			.finally(() => {
+				setSubmitting(false);
+			})
 	}
 	
 	return (

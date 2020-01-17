@@ -1,5 +1,6 @@
-import styled from 'styled-components';
 import { Paper } from '@material-ui/core';
+
+import styled from 'styled-components';
 
 export const ModalPaper = styled(Paper)`
 	width:40%;

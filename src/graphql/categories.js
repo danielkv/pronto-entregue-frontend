@@ -14,20 +14,17 @@ export const GET_CATEGORY = gql`
 `;
 
 
-export const GET_BRANCH_CATEGORIES = gql`
+export const GET_CATEGORIES = gql`
 	query GetCategories ($id:ID!, $filter: Filter!, $pagination: Pagination) {
-		branch (id:$id) {
+		countCategories(filter: $filter)
+		categories(filter: $filter, pagination: $pagination) {
 			id
-			countCategories(filter: $filter)
-			categories(filter: $filter, pagination: $pagination) {
-				id
-				name
-				image
-				order
-				products_qty
-				createdAt
-				active
-			}
+			name
+			image
+			order
+			products_qty
+			createdAt
+			active
 		}
 	}
 `;

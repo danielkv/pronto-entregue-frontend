@@ -1,13 +1,16 @@
-import React, {useState, Fragment, useEffect, useRef} from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup} from '@material-ui/core';
-import Icon from '@mdi/react';
-import {mdiPencil, mdiFilter, mdiAccountCircle} from '@mdi/js';
-import {Link} from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React, { useState, Fragment, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
-import {setPageTitle} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup } from '@material-ui/core';
+import { mdiPencil, mdiFilter, mdiAccountCircle } from '@mdi/js';
+import Icon from '@mdi/react';
+
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading } from '../../layout/components';
+
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle } from '../../utils';
+
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 
@@ -38,22 +41,22 @@ function Page (props) {
 			search: searchRef.current.value
 		})
 	}
-	const clearFilterForm = (e) => {
+	const clearFilterForm = () => {
 		setFilter(initialFilter);
 	}
 
 	//carrega empresa selecionada
-	const {data: { selectedCompany }, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
+	const { data: { selectedCompany }, loading: loadingSelectedCompany } = useQuery(GET_SELECTED_COMPANY);
 
 	//carrega usuários
 	const {
 		data: { company: { countUsers = 0, users = [] } = {} } = {},
-		loading:loadingUsersData,
+		loading: loadingUsersData,
 		error,
 		called,
 	} = useQuery(GET_COMPANY_USERS, { variables: { id: selectedCompany, filter, pagination } });
 
-	const [setUserEnabled, { loading }] = useMutation(UPDATE_USER, { variables: { company_id: selectedCompany } });
+	const [setUserEnabled, { loading }] = useMutation(UPDATE_USER, { variables: { companyId: selectedCompany } });
 
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedCompany || (loadingUsersData && !called)) return (<LoadingBlock />);
@@ -62,71 +65,71 @@ function Page (props) {
 		<Fragment>
 			<Content>
 				{loadingUsersData ? <LoadingBlock /> :
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Usuários</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button>{loading && <Loading />}
-						<NumberOfRows>{countUsers} usuários</NumberOfRows>
-					</BlockHeader>
-					<Paper>
-						<Table>
-							<TableHead>
-								<TableRow>
-									<TableCell style={{width:30, paddingLeft:30}}></TableCell>
-									<TableCell>Nome</TableCell>
-									<TableCell>Função</TableCell>
-									<TableCell>Criada em</TableCell>
-									<TableCell style={{width:100}}>Ações</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{users.map(row => (
-									<TableRow key={row.id}>
-										<TableCell style={{width:30, paddingLeft:30, paddingRight:10}}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
-										<TableCell>{row.full_name}</TableCell>
-										<TableCell>{row.role}</TableCell>
-										<TableCell>{row.createdAt}</TableCell>
-										<TableCell>
-											<IconButton  disabled={loading}  onClick={()=>{props.history.push(`/usuarios/alterar/${row.id}`)}}>
-												<Icon path={mdiPencil} size='18' color='#363E5E' />
-											</IconButton>
-											<Switch
-												checked={row.active}
-												onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
-												value="checkedB"
-												disabled={loading} 
-												size='small'
-												color="secondary"
-												inputProps={{ 'aria-label': 'primary checkbox' }}
-											/>
-										</TableCell>
+					<Block>
+						<BlockHeader>
+							<BlockTitle>Usuários</BlockTitle>
+							<Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button>{loading && <Loading />}
+							<NumberOfRows>{countUsers} usuários</NumberOfRows>
+						</BlockHeader>
+						<Paper>
+							<Table>
+								<TableHead>
+									<TableRow>
+										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
+										<TableCell>Nome</TableCell>
+										<TableCell>Função</TableCell>
+										<TableCell>Criada em</TableCell>
+										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							component="div"
-							backIconButtonProps={{
-								'aria-label': 'previous page',
-							}}
-							nextIconButtonProps={{
-								'aria-label': 'next page',
-							}}
-							count={countUsers}
-							rowsPerPage={pagination.rowsPerPage}
-							page={pagination.page}
-							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
+								</TableHead>
+								<TableBody>
+									{users.map(row => (
+										<TableRow key={row.id}>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
+											<TableCell>{row.full_name}</TableCell>
+											<TableCell>{row.role}</TableCell>
+											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>
+												<IconButton  disabled={loading}  onClick={()=>{props.history.push(`/usuarios/alterar/${row.id}`)}}>
+													<Icon path={mdiPencil} size='18' color='#363E5E' />
+												</IconButton>
+												<Switch
+													checked={row.active}
+													onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
+													value="checkedB"
+													disabled={loading}
+													size='small'
+													color="secondary"
+													inputProps={{ 'aria-label': 'primary checkbox' }}
+												/>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+							<TablePagination
+								component="div"
+								backIconButtonProps={{
+									'aria-label': 'previous page',
+								}}
+								nextIconButtonProps={{
+									'aria-label': 'next page',
+								}}
+								count={countUsers}
+								rowsPerPage={pagination.rowsPerPage}
+								page={pagination.page}
+								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
-					</Paper>
-					<NumberOfRows>{countUsers} usuários</NumberOfRows>
-				</Block>}
+						</Paper>
+						<NumberOfRows>{countUsers} usuários</NumberOfRows>
+					</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
 						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
-						<FormControlLabel	
+						<FormControlLabel
 							control={
 								<Switch
 									size='small'
@@ -147,7 +150,7 @@ function Page (props) {
 										<TextField
 											label='Buscar'
 											inputRef={searchRef}
-											/>
+										/>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

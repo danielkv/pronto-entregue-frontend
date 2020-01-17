@@ -1,12 +1,14 @@
 import React from 'react';
-import { useMutation, useApolloClient } from '@apollo/react-hooks';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
 
+import { useMutation, useApolloClient } from '@apollo/react-hooks';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+
+import { setPageTitle, sanitizeProductData } from '../../utils';
 import PageForm from './form';
-import {setPageTitle, sanitizeProductData} from '../../utils';
-import { GET_SELECTED_BRANCH } from '../../graphql/branches';
-import { CREATE_PRODUCT, GET_BRANCHES_PRODUCTS } from '../../graphql/products';
+
+import { GET_SELECTED_COMPANY } from '../../graphql/branches';
+import { CREATE_PRODUCT, GET_COMPANYES_PRODUCTS } from '../../graphql/products';
 
 const FILE_SIZE = 500 * 1024;
 
@@ -15,8 +17,8 @@ const productSchema = Yup.object().shape({
 	price: Yup.number().required('Obrigatório'),
 	description: Yup.string().required('Obrigatório'),
 	file: Yup.mixed().required('Selecione uma imagem')
-			.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
-	options_groups: Yup.array().of(Yup.object().shape({
+		.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
+	optionsGroups: Yup.array().of(Yup.object().shape({
 		name: Yup.string().required('Obrigatório'),
 		options: Yup.array().of(Yup.object().shape({
 			name: Yup.string().required('Obrigatório'),
@@ -29,27 +31,27 @@ function Page (props) {
 	setPageTitle('Novo produto');
 
 	const client = useApolloClient();
-	const { selectedBranch } = client.readQuery({ query: GET_SELECTED_BRANCH });
-	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_BRANCHES_PRODUCTS, variables: { id: selectedBranch } }] });
+	const { selectedBranch } = client.readQuery({ query: GET_SELECTED_COMPANY });
+	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANYES_PRODUCTS, variables: { id: selectedBranch } }] });
 
 	const initialValues = {
-		name:'',
-		description:'',
-		active:true,
-		type:'inline',
-		price:'',
-		file:'',
-		featured: false, 
-		preview:'',
-		category:{id:''},
-		options_groups: []
+		name: '',
+		description: '',
+		active: true,
+		type: 'inline',
+		price: '',
+		file: '',
+		featured: false,
+		preview: '',
+		category: { id: '' },
+		optionsGroups: []
 	};
 
 	function onSubmit(data) {
 		const dataSave = sanitizeProductData(data);
 
-		return createProduct({ variables:{ data: dataSave } })
-			.then(({data:{createItem}})=>{
+		return createProduct({ variables: { data: dataSave } })
+			.then(({ data: { createItem } })=>{
 				props.history.push(`/estoque/alterar/${createItem.id}`);
 			})
 			.catch((err)=>{

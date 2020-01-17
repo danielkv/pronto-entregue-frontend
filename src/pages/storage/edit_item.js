@@ -1,11 +1,13 @@
-import React, {useState, Fragment} from 'react';
-import PageForm from './form';
-import gql from 'graphql-tag';
+import React, { useState, Fragment } from 'react';
+
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+import gql from 'graphql-tag';
 
-import {setPageTitle} from '../../utils';
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle } from '../../utils';
+import PageForm from './form';
+
 import { UPDATE_ITEM } from '../../graphql/items';
 
 const LOAD_ITEM = gql`
@@ -23,13 +25,13 @@ const LOAD_ITEM = gql`
 function Page (props) {
 	setPageTitle('Alterar item de estoque');
 
-	const edit_id = props.match.params.id;
+	const editId = props.match.params.id;
 
 	//erro e confirmação
 	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_ITEM, {variables:{id:edit_id}});
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_ITEM, { variables: { id: editId } });
 	const client = useApolloClient();
 
 	if (error) return <ErrorBlock error={error} />
@@ -41,19 +43,19 @@ function Page (props) {
 		active: data.item.active,
 	};
 
-	function onSubmit(data, {setSubmitting}) {
+	function onSubmit(data, { setSubmitting }) {
 
-		client.mutate({mutation:UPDATE_ITEM, variables:{id:edit_id, data}})
-		.then(()=>{
-			setDisplaySuccess('O item de estoque foi salvo');
-		})
-		.catch((err)=>{
-			setDisplayError(err.message);
-			console.error(err.graphQLErrors, err.networkError, err.operation);
-		})
-		.finally(() => {
-			setSubmitting(false);
-		})
+		client.mutate({ mutation: UPDATE_ITEM, variables: { id: editId, data } })
+			.then(()=>{
+				setDisplaySuccess('O item de estoque foi salvo');
+			})
+			.catch((err)=>{
+				setDisplayError(err.message);
+				console.error(err.graphQLErrors, err.networkError, err.operation);
+			})
+			.finally(() => {
+				setSubmitting(false);
+			})
 	}
 
 	return (
@@ -84,7 +86,7 @@ function Page (props) {
 				pageTitle='Alterar item de estoque'
 				initialValues={item}
 				onSubmit={onSubmit}
-				/>
+			/>
 		</Fragment>
 	)
 }

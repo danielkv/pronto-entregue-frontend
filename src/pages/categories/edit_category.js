@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
-import PageForm from './form';
-import gql from 'graphql-tag';
+import React, { useState } from 'react';
+
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+import gql from 'graphql-tag';
 
-import {setPageTitle} from '../../utils';
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle } from '../../utils';
+import PageForm from './form';
+
 import { UPDATE_CATEGORY } from '../../graphql/categories';
 
 const LOAD_CATEGORY = gql`
@@ -24,13 +26,13 @@ const LOAD_CATEGORY = gql`
 function Page (props) {
 	setPageTitle('Alterar categoria');
 
-	const edit_id = props.match.params.id;
+	const editId = props.match.params.id;
 
 	//erro e confirmação
 	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_CATEGORY, {variables:{id:edit_id}});
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_CATEGORY, { variables: { id: editId } });
 	const client = useApolloClient();
 
 	if (error) return <ErrorBlock error={error} />
@@ -39,27 +41,27 @@ function Page (props) {
 	const category = {
 		name: data.category.name,
 		description: data.category.description || '',
-		file : '',
+		file: '',
 		preview: data.category.image,
 		active: data.category.active,
 	};
 
-	function onSubmit(values, {setSubmitting}) {
+	function onSubmit(values, { setSubmitting }) {
 
-		const data = {name:values.name, description:values.description, active:values.active};
+		const data = { name: values.name, description: values.description, active: values.active };
 		if (values.file) data.file = values.file;
 
-		client.mutate({mutation:UPDATE_CATEGORY, variables:{id:edit_id, data}})
-		.then(()=>{
-			setDisplaySuccess('A categoria salva');
-		})
-		.catch((err)=>{
-			setDisplayError(err.message);
-			console.error(err.graphQLErrors, err.networkError, err.operation);
-		})
-		.finally(() => {
-			setSubmitting(false);
-		})
+		client.mutate({ mutation: UPDATE_CATEGORY, variables: { id: editId, data } })
+			.then(()=>{
+				setDisplaySuccess('A categoria salva');
+			})
+			.catch((err)=>{
+				setDisplayError(err.message);
+				console.error(err.graphQLErrors, err.networkError, err.operation);
+			})
+			.finally(() => {
+				setSubmitting(false);
+			})
 	}
 
 	return (
@@ -90,8 +92,8 @@ function Page (props) {
 				pageTitle='Alterar categoria'
 				initialValues={category}
 				onSubmit={onSubmit}
-				edit={edit_id}
-				/>
+				edit={editId}
+			/>
 		</>
 	)
 }

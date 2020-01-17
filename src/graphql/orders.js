@@ -1,6 +1,43 @@
 import gql from "graphql-tag";
+
 import { OPTIONS_GROUP_FRAGMENT } from "./products";
 
+
+export const GET_COMPANY_LAST_ORDERS = gql`
+	query GetLastOrders ($id:ID!, $filter:Filter, $pagination: Pagination) {
+		company(id: $id) {
+			id
+			orders (filter: $filter, pagination: $pagination) {
+				id
+				user {
+					id
+					full_name
+				}
+				street
+				number
+				products_qty
+				type
+				createdDate
+				createdTime
+				status
+			}
+		}
+	}
+
+`;
+
+export const GET_COMPANY_ORDERS_QTY = gql`
+	query OrdersQty($id: ID!) {
+		company(id: $id) {
+			id
+			waitingOrders: countOrders(filter: { "status": "waiting", "createdAt": "CURDATE"})
+			preparingOrders: countOrders(filter: { "status": "preparing", "createdAt": "CURDATE"})
+			deliveryOrders: countOrders(filter: { "status": "delivery", "createdAt": "CURDATE"})
+			deliveredOrders: countOrders(filter: { "status": "delivered", "createdAt": "CURDATE"})
+			canceledOrders: countOrders(filter: { "status": "canceled", "createdAt": "CURDATE"})
+		}
+	}
+`;
 
 export const ORDER_PRODUCT_RELATED_FRAGMENT = gql`
 	fragment ProductRelatedFields on Product {
@@ -22,10 +59,10 @@ export const ORDER_FRAGMENT = gql`
 		price
 		type
 		message
-		delivery_price
+		deliveryPrice
 		discount
-		payment_fee
-		payment_method {
+		paymentFee
+		paymentMethod {
 			id
 		}
 
@@ -83,8 +120,8 @@ export const ORDER_FRAGMENT = gql`
 `;
 
 export const CALCULATE_DELIVERY_PRICE = gql`
-	query CalculateDeliveryPrice ($zipcode:Int!) {
-		calculateDeliveryPrice(zipcode: $zipcode) {
+	query CalculatedeliveryPrice ($zipcode:Int!) {
+		calculatedeliveryPrice(zipcode: $zipcode) {
 			id
 			name
 			price
@@ -119,9 +156,9 @@ export const LOAD_ORDER = gql`
 	${ORDER_FRAGMENT}
 `;
 
-export  const GET_BANCH_ORDERS = gql`
+export const GET_COMPANY_ORDERS = gql`
 	query GetOrders ($id:ID!, $filter: Filter, $pagination: Pagination) {
-		branch (id:$id) {
+		company(id: $id) {
 			id
 			countOrders(filter: $filter)
 			orders(filter: $filter, pagination: $pagination) {
@@ -144,8 +181,8 @@ export  const GET_BANCH_ORDERS = gql`
 `;
 
 export const SUBSCRIBE_ORDER_CREATED = gql`
-	subscription ($branch_id: ID!) {
-		orderCreated(branch_id: $branch_id) {
+	subscription ($company_id: ID!) {
+		orderCreated(company_id: $company_id) {
 			id
 			user {
 				id

@@ -1,10 +1,10 @@
 {
   "name": "flakery-frontend",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
   "engines": {
-    "yarn": "1.19.1",
-    "node": "10.15.3"
+    "yarn": "1.21.1",
+    "node": "12.14.0"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.0",
@@ -20,7 +20,6 @@
     "apollo-link-http": "^1.5.16",
     "apollo-link-ws": "^1.0.19",
     "apollo-upload-client": "^11.0.0",
-    "dotenv": "^8.2.0",
     "downshift": "^3.3.4",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
@@ -48,7 +47,8 @@
     "dev": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --cache --color --ext .jsx,.js src"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -66,7 +66,10 @@
     ]
   },
   "devDependencies": {
-    "babel-plugin-styled-components": "^1.10.6"
+    "babel-plugin-styled-components": "^1.10.6",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import-helpers": "^1.0.2",
+    "eslint-plugin-react": "^7.18.0"
   },
   "plugins": [
     "babel-plugin-styled-components"

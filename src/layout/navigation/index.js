@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
-import Icon from '@mdi/react';
-import { mdiViewDashboard, mdiStore, mdiSourceBranch, mdiViewList,  mdiShape, mdiBasket, mdiAccountMultiple, mdiSettings, mdiInboxMultiple } from '@mdi/js';
-import {Popper, Paper} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
 import { useLocation } from 'react-router-dom';
 
-import {NavigationContainer, NavItem} from './styles';
+import { Popper, Paper } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { mdiViewDashboard, mdiStore, mdiSourceBranch, mdiViewList,  mdiShape, mdiBasket, mdiAccountMultiple, mdiSettings, mdiInboxMultiple } from '@mdi/js';
+import Icon from '@mdi/react';
+
+import { NavigationContainer, NavItem } from './styles';
 
 const useStyles = makeStyles(theme => ({
-	root : {
+	root: {
 		marginLeft: theme.spacing()
 	},
-	paper:{
-		padding:'8px 10px',
-		backgroundColor:'#444',
-		color:'#fff',
-		fontSize:12
+	paper: {
+		padding: '8px 10px',
+		backgroundColor: '#444',
+		color: '#fff',
+		fontSize: 12
 	}
 }))
 
-function Navigation(props) {
-
+function Navigation() {
 	const location = useLocation();
 	
 	const [popperOpen, setPopperOpen] = useState(false);
@@ -37,13 +37,13 @@ function Navigation(props) {
 	
 	function isSelected(match) {
 		if (!location.pathname) return '';
-		const current_location = location.pathname.substr(1).split('/')[0];
-		return current_location === match ? 'selected' : '';
+		const currentLocation = location.pathname.substr(1).split('/')[0];
+		return currentLocation === match ? 'selected' : '';
 	}
 
 	return (
 		<NavigationContainer>
-			<Popper className={classes.root} open={popperOpen} anchorEl={anchorEl} placement='right' modifiers={{arrow:{enabled:true}}}>
+			<Popper className={classes.root} open={popperOpen} anchorEl={anchorEl} placement='right' modifiers={{ arrow: { enabled: true } }}>
 				<Paper className={classes.paper}>
 					{popperText}
 				</Paper>

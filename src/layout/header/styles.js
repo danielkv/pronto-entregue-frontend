@@ -1,7 +1,8 @@
-import styled from 'styled-components';
-import {Paper} from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 
-export const HeaderContainer = styled(Paper).attrs(props=>({elevation:2}))`
+import styled from 'styled-components';
+
+export const HeaderContainer = styled(Paper).attrs(()=>({ elevation: 2 }))`
 	display:flex;
 	align-items:stretch;
 	height:70px;

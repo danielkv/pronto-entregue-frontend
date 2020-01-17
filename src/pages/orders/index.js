@@ -1,17 +1,20 @@
-import React, {useState, Fragment, useRef, useEffect} from 'react';
-import {Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
+import React, { useState, Fragment, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+import { useQuery } from '@apollo/react-hooks';
+import { Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox } from '@material-ui/core';
+import { mdiPencil, mdiFilter, mdiDotsVertical } from '@mdi/js';
 import Icon from '@mdi/react';
-import {mdiPencil, mdiFilter, mdiDotsVertical} from '@mdi/js';
-import {Link} from 'react-router-dom';
 import numeral from 'numeral'
 
-import {setPageTitle, getStatusIcon} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar} from '../../layout/components';
-import {OrderCreated, OrderDate, OrderTime} from './styles';
-import { useQuery } from '@apollo/react-hooks';
-import { GET_SELECTED_BRANCH } from '../../graphql/branches';
-import { GET_BANCH_ORDERS } from '../../graphql/orders';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar } from '../../layout/components';
+
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
+import { setPageTitle, getStatusIcon } from '../../utils';
+import { OrderCreated, OrderDate, OrderTime } from './styles';
+
+import { GET_SELECTED_COMPANY } from '../../graphql/branches';
+import { GET_BANCH_ORDERS } from '../../graphql/orders';
 
 const initialFilter = {
 	search: '',
@@ -39,11 +42,11 @@ function Page (props) {
 			search: searchRef.current.value
 		})
 	}
-	const clearFilterForm = (e) => {
+	const clearFilterForm = () => {
 		setFilter(initialFilter);
 	}
 
-	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
+	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 	const { data: { branch: { countOrders = 0, orders = [] } = {} } = {}, loading: loadingOrders, error, called } = useQuery(GET_BANCH_ORDERS, {
 		variables: {
 			id: selectedBranch,
@@ -59,68 +62,68 @@ function Page (props) {
 		<Fragment>
 			<Content>
 				{loadingOrders ? <LoadingBlock /> :
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Pedidos</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/pedidos/novo' component={Link}>Adicionar</Button>
-						<NumberOfRows>{countOrders} pedidos</NumberOfRows>
-					</BlockHeader>
-					<Paper>
-						<Table>
-							<TableHead>
-								<TableRow>
-									<TableCell style={{width:30, paddingRight:10}}></TableCell>
-									<TableCell>Cliente</TableCell>
-									<TableCell>Endereço de entrega</TableCell>
-									<TableCell>Valor</TableCell>
-									<TableCell>Nº de produtos</TableCell>
-									<TableCell>Status</TableCell>
-									<TableCell>Ações</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{orders.map(row => (
-									<TableRow key={row.id}>
-										<TableCell style={{width:30, paddingLeft:30}}>
-											<OrderCreated>
-												<OrderDate>{row.createdDate}</OrderDate>
-												<OrderTime>{row.createdTime}</OrderTime>
-											</OrderCreated>
-										</TableCell>
-										<TableCell>{row.user.full_name}</TableCell>
-										<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
-										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
-										<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
-										<TableCell style={{width:30, textAlign:'center'}}>{getStatusIcon(row.status)}</TableCell>
-										<TableCell style={{width:100}}>
-											<IconButton onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
-												<Icon path={mdiPencil} size='18' color='#363E5E' />
-											</IconButton>
-											<IconButton>
-												<Icon path={mdiDotsVertical} size='18' color='#363E5E' />
-											</IconButton>
-										</TableCell>
+					<Block>
+						<BlockHeader>
+							<BlockTitle>Pedidos</BlockTitle>
+							<Button size='small' variant="contained" color='secondary' to='/pedidos/novo' component={Link}>Adicionar</Button>
+							<NumberOfRows>{countOrders} pedidos</NumberOfRows>
+						</BlockHeader>
+						<Paper>
+							<Table>
+								<TableHead>
+									<TableRow>
+										<TableCell style={{ width: 30, paddingRight: 10 }}></TableCell>
+										<TableCell>Cliente</TableCell>
+										<TableCell>Endereço de entrega</TableCell>
+										<TableCell>Valor</TableCell>
+										<TableCell>Nº de produtos</TableCell>
+										<TableCell>Status</TableCell>
+										<TableCell>Ações</TableCell>
 									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							component="div"
-							backIconButtonProps={{
-								'aria-label': 'previous page',
-							}}
-							nextIconButtonProps={{
-								'aria-label': 'next page',
-							}}
-							count={countOrders}
-							rowsPerPage={pagination.rowsPerPage}
-							page={pagination.page}
-							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
+								</TableHead>
+								<TableBody>
+									{orders.map(row => (
+										<TableRow key={row.id}>
+											<TableCell style={{ width: 30, paddingLeft: 30 }}>
+												<OrderCreated>
+													<OrderDate>{row.createdDate}</OrderDate>
+													<OrderTime>{row.createdTime}</OrderTime>
+												</OrderCreated>
+											</TableCell>
+											<TableCell>{row.user.full_name}</TableCell>
+											<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
+											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
+											<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
+											<TableCell style={{ width: 30, textAlign: 'center' }}>{getStatusIcon(row.status)}</TableCell>
+											<TableCell style={{ width: 100 }}>
+												<IconButton onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
+													<Icon path={mdiPencil} size='18' color='#363E5E' />
+												</IconButton>
+												<IconButton>
+													<Icon path={mdiDotsVertical} size='18' color='#363E5E' />
+												</IconButton>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+							<TablePagination
+								component="div"
+								backIconButtonProps={{
+									'aria-label': 'previous page',
+								}}
+								nextIconButtonProps={{
+									'aria-label': 'next page',
+								}}
+								count={countOrders}
+								rowsPerPage={pagination.rowsPerPage}
+								page={pagination.page}
+								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
-					</Paper>
-					<NumberOfRows>{countOrders} pedidos</NumberOfRows>
-				</Block>}
+						</Paper>
+						<NumberOfRows>{countOrders} pedidos</NumberOfRows>
+					</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>

@@ -1,45 +1,38 @@
 import React from 'react';
-import { ThemeProvider } from '@material-ui/styles';
-import {Route, Redirect, Switch} from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 
-import theme from './layout/theme';
-import {Container, HeaderArea, NavigationArea, Main} from './layout/components';
+import { ThemeProvider } from '@material-ui/styles';
+
+import { Container, HeaderArea, NavigationArea, Main } from './layout/components';
+
 import Header from './layout/header';
 import Navigation from './layout/navigation';
-
-import Dashboard from './pages/dashboard';
-
-import Companies from './pages/companies';
-import NewCompany from './pages/companies/new_company';
-import EditCompany from './pages/companies/edit_company';
-
+import theme from './layout/theme';
 import Branches from './pages/branches';
-import NewBranch from './pages/branches/new_branch';
 import EditBranch from './pages/branches/edit_branch';
-
-import Storage from './pages/storage';
-import NewItem from './pages/storage/new_item';
-import EditItem from './pages/storage/edit_item';
-
-import Orders from './pages/orders';
-import NewOrder from './pages/orders/new_order';
-import EditOrder from './pages/orders/edit_order';
-
+import NewBranch from './pages/branches/new_branch';
 import Categories from './pages/categories';
-import NewCategory from './pages/categories/new_category';
 import EditCategory from './pages/categories/edit_category';
-
+import NewCategory from './pages/categories/new_category';
+import Companies from './pages/companies';
+import EditCompany from './pages/companies/edit_company';
+import NewCompany from './pages/companies/new_company';
+import Dashboard from './pages/dashboard';
+import Orders from './pages/orders';
+import EditOrder from './pages/orders/edit_order';
+import NewOrder from './pages/orders/new_order';
 import Products from './pages/products';
-import NewProduct from './pages/products/new_product';
 import EditProduct from './pages/products/edit_product';
-
-import Users from './pages/users';
-import NewUser from './pages/users/new_user';
-import EditUser from './pages/users/edit_user';
-
+import NewProduct from './pages/products/new_product';
 import Settings from './pages/settings';
+import Storage from './pages/storage';
+import EditItem from './pages/storage/edit_item';
+import NewItem from './pages/storage/new_item';
+import Users from './pages/users';
+import EditUser from './pages/users/edit_user';
+import NewUser from './pages/users/new_user';
 
-export default function Layout (_props) {
+export default function Layout () {
 	return (
 		<ThemeProvider theme={theme}>
 			<Container>

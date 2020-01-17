@@ -1,8 +1,8 @@
 import React from 'react';
-import Icon from '@mdi/react';
-import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle } from '@mdi/js';
-import {uniqueId} from 'lodash';
 
+import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle } from '@mdi/js';
+import Icon from '@mdi/react';
+import { uniqueId } from 'lodash';
 import numeral from 'numeral';
 
 export const getStatusIcon = (status) => {
@@ -22,33 +22,33 @@ export const getStatusIcon = (status) => {
 }
 
 export const joinMetas = (metas, values={}) => {
-	let return_metas = [];
+	let returnMetas = [];
 	
 	metas.forEach(key => {
 		if (values[key]) {
 			let value = values[key];
 			switch (key) {
 				case 'address':
-					return_metas.push({...value, meta_value:JSON.stringify(value.meta_value)});
-				break;
+					returnMetas.push({ ...value, value: JSON.stringify(value.value) });
+					break;
 				case 'addresses':
-					return_metas = [...return_metas, ...value.map(v => ({...v, meta_value:JSON.stringify(v.meta_value)}))];
-				break;
+					returnMetas = [...returnMetas, ...value.map(v => ({ ...v, value: JSON.stringify(v.value) }))];
+					break;
 				case 'phones':
 				case 'emails':
-					return_metas = [...return_metas, ...value];
-				break;
-				default :
-					return_metas.push(value);
+					returnMetas = [...returnMetas, ...value];
+					break;
+				default:
+					returnMetas.push(value);
 			}
 		}
 	});
 
-	return return_metas;
+	return returnMetas;
 }
 
-export const meta_model = (type, value='', action='new_empty') => {
-	return {action, meta_type:type, meta_value:value};
+export const metaModel = (type, value='', action='new_empty') => {
+	return { action, key: type, value: value };
 }
 
 export const initialMetas = (needed=[]) => {
@@ -57,29 +57,29 @@ export const initialMetas = (needed=[]) => {
 
 	needed.forEach(need => {
 		if (need === 'address') {
-			metas[need] = meta_model('address', {
-				street:'',
-				number:'',
-				district:'',
-				zipcode:'',
-				city:'',
-				state:'',
+			metas[need] = metaModel('address', {
+				street: '',
+				number: '',
+				district: '',
+				zipcode: '',
+				city: '',
+				state: '',
 			});
 		} else if (need === 'addresses') {
-			metas[need] = [meta_model('address', {
-				street:'',
-				number:'',
-				district:'',
-				zipcode:'',
-				city:'',
-				state:'',
+			metas[need] = [metaModel('address', {
+				street: '',
+				number: '',
+				district: '',
+				zipcode: '',
+				city: '',
+				state: '',
 			})];
 		} else if (need === 'phones') {
-			metas[need] = [meta_model('phone')];
+			metas[need] = [metaModel('phone')];
 		} else if (need === 'emails') {
-			metas[need] = [meta_model('email')];
+			metas[need] = [metaModel('email')];
 		} else
-			metas[need] = meta_model(need);
+			metas[need] = metaModel(need);
 	});
 
 	return metas;
@@ -87,82 +87,83 @@ export const initialMetas = (needed=[]) => {
 
 export const extractMetas = (needed, metas=[]) => {
 	//valores padrão
-	let return_metas = initialMetas(needed);
+	let returnMetas = initialMetas(needed);
 
 	//Retira __typename dos metadados
+	// eslint-disable-next-line no-param-reassign
 	metas = metas.map(meta => {delete meta.__typename; return meta});
 
-	needed.forEach(meta_type => {
-		let value, search_meta;
+	needed.forEach(key => {
+		let value, searchMeta;
 
-		if (meta_type === 'addresses')
-			search_meta = 'address';
-		else if (meta_type === 'phones')
-			search_meta = 'phone';
-		else if (meta_type === 'emails')
-			search_meta = 'email';
+		if (key === 'addresses')
+			searchMeta = 'address';
+		else if (key === 'phones')
+			searchMeta = 'phone';
+		else if (key === 'emails')
+			searchMeta = 'email';
 		else
-			search_meta = meta_type;
+			searchMeta = key;
 
-		const found = metas.filter(m => m.meta_type === search_meta);
+		const found = metas.filter(m => m.key === searchMeta);
 		
 		if (found.length) {
-			switch(meta_type) {
+			switch(key) {
 				case 'address':
 					value = found[0];
-					return_metas[meta_type] = {...value, meta_value: JSON.parse(value.meta_value)};
-				break;
+					returnMetas[key] = { ...value, value: JSON.parse(value.value) };
+					break;
 				case 'addresses':
-					return_metas[meta_type] = found.map(meta=>({...meta, meta_value:JSON.parse(meta.meta_value)}));
-				break;
+					returnMetas[key] = found.map(meta=>({ ...meta, value: JSON.parse(meta.value) }));
+					break;
 				case 'phones':
 				case 'emails':
-					return_metas[meta_type] = found;
-				break;
-				default :
-					return_metas[meta_type] = found[0];
+					returnMetas[key] = found;
+					break;
+				default:
+					returnMetas[key] = found[0];
 			}
 		}
 	});
 
-	return return_metas;
+	return returnMetas;
 }
 
-export const setPageTitle = (new_title) => {
-	if (new_title)
-		return document.title = `Flakery - ${new_title}`;
+export const setPageTitle = (newTitle) => {
+	if (newTitle)
+		return document.title = `Flakery - ${newTitle}`;
 	
 	return document.title = `Flakery`;
 }
 
 export const createEmptyOrderProduct = (overwrite={}) => {
-	if (overwrite.options_groups) {
-		overwrite.options_groups = overwrite.options_groups.map(group=>{
-			if (group.id) group.group_related = {id:group.id};
+	if (overwrite.optionsGroups) {
+		overwrite.optionsGroups = overwrite.optionsGroups.map(group=>{
+			if (group.id) group.groupRelated = { id: group.id };
 			//group.id = uniqueId();
 			group.action = 'create';
 
 			if (group.options) {
 				group.options = group.options.map(option=>{
-					if (option.id) option.option_related = {id: option.id};
+					if (option.id) option.optionRelated = { id: option.id };
 					group.id = uniqueId();
 					option.action = 'create';
 
-					return {...option, selected:option.selected || false}
+					return { ...option, selected: option.selected || false }
 				})
 			}
 			return group;
 		})
 	}
 	if (overwrite.id) {
-		overwrite.product_related = {id: overwrite.id};
+		overwrite.productRelated = { id: overwrite.id };
 		delete overwrite.id;
 	}
 	return {
-		action:'new_empty',
-		message:'',
+		action: 'new_empty',
+		message: '',
 		quantity: 1,
-		options_groups: [],
+		optionsGroups: [],
 		...overwrite,
 		id: uniqueId(),
 	}
@@ -170,33 +171,33 @@ export const createEmptyOrderProduct = (overwrite={}) => {
 
 export const createEmptyOptionsGroup = (overwrite={}) => {
 	return {
-		name:'',
-		type:'single',
-		groupRestrained:'',
-		action:'new_empty',
-		active:true,
-		min_select:0,
-		max_select:0,
-		options:[],
+		name: '',
+		type: 'single',
+		groupRestrained: '',
+		action: 'new_empty',
+		active: true,
+		minSelect: 0,
+		maxSelect: 0,
+		options: [],
 		...overwrite
 	}
 }
 
 export const createEmptyOption = (overwrite={}) => {
 	return {
-		name:'',
-		price:0,
-		item:'',
-		active:true,
-		max_select_restrain_other:0,
-		order:0,
-		action:'new_empty',
+		name: '',
+		price: 0,
+		item: '',
+		active: true,
+		maxSelectRestrainOther: 0,
+		order: 0,
+		action: 'new_empty',
 		...overwrite
 	}
 }
 
 export const calculateProductPrice = (product) => {
-	return product.options_groups.reduce((totalGroup, group)=>{
+	return product.optionsGroups.reduce((totalGroup, group)=>{
 		let optionsPrice = group.options.reduce((totalOption, option)=> {
 			return (option.selected) ?  totalOption + option.price : totalOption;
 		}, 0);
@@ -213,15 +214,15 @@ export const calculateOrderPrice = (products, initialValue=0) => {
 
 export const sanitizeOrderData = (data) => {
 	return {
-		user_id: data.user.id || null,
+		userId: data.user.id || null,
 		type: data.type,
 		status: data.status,
-		payment_method_id: data.payment_method && data.payment_method.id ? data.payment_method.id : '',
+		paymentMethodId: data.paymentMethod && data.paymentMethod.id ? data.paymentMethod.id : '',
 
-		payment_fee: data.payment_fee,
-		delivery_price: data.delivery_price,
+		paymentFee: data.paymentFee,
+		deliveryPrice: data.deliveryPrice,
 		discount: data.discount,
-		price: calculateOrderPrice(data.products, data.payment_fee + data.delivery_price - data.discount),
+		price: calculateOrderPrice(data.products, data.paymentFee + data.deliveryPrice - data.discount),
 		message: data.message,
 		
 		street: data.street,
@@ -233,36 +234,36 @@ export const sanitizeOrderData = (data) => {
 		zipcode: data.zipcode || null,
 		
 		products: data.products.map(product => {
-			let new_product = {
+			let newProduct = {
 				action: product.action,
 				name: product.name,
 				price: product.price,
 				quantity: product.quantity,
 				message: product.message || '',
-				product_id: product.product_related.id,
+				productId: product.productRelated.id,
 
-				options_groups: product.options_groups.filter(group=>group.options.some(option=>option.selected)).map(group =>{
-					let new_group = {
+				optionsGroups: product.optionsGroups.filter(group=>group.options.some(option=>option.selected)).map(group =>{
+					let newGroup = {
 						name: group.name,
-						options_group_id: group.group_related.id,
+						optionsGroupId: group.groupRelated.id,
 
 						options: group.options.filter(option=>option.selected).map(option => {
-							let new_option = {
+							let newOption = {
 								name: option.name,
 								price: option.price,
-								item_id: option.item ? option.item.id : null,
-								option_id: option.option_related.id,
+								itemId: option.item ? option.item.id : null,
+								optionId: option.optionRelated.id,
 							};
-							if (option.id) new_option.id = option.id;
-							return new_option;
+							if (option.id) newOption.id = option.id;
+							return newOption;
 						})
 					}
-					if (group.id) new_group.id = group.id;
-					return new_group;
+					if (group.id) newGroup.id = group.id;
+					return newGroup;
 				})
 			};
-			if (product.id) new_product.id = product.id;
-			return new_product;
+			if (product.id) newProduct.id = product.id;
+			return newProduct;
 		})
 	}
 }
@@ -276,17 +277,17 @@ export const sanitizeProductData = (data) => {
 		featured: data.featured,
 		price: data.price,
 		active: data.active,
-		category_id: data.category.id,
-		options_groups: data.options_groups.map(group=>{
+		categoryId: data.category.id,
+		optionsGroups: data.optionsGroups.map(group=>{
 			let g = {
 				action: group.action,
 				name: group.name,
 				type: group.type,
 				order: group.order,
-				min_select: group.min_select,
-				max_select: group.type === 'single' ? 1 : group.max_select,
+				minSelect: group.minSelect,
+				maxSelect: group.type === 'single' ? 1 : group.maxSelect,
 				active: group.active,
-				max_select_restrain: group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : null,
+				maxSelectRestrain: group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : null,
 				options: group.options.map(option=>{
 					let o = {
 						action: option.action,
@@ -294,8 +295,8 @@ export const sanitizeProductData = (data) => {
 						order: option.order,
 						active: option.active,
 						price: option.price,
-						max_select_restrain_other: parseInt(option.max_select_restrain_other),
-						item_id: option.item && option.item.id !== 'none' ? option.item.id : null,
+						maxSelectRestrainOther: parseInt(option.maxSelectRestrainOther),
+						itemId: option.item && option.item.id !== 'none' ? option.item.id : null,
 					};
 					if (option.id && option.action !== 'create') o.id = option.id;
 					return o;
@@ -303,24 +304,24 @@ export const sanitizeProductData = (data) => {
 			}
 			if (group.id && group.action !== 'create') g.id = group.id;
 			return g;
-		})	
+		})
 	}
 }
 
 numeral.register('locale', 'br', {
-    delimiters: {
-        thousands: '.',
-        decimal: ','
-    },
-    abbreviations: {
-        thousand: 'k',
-        million: 'm',
-        billion: 'b',
-        trillion: 't'
-    },
-    currency: {
-        symbol: 'R$ '
-    }
+	delimiters: {
+		thousands: '.',
+		decimal: ','
+	},
+	abbreviations: {
+		thousand: 'k',
+		million: 'm',
+		billion: 'b',
+		trillion: 't'
+	},
+	currency: {
+		symbol: 'R$ '
+	}
 });
 
 numeral.locale('br');

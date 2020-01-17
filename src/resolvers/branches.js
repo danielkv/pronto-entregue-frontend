@@ -1,18 +1,19 @@
 import gql from "graphql-tag";
 
 export default {
-	Query : {
+	Query: {
 		
 	},
-	BranchMeta:{
-		action : ()=> {
+	BranchMeta: {
+		action: ()=> {
 			return 'editable';
 		}
 	},
-	Mutation : {
-		selectBranch: async (_, {id}, {client, cache}) => {
+	Mutation: {
+		selectBranch: async (_, { id }, { client, cache }) => {
 			try {
-				const {data} = await client.query({query:gql`
+				const { data } = await client.query({
+					query: gql`
 					query ($id:ID!) {
 						branch (id:$id) {
 							id
@@ -22,9 +23,10 @@ export default {
 							createdAt
 						}
 					}
-				`, variables:{id}});
+				`, variables: { id }
+				});
 				
-				cache.writeData({data:{selectedBranch:data.branch.id}});
+				cache.writeData({ data: { selectedBranch: data.branch.id } });
 
 				localStorage.setItem('@flakery/selectedBranch', data.branch.id);
 

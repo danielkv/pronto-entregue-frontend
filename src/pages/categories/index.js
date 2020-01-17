@@ -1,17 +1,18 @@
-import React, {useState, Fragment, useRef, useEffect} from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
-import Icon from '@mdi/react';
-import {mdiDrag , mdiPencil, mdiFilter} from '@mdi/js';
-import {Link} from 'react-router-dom';
+import React, { useState, Fragment, useRef, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Link } from 'react-router-dom';
+
 import { useMutation, useQuery } from '@apollo/react-hooks';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
+import { mdiDrag , mdiPencil, mdiFilter } from '@mdi/js';
+import Icon from '@mdi/react';
 
-import { DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, Loading, DraggableCell } from '../../layout/components';
 
-import {setPageTitle} from '../../utils';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, Loading, DraggableCell} from '../../layout/components';
-import { GET_SELECTED_BRANCH } from '../../graphql/branches';
-import { GET_BRANCH_CATEGORIES, UPDATE_CATEGORY, UPDATE_CATEGORIES_ORDER } from '../../graphql/categories';
+import { setPageTitle } from '../../utils';
+
+import { GET_CATEGORIES, UPDATE_CATEGORY, UPDATE_CATEGORIES_ORDER } from '../../graphql/categories';
 
 const sort = (a, b) => {
 	if (a.order > b.order) return 1;
@@ -47,26 +48,24 @@ function Page (props) {
 			search: searchRef.current.value
 		})
 	}
-	const clearFilterForm = (e) => {
+	const clearFilterForm = () => {
 		setFilter(initialFilter);
 	}
-
-	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
 	
-	const [setCategoryEnabled, {loading}] = useMutation(UPDATE_CATEGORY);
-	const [updateCategoriesOrder, {loading: loadingCategoriesOrder}] = useMutation(UPDATE_CATEGORIES_ORDER, {
-		refetchQueries: [{ query: GET_BRANCH_CATEGORIES, variables: { id: selectedBranch, filter, pagination } }]
+	const [setCategoryEnabled, { loading }] = useMutation(UPDATE_CATEGORY);
+	const [updateCategoriesOrder, { loading: loadingCategoriesOrder }] = useMutation(UPDATE_CATEGORIES_ORDER, {
+		refetchQueries: [{ query: GET_CATEGORIES, variables: { filter, pagination } }]
 	});
 	
-	const {data: { branch: { countCategories = 0, categories = [] } = {} } = {}, loading: loadingCategories, error, called} = useQuery(GET_BRANCH_CATEGORIES, {
-		variables: { id: selectedBranch, filter, pagination }
+	const { data: { countCategories = 0, categories = [] } = {}, loading: loadingCategories, error, called } = useQuery(GET_CATEGORIES, {
+		variables: { filter, pagination }
 	});
 
 	//temp order
 	if (categories.length) categories.sort(sort);
 	
 	if (error) return <ErrorBlock error={error} />
-	if (loadingSelectedData || (!called && loadingCategories)) return (<LoadingBlock />);
+	if (!called && loadingCategories) return (<LoadingBlock />);
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -79,10 +78,10 @@ function Page (props) {
 	const onDragEnd = result => {
 		if (!result.destination || result.destination.index === result.source.index) return;
 
-		const new_order = reorder(categories, result.source.index, result.destination.index);
+		const newOrder = reorder(categories, result.source.index, result.destination.index);
 
-		const save_new_order = new_order.map((cat, index) => ({ id: cat.id, order:index }));
-		updateCategoriesOrder({ variables: { data: save_new_order } });
+		const saveNewOrder = newOrder.map((cat, index) => ({ id: cat.id, order: index }));
+		updateCategoriesOrder({ variables: { data: saveNewOrder } });
 	}
 
 	return (
@@ -95,63 +94,63 @@ function Page (props) {
 						<NumberOfRows>{countCategories} categorias</NumberOfRows>
 					</BlockHeader>
 					<Paper>
-						<Table style={{tableLayout:'auto', width:'100%'}}>
+						<Table style={{ tableLayout: 'auto', width: '100%' }}>
 							<TableHead>
 								<TableRow>
-									<TableCell style={{width:30}}></TableCell>
-									<TableCell style={{width:50}}></TableCell>
+									<TableCell style={{ width: 30 }}></TableCell>
+									<TableCell style={{ width: 50 }}></TableCell>
 									<TableCell>Nome</TableCell>
-									<TableCell style={{width:350}}>Produtos vinculados</TableCell>
-									<TableCell style={{width:300}}>Criada em</TableCell>
-									<TableCell style={{width:100}}>Ações</TableCell>
+									<TableCell style={{ width: 350 }}>Produtos vinculados</TableCell>
+									<TableCell style={{ width: 300 }}>Criada em</TableCell>
+									<TableCell style={{ width: 100 }}>Ações</TableCell>
 								</TableRow>
 							</TableHead>
 							<DragDropContext
 								/* onDragStart
 								onDragUpdate */
 								onDragEnd={onDragEnd}
-								>
+							>
 								<Droppable droppableId='reorder'>
 									{(provided, snapshot)=>(
-									<TableBody
-										innerRef={provided.innerRef}
-										{...provided.droppableProps}
+										<TableBody
+											innerRef={provided.innerRef}
+											{...provided.droppableProps}
 										>
-										{categories.map((row, index) => (
-											<Draggable key={row.id} draggableId={row.id} index={index} style={{display: 'table'}}>
-												{(provided)=>{
-													const selected = row.id === snapshot.draggingFromThisWith;
-													return(
-												<TableRow
+											{categories.map((row, index) => (
+												<Draggable key={row.id} draggableId={row.id} index={index} style={{ display: 'table' }}>
+													{(provided)=>{
+														const selected = row.id === snapshot.draggingFromThisWith;
+														return(
+															<TableRow
 														
-													selected={selected}
-													innerRef={provided.innerRef}
-													{...provided.draggableProps}
-													>
-													<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></DraggableCell>
-													<DraggableCell selected={selected}><ProductImage src={row.image} /></DraggableCell>
-													<DraggableCell selected={selected}>{row.name}</DraggableCell>
-													<DraggableCell selected={selected}><CircleNumber>{row.products_qty}</CircleNumber></DraggableCell>
-													<DraggableCell selected={selected}>{row.created_at}</DraggableCell>
-													<DraggableCell selected={selected}>
-														<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>
-															<Icon path={mdiPencil} size='18' color='#363E5E' />
-														</IconButton>
-														<Switch
-															checked={row.active}
-															disabled={loading}
-															onChange={()=>setCategoryEnabled({variables:{id:row.id, data:{active:!row.active}}})}
-															value="checkedB"
-															size='small'
-															color="secondary"
-															inputProps={{ 'aria-label': 'primary checkbox' }}
-														/>
-													</DraggableCell>
-												</TableRow>)}}
-											</Draggable>
-										))}
-										{provided.placeholder}
-									</TableBody>)}
+																selected={selected}
+																innerRef={provided.innerRef}
+																{...provided.draggableProps}
+															>
+																<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></DraggableCell>
+																<DraggableCell selected={selected}><ProductImage src={row.image} /></DraggableCell>
+																<DraggableCell selected={selected}>{row.name}</DraggableCell>
+																<DraggableCell selected={selected}><CircleNumber>{row.products_qty}</CircleNumber></DraggableCell>
+																<DraggableCell selected={selected}>{row.created_at}</DraggableCell>
+																<DraggableCell selected={selected}>
+																	<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>
+																		<Icon path={mdiPencil} size='18' color='#363E5E' />
+																	</IconButton>
+																	<Switch
+																		checked={row.active}
+																		disabled={loading}
+																		onChange={()=>setCategoryEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
+																		value="checkedB"
+																		size='small'
+																		color="secondary"
+																		inputProps={{ 'aria-label': 'primary checkbox' }}
+																	/>
+																</DraggableCell>
+															</TableRow>)}}
+												</Draggable>
+											))}
+											{provided.placeholder}
+										</TableBody>)}
 								</Droppable>
 							</DragDropContext>
 						</Table>
@@ -167,8 +166,8 @@ function Page (props) {
 							rowsPerPage={pagination.rowsPerPage}
 							page={pagination.page}
 							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
-							/>
+							onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+						/>
 					</Paper>
 					<NumberOfRows>{countCategories} categorias</NumberOfRows>
 				</Block>
@@ -183,7 +182,7 @@ function Page (props) {
 									size='small'
 									color='primary'
 									checked={filter.showInactive}
-									onChange={(e)=>setFilter({ ...filter, showInactive: !filter.showInactive })}
+									onChange={()=>setFilter({ ...filter, showInactive: !filter.showInactive })}
 									value={filter.showInactive}
 								/>
 							}

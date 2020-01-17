@@ -1,19 +1,19 @@
 
 export default {
-	Query : {
+	Query: {
 		
 	},
-	OptionsGroup:{
-		action : ()=> {
+	OptionsGroup: {
+		action: ()=> {
 			return 'editable';
 		}
 	},
-	Option:{
-		action : ()=> {
+	Option: {
+		action: ()=> {
 			return 'editable';
 		}
 	},
-	Mutation : {
+	Mutation: {
 		
 	}
 }

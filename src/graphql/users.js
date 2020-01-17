@@ -50,19 +50,11 @@ export const UPDATE_USER = gql`
 				user_relation {
 					active
 				}
-				assigned_branches {
-					id
-					name
-					user_relation {
-						active
-						role_id
-					}
-				}
 			}
 			metas {
 				id
-				meta_type
-				meta_value
+				key
+				value
 				action @client
 			}
 		}

@@ -1,13 +1,15 @@
 import React, { useState, Fragment, useRef, useEffect } from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
-import Icon from '@mdi/react';
-import {mdiInbox , mdiPencil, mdiFilter} from '@mdi/js';
-import {Link} from 'react-router-dom';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Link } from 'react-router-dom';
 
-import {setPageTitle} from '../../utils';
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading} from '../../layout/components';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button } from '@material-ui/core';
+import { mdiInbox , mdiPencil, mdiFilter } from '@mdi/js';
+import Icon from '@mdi/react';
+
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, Loading } from '../../layout/components';
+
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle } from '../../utils';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ITEMS, UPDATE_ITEM } from '../../graphql/items';
@@ -39,14 +41,14 @@ function Page (props) {
 			search: searchRef.current.value
 		})
 	}
-	const clearFilterForm = (e) => {
+	const clearFilterForm = () => {
 		setFilter(initialFilter);
 	}
 
-	const {data: { selectedCompany }, loading:loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
-	const { 
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const {
 		data: { company: { countItems = 0, items = [] } = {} } = {},
-		loading:loadingItems,
+		loading: loadingItems,
 		error,
 		called,
 	} = useQuery(GET_COMPANY_ITEMS, {
@@ -57,7 +59,7 @@ function Page (props) {
 		},
 	});
 	
-	const [setItemEnabled, {loading}] = useMutation(UPDATE_ITEM);
+	const [setItemEnabled, { loading }] = useMutation(UPDATE_ITEM);
 	
 	if (error) return <ErrorBlock error={error} />
 	if (loadingSelectedData || (loadingItems && !called)) return (<LoadingBlock />);
@@ -66,63 +68,63 @@ function Page (props) {
 		<Fragment>
 			<Content>
 				{loadingItems ? <LoadingBlock /> :
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Estoque</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/estoque/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
-						<NumberOfRows>{countItems} itens</NumberOfRows>
-					</BlockHeader>
-					<Paper>
-						<Table>
-							<TableHead>
-								<TableRow>
-									<TableCell style={{width:30, paddingRight:10}}></TableCell>
-									<TableCell>Nome</TableCell>
-									<TableCell style={{width:130}}>Criada em</TableCell>
-									<TableCell style={{width:100}}>Ações</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{items.map(row => (
-									<TableRow key={row.name}>
-										<TableCell style={{width:30, paddingLeft:40, paddingRight:10}}><Icon path={mdiInbox} size='20' color='#BCBCBC' /></TableCell>
-										<TableCell>{row.name}</TableCell>
-										<TableCell>{row.createdAt}</TableCell>
-										<TableCell>
-											<IconButton onClick={()=>{props.history.push(`/estoque/alterar/${row.id}`)}}>
-												<Icon path={mdiPencil} size='18' color='#363E5E' />
-											</IconButton>
-											<Switch
-												checked={row.active}
-												disabled={loading}
-												onChange={()=>setItemEnabled({variables:{id:row.id, data:{active:!row.active}}})}
-												value="checkedB"
-												size='small'
-												color="secondary"
-											/>
-										</TableCell>
+					<Block>
+						<BlockHeader>
+							<BlockTitle>Estoque</BlockTitle>
+							<Button size='small' variant="contained" color='secondary' to='/estoque/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
+							<NumberOfRows>{countItems} itens</NumberOfRows>
+						</BlockHeader>
+						<Paper>
+							<Table>
+								<TableHead>
+									<TableRow>
+										<TableCell style={{ width: 30, paddingRight: 10 }}></TableCell>
+										<TableCell>Nome</TableCell>
+										<TableCell style={{ width: 130 }}>Criada em</TableCell>
+										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							component="div"
+								</TableHead>
+								<TableBody>
+									{items.map(row => (
+										<TableRow key={row.name}>
+											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Icon path={mdiInbox} size='20' color='#BCBCBC' /></TableCell>
+											<TableCell>{row.name}</TableCell>
+											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>
+												<IconButton onClick={()=>{props.history.push(`/estoque/alterar/${row.id}`)}}>
+													<Icon path={mdiPencil} size='18' color='#363E5E' />
+												</IconButton>
+												<Switch
+													checked={row.active}
+													disabled={loading}
+													onChange={()=>setItemEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
+													value="checkedB"
+													size='small'
+													color="secondary"
+												/>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+							<TablePagination
+								component="div"
 							
-							backIconButtonProps={{
-								'aria-label': 'previous page',
-							}}
-							nextIconButtonProps={{
-								'aria-label': 'next page',
-							}}
-							count={countItems}
-							rowsPerPage={pagination.rowsPerPage}
-							page={pagination.page}
-							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
+								backIconButtonProps={{
+									'aria-label': 'previous page',
+								}}
+								nextIconButtonProps={{
+									'aria-label': 'next page',
+								}}
+								count={countItems}
+								rowsPerPage={pagination.rowsPerPage}
+								page={pagination.page}
+								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
-					</Paper>
-					<NumberOfRows>{countItems} itens</NumberOfRows>
-				</Block>}
+						</Paper>
+						<NumberOfRows>{countItems} itens</NumberOfRows>
+					</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -149,7 +151,7 @@ function Page (props) {
 										<TextField
 											label='Buscar'
 											inputRef={searchRef}
-											/>
+										/>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

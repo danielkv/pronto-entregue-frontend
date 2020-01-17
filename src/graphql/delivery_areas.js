@@ -1,30 +1,30 @@
 import gql from "graphql-tag";
 
-export const GET_BRANCH_DELIVERY_AREAS = gql`
-	query GetDeliveryAreas ($id:ID!) {
-		branch (id:$id) {
+export const GET_COMPANY_DELIVERY_AREAS = gql`
+	query GetDeliveryAreas ($id: ID!) {
+		company (id: $id) {
 			id
 			deliveryAreas {
 				id
 				type
 				name
 				price
-				zipcode_a
-				zipcode_b
+				zipcodeA
+				zipcodeB
 			}
 		}
 	}
 `;
 
 export const REMOVE_DELIVERY_AREA = gql`
-	mutation RemoveDeliveryArea ($id:ID!) {
-		removeDeliveryArea (id:$id) {
+	mutation RemoveDeliveryArea ($id: ID!) {
+		removeDeliveryArea (id: $id) {
 			id
 			type
 			name
 			price
-			zipcode_a
-			zipcode_b
+			zipcodeA
+			zipcodeB
 		}
 	}
 `;

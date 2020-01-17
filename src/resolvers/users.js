@@ -1,14 +1,14 @@
 
 export default {
-	Query : {
+	Query: {
 		
 	},
-	UserMeta:{
-		action : ()=> {
+	UserMeta: {
+		action: ()=> {
 			return 'editable';
 		}
 	},
-	Mutation : {
+	Mutation: {
 		
 	}
 }

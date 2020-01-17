@@ -1,9 +1,11 @@
 import React from 'react';
+
 import { useApolloClient } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+import { setPageTitle } from '../../utils';
 import PageForm from './form';
-import {setPageTitle} from '../../utils';
+
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ITEMS } from '../../graphql/items';
 
@@ -24,24 +26,24 @@ function Page (props) {
 	const client = useApolloClient();
 
 	const item = {
-		name:'',
-		description:'',
-		active:true,
+		name: '',
+		description: '',
+		active: true,
 	};
 
-	function onSubmit(data, {setSubmitting}) {
-		const {selectedCompany} = client.readQuery({query:GET_SELECTED_COMPANY});
+	function onSubmit(data, { setSubmitting }) {
+		const { selectedCompany } = client.readQuery({ query: GET_SELECTED_COMPANY });
 
-		client.mutate({mutation:CREATE_ITEM, variables:{data}, refetchQueries:[{query:GET_COMPANY_ITEMS, variables:{id:selectedCompany}}]})
-		.then(({data:{createItem}})=>{
-			props.history.push(`/estoque/alterar/${createItem.id}`);
-		})
-		.catch((err)=>{
-			console.error(err);
-		})
-		.finally(()=>{
-			setSubmitting(false);
-		})
+		client.mutate({ mutation: CREATE_ITEM, variables: { data }, refetchQueries: [{ query: GET_COMPANY_ITEMS, variables: { id: selectedCompany } }] })
+			.then(({ data: { createItem } })=>{
+				props.history.push(`/estoque/alterar/${createItem.id}`);
+			})
+			.catch((err)=>{
+				console.error(err);
+			})
+			.finally(()=>{
+				setSubmitting(false);
+			})
 	}
 	
 	return (

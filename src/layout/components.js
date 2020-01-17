@@ -1,9 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import styled, {keyframes} from 'styled-components';
-import { Paper, TextField, TableCell } from '@material-ui/core';
 
+import { Paper, TextField, TableCell } from '@material-ui/core';
+import { mdiLoading } from '@mdi/js';
 import Icon from '@mdi/react';
-import {mdiLoading} from '@mdi/js';
+
+import styled, { keyframes } from 'styled-components';
+
 
 const rotate = keyframes`
 	from {
@@ -15,11 +17,11 @@ const rotate = keyframes`
 	}
 `;
 
-export const Loading = styled(Icon).attrs(({size})=>{
+export const Loading = styled(Icon).attrs(({ size })=>{
 	return ({
 		path: mdiLoading,
 		size: size || '26',
-		color:'#707070'
+		color: '#707070'
 	})
 })`
 	margin-left:10px;
@@ -46,14 +48,14 @@ export const ErrorTitle = styled.div`
 
 export function DraggableCell (props) {
 	const ref = useRef();
-	let styles = {...props.style};
+	let styles = { ...props.style };
 
 	useEffect(() => {
 	
 	}, [ref]);
 	
 	if (ref.current && props.selected) {
-		let {width} = ref.current.getBoundingClientRect();
+		let { width } = ref.current.getBoundingClientRect();
 		styles.width = width;
 	}
 
@@ -211,7 +213,7 @@ export const ProductImage = styled.div`
 
 //export function tField({field, label, action=false, type='text', inputProps, InputProps, form:{isSubmitting, errors, setFieldValue, values}, form}) {
 export function tField(props) {
-	let {field, form:{isSubmitting, errors, setFieldValue, values}} = props;
+	let { field, form: { isSubmitting, errors, setFieldValue, values } } = props;
 	let error = '';
 	const nesting = field.name.split('.');
 	let controlDisabled = typeof props.controlDisabled !== "undefined" ? props.controlDisabled : isSubmitting;
@@ -219,20 +221,20 @@ export function tField(props) {
 	if (errors[nesting[0]]) error = nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, errors);
 
 	if (props.action) {
-		let action_nesting = props.action.split('.');
-		let action_value = action_nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, values);
+		let actionNesting = props.action.split('.');
+		let actionValue = actionNesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, values);
 
 		let onChange = field.onChange;
 		field.onChange = (e) => {
 			onChange(e);
-			if (action_value === 'new_empty') setFieldValue(props.action, 'create');
-			else if (action_value === 'editable') setFieldValue(props.action, 'update');
+			if (actionValue === 'new_empty') setFieldValue(props.action, 'create');
+			else if (actionValue === 'editable') setFieldValue(props.action, 'update');
 		}
-	} 
+	}
 
 
 	return (
-//		<TextField {...field} inputProps={inputProps} InputProps={InputProps} onClick={(e)=>{e.stopPropagation();}} type={type} label={label}  helperText={error} disabled={isSubmitting}  />
+	//		<TextField {...field} inputProps={inputProps} InputProps={InputProps} onClick={(e)=>{e.stopPropagation();}} type={type} label={label}  helperText={error} disabled={isSubmitting}  />
 		<TextField {...props} {...field} disabled={controlDisabled} error={!!error} helperText={error}  />
 	)
 }
@@ -244,7 +246,7 @@ export const ImagePlaceHolderContainer = styled.div`
 	border-radius:3px;
 	transition:background-color ease-in-out .3s;
 
-	${({isDragActive})=>{
+	${({ isDragActive })=>{
 		if (isDragActive) return 'background-color:#B1FFA8;';
 	}}
 

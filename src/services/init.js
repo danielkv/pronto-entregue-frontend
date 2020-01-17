@@ -1,6 +1,8 @@
-import {useState, useEffect} from 'react';
-import {useQuery} from '@apollo/react-hooks';
+import { useState, useEffect } from 'react';
+
+import { useQuery } from '@apollo/react-hooks';
 import gql from "graphql-tag";
+
 
 import client from './server';
 
@@ -61,18 +63,18 @@ async function init() {
 			client.writeData({ data: { userToken: token } });
 		}
 
-		client.writeData({ data:  { initialized: true } });
+		client.writeData({ data: { initialized: true } });
 
 		return true;
 	} catch (e) {
 		logUserOut();
 		throw e;
-	};
+	}
 }
 
 export function logUserIn (user, token) {
 	localStorage.setItem('@flakery/userToken', token);
-	client.writeData({ data: { loadingInit: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });	
+	client.writeData({ data: { loadingInit: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });
 }
 
 export function logUserOut () {
@@ -88,9 +90,9 @@ function loadInitialData() {
 	return client.query({ query: GET_USER_COMPANIES, variables: { id: loggedUserId } })
 		.then (async ({ data: { user: { companies = [] } = {} } = {} }) => {
 			const { selectedCompany } = client.readQuery({ query: GET_SELECTED_COMPANY });
-			const selectCompany_id = selectedCompany || companies[0].id;
+			const selectCompanyId = selectedCompany || companies[0].id;
 
-			await client.mutate({ mutation: SELECT_COMPANY, variables: { id: selectCompany_id } });
+			await client.mutate({ mutation: SELECT_COMPANY, variables: { id: selectCompanyId } });
 
 			return true;
 		});

@@ -1,18 +1,5 @@
 import gql from "graphql-tag";
 
-export const SEARCH_BRANCH_PRODUCTS = gql`
-	query SearchProducts ($search:String!) {
-		searchBranchProducts(search:$search) {
-			id
-			name
-			category {
-				id
-				name
-			}
-		}
-	}
-`;
-
 export const OPTIONS_GROUP_FRAGMENT = gql`
 	fragment OptionsGroupFields on OptionsGroup {
 		id
@@ -90,9 +77,9 @@ export const CREATE_PRODUCT = gql`
 	}
 `;
 
-export const GET_BRANCHES_PRODUCTS = gql`
+export const GET_COMPANY_PRODUCTS = gql`
 	query GetProducts ($id:ID!, $filter:Filter, $pagination: Pagination) {
-		branch (id:$id) {
+		company (id:$id) {
 			id
 			countProducts(filter: $filter)
 			products(filter: $filter, pagination: $pagination) {
@@ -113,7 +100,7 @@ export const GET_BRANCHES_PRODUCTS = gql`
 `;
 
 export const UPDATE_PRODUCT = gql`
-	mutation UpdateProduct ($id:ID!, $data:ProductInput!, $filter:Filter) {
+	mutation UpdateProduct ($id:ID!, $data: ProductInput!, $filter:Filter) {
 		updateProduct (id:$id, data:$data) {
 			id
 			name
@@ -132,4 +119,19 @@ export const UPDATE_PRODUCT = gql`
 		}
 	}
 	${OPTIONS_GROUP_FRAGMENT}
+`;
+
+export const GET_COMPANY_BEST_SELLERS = gql`
+	query BestSellers ($id:ID!, $filter: Filter, $pagination: Pagination) {
+		company(id: $id) {
+			id
+			best_sellers (filter: $filter, pagination: $pagination) {
+				id
+				name
+				image
+				qty
+			}
+		}
+	}
+
 `;

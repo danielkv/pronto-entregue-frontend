@@ -1,10 +1,13 @@
 import React from 'react';
-import { ThemeProvider } from '@material-ui/styles';
-import theme from './theme';
 
-import {Container, HeaderArea, NavigationArea, Main} from './components';
+import { ThemeProvider } from '@material-ui/styles';
+
+
+import { Container, HeaderArea, NavigationArea, Main } from './components';
+
 import Header from './header';
 import Navigation from './navigation';
+import theme from './theme';
 
 export default function Layout (_props) {
 	return (

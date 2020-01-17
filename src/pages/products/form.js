@@ -1,25 +1,26 @@
 import React, { Fragment, useState, useCallback } from 'react';
-import gql from 'graphql-tag';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+
 import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
-import {Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment} from '@material-ui/core';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
-
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram } from '@mdi/js'
 import Icon from '@mdi/react';
-import {mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram } from '@mdi/js'
 import Downshift from "downshift";
-import { FieldArray, Form, Field, ErrorMessage} from 'formik';
-import { DragDropContext, Droppable} from 'react-beautiful-dnd';
+import { FieldArray, Form, Field, ErrorMessage } from 'formik';
+import gql from 'graphql-tag';
 
-import {createEmptyOptionsGroup} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading} from '../../layout/components';
 
-import OptionsGroups from './options_groups';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading } from '../../layout/components';
+
+import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
+import { createEmptyOptionsGroup } from '../../utils';
+import OptionsGroups from './optionsGroups';
+
+import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { LOAD_OPTION_GROUP } from '../../graphql/products';
-import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
-import { GET_SELECTED_BRANCH } from '../../graphql/branches';
-import { GET_BRANCH_CATEGORIES } from '../../graphql/categories';
 
 const GET_COMPANY_ITEMS = gql`
 	query ($id:ID!) {
@@ -55,24 +56,24 @@ const SEARCH_OPTIONS_GROUPS = gql`
 	}
 `;
 
-export default function PageForm ({values:{active, featured, price, type, preview, category, options_groups}, setFieldValue, handleChange, isSubmitting, errors}) {
+export default function PageForm ({ values: { active, featured, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isSubmitting, errors }) {
 	console.log('product')
 
 	const [loadingCopy, setLoadingCopy] = useState(false);
 	const [dragAlertOpen, setDragAlertOpen] = useState(false);
 	
-	const {data:selectedBranchData, loading:loadingSelectedData} = useQuery(GET_SELECTED_BRANCH);
-	const {data:categoriesData, loading:loadingcategoriesData} = useQuery(GET_BRANCH_CATEGORIES, {variables:{id:selectedBranchData.selectedBranch}});
+	const { data: selectedBranchData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const { data: categoriesData, loading: loadingcategoriesData } = useQuery(GET_COMPANY_CATEGORIES, { variables: { id: selectedBranchData.selectedBranch } });
 
-	const {data:selectedCompanyData, loading:loadingSelectedCompany} = useQuery(GET_SELECTED_COMPANY);
-	const {data:itemsData, loading:loadingItems} = useQuery(GET_COMPANY_ITEMS, {variables:{id:selectedCompanyData.selectedCompany}});
+	const { data: selectedCompanyData, loading: loadingSelectedCompany } = useQuery(GET_SELECTED_COMPANY);
+	const { data: itemsData, loading: loadingItems } = useQuery(GET_COMPANY_ITEMS, { variables: { id: selectedCompanyData.selectedCompany } });
 	let items = [];
 	if (itemsData) {
 		items = itemsData.company.items;
-		if (!items.length || items[0].id !== 'none') items.unshift({id:'none', name:'Sem vínculo'})
+		if (!items.length || items[0].id !== 'none') items.unshift({ id: 'none', name: 'Sem vínculo' })
 	}
 
-	const [searchOptionsGroups, {data:groupsData, loading:loadingGroups}] = useLazyQuery(SEARCH_OPTIONS_GROUPS, {fetchPolicy:'no-cache'});
+	const [searchOptionsGroups, { data: groupsData, loading: loadingGroups }] = useLazyQuery(SEARCH_OPTIONS_GROUPS, { fetchPolicy: 'no-cache' });
 	const groups = groupsData ? groupsData.searchOptionsGroups : [];
 	const client = useApolloClient();
 	
@@ -104,7 +105,7 @@ export default function PageForm ({values:{active, featured, price, type, previe
 			let [removed] = list.splice(result.source.index, 1);
 			list.splice(result.destination.index, 0, removed);
 			
-			setFieldValue('options_groups', sanitizeOptionsGroupsOrder(list));
+			setFieldValue('optionsGroups', sanitizeOptionsGroupsOrder(list));
 		}
 		
 		if (result.type === 'option') {
@@ -124,33 +125,33 @@ export default function PageForm ({values:{active, featured, price, type, previe
 			list[droppableSource] = sanitizeOptionsOrder(list[droppableSource]);
 			list[droppableDestination] = sanitizeOptionsOrder(list[droppableDestination]);
 			
-			setFieldValue('options_groups', list);
+			setFieldValue('optionsGroups', list);
 		}
 	}
 	
 	const handleSearchGroups = (search) => {
-		searchOptionsGroups({variables:{search}});
+		searchOptionsGroups({ variables: { search } });
 	}
 	
 	const getCopiedOptionGroup = (group) => {
 		setLoadingCopy(true);
-		return client.query({query:LOAD_OPTION_GROUP, variables:{id:group.id}})
-		.then(({data:{optionsGroup}})=>{
-			delete optionsGroup.id;
-			optionsGroup.action = 'create';
-			optionsGroup.options = optionsGroup.options.map(row =>{
-				delete row.id;
-				row.action='create';
-				return row
-			});
-			return optionsGroup;
-		})
-		.catch(e=>{
-			console.error(e);
-		})
-		.finally(()=>{
-			setLoadingCopy(false);
-		})
+		return client.query({ query: LOAD_OPTION_GROUP, variables: { id: group.id } })
+			.then(({ data: { optionsGroup } })=>{
+				delete optionsGroup.id;
+				optionsGroup.action = 'create';
+				optionsGroup.options = optionsGroup.options.map(row =>{
+					delete row.id;
+					row.action='create';
+					return row
+				});
+				return optionsGroup;
+			})
+			.catch(e=>{
+				console.error(e);
+			})
+			.finally(()=>{
+				setLoadingCopy(false);
+			})
 	}
 	
 	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
@@ -213,13 +214,13 @@ export default function PageForm ({values:{active, featured, price, type, previe
 									disabled={isSubmitting}
 									error={!!errors.price}
 									helperText={!!errors.price && errors.price}
-									InputProps={{startAdornment:<InputAdornment position="start">R$</InputAdornment>}}
-									inputProps={{step:0.01}} />
+									InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
+									inputProps={{ step: 0.01 }} />
 							</FieldControl>
 							<FieldControl>
 								<TextField select value={category.id} label='Categoria' name='category.id' onChange={handleChange}>
-									{categoriesData && categoriesData.branch.categories.map(category_item=>(
-										<MenuItem key={category_item.id} value={category_item.id}>{category_item.name}</MenuItem>
+									{categoriesData && categoriesData.branch.categories.map(categoryItem=>(
+										<MenuItem key={categoryItem.id} value={categoryItem.id}>{categoryItem.name}</MenuItem>
 									))}
 								</TextField>
 							</FieldControl>
@@ -231,80 +232,81 @@ export default function PageForm ({values:{active, featured, price, type, previe
 						<BlockTitle>Opções</BlockTitle>
 						{loadingCopy && <Loading />}
 					</BlockHeader>
-					<Paper style={{overflow:'visible'}}>
-						<FieldArray  name={`options_groups`}>
-							{({insert, remove}) => (
+					<Paper style={{ overflow: 'visible' }}>
+						<FieldArray  name={`optionsGroups`}>
+							{() => (
 								<Fragment>
 									<BlockSeparator>
 										<FormRow>
 											<FieldControl>
 												<FormControl>
-												<Downshift
-													onChange={async (selected, {reset, clearSelection})=>{
-														if (selected.action !== 'create') {
-															selected = await getCopiedOptionGroup(selected);
-														}
-														const list = Array.from(options_groups);
-														list.unshift({...selected, id:Math.round(Math.random()*1000)});
-														setFieldValue('options_groups', sanitizeOptionsGroupsOrder(list));
-													}}
-													itemToString={(item => item ? item.name : '')}
-													onInputValueChange={(value)=>{handleSearchGroups(value)}}
-												>
-													{({
-														getInputProps,
-														getItemProps,
-														getMenuProps,
-														isOpen,
-														inputValue,
-														highlightedIndex,
-													})=>{
-														if (inputValue && (!groups.length || !groups[groups.length-1].action))
-															groups.push(createEmptyOptionsGroup({id:Math.round(Math.random()*1000), name:inputValue, action:'create'}));
+													<Downshift
+														onChange={async (selected)=>{
+															if (selected.action !== 'create') {
+																// eslint-disable-next-line no-param-reassign
+																selected = await getCopiedOptionGroup(selected);
+															}
+															const list = Array.from(optionsGroups);
+															list.unshift({ ...selected, id: Math.round(Math.random()*1000) });
+															setFieldValue('optionsGroups', sanitizeOptionsGroupsOrder(list));
+														}}
+														itemToString={(item => item ? item.name : '')}
+														onInputValueChange={(value)=>{handleSearchGroups(value)}}
+													>
+														{({
+															getInputProps,
+															getItemProps,
+															getMenuProps,
+															isOpen,
+															inputValue,
+															highlightedIndex,
+														})=>{
+															if (inputValue && (!groups.length || !groups[groups.length-1].action))
+																groups.push(createEmptyOptionsGroup({ id: Math.round(Math.random()*1000), name: inputValue, action: 'create' }));
 
-														return (
-															<div>
-																<TextField disabled={loadingCopy} {...getInputProps()} />
-																{isOpen && (
-																	<List {...getMenuProps()} className="dropdown">
-																		{loadingGroups && <div style={{padding:20}}><Loading /></div>}
+															return (
+																<div>
+																	<TextField disabled={loadingCopy} {...getInputProps()} />
+																	{isOpen && (
+																		<List {...getMenuProps()} className="dropdown">
+																			{loadingGroups && <div style={{ padding: 20 }}><Loading /></div>}
 																		
-																		{groups.map((item, index) => {
-																			let icon = item.action && item.action === 'create' ? mdiPlus : mdiBasket;
-																			let text = item.action && item.action === 'create' ? inputValue : <span>{`${item.name} `}<small>{`(${item.options_qty})`}</small></span>;
-																			let secondary = item.action && item.action === 'create' ? 'criar novo grupo' : `copiar de ${item.product.name} em ${item.product.category.branch.name}`;
+																			{groups.map((item, index) => {
+																				let icon = item.action && item.action === 'create' ? mdiPlus : mdiBasket;
+																				let text = item.action && item.action === 'create' ? inputValue : <span>{`${item.name} `}<small>{`(${item.options_qty})`}</small></span>;
+																				let secondary = item.action && item.action === 'create' ? 'criar novo grupo' : `copiar de ${item.product.name} em ${item.product.category.branch.name}`;
 
-																			return (<ListItem
-																				className="dropdown-item"
-																				selected={highlightedIndex === index}
-																				key={item.id}
-																				{...getItemProps({ key: item.id, index, item })}
+																				return (<ListItem
+																					className="dropdown-item"
+																					selected={highlightedIndex === index}
+																					key={item.id}
+																					{...getItemProps({ key: item.id, index, item })}
 																				>
 																					<ListItemIcon><Icon path={icon} color='#707070' size='22' /></ListItemIcon>
 																					<ListItemText>{text}</ListItemText>
 																					<ListItemSecondaryAction><small>{secondary}</small></ListItemSecondaryAction>
 																				</ListItem>)
-																		})}
-																	</List>
-																)}
-															</div>
-														)
-													}}
-												</Downshift>
+																			})}
+																		</List>
+																	)}
+																</div>
+															)
+														}}
+													</Downshift>
 													<FormHelperText>Crie um grupo novo ou copie um grupo já existente</FormHelperText>
 												</FormControl>
 											</FieldControl>
 										</FormRow>
 									</BlockSeparator>
 									<BlockSeparator>
-										<DragDropContext onDragEnd={onDragEnd(options_groups, setFieldValue)}>
+										<DragDropContext onDragEnd={onDragEnd(optionsGroups, setFieldValue)}>
 											<Droppable droppableId={`groups`} type='group'>
-												{(provided, snapshot)=>(
+												{(provided)=>(
 													
 													<div {...provided.droppableProps} ref={provided.innerRef}>
-														{options_groups.map((group, groupIndex)=>{
+														{optionsGroups.map((group, groupIndex)=>{
 															const props = {
-																groups: options_groups,
+																groups: optionsGroups,
 																group,
 																sanitizeOptionsGroupsOrder,
 																sanitizeOptionsOrder,
@@ -341,7 +343,7 @@ export default function PageForm ({values:{active, featured, price, type, previe
 					<Sidebar>
 						<BlockSeparator>
 							<FormRow>
-								<FieldControl style={{justifyContent:'flex-end', paddingRight:7}}>
+								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
 									<FormControlLabel
 										labelPlacement='start'
 										control={
@@ -352,7 +354,7 @@ export default function PageForm ({values:{active, featured, price, type, previe
 								</FieldControl>
 							</FormRow>
 							<FormRow>
-								<FieldControl style={{justifyContent:'flex-end', paddingRight:7}}>
+								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
 									<FormControlLabel
 										labelPlacement='start'
 										control={
@@ -372,7 +374,7 @@ export default function PageForm ({values:{active, featured, price, type, previe
 							<FormRow>
 								<FieldControl>
 									<FormControl>
-										<FormLabel>Tipo de seleção</FormLabel> 
+										<FormLabel>Tipo de seleção</FormLabel>
 										<ToggleButtonGroup
 											value={type}
 											exclusive
@@ -381,7 +383,7 @@ export default function PageForm ({values:{active, featured, price, type, previe
 												setFieldValue('type', value);
 											}}
 											aria-label="text alignment"
-											>
+										>
 											<ToggleButton disabled={isSubmitting} value="inline" title="Normal" aria-label="left aligned">
 												<Icon path={mdiCheckDecagram} size='16' color='#707070' />
 											</ToggleButton>
@@ -397,7 +399,7 @@ export default function PageForm ({values:{active, featured, price, type, previe
 							<FormRow>
 								<FieldControl>
 									<FormControl>
-										<FormLabel>Imagem</FormLabel> 
+										<FormLabel>Imagem</FormLabel>
 										<DropzoneBlock preview={preview} onDrop={handleDropFile(setFieldValue)} />
 										<FormHelperText error><ErrorMessage name="file" /></FormHelperText>
 									</FormControl>

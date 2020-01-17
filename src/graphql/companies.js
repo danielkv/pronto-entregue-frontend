@@ -14,9 +14,40 @@ export const UPDATE_COMPANY = gql`
 			active
 			metas {
 				id
-				meta_type
-				meta_value
+				key
+				value
 			}
+		}
+	}
+`;
+
+export const GET_COMPANY_PAYMENT_METHODS = gql`
+	query GetPaymentMethods ($id: ID!) {
+		company (id: $id) {
+			id
+			paymentMethods {
+				id
+				name
+				display_name
+			}
+		}
+	}
+`;
+
+export const ENABLE_PAYMENT_METHOD = gql`
+	mutation EnablePaymentMethod ($id:ID!) {
+		enablePaymentMethod (id:$id) {
+			id
+			name
+		}
+	}
+`;
+
+export const DISABLE_PAYMENT_METHOD = gql`
+	mutation DisablePaymentMethod ($id:ID!) {
+		disablePaymentMethod (id:$id) {
+			id
+			name
 		}
 	}
 `;

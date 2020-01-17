@@ -1,17 +1,19 @@
 import gql from "graphql-tag";
-import { SELECT_BRANCH } from "../graphql/branches";
+
+import { SELECT_COMPANY } from "../graphql/branches";
 
 export default {
-	CompanyMeta:{
-		action : ()=> {
+	CompanyMeta: {
+		action: ()=> {
 			return 'editable';
 		}
 	},
-	Mutation : {
-		selectCompany: async (_, {id}, {client, cache}) => {
+	Mutation: {
+		selectCompany: async (_, { id }, { client, cache }) => {
 			try {
 				//carrega, do cliente, a empresa selecionada
-				const {data} = await client.query({query:gql`
+				const { data } = await client.query({
+					query: gql`
 					query ($id:ID!){
 						company(id:$id) {
 							id
@@ -26,22 +28,25 @@ export default {
 							}
 						}
 					}
-				`, variables:{id}});
+				`, variables: { id }
+				});
 				
 				if (!data) new Error('Empresa não encontrada');
 
 				//define empresa selecionada e filiais selecionaveis
-				cache.writeData({data:{
-					selectedCompany:data.company.id,
-					selectedBranch:'',
-					userBranches:data.company.branches
-				}});
+				cache.writeData({
+					data: {
+						selectedCompany: data.company.id,
+						selectedBranch: '',
+						userBranches: data.company.branches
+					}
+				});
 
 				localStorage.setItem('@flakery/selectedCompany', data.company.id);
 
 				//seleciona a primeira filial
 				const selectedBranch = data.company.branches.length ? data.company.branches[0].id : 0;
-				await client.mutate({mutation:SELECT_BRANCH, variables:{id:selectedBranch}});
+				await client.mutate({ mutation: SELECT_COMPANY, variables: { id: selectedBranch } });
 				
 				return data.userCompany;
 			} catch (e) {

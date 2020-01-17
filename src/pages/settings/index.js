@@ -1,21 +1,22 @@
 import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+
 import { Grid, Paper } from '@material-ui/core';
-import {Route, Redirect} from 'react-router-dom';
 
-import {setPageTitle} from '../../utils';
-import {Content} from '../../layout/components';
-import { MenuLink } from './styles';
+import { Content } from '../../layout/components';
 
+import { setPageTitle } from '../../utils';
 import BusinessHours from './business_hours';
 import DeliveryAreas from './delivery_areas';
-import PaymentMethods from './payment_methods';
+import PaymentMethods from './paymentMethods';
+import { MenuLink } from './styles';
 
 function Page (props) {
 	setPageTitle('Configurações');
 
 	function isSelected(location) {
-		const current_location = props.location.pathname.substr(1).split('/')[1];
-		return current_location === location ? 'selected' : '';
+		const currentLocation = props.location.pathname.substr(1).split('/')[1];
+		return currentLocation === location ? 'selected' : '';
 	}
 	
 	return (

@@ -1,19 +1,20 @@
 import React from 'react';
+
 import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
+import { setPageTitle, joinMetas, initialMetas } from '../../utils';
 import PageForm from './form';
-import {setPageTitle, joinMetas, initialMetas} from '../../utils';
 
-import { GET_USER_COMPANIES } from '../../graphql/companies';
 import { LOGGED_USER_ID } from '../../graphql/authentication';
+import { GET_USER_COMPANIES } from '../../graphql/companies';
 
 const CREATE_COMPANY = gql`
 	mutation ($data:CompanyInput!) {
 		createCompany (data:$data) {
 			id
 			name
-			display_name
+			displayName
 			last_month_revenue
 			createdAt
 			active
@@ -21,7 +22,7 @@ const CREATE_COMPANY = gql`
 	}
 `;
 
-function Page (props) {
+function Page () {
 	setPageTitle('Nova empresa');
 	
 	const client = useApolloClient();
@@ -30,14 +31,14 @@ function Page (props) {
 
 	const metas = ['address', 'document', 'contact', 'phones', 'emails'];
 	const company = {
-		name:'',
-		display_name:'',
-		active:true,
+		name: '',
+		displayName: '',
+		active: true,
 		...initialMetas(metas)
 	};
 
 	function onSubmit(values) {
-		const data = {...values, metas:joinMetas(metas, values)};
+		const data = { ...values, metas: joinMetas(metas, values) };
 		delete data.address;
 		delete data.contact;
 		delete data.phones;

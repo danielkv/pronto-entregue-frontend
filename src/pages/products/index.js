@@ -1,16 +1,19 @@
-import React, {useState, Fragment, useRef, useEffect} from 'react';
-import {Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup} from '@material-ui/core';
-import Icon from '@mdi/react';
-import {mdiPencil, mdiFilter} from '@mdi/js';
-import {Link} from 'react-router-dom';
-import numeral from 'numeral';
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import React, { useState, Fragment, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
-import {setPageTitle} from '../../utils';
-import {Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, Loading} from '../../layout/components';
-import { GET_SELECTED_BRANCH } from '../../graphql/branches';
-import { GET_BRANCHES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup } from '@material-ui/core';
+import { mdiPencil, mdiFilter } from '@mdi/js';
+import Icon from '@mdi/react';
+import numeral from 'numeral';
+
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, Loading } from '../../layout/components';
+
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle } from '../../utils';
+
+import { GET_SELECTED_COMPANY } from '../../graphql/branches';
+import { GET_COMPANYES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
 const initialFilter = {
 	showInactive: false,
@@ -39,26 +42,26 @@ function Page (props) {
 			search: searchRef.current.value
 		})
 	}
-	const clearFilterForm = (e) => {
+	const clearFilterForm = () => {
 		setFilter(initialFilter);
 	}
 
-	const { data: { selectedBranch }, loading:loadingSelectedData } = useQuery(GET_SELECTED_BRANCH);
+	const { data: { selectedBranch }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 
 	const {
 		data: { branch: { countProducts = 0, products = [] } = {} } = {},
 		loading: loadingProducts,
 		error,
 		called,
-	} = useQuery(GET_BRANCHES_PRODUCTS, {
+	} = useQuery(GET_COMPANYES_PRODUCTS, {
 		variables: {
 			id: selectedBranch,
 			filter,
 			pagination
-		} 
+		}
 	});
 
-	const [setCompanyEnabled, {loading}] = useMutation(UPDATE_PRODUCT);
+	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_PRODUCT);
 
 	if (error) return <ErrorBlock error={error} />
 	if ((loadingProducts && !called) || loadingSelectedData) return (<LoadingBlock />);
@@ -67,69 +70,69 @@ function Page (props) {
 		<Fragment>
 			<Content>
 				{loadingProducts ? <LoadingBlock /> :
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Produtos</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
-						<NumberOfRows>{countProducts} produtos</NumberOfRows>
-					</BlockHeader>
-					<Paper>
-						<Table>
-							<TableHead>
-								<TableRow>
-									<TableCell style={{width:30, paddingLeft:30}}></TableCell>
-									<TableCell>Produto</TableCell>
-									<TableCell>Categoria</TableCell>
-									<TableCell>Nº de opções</TableCell>
-									<TableCell>Preço</TableCell>
-									<TableCell>Criada em</TableCell>
-									<TableCell style={{width:100}}>Ações</TableCell>
-								</TableRow>
-							</TableHead>
-							<TableBody>
-								{products.map(row => (
-									<TableRow key={row.id}>
-										<TableCell style={{width:30, paddingLeft:30, paddingRight:10}}><ProductImage src={row.image} /></TableCell>
-										<TableCell>{row.name}</TableCell>
-										<TableCell>{row.category.name}</TableCell>
-										<TableCell><CircleNumber>{row.options_qty}</CircleNumber></TableCell>
-										<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
-										<TableCell>{row.createdAt}</TableCell>
-										<TableCell>
-											<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
-												<Icon path={mdiPencil} size='18' color='#363E5E' />
-											</IconButton>
-											<Switch
-												disabled={loading}
-												checked={row.active}
-												onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } }) }
-												value="checkedB"
-												size='small'
-												color="secondary"
-												inputProps={{ 'aria-label': 'primary checkbox' }}
-											/>
-										</TableCell>
+					<Block>
+						<BlockHeader>
+							<BlockTitle>Produtos</BlockTitle>
+							<Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button> {loading && <Loading />}
+							<NumberOfRows>{countProducts} produtos</NumberOfRows>
+						</BlockHeader>
+						<Paper>
+							<Table>
+								<TableHead>
+									<TableRow>
+										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
+										<TableCell>Produto</TableCell>
+										<TableCell>Categoria</TableCell>
+										<TableCell>Nº de opções</TableCell>
+										<TableCell>Preço</TableCell>
+										<TableCell>Criada em</TableCell>
+										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-						<TablePagination
-							component="div"
-							backIconButtonProps={{
-								'aria-label': 'previous page',
-							}}
-							nextIconButtonProps={{
-								'aria-label': 'next page',
-							}}
-							count={countProducts}
-							rowsPerPage={pagination.rowsPerPage}
-							page={pagination.page}
-							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({...pagination, page: 0, rowsPerPage: e.target.value });}}
-						/>
-					</Paper>
-					<NumberOfRows>{countProducts} produtos</NumberOfRows>
-				</Block>}
+								</TableHead>
+								<TableBody>
+									{products.map(row => (
+										<TableRow key={row.id}>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><ProductImage src={row.image} /></TableCell>
+											<TableCell>{row.name}</TableCell>
+											<TableCell>{row.category.name}</TableCell>
+											<TableCell><CircleNumber>{row.options_qty}</CircleNumber></TableCell>
+											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
+											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>
+												<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
+													<Icon path={mdiPencil} size='18' color='#363E5E' />
+												</IconButton>
+												<Switch
+													disabled={loading}
+													checked={row.active}
+													onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } }) }
+													value="checkedB"
+													size='small'
+													color="secondary"
+													inputProps={{ 'aria-label': 'primary checkbox' }}
+												/>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+							<TablePagination
+								component="div"
+								backIconButtonProps={{
+									'aria-label': 'previous page',
+								}}
+								nextIconButtonProps={{
+									'aria-label': 'next page',
+								}}
+								count={countProducts}
+								rowsPerPage={pagination.rowsPerPage}
+								page={pagination.page}
+								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+							/>
+						</Paper>
+						<NumberOfRows>{countProducts} produtos</NumberOfRows>
+					</Block>}
 			</Content>
 			<SidebarContainer>
 				<Block>

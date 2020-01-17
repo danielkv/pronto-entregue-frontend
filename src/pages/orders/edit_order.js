@@ -1,25 +1,26 @@
-import React, {useState, Fragment} from 'react';
-import PageForm from './form';
+import React, { useState, Fragment } from 'react';
+
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import {setPageTitle, sanitizeOrderData} from '../../utils';
-import {LoadingBlock, ErrorBlock} from '../../layout/blocks';
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
+import { setPageTitle, sanitizeOrderData } from '../../utils';
+import PageForm from './form';
+
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
 
 function Page (props) {
 	setPageTitle('Alterar pedido');
 
-	const edit_id = props.match.params.id;
+	const editId = props.match.params.id;
 
 	//erro e confirmação
 	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const {data, loading:loadingGetData, error} = useQuery(LOAD_ORDER, {variables:{id:edit_id}});
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_ORDER, { variables: { id: editId } });
 	const client = useApolloClient();
 
 	if (error) return <ErrorBlock error={error} />
@@ -27,8 +28,8 @@ function Page (props) {
 
 	const order = {
 		user: data.order.user,
-		payment_fee: data.order.payment_fee,
-		delivery_price: data.order.delivery_price,
+		paymentFee: data.order.paymentFee,
+		deliveryPrice: data.order.deliveryPrice,
 		price: data.order.price,
 		type: data.order.type,
 		discount: data.order.discount,
@@ -40,63 +41,63 @@ function Page (props) {
 		state: data.order.state,
 		district: data.order.district,
 		zipcode: data.order.zipcode,
-		payment_method: data.order.payment_method,
+		paymentMethod: data.order.paymentMethod,
 		products: data.order.products.map(product=>{
 			return {
-				...product.product_related,
+				...product.productRelated,
 
 				id: product.id,
 				price: product.price,
 				name: product.name,
 				quantity: product.quantity,
 				action: 'editable',
-				product_related: { id: product.product_related.id },
+				productRelated: { id: product.productRelated.id },
 
-				options_groups:product.product_related.options_groups.map(group=>{
-					let order_group = product.options_groups.find(row=>row.options_group_related.id===group.id);
-					let name = order_group ? order_group.name : group.name;
-					let id = order_group ? order_group.id : group.id;
+				optionsGroups: product.productRelated.optionsGroups.map(group=>{
+					let orderGroup = product.optionsGroups.find(row=>row.options_groupRelated.id===group.id);
+					let name = orderGroup ? orderGroup.name : group.name;
+					let id = orderGroup ? orderGroup.id : group.id;
 
 					let options = group.options.map(option=>{
-						let order_option = order_group ? order_group.options.find(row=>row.option_related.id===option.id) : null;
-						let name = order_option ? order_option.name : option.name;
-						let selected = order_option ? true : false;
-						let price = order_option ? order_option.price : option.price;
-						let id = order_option ? order_option.id : option.id;
-						return {...option, id, name, selected, price, action:'editable', option_related:{id: option.id}};
+						let orderOption = orderGroup ? orderGroup.options.find(row=>row.optionRelated.id===option.id) : null;
+						let name = orderOption ? orderOption.name : option.name;
+						let selected = orderOption ? true : false;
+						let price = orderOption ? orderOption.price : option.price;
+						let id = orderOption ? orderOption.id : option.id;
+						return { ...option, id, name, selected, price, action: 'editable', optionRelated: { id: option.id } };
 					})
 
-					return {...group, id, options, name, action:'editable', group_related:{id: group.id}};
+					return { ...group, id, options, name, action: 'editable', groupRelated: { id: group.id } };
 				}),
 			}
 		}),
 	};
 
-	function onSubmit(data, {setSubmitting}) {
+	function onSubmit(data, { setSubmitting }) {
 		const saveData = sanitizeOrderData(data);
 		console.log(saveData);
 
-		client.mutate({mutation:UPDATE_ORDER, variables:{id:edit_id, data:saveData}})
-		.then(()=>{
-			setDisplaySuccess('O peido foi salvo');
-		})
-		.catch((err)=>{
-			setDisplayError(err.message);
-			console.error(err.graphQLErrors, err.networkError, err.operation);
-		})
-		.finally(() => {
-			setSubmitting(false);
-		})
+		client.mutate({ mutation: UPDATE_ORDER, variables: { id: editId, data: saveData } })
+			.then(()=>{
+				setDisplaySuccess('O peido foi salvo');
+			})
+			.catch((err)=>{
+				setDisplayError(err.message);
+				console.error(err.graphQLErrors, err.networkError, err.operation);
+			})
+			.finally(() => {
+				setSubmitting(false);
+			})
 	}
 
-	const test_address = (_type) => (type) => {
-		if (type === 'takeout') 
+	const checkAddress = (_type) => (type) => {
+		if (type === 'takeout')
 			return Yup.mixed().notRequired();
 		
 		return (_type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
 	}
 	
-	function test_zipcode_ok (value) {
+	function chackZipcode (value) {
 		const { type, zipcode } = this.parent
 
 		if (type)
@@ -107,7 +108,7 @@ function Page (props) {
 		return !!value;
 	}
 
-	function test_zipcode (value) {
+	function checkZipcode (value) {
 		if (this.parent.type === 'takeout')
 			return true;
 
@@ -116,23 +117,23 @@ function Page (props) {
 	}
 
 	const productSchema = Yup.object().shape({
-		status : Yup.string().required('Obrigatório'),
+		status: Yup.string().required('Obrigatório'),
 		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
 		message: Yup.string().notRequired(),
 		type: Yup.string().required('Obrigatório'),
-		payment_method: Yup.string().typeError('Obrigatório').required('Obrigatório'),
+		paymentMethod: Yup.string().typeError('Obrigatório').required('Obrigatório'),
 
-		street: Yup.mixed().when('type', test_address('string')),
-		number: Yup.mixed().when('type', test_address('number')),
-		city: Yup.mixed().when('type', test_address('string')),
-		state: Yup.mixed().when('type', test_address('string')),
-		district: Yup.mixed().when('type', test_address('string')),
+		street: Yup.mixed().when('type', checkAddress('string')),
+		number: Yup.mixed().when('type', checkAddress('number')),
+		city: Yup.mixed().when('type', checkAddress('string')),
+		state: Yup.mixed().when('type', checkAddress('string')),
+		district: Yup.mixed().when('type', checkAddress('string')),
 
-		zipcode: Yup.mixed().test('test_zipcode', 'Obrigatório', test_zipcode),
-		zipcode_ok: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', test_zipcode_ok),
+		zipcode: Yup.mixed().test('checkZipcode', 'Obrigatório', checkZipcode),
+		zipcodeOk: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', chackZipcode),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
-		delivery_price: Yup.number().typeError('Digite um número').required('Obrigatório'),
+		deliveryPrice: Yup.number().typeError('Digite um número').required('Obrigatório'),
 		discount: Yup.number().typeError('Digite um número').required('Obrigatório')
 	});
 
