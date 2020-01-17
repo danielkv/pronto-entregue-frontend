@@ -18,7 +18,7 @@ import {
 	OptionsInfo,
 } from './options_styles';
 
-function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, items, isSubmitting, sanitizeOptionsGroupsOrder, sanitizeOptionsOrder }) {
+function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, isSubmitting, sanitizeOptionsGroupsOrder, sanitizeOptionsOrder }) {
 	const inputName = useRef(null);
 	const editing = !!group.editing;
 	
@@ -284,7 +284,6 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														insertOption: insert,
 														removeOption: remove,
 														isSubmitting,
-														items,
 
 														errors,
 														setFieldValue,

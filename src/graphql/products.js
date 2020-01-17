@@ -22,10 +22,6 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 			id
 			name
 			price
-			item {
-				id
-				name
-			}
 			active
 			max_select_restrain_other
 			order
