@@ -10,6 +10,7 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, Field
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
@@ -58,7 +59,7 @@ function Page (props) {
 
 	const [setUserEnabled, { loading }] = useMutation(UPDATE_USER, { variables: { companyId: selectedCompany } });
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (loadingSelectedCompany || (loadingUsersData && !called)) return (<LoadingBlock />);
 
 	return (

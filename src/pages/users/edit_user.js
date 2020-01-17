@@ -12,6 +12,7 @@ import PageForm from './form';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { UPDATE_USER } from '../../graphql/users';
+import { getErrors } from '../../utils/error';
 
 const LOAD_USER = gql`
 	query ($id: ID!, $companyId:ID!) {
@@ -66,7 +67,7 @@ function Page (props) {
 
 	const client = useApolloClient();
 
-	if (errorGetData) return <ErrorBlock error={errorGetData} />
+	if (errorGetData) return <ErrorBlock error={getErrors(errorGetData)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const metas = ['document', 'addresses', 'phones'];

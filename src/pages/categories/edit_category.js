@@ -6,6 +6,7 @@ import gql from 'graphql-tag';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { UPDATE_CATEGORY } from '../../graphql/categories';
@@ -35,7 +36,7 @@ function Page (props) {
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_CATEGORY, { variables: { id: editId } });
 	const client = useApolloClient();
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const category = {

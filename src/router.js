@@ -6,12 +6,13 @@ import { LoadingBlock, ErrorBlock } from './layout/blocks';
 import Login from './pages/login';
 import RoutesFrame from './routes-frame';
 import { useInitialize } from './services/init';
+import { getErrors } from './utils/error';
 
 const Routes = ()  => {
 	const { error, loading, isUserLoggedIn } = useInitialize(true);
 
 	if (loading) return <LoadingBlock />;
-	if (error) return <ErrorBlock error={error} />;
+	if (error) return <ErrorBlock error={getErrors(error)} />;
 
 	return (
 		<BrowserRouter>

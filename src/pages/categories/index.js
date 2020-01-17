@@ -11,6 +11,7 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, Field
 
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 
 import { GET_CATEGORIES, UPDATE_CATEGORY, UPDATE_CATEGORIES_ORDER } from '../../graphql/categories';
 
@@ -64,7 +65,7 @@ function Page (props) {
 	//temp order
 	if (categories.length) categories.sort(sort);
 	
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!called && loadingCategories) return (<LoadingBlock />);
 
 	const reorder = (list, startIndex, endIndex) => {

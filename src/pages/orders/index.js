@@ -11,6 +11,7 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, Field
 
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle, getStatusIcon } from '../../utils';
+import { getErrors } from '../../utils/error';
 import { OrderCreated, OrderDate, OrderTime } from './styles';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -58,7 +59,7 @@ function Page (props) {
 		}
 	})
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if ((!called && loadingOrders) || loadingSelectedData) return (<LoadingBlock />);
 
 	return (

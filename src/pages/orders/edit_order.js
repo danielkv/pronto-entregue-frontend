@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle, sanitizeOrderData } from '../../utils';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
@@ -23,7 +24,7 @@ function Page (props) {
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_ORDER, { variables: { id: editId } });
 	const client = useApolloClient();
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const order = {

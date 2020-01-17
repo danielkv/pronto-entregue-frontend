@@ -13,6 +13,7 @@ import OrdersDelivering from '../../assets/images/orders-delivering.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
 import { ErrorBlock } from '../../layout/blocks';
 import { getStatusIcon, setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 import { OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer } from './styles';
 
 import { GET_SELECTED_COMPANY, GET_COMPANY_BEST_SELLERS } from '../../graphql/companies';
@@ -54,7 +55,7 @@ function Page () {
 				<DashContainer>
 					<OrdersTodayContainer>
 						{(ordersQtyError)
-							? <ErrorBlock error={ordersQtyError} />
+							? <ErrorBlock error={getErrors(ordersQtyError)} />
 							: (
 								<>
 									<BlockTitle>Pedidos de hoje</BlockTitle>

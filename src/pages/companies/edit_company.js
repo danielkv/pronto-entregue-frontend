@@ -6,6 +6,7 @@ import gql from 'graphql-tag';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle, extractMetas, joinMetas } from '../../utils';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { UPDATE_COMPANY } from '../../graphql/companies';
@@ -42,7 +43,7 @@ function Page (props) {
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_COMPANY, { variables: { id: editId } });
 	const client = useApolloClient();
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const metas = ['address', 'document', 'contact', 'phones', 'emails'];

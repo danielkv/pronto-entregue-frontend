@@ -11,6 +11,7 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, Field
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 
 import { LOGGED_USER_ID } from '../../graphql/authentication';
 import { GET_USER_COMPANIES, UPDATE_COMPANY } from '../../graphql/companies';
@@ -57,7 +58,7 @@ function Page (props) {
 
 	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY, { refetchQueries: [{ query: GET_USER_COMPANIES, variables: { id: loggedUserId, filter, pagination } }] });
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (loadingCompanies && !called) return (<LoadingBlock />);
 
 	return (

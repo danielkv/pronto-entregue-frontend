@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle, sanitizeProductData } from '../../utils';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
@@ -40,7 +41,7 @@ function Page (props) {
 		refetchQueries: [{ query: LOAD_PRODUCT, variables: { id: editId, filter: { showInactive: true } } }]
 	});
 
-	if (error) return <ErrorBlock error={error} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	const initialValues = {
