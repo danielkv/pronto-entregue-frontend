@@ -9,7 +9,7 @@ export const UPDATE_COMPANY = gql`
 		updateCompany (id: $id, data:$data) {
 			id
 			name
-			display_name
+			displayName
 			createdAt
 			active
 			metas {
@@ -22,13 +22,13 @@ export const UPDATE_COMPANY = gql`
 `;
 
 export const GET_COMPANY_PAYMENT_METHODS = gql`
-	query GetPaymentMethods ($id: ID!) {
+	query GetCompanyPaymentMethods ($id: ID!) {
 		company (id: $id) {
 			id
 			paymentMethods {
 				id
 				name
-				display_name
+				displayName
 			}
 		}
 	}
@@ -36,9 +36,26 @@ export const GET_COMPANY_PAYMENT_METHODS = gql`
 
 export const ENABLE_PAYMENT_METHOD = gql`
 	mutation EnablePaymentMethod ($id:ID!) {
-		enablePaymentMethod (id:$id) {
+		enablePaymentMethod(id: $id) {
 			id
 			name
+		}
+	}
+`;
+
+export const LOAD_COMPANY = gql`
+	query LoadCompany ($id: ID!) {
+		company (id: $id) {
+			id
+			name
+			displayName
+			createdAt
+			active
+			metas {
+				id
+				key
+				value
+			}
 		}
 	}
 `;
@@ -60,9 +77,9 @@ export const GET_USER_COMPANIES = gql`
 			companies (filter: $filter, pagination: $pagination) {
 				id
 				name
-				display_name
+				displayName
 				createdAt
-				last_month_revenue
+				lastMonthRevenue
 				active
 			}
 		}

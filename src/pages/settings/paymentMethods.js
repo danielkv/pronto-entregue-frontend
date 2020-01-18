@@ -5,8 +5,9 @@ import { Paper, Table, TableBody, TableHead, TableCell, TableRow, Switch } from 
 import { mdiCreditCardOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 
-import { LoadingBlock } from '../../layout/blocks';
+import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 
 import { GET_SELECTED_COMPANY, GET_COMPANY_PAYMENT_METHODS, ENABLE_PAYMENT_METHOD, DISABLE_PAYMENT_METHOD } from '../../graphql/companies';
 import { GET_PAYMENT_METHODS } from '../../graphql/paymentMethods';
@@ -22,11 +23,12 @@ function Page () {
 	const {
 		data: { company: { paymentMethods: companyPaymentMethods = [] } = {} }= {},
 		loading: loadingCompanyPaymentMethods
-	} = useQuery(GET_COMPANY_PAYMENT_METHODS, { variables: { id: selectedCompany.selectedCompany } });
+	} = useQuery(GET_COMPANY_PAYMENT_METHODS, { variables: { id: selectedCompany } });
 
-	const [enablePaymentMethod, { loading: loadingEnablePaymentMethod }] = useMutation(ENABLE_PAYMENT_METHOD, { refetchQueries: [{ query: GET_COMPANY_PAYMENT_METHODS, variables: { id: selectedCompany.selectedCompany } }] })
-	const [disablePaymentMethod, { loading: loadingDisablePaymentMethod }] = useMutation(DISABLE_PAYMENT_METHOD, { refetchQueries: [{ query: GET_COMPANY_PAYMENT_METHODS, variables: { id: selectedCompany.selectedCompany } }] })
+	const [enablePaymentMethod, { loading: loadingEnablePaymentMethod, error: enableError }] = useMutation(ENABLE_PAYMENT_METHOD, { refetchQueries: [{ query: GET_COMPANY_PAYMENT_METHODS, variables: { id: selectedCompany } }] })
+	const [disablePaymentMethod, { loading: loadingDisablePaymentMethod, error: disableError }] = useMutation(DISABLE_PAYMENT_METHOD, { refetchQueries: [{ query: GET_COMPANY_PAYMENT_METHODS, variables: { id: selectedCompany } }] })
 
+	if (enableError || disableError) return <ErrorBlock error={getErrors(enableError || disableError)} />;
 	if (loadingPaymentMethods || loadingCompanyPaymentMethods) return <LoadingBlock />;
 
 	const paymentMethods = paymentMethodsList.map(method => {
@@ -57,7 +59,7 @@ function Page () {
 					{paymentMethods.map((method, index)=> (
 						<TableRow key={index}>
 							<TableCell><Icon path={mdiCreditCardOutline} color='#707070' size='18' /></TableCell>
-							<TableCell>{method.display_name}</TableCell>
+							<TableCell>{method.displayName}</TableCell>
 							<TableCell>
 								<Switch
 									disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}

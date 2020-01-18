@@ -5,7 +5,7 @@ export const GET_PAYMENT_METHODS = gql`
 		paymentMethods {
 			id
 			name
-			display_name
+			displayName
 		}
 	}
 `;

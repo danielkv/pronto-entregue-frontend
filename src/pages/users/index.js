@@ -87,7 +87,7 @@ function Page (props) {
 									{users.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
-											<TableCell>{row.full_name}</TableCell>
+											<TableCell>{row.fullName}</TableCell>
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>

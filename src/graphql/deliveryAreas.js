@@ -36,8 +36,8 @@ export const MODIFY_DELIVERY_AREA = gql`
 			type
 			name
 			price
-			zipcode_a
-			zipcode_b
+			zipcodeA
+			zipcodeB
 		}
 	}
 `;

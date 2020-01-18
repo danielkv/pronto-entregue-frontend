@@ -57,7 +57,7 @@ export default function Header () {
 								>
 									{
 										companies.map(company=>{
-											return <MenuItem key={company.id} value={company.id}>{company.display_name}</MenuItem>;
+											return <MenuItem key={company.id} value={company.id}>{company.displayName}</MenuItem>;
 										})
 									}
 								</Select>}

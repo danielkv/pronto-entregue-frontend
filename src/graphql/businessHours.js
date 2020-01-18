@@ -4,8 +4,8 @@ export const LOAD_BUSINESS_HOURS = gql`
 	query LoadBusinessHours ($id:ID!) {
 		company (id:$id) {
 			id
-			business_hours {
-				day_of_week
+			businessHours {
+				dayOfWeek
 				hours {
 					from
 					to

@@ -1,34 +1,14 @@
 import React, { useState, Fragment } from 'react';
 
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import gql from 'graphql-tag';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle, extractMetas, joinMetas } from '../../utils';
 import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
-import { UPDATE_COMPANY } from '../../graphql/companies';
-
-
-export const LOAD_COMPANY = gql`
-	query ($id: ID!) {
-		company (id: $id) {
-			id
-			name
-			displayName
-			createdAt
-			active
-			metas {
-				id
-				key
-				value
-				action @client
-			}
-		}
-	}
-`;
+import { UPDATE_COMPANY, LOAD_COMPANY } from '../../graphql/companies';
 
 function Page (props) {
 	setPageTitle('Alterar empresa');
@@ -36,15 +16,17 @@ function Page (props) {
 	const editId = props.match.params.id;
 
 	//erro e confirmação
-	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
 	//carrega empresa
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_COMPANY, { variables: { id: editId } });
-	const client = useApolloClient();
+	const [updateCompany, { error: displayError }] = useMutation(UPDATE_COMPANY, { variables: { id: editId } })
 
+	
 	if (error) return <ErrorBlock error={getErrors(error)} />
-	if (!data || loadingGetData) return (<LoadingBlock />);
+	if (loadingGetData) return (<LoadingBlock />);
+
+	if (!data) return false;
 
 	const metas = ['address', 'document', 'contact', 'phones', 'emails'];
 
@@ -55,7 +37,7 @@ function Page (props) {
 		...extractMetas(metas, data.company.metas)
 	};
 
-	function onSubmit(values, { setSubmitting }) {
+	function onSubmit(values) {
 		const data = { ...values, metas: joinMetas(metas, values) };
 		delete data.address;
 		delete data.contact;
@@ -63,16 +45,9 @@ function Page (props) {
 		delete data.emails;
 		delete data.document;
 
-		client.mutate({ mutation: UPDATE_COMPANY, variables: { id: editId, data } })
+		return updateCompany({ variables: { data } })
 			.then(()=>{
 				setDisplaySuccess('A empresa foi salva');
-			})
-			.catch((err)=>{
-				setDisplayError(err.message);
-				console.error(err.graphQLErrors, err.networkError, err.operation);
-			})
-			.finally(() => {
-				setSubmitting(false);
 			})
 	}
 	
@@ -84,8 +59,6 @@ function Page (props) {
 					vertical: 'bottom',
 					horizontal: 'left',
 				}}
-				onClose={()=>{setDisplayError('')}}
-				autoHideDuration={4000}
 			>
 				<SnackbarContent className='error' message={!!displayError && displayError} />
 			</Snackbar>

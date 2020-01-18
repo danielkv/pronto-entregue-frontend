@@ -53,7 +53,7 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 											<Field name='firstName' component={tField} label='Primeiro nome' />
 										</FieldControl>
 										<FieldControl>
-											<Field name='last_name' component={tField} label='Sobrenome' />
+											<Field name='lastName' component={tField} label='Sobrenome' />
 										</FieldControl>
 									</FormRow>
 									<FormRow>

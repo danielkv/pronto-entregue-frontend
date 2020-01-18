@@ -22,9 +22,6 @@ import Products from './pages/products';
 import EditProduct from './pages/products/edit_product';
 import NewProduct from './pages/products/new_product';
 import Settings from './pages/settings';
-import Storage from './pages/storage';
-import EditItem from './pages/storage/edit_item';
-import NewItem from './pages/storage/new_item';
 import Users from './pages/users';
 import EditUser from './pages/users/edit_user';
 import NewUser from './pages/users/new_user';
@@ -48,10 +45,6 @@ export default function Layout () {
 						<Route exact path='/empresas' component={Companies} />
 						<Route path='/empresas/novo' component={NewCompany} />
 						<Route path='/empresas/alterar/:id' component={EditCompany} />
-
-						<Route exact path='/estoque' component={Storage} />
-						<Route path='/estoque/novo' component={NewItem} />
-						<Route path='/estoque/alterar/:id' component={EditItem} />
 						
 						<Route exact path='/pedidos' component={Orders} />
 						<Route path='/pedidos/novo' component={NewOrder} />

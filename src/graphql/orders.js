@@ -11,11 +11,11 @@ export const GET_COMPANY_LAST_ORDERS = gql`
 				id
 				user {
 					id
-					full_name
+					fullName
 				}
 				street
 				number
-				products_qty
+				countProducts
 				type
 				createdDate
 				createdTime
@@ -30,11 +30,11 @@ export const GET_COMPANY_ORDERS_QTY = gql`
 	query OrdersQty($id: ID!) {
 		company(id: $id) {
 			id
-			waitingOrders: countOrders(filter: { "status": "waiting", "createdAt": "CURDATE"})
-			preparingOrders: countOrders(filter: { "status": "preparing", "createdAt": "CURDATE"})
-			deliveryOrders: countOrders(filter: { "status": "delivery", "createdAt": "CURDATE"})
-			deliveredOrders: countOrders(filter: { "status": "delivered", "createdAt": "CURDATE"})
-			canceledOrders: countOrders(filter: { "status": "canceled", "createdAt": "CURDATE"})
+			waitingOrders: countOrders(filter: { status: "waiting", createdAt: "CURDATE"})
+			preparingOrders: countOrders(filter: { status: "preparing", createdAt: "CURDATE"})
+			deliveryOrders: countOrders(filter: { status: "delivery", createdAt: "CURDATE"})
+			deliveredOrders: countOrders(filter: { status: "delivered", createdAt: "CURDATE"})
+			canceledOrders: countOrders(filter: { status: "canceled", createdAt: "CURDATE"})
 		}
 	}
 `;
@@ -75,7 +75,7 @@ export const ORDER_FRAGMENT = gql`
 
 		user {
 			id
-			full_name
+			fullName
 			addresses {
 				id
 				name
@@ -166,12 +166,12 @@ export const GET_COMPANY_ORDERS = gql`
 				type
 				user {
 					id
-					full_name
+					fullName
 				}
 				street
 				number
 				price
-				products_qty
+				countProducts
 				status
 				createdDate
 				createdTime
@@ -186,8 +186,8 @@ export const SUBSCRIBE_ORDER_CREATED = gql`
 			id
 			user {
 				id
-				first_name
-				last_name
+				firstName
+				lastName
 			}
 		}
 	}

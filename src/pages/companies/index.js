@@ -88,7 +88,7 @@ function Page (props) {
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell>{numeral(row.last_month_revenue).format('$0,0.00')}</TableCell>
+											<TableCell>{numeral(row.lastMonthRevenue).format('$0,0.00')}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} onClick={()=>{props.history.push(`/empresas/alterar/${row.id}`)}}>

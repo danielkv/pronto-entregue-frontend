@@ -15,7 +15,7 @@ const CREATE_COMPANY = gql`
 			id
 			name
 			displayName
-			last_month_revenue
+			lastMonthRevenue
 			createdAt
 			active
 		}

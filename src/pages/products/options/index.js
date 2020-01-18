@@ -11,7 +11,7 @@ import {
 	OptionColumn,
 	OptionsInfo,
 	OptionRow,
-} from './options_styles';
+} from './styles';
 
 const CustomTextInput = withStyles({
 	root: {

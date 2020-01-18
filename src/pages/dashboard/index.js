@@ -16,8 +16,9 @@ import { getStatusIcon, setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer } from './styles';
 
-import { GET_SELECTED_COMPANY, GET_COMPANY_BEST_SELLERS } from '../../graphql/companies';
+import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ORDERS_QTY, GET_COMPANY_LAST_ORDERS } from '../../graphql/orders';
+import { GET_COMPANY_BEST_SELLERS } from '../../graphql/products';
 
 function Page () {
 	setPageTitle('Dashboard');
@@ -38,13 +39,13 @@ function Page () {
 	const {
 		data: {
 			company: {
-				waitingOrders,
-				preparingOrders,
-				deliveryOrders,
-				deliveredOrders,
-				canceledOrders,
-			}
-		},
+				waitingOrders = 0,
+				preparingOrders = 0,
+				deliveryOrders = 0,
+				deliveredOrders = 0,
+				canceledOrders = 0,
+			} = {}
+		} = {},
 		loading: loadingOrdersQty,
 		error: ordersQtyError
 	} = useQuery(GET_COMPANY_ORDERS_QTY, { variables: { id: selectedCompany } });
@@ -129,7 +130,7 @@ function Page () {
 											</TableCell>
 											<TableCell>{row.user.full_name}</TableCell>
 											<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.street}, ${row.number}`}</TableCell>
-											<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
+											<TableCell><CircleNumber>{row.countProducts}</CircleNumber></TableCell>
 											<TableCell>{getStatusIcon(row.status)}</TableCell>
 										</TableRow>
 									))}

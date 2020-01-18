@@ -6,8 +6,8 @@ import { Grid, Paper } from '@material-ui/core';
 import { Content } from '../../layout/components';
 
 import { setPageTitle } from '../../utils';
-import BusinessHours from './business_hours';
-import DeliveryAreas from './delivery_areas';
+import BusinessHours from './businessHours';
+import DeliveryAreas from './deliveryAreas';
 import PaymentMethods from './paymentMethods';
 import { MenuLink } from './styles';
 

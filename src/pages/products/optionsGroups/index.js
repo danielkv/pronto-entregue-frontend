@@ -9,14 +9,14 @@ import Icon from '@mdi/react';
 import { FieldArray } from 'formik';
 import { isEqual } from 'lodash';
 
-import { createEmptyOption } from '../../utils';
-import Options from './options';
+import { createEmptyOption } from '../../../utils';
+import Options from '../options';
 import {
 	OptionsContainer,
 	OptionHead,
 	OptionColumn,
 	OptionsInfo,
-} from './options_styles';
+} from './styles';
 
 function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, handleChange, errors, isSubmitting, sanitizeOptionsGroupsOrder, sanitizeOptionsOrder }) {
 	const inputName = useRef(null);

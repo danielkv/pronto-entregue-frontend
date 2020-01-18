@@ -15,14 +15,14 @@ export const GET_CATEGORY = gql`
 
 
 export const GET_CATEGORIES = gql`
-	query GetCategories ($id:ID!, $filter: Filter!, $pagination: Pagination) {
+	query GetCategories ($filter: Filter!, $pagination: Pagination) {
 		countCategories(filter: $filter)
 		categories(filter: $filter, pagination: $pagination) {
 			id
 			name
 			image
 			order
-			products_qty
+			countProducts
 			createdAt
 			active
 		}
@@ -30,8 +30,8 @@ export const GET_CATEGORIES = gql`
 `;
 
 export const UPDATE_CATEGORY = gql`
-	mutation UpdateCategory ($id:ID!, $data:CategoryInput!) {
-		updateCategory (id:$id, data:$data) {
+	mutation UpdateCategory ($id: ID!, $data: CategoryInput!) {
+		updateCategory (id: $id, data:$data) {
 			id
 			name
 			image
@@ -49,7 +49,7 @@ export const CREATE_CATEGORY = gql`
 			image
 			description
 			order
-			products_qty
+			countProducts
 			createdAt
 			active
 		}

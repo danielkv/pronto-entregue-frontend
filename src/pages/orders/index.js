@@ -97,7 +97,7 @@ function Page (props) {
 											<TableCell>{row.user.full_name}</TableCell>
 											<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
 											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
-											<TableCell><CircleNumber>{row.products_qty}</CircleNumber></TableCell>
+											<TableCell><CircleNumber>{row.countProducts}</CircleNumber></TableCell>
 											<TableCell style={{ width: 30, textAlign: 'center' }}>{getStatusIcon(row.status)}</TableCell>
 											<TableCell style={{ width: 100 }}>
 												<IconButton onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>

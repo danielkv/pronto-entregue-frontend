@@ -1,7 +1,5 @@
 import gql from "graphql-tag";
 
-import { SET_SELECTED_COMPANY } from "../graphql/companies";
-
 export default {
 	CompanyMeta: {
 		action: ()=> {
@@ -14,13 +12,13 @@ export default {
 				//carrega, do cliente, a empresa selecionada
 				const { data } = await client.query({
 					query: gql`
-					query ($id:ID!){
-						company(id:$id) {
-							id
-							display_name
-							name
+						query ($id: ID!){
+							company(id:$id) {
+								id
+								displayName
+								name
+							}
 						}
-					}
 				`, variables: { id }
 				});
 				

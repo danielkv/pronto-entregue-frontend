@@ -4,7 +4,7 @@ export const CREATE_USER = gql`
 	mutation ($data:UserInput!) {
 		createUser (data:$data) {
 			id
-			full_name
+			fullName
 			role
 			createdAt
 			active
@@ -16,7 +16,7 @@ export const SEARCH_USERS = gql`
 	query SearchUsers ($search:String!) {
 		searchCompanyUsers(search:$search) {
 			id
-			full_name
+			fullName
 			email
 			addresses {
 				id
@@ -38,7 +38,7 @@ export const GET_COMPANY_USERS = gql`
 			countUsers (filter: $filter)
 			users (filter: $filter, pagination: $pagination) {
 				id
-				full_name
+				fullName
 				role
 				createdAt
 				active
@@ -51,8 +51,8 @@ export const UPDATE_USER = gql`
 	mutation UpdateUser ($id: ID!, $data: UserInput!, $company_id: ID!) {
 		updateUser (id: $id, data: $data) {
 			id
-			first_name
-			last_name
+			firstName
+			lastName
 			email
 			createdAt
 			active
@@ -67,7 +67,6 @@ export const UPDATE_USER = gql`
 				id
 				key
 				value
-				action @client
 			}
 		}
 	}

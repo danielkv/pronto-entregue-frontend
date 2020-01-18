@@ -225,7 +225,7 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 																		
 																			{groups.map((group, index) => {
 																				let icon = group.action && group.action === 'create' ? mdiPlus : mdiBasket;
-																				let text = group.action && group.action === 'create' ? inputValue : <span>{`${group.name} `}<small>{`(${group.options_qty})`}</small></span>;
+																				let text = group.action && group.action === 'create' ? inputValue : <span>{`${group.name} `}<small>{`(${group.countOptions})`}</small></span>;
 																				let secondary = group.action && group.action === 'create' ? 'criar novo grupo' : `copiar de ${group.product.name}`;
 
 																				return (<ListItem

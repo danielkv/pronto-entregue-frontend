@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Popper, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { mdiViewDashboard, mdiStore, mdiSourceBranch, mdiViewList,  mdiShape, mdiBasket, mdiAccountMultiple, mdiSettings, mdiInboxMultiple } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { NavigationContainer, NavItem } from './styles';
@@ -55,12 +55,6 @@ function Navigation() {
 				<NavItem to='/empresas' className={isSelected('empresas')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Empresas'>
 					<Icon path={mdiStore} size='22' color='#707070' />
 				</NavItem>
-				<NavItem to='/filiais' className={isSelected('filiais')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Filiais'>
-					<Icon path={mdiSourceBranch} size='22' color='#707070' />
-				</NavItem>
-				<NavItem to='/estoque' className={isSelected('estoque')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Estoque'>
-					<Icon path={mdiInboxMultiple} size='22' color='#707070' />
-				</NavItem>
 				<NavItem to='/pedidos' className={isSelected('pedidos')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Pedidos'>
 					<Icon path={mdiViewList} size='22' color='#707070' />
 				</NavItem>
@@ -71,7 +65,7 @@ function Navigation() {
 					<Icon path={mdiBasket} size='22' color='#707070' />
 				</NavItem>
 				<NavItem to='/usuarios' className={isSelected('usuarios')} onMouseOver={handleClick} onMouseOut={handleClick} alt='usuários'>
-					<Icon path={mdiAccountMultiple} size='22' color='#707070' />
+					<Icon path={mdiAccountTie } size='22' color='#707070' />
 				</NavItem>
 
 				<NavItem className={`settings ${isSelected('configuracoes')}`} onMouseOver={handleClick} onMouseOut={handleClick} to='/configuracoes' alt='Configurações'>

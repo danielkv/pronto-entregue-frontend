@@ -13,23 +13,22 @@ import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
-import { GET_COMPANY_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/delivery_areas';
+import { GET_COMPANY_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/deliveryAreas';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
 
 	// query load delivery_areas
-	const { data: selectedCompanyData, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
 	const {
 		data: { company: { deliveryAreas: deliveryAreasInitial = [] } = {} } = {},
 		loading: loadingDeliveryAreas
-	} = useQuery(GET_COMPANY_DELIVERY_AREAS, { variables: { id: selectedCompanyData.selectedCompany } });
+	} = useQuery(GET_COMPANY_DELIVERY_AREAS, { variables: { id: selectedCompany } });
 
-	// remove delivery_area
-	const [removeDeliveryArea, { loading: loadingRemoveDeliveryArea }] = useMutation(REMOVE_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompanyData.selectedCompany } }] })
-
-	// mutate delivery_area
-	const [modifyDeliveryAreas, { loading: loadingModifyDeliveryAreas }] = useMutation(MODIFY_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompanyData.selectedCompany } }] })
+	// mutations
+	const [removeDeliveryArea, { loading: loadingRemoveDeliveryArea }] = useMutation(REMOVE_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompany } }] })
+	const [modifyDeliveryAreas] = useMutation(MODIFY_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompany } }] })
+	
 	
 	// still loading displays loading
 	if (loadingSelectedData || loadingDeliveryAreas) return <LoadingBlock />;
@@ -64,7 +63,8 @@ function Page () {
 			zipcodeA: area.zipcodeA,
 			zipcodeB: area.zipcodeB || null,
 		}))
-		modifyDeliveryAreas({ variables: { data: deliveryAreasSave } });
+
+		return modifyDeliveryAreas({ variables: { data: deliveryAreasSave } });
 	}
 
 	return (
@@ -76,7 +76,9 @@ function Page () {
 			validateOnBlur={true}
 			initialValues={{ deliveryAreas: deliveryAreasInitial }}
 		>
-			{({ values: { deliveryAreas }, handleChange, setFieldValue })=>{
+			{({ values: { deliveryAreas }, handleChange, setFieldValue, isSubmitting })=>{
+				const inputsDisabled = loadingRemoveDeliveryArea || isSubmitting;
+
 				return (<Paper>
 					<Form>
 						<FieldArray name='deliveryAreas'>
@@ -103,9 +105,9 @@ function Page () {
 												return (
 													<TableRow key={index}>
 														<TableCell><Icon path={mdiCashMarker} color='#707070' size='18' /></TableCell>
-														<TableCell><Field disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas} component={tField} name={`deliveryAreas.${index}.name`} inputProps={{ autocomplete: false }} /></TableCell>
+														<TableCell><Field disabled={inputsDisabled} component={tField} name={`deliveryAreas.${index}.name`} inputProps={{ autoComplete: "false" }} /></TableCell>
 														<TableCell>
-															<TextField disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas} onChange={handleChange} name={`deliveryAreas.${index}.type`} value={area.type} select>
+															<TextField disabled={inputsDisabled} onChange={handleChange} name={`deliveryAreas.${index}.type`} value={area.type} select>
 																<MenuItem value='single'>Simples</MenuItem>
 																<MenuItem value='set'>Variação</MenuItem>
 																<MenuItem value='joker'>Coringa</MenuItem>
@@ -114,13 +116,13 @@ function Page () {
 														<TableCell>
 															<FieldControl style={{ margin: 0 }}>
 																<Field
-																	disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas}
+																	disabled={inputsDisabled}
 																	component={tField} name={`deliveryAreas.${index}.zipcodeA`}
 																	inputProps={{ placeholder }}
 																/>
 																{area.type === 'set' && <span style={{ marginLeft: 10 }}>
 																	<Field
-																		disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas}
+																		disabled={inputsDisabled}
 																		component={tField} name={`deliveryAreas.${index}.zipcodeB`}
 																		inputProps={{ placeholder: 'CEP final' }}
 																	/>
@@ -129,7 +131,7 @@ function Page () {
 														</TableCell>
 														<TableCell>
 															<Field
-																disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas}
+																disabled={inputsDisabled}
 																component={tField}
 																type='number'
 																name={`deliveryAreas.${index}.price`}
@@ -142,7 +144,7 @@ function Page () {
 																<Loading />
 																:
 																<IconButton
-																	disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas}
+																	disabled={inputsDisabled}
 																	onClick={()=>{
 																		if (!area.id)
 																			remove(index);
@@ -163,7 +165,7 @@ function Page () {
 									<FormRow></FormRow>
 									<FormRow>
 										<FieldControl>
-											<ButtonGroup disabled={loadingRemoveDeliveryArea || loadingModifyDeliveryAreas}>
+											<ButtonGroup disabled={inputsDisabled}>
 												{/* <Button color='secondary'>Cancelar</Button> */}
 												<Button
 													variant="contained"
@@ -180,7 +182,7 @@ function Page () {
 											Salvar
 												</Button>
 											</ButtonGroup>
-											{!!loadingModifyDeliveryAreas && <Loading />}
+											{!!isSubmitting && <Loading />}
 										</FieldControl>
 									</FormRow>
 								</Fragment>

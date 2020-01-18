@@ -14,7 +14,7 @@ import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
-import { GET_COMPANYES_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
+import { GET_COMPANY_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
 const initialFilter = {
 	showInactive: false,
@@ -54,7 +54,7 @@ function Page (props) {
 		loading: loadingProducts,
 		error: productsError,
 		called,
-	} = useQuery(GET_COMPANYES_PRODUCTS, {
+	} = useQuery(GET_COMPANY_PRODUCTS, {
 		variables: {
 			id: selectedCompany,
 			filter,
@@ -96,7 +96,7 @@ function Page (props) {
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><ProductImage src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell>{row.category.name}</TableCell>
-											<TableCell><CircleNumber>{row.options_qty}</CircleNumber></TableCell>
+											<TableCell><CircleNumber>{row.countOptions}</CircleNumber></TableCell>
 											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>

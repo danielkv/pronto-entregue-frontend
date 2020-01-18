@@ -131,7 +131,7 @@ function Page (props) {
 																<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></DraggableCell>
 																<DraggableCell selected={selected}><ProductImage src={row.image} /></DraggableCell>
 																<DraggableCell selected={selected}>{row.name}</DraggableCell>
-																<DraggableCell selected={selected}><CircleNumber>{row.products_qty}</CircleNumber></DraggableCell>
+																<DraggableCell selected={selected}><CircleNumber>{row.countProducts}</CircleNumber></DraggableCell>
 																<DraggableCell selected={selected}>{row.created_at}</DraggableCell>
 																<DraggableCell selected={selected}>
 																	<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>

@@ -11,7 +11,7 @@ import { tField, FormRow, FieldControl, Loading } from '../../layout/components'
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 
-import { LOAD_BUSINESS_HOURS, UPDATE_BUSINESS_HOURS } from '../../graphql/business_hours';
+import { LOAD_BUSINESS_HOURS, UPDATE_BUSINESS_HOURS } from '../../graphql/businessHours';
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 
 function Page () {
@@ -56,12 +56,12 @@ function Page () {
 								<FieldArray key={dayIndex} name={`businessHours.${dayIndex}.hours`}>
 									{({ insert, remove })=>(
 										<TableRow>
-											<TableCell style={{ width: 190 }}>{day.day_of_week}</TableCell>
+											<TableCell style={{ width: 190 }}>{day.dayOfWeek}</TableCell>
 											<TableCell>
 												{day.hours.map((hour, hourIndex)=>
 													<Fragment key={hourIndex}>
-														<Field component={tField} controlDisabled={loadingUpdateBusinessHours} name={`businessHours.${dayIndex}.hours.${hourIndex}.from`} style={{ margin: '0 7px' }} fullWidth={false} type='time' />
-														<Field component={tField} controlDisabled={loadingUpdateBusinessHours} name={`businessHours.${dayIndex}.hours.${hourIndex}.to`} style={{ margin: '0 7px' }} fullWidth={false} type='time' />
+														<Field component={tField} disabled={loadingUpdateBusinessHours} name={`businessHours.${dayIndex}.hours.${hourIndex}.from`} style={{ margin: '0 7px' }} fullWidth={false} type='time' />
+														<Field component={tField} disabled={loadingUpdateBusinessHours} name={`businessHours.${dayIndex}.hours.${hourIndex}.to`} style={{ margin: '0 7px' }} fullWidth={false} type='time' />
 													</Fragment>
 												)}
 											</TableCell>

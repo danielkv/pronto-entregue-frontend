@@ -15,7 +15,7 @@ import ProductModal from './product_modal';
 
 import { GET_SELECTED_COMPANY, GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { CALCULATE_DELIVERY_PRICE } from '../../graphql/orders';
-import { SEARCH_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
+import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { SEARCH_USERS } from '../../graphql/users';
 
 export default function PageForm ({ values, setValues, setFieldValue, handleChange, isSubmitting, errors }) {
@@ -38,7 +38,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 	//Query de busca de produto
 	const [searchProducts, {
 		data: { company: { products: productsFound = [] } = {} } = {}, loading: loadingProducts
-	}] = useLazyQuery(SEARCH_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache', variables: { id: selectedCompany } });
+	}] = useLazyQuery(GET_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache', variables: { id: selectedCompany } });
 
 
 	//Query formas de pagamento
@@ -462,7 +462,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 									{!loadingSelectedData && !!paymentMethods.length &&
 									<TextField helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
 										{paymentMethods.map(row=>(
-											<MenuItem key={row.id} value={row.id}>{row.display_name}</MenuItem>
+											<MenuItem key={row.id} value={row.id}>{row.displayName}</MenuItem>
 										))}
 									</TextField>}
 								</FieldControl>

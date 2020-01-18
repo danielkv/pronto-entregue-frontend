@@ -17,7 +17,6 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 			id
 			name
 		}
-		action @client
 		options (filter:$filter) {
 			id
 			name
@@ -25,7 +24,6 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 			active
 			max_select_restrain_other
 			order
-			action @client
 		}
 	}
 `;
@@ -84,7 +82,7 @@ export const GET_COMPANY_PRODUCTS = gql`
 				image
 				active
 				price
-				options_qty
+				countOptions
 				createdAt
 				category {
 					id
@@ -121,7 +119,7 @@ export const GET_COMPANY_BEST_SELLERS = gql`
 	query BestSellers ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		company(id: $id) {
 			id
-			best_sellers (filter: $filter, pagination: $pagination) {
+			bestSellers (filter: $filter, pagination: $pagination) {
 				id
 				name
 				image
@@ -137,7 +135,7 @@ export const SEARCH_OPTIONS_GROUPS = gql`
 		searchOptionsGroups(search: $search) {
 			id
 			name
-			options_qty
+			countOptions
 			product {
 				id
 				name
