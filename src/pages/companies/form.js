@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
-import { metaModel } from '../../utils';
+import { metaModel } from '../../utils/metas';
 
 const companySchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),

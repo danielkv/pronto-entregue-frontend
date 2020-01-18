@@ -3,8 +3,9 @@ import React from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
 import { ErrorBlock } from '../../layout/blocks';
-import { setPageTitle, joinMetas, initialMetas } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { joinMetas, initialMetas } from '../../utils/metas';
 import PageForm from './form';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';

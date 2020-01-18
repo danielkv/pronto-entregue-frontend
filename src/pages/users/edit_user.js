@@ -4,41 +4,15 @@ import React, { useState, Fragment } from 'react';
 
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import gql from 'graphql-tag';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
-import { setPageTitle, extractMetas, joinMetas } from '../../utils';
+import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
+import { joinMetas, extractMetas } from '../../utils/metas';
 import PageForm from './form';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
-import { UPDATE_USER } from '../../graphql/users';
-import { getErrors } from '../../utils/error';
-
-const LOAD_USER = gql`
-	query ($id: ID!, $companyId:ID!) {
-		user (id: $id) {
-			id
-			firstName
-			lastName
-			email
-			createdAt
-			active
-			role
-			company(companyId:$companyId) {
-				id
-				userRelation {
-					active
-				}
-			}
-			metas {
-				id
-				key
-				value
-				action @client
-			}
-		}
-	}
-`;
+import { UPDATE_USER, LOAD_USER } from '../../graphql/users';
 
 function Page (props) {
 	setPageTitle('Alterar usuário');

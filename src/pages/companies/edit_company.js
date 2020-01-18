@@ -4,8 +4,9 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
-import { setPageTitle, extractMetas, joinMetas } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { extractMetas, joinMetas } from '../../utils/metas';
 import PageForm from './form';
 
 import { UPDATE_COMPANY, LOAD_COMPANY } from '../../graphql/companies';

@@ -1,5 +1,31 @@
 import gql from "graphql-tag";
 
+export const LOAD_USER = gql`
+	query ($id: ID!, $companyId:ID!) {
+		user (id: $id) {
+			id
+			firstName
+			lastName
+			email
+			createdAt
+			active
+			role
+			company(companyId:$companyId) {
+				id
+				userRelation {
+					active
+				}
+			}
+			metas {
+				id
+				key
+				value
+				action @client
+			}
+		}
+	}
+`;
+
 export const CREATE_USER = gql`
 	mutation ($data:UserInput!) {
 		createUser (data:$data) {
