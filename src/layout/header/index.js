@@ -2,11 +2,9 @@ import React, { Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { FormControl, Select, MenuItem, Fab } from '@material-ui/core';
+import { FormControl, Select, MenuItem, Fab, CircularProgress } from '@material-ui/core';
 import { mdiStore, mdiLogout, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
-
-import { Loading } from '../components';
 
 import mainLogo from '../../assets/images/logo.png';
 import { logUserOut } from '../../services/init';
@@ -40,7 +38,7 @@ export default function Header () {
 			<LogoContainer>
 				<img src={mainLogo} alt='Flakery' />
 			</LogoContainer>
-			{loadingCompanies ? <Loading /> :
+			{loadingCompanies ? <CircularProgress /> :
 				<Fragment>
 					<SelectContainer>
 						<Icon path={mdiStore} size='24' color='#D41450' />
@@ -64,7 +62,7 @@ export default function Header () {
 						</FormControl>
 					</SelectContainer>
 				</Fragment>}
-			{loadingLoggedUser || !user ? <Loading /> :
+			{loadingLoggedUser || !user ? <CircularProgress /> :
 				<RightSide>
 					<Notification />
 					<LoggedUser>

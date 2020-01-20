@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react';
 import Dropzone from 'react-dropzone';
 
+import { CircularProgress } from '@material-ui/core';
+
 import {
-	Loading,
 	BlockContainer,
 	LoadingText,
 	ErrorTitle,
@@ -15,7 +16,7 @@ import imagePlaceHolderPng from '../assets/images/select_image.png';
 
 export const LoadingBlock = () => (
 	<BlockContainer>
-		<Loading size='40' />
+		<CircularProgress />
 		<LoadingText>Carregando...</LoadingText>
 	</BlockContainer>
 )

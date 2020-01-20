@@ -1,14 +1,14 @@
 import React, { useState, Fragment, useEffect, useCallback } from 'react';
 
 import { useQuery, useApolloClient ,useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem } from '@material-ui/core';
+import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress } from '@material-ui/core';
 import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { FieldArray, Form, Field } from 'formik';
 import numeral from 'numeral';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, Loading, tField } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, tField } from '../../layout/components';
 
 import { getErrors } from '../../utils/error';
 import { createEmptyOrderProduct, calculateOrderPrice } from '../../utils/orders';
@@ -165,7 +165,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 													<TextField disabled={isSubmitting} {...getInputProps({ error: !!errors.user, label: 'Cliente' })} />
 													{isOpen && (
 														<List {...getMenuProps()} className="dropdown">
-															{loadingUsers ? <div style={{ padding: 20 }}><Loading /></div>
+															{loadingUsers ? <div style={{ padding: 20 }}><CircularProgress /></div>
 																:
 																usersFound.map((item, index) => {
 																	return (<ListItem
@@ -274,7 +274,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 				</Block>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Produtos {!!loadingProduct && <Loading />}</BlockTitle>
+						<BlockTitle>Produtos {!!loadingProduct && <CircularProgress />}</BlockTitle>
 					</BlockHeader>
 					<Paper>
 						<FieldArray name='products'>
@@ -308,7 +308,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 																	/>
 																	{isOpen && (
 																		<List {...getMenuProps()} className="dropdown">
-																			{loadingProducts ? <div style={{ padding: 20 }}><Loading /></div>
+																			{loadingProducts ? <div style={{ padding: 20 }}><CircularProgress /></div>
 																				:
 																				productsFound.map((item, index) => {
 																					return (<ListItem
@@ -436,7 +436,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 										component={tField}
 									/>
 								</FieldControl>
-								{!!loadingdeliveryPrice && <Loading />}
+								{!!loadingdeliveryPrice && <CircularProgress />}
 							</FormRow>
 							<FormRow>
 								<FieldControl>

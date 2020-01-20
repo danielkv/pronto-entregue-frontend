@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableCell, TextField, IconButton, TableRow, MenuItem, ButtonGroup, Button, InputAdornment } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableCell, TextField, IconButton, TableRow, MenuItem, ButtonGroup, Button, InputAdornment, CircularProgress } from '@material-ui/core';
 import { mdiCashMarker, mdiDelete, mdiPlusCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Formik, Field, FieldArray, Form } from 'formik';
 import * as Yup from 'yup';
 
-import { FormRow, FieldControl, tField, Loading } from '../../layout/components';
+import { FormRow, FieldControl, tField } from '../../layout/components';
 
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
@@ -141,7 +141,7 @@ function Page () {
 														</TableCell>
 														<TableCell>
 															{area.removing ?
-																<Loading />
+																<CircularProgress />
 																:
 																<IconButton
 																	disabled={inputsDisabled}
@@ -182,7 +182,7 @@ function Page () {
 											Salvar
 												</Button>
 											</ButtonGroup>
-											{!!isSubmitting && <Loading />}
+											{!!isSubmitting && <CircularProgress />}
 										</FieldControl>
 									</FormRow>
 								</Fragment>

@@ -1,32 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 
 import { Paper, TextField, TableCell } from '@material-ui/core';
-import { mdiLoading } from '@mdi/js';
-import Icon from '@mdi/react';
 
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
-
-const rotate = keyframes`
-	from {
-		transform: rotate(0deg);
-	}
-
-	to {
-		transform: rotate(360deg);
-	}
-`;
-
-export const Loading = styled(Icon).attrs(({ size })=>{
-	return ({
-		path: mdiLoading,
-		size: size || '26',
-		color: '#707070'
-	})
-})`
-	margin-left:10px;
-	animation: ${rotate} 1s linear infinite;
-`
 export const BlockContainer = styled.div`
 	display:flex;
 	flex:1;
@@ -73,14 +50,9 @@ export const Error = styled.div`
 	margin-top:18px;
 	color:rgb(206, 17, 38);
 `
-
-
-
-
-
 export const Container = styled.div`
 	display:grid;
-	grid-template-columns: 130px auto;
+	grid-template-columns: 240px auto;
 	grid-template-rows: 95px auto;
 
 	grid-template-areas:"header header"

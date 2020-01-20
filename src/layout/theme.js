@@ -17,6 +17,11 @@ export default createMuiTheme({
 				}
 			}
 		},
+		MuiListItemIcon: {
+			root: {
+				minWidth: 40,
+			}
+		},
 		MuiFormLabel: {
 			root: {
 				marginBottom: 12
@@ -165,7 +170,7 @@ export default createMuiTheme({
 	},
 	palette: {
 		primary: {
-			main: '#363E5E'
+			main: '#666666'
 		},
 		secondary: {
 			main: '#D41450'

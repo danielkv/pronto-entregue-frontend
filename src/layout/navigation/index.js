@@ -1,78 +1,97 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Popper, Paper } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { useQuery } from '@apollo/react-hooks';
+import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings } from '@mdi/js';
 import Icon from '@mdi/react';
 
-import { NavigationContainer, NavItem } from './styles';
+import { LoadingBlock } from '../blocks';
+import { Container, NavigationContainer, NavItem } from './styles';
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		marginLeft: theme.spacing()
-	},
-	paper: {
-		padding: '8px 10px',
-		backgroundColor: '#444',
-		color: '#fff',
-		fontSize: 12
-	}
-}))
+import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
 
 function Navigation() {
 	const location = useLocation();
-	
-	const [popperOpen, setPopperOpen] = useState(false);
-	const [anchorEl, setAnchorEl] = useState(null);
-	const [popperText, setPopperText] = useState(null);
-	const classes = useStyles();
 
-	const handleClick = event => {
-		setAnchorEl(event.currentTarget);
-		setPopperOpen(prev => prev ? false : true);
-		setPopperText(event.currentTarget.getAttribute('alt'));
-	};
-
+	const { data: { loggedUserId } } = useQuery(LOGGED_USER_ID);
+	const { data: { user: { role = null } = {} } = {}, loading: loadingUser } = useQuery(GET_USER, { variables: { id: loggedUserId } });
 	
 	function isSelected(match) {
 		if (!location.pathname) return '';
 		const currentLocation = location.pathname.substr(1).split('/')[0];
-		return currentLocation === match ? 'selected' : '';
+		return currentLocation === match ? true : false;
 	}
 
+	if (loadingUser) return <LoadingBlock />;
+
 	return (
-		<NavigationContainer>
-			<Popper className={classes.root} open={popperOpen} anchorEl={anchorEl} placement='right' modifiers={{ arrow: { enabled: true } }}>
-				<Paper className={classes.paper}>
-					{popperText}
-				</Paper>
-			</Popper>
-			<nav>
-				<NavItem to='/dashboard' className={isSelected('dashboard')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Dashboard'>
-					<Icon className='teste' path={mdiViewDashboard} size='22' color='#707070' />
+		<Container>
+			<NavigationContainer>
+				<NavItem to='/dashboard' selected={isSelected('dashboard')} alt='Dashboard'>
+					<ListItemIcon>
+						<Icon className='teste' path={mdiViewDashboard} size='22' color='#707070' />
+					</ListItemIcon>
+					<ListItemText>
+						Inicio
+					</ListItemText>
 				</NavItem>
-				<NavItem to='/empresas' className={isSelected('empresas')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Empresas'>
-					<Icon path={mdiStore} size='22' color='#707070' />
+				<NavItem to='/pedidos' selected={isSelected('pedidos')} alt='Pedidos'>
+					<ListItemIcon>
+						<Icon path={mdiViewList} size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+						Pedidos
+					</ListItemText>
 				</NavItem>
-				<NavItem to='/pedidos' className={isSelected('pedidos')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Pedidos'>
-					<Icon path={mdiViewList} size='22' color='#707070' />
+				<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
+					<ListItemIcon>
+						<Icon path={mdiShape} size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+						Categorias
+					</ListItemText>
 				</NavItem>
-				<NavItem to='/categorias' className={isSelected('categorias')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Categorias'>
-					<Icon path={mdiShape} size='22' color='#707070' />
+				<NavItem to='/produtos' selected={isSelected('produtos')} alt='Produtos'>
+					<ListItemIcon>
+						<Icon path={mdiBasket} size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+						Produtos
+					</ListItemText>
 				</NavItem>
-				<NavItem to='/produtos' className={isSelected('produtos')} onMouseOver={handleClick} onMouseOut={handleClick} alt='Produtos'>
-					<Icon path={mdiBasket} size='22' color='#707070' />
-				</NavItem>
-				<NavItem to='/usuarios' className={isSelected('usuarios')} onMouseOver={handleClick} onMouseOut={handleClick} alt='usuários'>
-					<Icon path={mdiAccountTie } size='22' color='#707070' />
+				<NavItem to='/usuarios' selected={isSelected('usuarios')} alt='usuários'>
+					<ListItemIcon>
+						<Icon path={mdiAccountTie } size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+						Usuários
+					</ListItemText>
 				</NavItem>
 
-				<NavItem className={`settings ${isSelected('configuracoes')}`} onMouseOver={handleClick} onMouseOut={handleClick} to='/configuracoes' alt='Configurações'>
-					<Icon path={mdiSettings} size='22' color='#707070' />
+				
+
+				<NavItem selected={isSelected('configuracoes')} className={`settings`} to='/configuracoes' alt='Configurações'>
+					<ListItemIcon>
+						<Icon path={mdiSettings} size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+						Configurações
+					</ListItemText>
 				</NavItem>
-			</nav>
-		</NavigationContainer>
+			</NavigationContainer>
+
+			{role === 'master' && (
+				<>
+					<Divider />
+
+					<NavigationContainer dense={true}>
+						<NavItem to='/empresas' selected={isSelected('empresas')} alt='Empresas'>
+							<ListItemIcon>
+								<Icon path={mdiStore} size='22' color='#707070' /></ListItemIcon>
+							<ListItemText>
+								Empresas
+							</ListItemText>
+						</NavItem>
+					</NavigationContainer>
+				</>
+			)}
+		</Container>
 	)
 }
 

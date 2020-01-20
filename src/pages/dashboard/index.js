@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 
 import { useQuery } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, CircularProgress } from '@material-ui/core';
 
-import { Content, BlockTitle, CircleNumber, ProductImage, Loading } from '../../layout/components';
+import { Content, BlockTitle, CircleNumber, ProductImage } from '../../layout/components';
 
 
 import OrdersAwaiting from '../../assets/images/orders-awaiting.png';
@@ -64,27 +64,27 @@ function Page () {
 									<OrdersToday>
 										<OrderStatus>
 											<img src={OrdersAwaiting} alt='Pedidos aguardando' />
-											{loadingOrdersQty ? <Loading /> : <h4>{waitingOrders}</h4>}
+											{loadingOrdersQty ? <CircularProgress /> : <h4>{waitingOrders}</h4>}
 											<div>Pedidos aguardando</div>
 										</OrderStatus>
 										<OrderStatus>
 											<img src={OrdersPreparing} alt='Pedidos em preparo' />
-											{loadingOrdersQty ? <Loading /> : <h4>{preparingOrders}</h4>}
+											{loadingOrdersQty ? <CircularProgress /> : <h4>{preparingOrders}</h4>}
 											<div>Pedidos em preparo</div>
 										</OrderStatus>
 										<OrderStatus>
 											<img src={OrdersDelivering} alt='Pedidos na entrega' />
-											{loadingOrdersQty ? <Loading /> : <h4>{deliveryOrders}</h4>}
+											{loadingOrdersQty ? <CircularProgress /> : <h4>{deliveryOrders}</h4>}
 											<div>Pedidos na entrega</div>
 										</OrderStatus>
 										<OrderStatus>
 											<img src={OrdersDelivered} alt='Pedidos entregues' />
-											{loadingOrdersQty ? <Loading /> : <h4>{deliveredOrders}</h4>}
+											{loadingOrdersQty ? <CircularProgress /> : <h4>{deliveredOrders}</h4>}
 											<div>Pedidos entregues</div>
 										</OrderStatus>
 										<OrderStatus>
 											<img src={OrdersCanceled} alt='Pedidos cancelados' />
-											{loadingOrdersQty ? <Loading /> : <h4>{canceledOrders}</h4>}
+											{loadingOrdersQty ? <CircularProgress /> : <h4>{canceledOrders}</h4>}
 											<div>Pedidos cancelados</div>
 										</OrderStatus>
 									</OrdersToday>

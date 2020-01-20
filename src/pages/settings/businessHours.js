@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableCell, IconButton, TableRow, Button } from '@material-ui/core';
+import { Paper, Table, TableBody, TableCell, IconButton, TableRow, Button, CircularProgress } from '@material-ui/core';
 import { mdiMinusCircle, mdiPlusCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Form, Field, FieldArray, Formik } from 'formik';
 
-import { tField, FormRow, FieldControl, Loading } from '../../layout/components';
+import { tField, FormRow, FieldControl } from '../../layout/components';
 
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
@@ -85,7 +85,7 @@ function Page () {
 					<FormRow>
 						<FieldControl>
 							<Button color='secondary' disabled={loadingUpdateBusinessHours} type='submit' variant='contained'>Salvar</Button>
-							{!!loadingUpdateBusinessHours && <Loading />}
+							{!!loadingUpdateBusinessHours && <CircularProgress />}
 						</FieldControl>
 					</FormRow>
 				

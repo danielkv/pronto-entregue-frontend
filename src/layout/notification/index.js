@@ -6,7 +6,6 @@ import { IconButton, Badge } from '@material-ui/core';
 import { mdiBell } from '@mdi/js';
 import Icon from '@mdi/react';
 
-
 import { Container } from './styles';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies'

@@ -2,7 +2,7 @@ import React, { Fragment, useState, useCallback } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment, CircularProgress } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram } from '@mdi/js'
@@ -10,7 +10,7 @@ import Icon from '@mdi/react';
 import Downshift from "downshift";
 import { FieldArray, Form, Field, ErrorMessage } from 'formik';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
 import { createEmptyOptionsGroup } from '../../utils/products';
@@ -182,7 +182,7 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Opções</BlockTitle>
-						{loadingCopy && <Loading />}
+						{loadingCopy && <CircularProgress />}
 					</BlockHeader>
 					<Paper style={{ overflow: 'visible' }}>
 						<FieldArray  name={`optionsGroups`}>
@@ -221,7 +221,7 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 																	<TextField disabled={loadingCopy} {...getInputProps()} />
 																	{isOpen && (
 																		<List {...getMenuProps()} className="dropdown">
-																			{loadingGroups && <div style={{ padding: 20 }}><Loading /></div>}
+																			{loadingGroups && <div style={{ padding: 20 }}><CircularProgress /></div>}
 																		
 																			{groups.map((group, index) => {
 																				let icon = group.action && group.action === 'create' ? mdiPlus : mdiBasket;
