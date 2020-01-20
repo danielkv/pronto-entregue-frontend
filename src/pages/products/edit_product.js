@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { sanitizeProductData } from '../../utils/products';
+import { sanitizeProductData, extractProduct } from '../../utils/products';
 import PageForm from './form';
 
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
@@ -33,11 +33,10 @@ function Page (props) {
 	const editId = props.match.params.id;
 
 	//erro e confirmação
-	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_PRODUCT, { variables: { id: editId, filter: { showInactive: true } } });
-	const [updateProduct] = useMutation(UPDATE_PRODUCT, {
+	const [updateProduct, { error: savingError }] = useMutation(UPDATE_PRODUCT, {
 		variables: { id: editId },
 		refetchQueries: [{ query: LOAD_PRODUCT, variables: { id: editId, filter: { showInactive: true } } }]
 	});
@@ -45,18 +44,7 @@ function Page (props) {
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
-	const initialValues = {
-		name: data.product.name,
-		featured: data.product.featured,
-		description: data.product.description,
-		active: data.product.active,
-		category: data.product.category,
-		price: data.product.price,
-		type: data.product.type,
-		file: '',
-		preview: data.product.image,
-		optionsGroups: data.product.optionsGroups
-	};
+	const initialValues = extractProduct(data.product);
 
 	function onSubmit(data) {
 		const saveData = sanitizeProductData(data);
@@ -65,25 +53,18 @@ function Page (props) {
 			.then(()=>{
 				setDisplaySuccess('O produto foi salvo');
 			})
-			.catch((err)=>{
-				setDisplayError(err.message);
-				console.error(err.graphQLErrors, err.networkError, err.operation);
-			});
-
 	}
 
 	return (
 		<Fragment>
 			<Snackbar
-				open={!!displayError}
+				open={!!savingError}
 				anchorOrigin={{
 					vertical: 'bottom',
 					horizontal: 'left',
 				}}
-				onClose={()=>{setDisplayError('')}}
-				autoHideDuration={4000}
 			>
-				<SnackbarContent className='error' message={!!displayError && displayError} />
+				<SnackbarContent className='error' message={!!savingError && getErrors(savingError)} />
 			</Snackbar>
 			<Snackbar
 				open={!!displaySuccess}

@@ -39,7 +39,7 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 			validateOnChange={validateOnChange}
 			validateOnBlur={false}
 		>
-			{({ values: { active, phones, role, assignedCompany, addresses }, setFieldValue, handleChange, isSubmitting }) => {
+			{({ values: { active, phones, role, assignCompany, addresses }, setFieldValue, handleChange, isSubmitting }) => {
 				return (
 					<Form>
 						<Content>
@@ -225,7 +225,7 @@ export default function PageForm ({ initialValues, onSubmit, pageTitle, validate
 												<FormControlLabel
 													labelPlacement='end'
 													control={
-														<Switch size='small' color='primary' checked={assignedCompany.active} onChange={()=>{setFieldValue('assignedCompany.active', !assignedCompany.active)}} />
+														<Switch size='small' color='primary' checked={assignCompany} onChange={()=>{setFieldValue('assignCompany', !assignCompany)}} />
 													}
 													label="Ativo"
 												/>

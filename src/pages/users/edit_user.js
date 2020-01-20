@@ -1,14 +1,12 @@
-
-
 import React, { useState, Fragment } from 'react';
 
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { joinMetas, extractMetas } from '../../utils/metas';
+import { extractUser, sanitizeUserData } from '../../utils/users';
 import PageForm from './form';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -20,77 +18,40 @@ function Page (props) {
 	const editId = props.match.params.id;
 
 	//erro e confirmação
-	const [displayError, setDisplayError] = useState('');
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
 	//busca usuário para edição
-	const { data: selectedCompanyData } = useQuery(GET_SELECTED_COMPANY);
-	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompanyData.selectedCompany } });
+	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompany } });
 
-	//busca filial selecionada para ser vincular
-	/* const { data: { selectedCompany }, loading: loadingselectedCompany } = useQuery(GET_SELECTED_COMPANY);
-	const { data: userBranchData, loading: loadingUserBranch } = useQuery(LOAD_USER_COMPANY, { variables: { id: selectedCompany } });
-	
-	//normaliza filial para ser vinculada
-	const assignBranch = userBranchData ? userBranchData.branch : '';
-	if (assignBranch) {
-		delete assignBranch.__typename;
-		assignBranch.action = 'assign';
-		assignBranch.userRelation = { roleId: '', active: true };
-	} */
-
-	const client = useApolloClient();
+	const [updateUser, { error: errorSaving }] = useMutation(UPDATE_USER, { variables: { id: editId } });
 
 	if (errorGetData) return <ErrorBlock error={getErrors(errorGetData)} />
-	if (!data || loadingGetData) return (<LoadingBlock />);
+	if (loadingGetData) return (<LoadingBlock />);
 
-	const metas = ['document', 'addresses', 'phones'];
-	const user = {
-		firstName: data.user.firstName,
-		lastName: data.user.lastName,
-		email: data.user.email,
-		active: data.user.active,
-		role: data.user.role,
-		password: '',
-		assignedCompany: {
-			active: data.user.company.userRelation.active,
-		},
-		...extractMetas(metas, data.user.metas)
-	};
+	// extract all user data
+	const user = extractUser(data.user);
 
-	function onSubmit(values, { setSubmitting }) {
+	function onSubmit(values) {
 		// eslint-disable-next-line no-param-reassign
-		values = JSON.parse(JSON.stringify(values));
-		const data = { ...values, metas: joinMetas(metas, values) };
-		delete data.addresses;
-		delete data.phones;
-		delete data.document;
+		const data = sanitizeUserData(values);
 
-		client.mutate({ mutation: UPDATE_USER, variables: { id: editId, data } })
+		return updateUser({ mutation: UPDATE_USER, variables: { data } })
 			.then(()=>{
 				setDisplaySuccess('O usuário foi salvo');
-			})
-			.catch((err)=>{
-				setDisplayError(err.message);
-				console.error(err.graphQLErrors, err.networkError, err.operation);
-			})
-			.finally(() => {
-				setSubmitting(false);
 			})
 	}
 
 	return (
 		<Fragment>
 			<Snackbar
-				open={!!displayError}
+				open={!!errorSaving}
 				anchorOrigin={{
 					vertical: 'bottom',
 					horizontal: 'left',
 				}}
-				onClose={()=>{setDisplayError('')}}
-				autoHideDuration={4000}
 			>
-				<SnackbarContent className='error' message={!!displayError && displayError} />
+				<SnackbarContent className='error' message={!!errorSaving && getErrors(errorSaving)} />
 			</Snackbar>
 			<Snackbar
 				open={!!displaySuccess}
@@ -107,7 +68,7 @@ function Page (props) {
 				pageTitle='Alterar usuário'
 				initialValues={user}
 				onSubmit={onSubmit}
-				selectedCompany={selectedCompanyData.selectedCompany}
+				selectedCompany={selectedCompany}
 				// assignBranch={assignBranch}
 				edit={true}
 			/>

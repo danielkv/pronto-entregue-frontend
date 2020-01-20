@@ -4,7 +4,8 @@ import { useApolloClient, useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import { setPageTitle } from '../../utils';
-import { joinMetas, initialMetas } from '../../utils/metas';
+import { metaTypes, sanitizeCompanyData } from '../../utils/companies';
+import { initialMetas } from '../../utils/metas';
 import PageForm from './form';
 
 import { LOGGED_USER_ID } from '../../graphql/authentication';
@@ -30,21 +31,15 @@ function Page () {
 	const { loggedUserId } = client.readQuery({ query: LOGGED_USER_ID });
 	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_USER_COMPANIES, variables: { id: loggedUserId } }] });
 
-	const metas = ['address', 'document', 'contact', 'phones', 'emails'];
 	const company = {
 		name: '',
 		displayName: '',
 		active: true,
-		...initialMetas(metas)
+		...initialMetas(metaTypes)
 	};
 
-	function onSubmit(values) {
-		const data = { ...values, metas: joinMetas(metas, values) };
-		delete data.address;
-		delete data.contact;
-		delete data.phones;
-		delete data.emails;
-		delete data.document;
+	function onSubmit(result) {
+		const data = sanitizeCompanyData(result);
 
 		return createCompany({ variables: { data } })
 			.catch((err)=>{

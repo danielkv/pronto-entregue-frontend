@@ -6,6 +6,55 @@ import { uniqueId } from 'lodash';
 
 import { calculateProductPrice } from './products';
 
+export function extractOrder(order) {
+	return {
+		user: order.user,
+		paymentFee: order.paymentFee,
+		deliveryPrice: order.deliveryPrice,
+		price: order.price,
+		type: order.type,
+		discount: order.discount,
+		status: order.status,
+		message: order.message,
+		street: order.street,
+		number: order.number || '',
+		city: order.city,
+		state: order.state,
+		district: order.district,
+		zipcode: order.zipcode,
+		paymentMethod: order.paymentMethod,
+		products: order.products.map(product=>{
+			return {
+				...product.productRelated,
+
+				id: product.id,
+				price: product.price,
+				name: product.name,
+				quantity: product.quantity,
+				action: 'editable',
+				productRelated: { id: product.productRelated.id },
+
+				optionsGroups: product.productRelated.optionsGroups.map(group=>{
+					let orderGroup = product.optionsGroups.find(row=>row.optionsGroupRelated.id===group.id);
+					let name = orderGroup ? orderGroup.name : group.name;
+					let id = orderGroup ? orderGroup.id : group.id;
+
+					let options = group.options.map(option=>{
+						let orderOption = orderGroup ? orderGroup.options.find(row=>row.optionRelated.id===option.id) : null;
+						let name = orderOption ? orderOption.name : option.name;
+						let selected = orderOption ? true : false;
+						let price = orderOption ? orderOption.price : option.price;
+						let id = orderOption ? orderOption.id : option.id;
+						return { ...option, id, name, selected, price, action: 'editable', optionRelated: { id: option.id } };
+					})
+
+					return { ...group, id, options, name, action: 'editable', groupRelated: { id: group.id } };
+				}),
+			}
+		}),
+	};
+}
+
 export const getOrderStatusIcon = (status) => {
 	switch(status) {
 		case 'waiting':

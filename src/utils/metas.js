@@ -1,3 +1,10 @@
+/**
+ * Convert fields to metas for saving
+ * 
+ * @param {Array} metas 
+ * @param {Object} values 
+ */
+
 export const joinMetas = (metas, values={}) => {
 	let returnMetas = [];
 	
@@ -24,10 +31,21 @@ export const joinMetas = (metas, values={}) => {
 	return returnMetas;
 }
 
-export const metaModel = (type, value='', action='new_empty') => {
-	return { action, key: type, value: value };
+/**
+ * Meta model to be used in application
+ * @param {String} key 
+ * @param {String|Object} value 
+ * @param {String} action 
+ */
+export const metaModel = (key, value='', action='new_empty') => {
+	return { action, key, value };
 }
 
+/**
+ * Default meta data
+ * 
+ * @param {Array} needed which meta keys are needed
+ */
 export const initialMetas = (needed=[]) => {
 	if (!needed) throw new Error('Metas necessárias não definidas');
 	const metas = {};
@@ -62,11 +80,17 @@ export const initialMetas = (needed=[]) => {
 	return metas;
 }
 
+/**
+ * Convert metas comming from database to be read in application
+ * 
+ * @param {Array} needed which meta keys area needed
+ * @param {Array} metas convert these metas
+ */
 export const extractMetas = (needed, metas=[]) => {
-	//valores padrão
+	// get default values
 	let returnMetas = initialMetas(needed);
 
-	//Retira __typename dos metadados
+	// remove __typename
 	// eslint-disable-next-line no-param-reassign
 	metas = metas.map(meta => {
 		delete meta.__typename;

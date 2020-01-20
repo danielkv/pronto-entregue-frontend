@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const LOAD_USER = gql`
-	query ($id: ID!, $companyId:ID!) {
+	query LoadUser($id: ID!, $companyId:ID!) {
 		user (id: $id) {
 			id
 			firstName
@@ -10,7 +10,7 @@ export const LOAD_USER = gql`
 			createdAt
 			active
 			role
-			company(companyId:$companyId) {
+			company(companyId: $companyId) {
 				id
 				userRelation {
 					active
@@ -20,7 +20,6 @@ export const LOAD_USER = gql`
 				id
 				key
 				value
-				action @client
 			}
 		}
 	}

@@ -33,6 +33,28 @@ export const calculateProductPrice = (product) => {
 	}, product.price);
 }
 
+export function extractProduct(product) {
+	return {
+		name: product.name,
+		featured: product.featured,
+		description: product.description,
+		active: product.active,
+		category: product.category,
+		price: product.price,
+		type: product.type,
+		file: '',
+		preview: product.image,
+		optionsGroups: product.optionsGroups.map(optionsGroup => ({
+			action: 'editable',
+			...optionsGroup,
+			options: optionsGroup.options.map(option => ({
+				action: 'editable',
+				...option
+			}))
+		}))
+	};
+}
+
 export const sanitizeProductData = (data) => {
 	return {
 		name: data.name,

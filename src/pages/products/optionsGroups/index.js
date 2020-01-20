@@ -264,7 +264,6 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 										<OptionColumn className='spaceDraggable'>Nome</OptionColumn>
 										<OptionsInfo>
 											<OptionColumn>Preço</OptionColumn>
-											<OptionColumn>Vincular a item de estoque</OptionColumn>
 											{!!groupRestrained && <OptionColumn>Restrigir seleção</OptionColumn>}
 											<OptionColumn style={{ width: 100 }}>Ações</OptionColumn>
 										</OptionsInfo>
