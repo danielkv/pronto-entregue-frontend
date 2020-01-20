@@ -32,9 +32,9 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 		}
 	}, [editing]);
 
-	const nameError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].options && !!errors.options_groups[groupIndex].options[optionIndex] && !!errors.options_groups[groupIndex].options[optionIndex].name ? errors.options_groups[groupIndex].options[optionIndex].name : '';
-	const priceError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].options && !!errors.options_groups[groupIndex].options[optionIndex] && !!errors.options_groups[groupIndex].options[optionIndex].price ? errors.options_groups[groupIndex].options[optionIndex].price : '';
-	const maxSelectError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].options && !!errors.options_groups[groupIndex].options[optionIndex] && !!errors.options_groups[groupIndex].options[optionIndex].maxSelectRestrainOther ? errors.options_groups[groupIndex].options[optionIndex].maxSelectRestrainOther : '';
+	const nameError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].name ? errors.optionsGroups[groupIndex].options[optionIndex].name : '';
+	const priceError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].price ? errors.optionsGroups[groupIndex].options[optionIndex].price : '';
+	const maxSelectError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther ? errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther : '';
 
 	return (
 		<Draggable draggableId={`option.${optionIndex}.${groupIndex}.${option.id}`} index={optionIndex}>
@@ -49,19 +49,19 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 								value={option.name}
 								error={!!nameError}
 								helperText={nameError}
-								onBlur={()=>{setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}.editing`, false)}}
+								onBlur={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, false)}}
 								onChange={(e)=>{
 									let newOption = {
 										...option,
 										name: e.target.value,
 									}
 									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}`, newOption);
-									if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');
+									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 								}} />
 							: <div>
 								{option.name}
-								<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}.editing`, true);}}>
+								<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, true);}}>
 									<Icon path={mdiPencil} size='14' color='#707070' />
 								</IconButton>
 							</div>
@@ -78,8 +78,8 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 										price: parseFloat(e.target.value.replace(',', '.')),
 									}
 									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}`, newOption);
-									if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');
+									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 								}}
 								error={!!priceError}
 								disabled={isSubmitting}
@@ -97,8 +97,8 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 										maxSelectRestrainOther: e.target.value,
 									}
 									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}`, newOption);
-									if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');
+									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 								}}
 								disabled={isSubmitting}
 								error={!!maxSelectError}
@@ -114,16 +114,16 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 										active: !option.active,
 									}
 									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}`, newOption)
-									if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');
+									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption)
+									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 								}}
 								value="checkedB"
 								size='small'
 							/>
 							{(option.action === 'create' || option.action === 'new_empty') &&
 							<IconButton onClick={()=>{
-								if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update');
-								if (option.action === 'editable') setFieldValue(`options_groups.${groupIndex}.options.${optionIndex}.action`, 'remove');
+								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
+								if (option.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.action`, 'remove');
 								removeOption(optionIndex)}
 							}>
 								<Icon path={mdiDelete } size='16' color='#707070' />

@@ -6,8 +6,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
-import { setPageTitle, sanitizeOrderData } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { sanitizeOrderData } from '../../utils/orders';
 import PageForm from './form';
 
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
@@ -55,7 +56,7 @@ function Page (props) {
 				productRelated: { id: product.productRelated.id },
 
 				optionsGroups: product.productRelated.optionsGroups.map(group=>{
-					let orderGroup = product.optionsGroups.find(row=>row.options_groupRelated.id===group.id);
+					let orderGroup = product.optionsGroups.find(row=>row.optionsGroupRelated.id===group.id);
 					let name = orderGroup ? orderGroup.name : group.name;
 					let id = orderGroup ? orderGroup.id : group.id;
 

@@ -7,8 +7,8 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 		active
 		type
 		order
-		min_select
-		max_select
+		minSelect
+		maxSelect
 		groupRestrained {
 			id
 			name
@@ -17,12 +17,12 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 			id
 			name
 		}
-		options (filter:$filter) {
+		options {
 			id
 			name
 			price
 			active
-			max_select_restrain_other
+			maxSelectRestrainOther
 			order
 		}
 	}
@@ -52,7 +52,7 @@ export const LOAD_PRODUCT = gql`
 			}
 			image
 			active
-			options_groups(filter:$filter) {
+			optionsGroups(filter:$filter) {
 				...OptionsGroupFields
 			}
 		}
@@ -107,7 +107,7 @@ export const UPDATE_PRODUCT = gql`
 			}
 			image
 			active
-			options_groups (filter:$filter) {
+			optionsGroups (filter:$filter) {
 				...OptionsGroupFields
 			}
 		}

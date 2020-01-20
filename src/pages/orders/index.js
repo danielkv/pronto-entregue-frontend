@@ -10,8 +10,9 @@ import numeral from 'numeral'
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
-import { setPageTitle, getStatusIcon } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { getOrderStatusIcon } from '../../utils/orders';
 import { OrderCreated, OrderDate, OrderTime } from './styles';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -98,7 +99,7 @@ function Page (props) {
 											<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
 											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 											<TableCell><CircleNumber>{row.countProducts}</CircleNumber></TableCell>
-											<TableCell style={{ width: 30, textAlign: 'center' }}>{getStatusIcon(row.status)}</TableCell>
+											<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
 											<TableCell style={{ width: 100 }}>
 												<IconButton onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />

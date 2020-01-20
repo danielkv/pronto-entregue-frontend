@@ -12,8 +12,9 @@ import OrdersDelivered from '../../assets/images/orders-delivered.png';
 import OrdersDelivering from '../../assets/images/orders-delivering.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
 import { ErrorBlock } from '../../layout/blocks';
-import { getStatusIcon, setPageTitle } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { getOrderStatusIcon } from '../../utils/orders';
 import { OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer } from './styles';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -131,7 +132,7 @@ function Page () {
 											<TableCell>{row.user.full_name}</TableCell>
 											<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.street}, ${row.number}`}</TableCell>
 											<TableCell><CircleNumber>{row.countProducts}</CircleNumber></TableCell>
-											<TableCell>{getStatusIcon(row.status)}</TableCell>
+											<TableCell>{getOrderStatusIcon(row.status)}</TableCell>
 										</TableRow>
 									))}
 								</TableBody>

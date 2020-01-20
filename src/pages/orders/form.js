@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect, useCallback } from 'react';
 
-import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
+import { useQuery, useApolloClient ,useLazyQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem } from '@material-ui/core';
 import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
@@ -10,7 +10,9 @@ import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, Loading, tField } from '../../layout/components';
 
-import { createEmptyOrderProduct, calculateProductPrice, calculateOrderPrice } from '../../utils';
+import { getErrors } from '../../utils/error';
+import { createEmptyOrderProduct, calculateOrderPrice } from '../../utils/orders';
+import { calculateProductPrice } from '../../utils/products';
 import ProductModal from './product_modal';
 
 import { GET_SELECTED_COMPANY, GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
@@ -26,7 +28,6 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 	const [editingProductIndex, setEditingProductIndex] = useState(null);
 	const [productModalCancel, setProductModalCancel] = useState(false);
 	const [loadingProduct, setLoadingProduct] = useState(false);
-	const [loadingdeliveryPrice, setLoadingdeliveryPrice] = useState(false);
 
 	//Carrega filial selecionada
 	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
@@ -40,6 +41,8 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 		data: { company: { products: productsFound = [] } = {} } = {}, loading: loadingProducts
 	}] = useLazyQuery(GET_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache', variables: { id: selectedCompany } });
 
+	const [calculateDeliveryPrice, { loading: loadingdeliveryPrice }] = useMutation(CALCULATE_DELIVERY_PRICE);
+
 
 	//Query formas de pagamento
 	const {
@@ -50,7 +53,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 		searchUsers({ variables: { search: value } });
 	}
 	const handleSearchProducts = (value) => {
-		searchProducts({ variables: { search: value } });
+		searchProducts({ variables: { filter: { search: value } } });
 	}
 	const handleSelectAddress = ({ street, number, zipcode, district, city, state }) => {
 		setValues({
@@ -87,7 +90,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 				return createEmptyOrderProduct({ ...product, action: 'create' });
 			})
 			.catch((err)=> {
-				console.error(err);
+				console.error(getErrors(err));
 			})
 			.finally(()=>{
 				setLoadingProduct(false);
@@ -103,34 +106,34 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 		setEditingProductIndex(null);
 	}
 
-	const calculatedeliveryPrice = useCallback((_zipcode)=>{
+	const handleCalculateDeliveryPrice = useCallback((_zipcode)=>{
 		setFieldValue('zipcodeOk', false);
 		if (!_zipcode) return;
 		
 		// eslint-disable-next-line no-param-reassign
-		_zipcode = parseInt(_zipcode.replace(/-/g, ''));
+		if (typeof _zipcode === 'string') _zipcode = parseInt(_zipcode.replace(/-/g, ''));
 		if (_zipcode.toString().length !== 8) return;
 		
-		setLoadingdeliveryPrice(true);
-		client.query({ query: CALCULATE_DELIVERY_PRICE, variables: { zipcode: _zipcode } })
-			.then(({ data: { calculatedeliveryPrice: area } })=>{
+		calculateDeliveryPrice({ variables: { zipcode: _zipcode } })
+			.then(({ data: { calculateDeliveryPrice: area } }) => {
 				setFieldValue('deliveryPrice', area.price);
 				setFieldValue('zipcodeOk', true);
 			})
-			.finally(()=>{
-				setLoadingdeliveryPrice(false);
-			});
+			.catch(()=> {
+				setFieldValue('deliveryPrice', 0);
+				setFieldValue('zipcodeOk', false);
+			})
+			
 
-	},[client, setFieldValue, setLoadingdeliveryPrice]);
-
+	},[calculateDeliveryPrice, setFieldValue]);
 
 	useEffect(()=>{
 		setFieldValue('price', calculateOrderPrice(products, deliveryPrice + paymentFee - discount))
 	}, [products, deliveryPrice, paymentFee, discount, setFieldValue]);
 	
 	useEffect(()=>{
-		calculatedeliveryPrice(zipcode);
-	}, [zipcode, calculatedeliveryPrice]);
+		handleCalculateDeliveryPrice(zipcode);
+	}, [zipcode, handleCalculateDeliveryPrice]);
 
 	return (
 		<Form>
@@ -146,7 +149,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 								<FormControl>
 									<Downshift
 										onChange={(item)=>{setFieldValue('user', item)}}
-										itemToString={(item => item ? item.full_name : '')}
+										itemToString={(item => item ? item.fullName : '')}
 										onInputValueChange={(value)=>{handleSearchCustomer(value)}}
 										initialSelectedItem={user && user.id ? user : null}
 									>
@@ -172,7 +175,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 																		{...getItemProps({ key: item.id, index, item })}
 																	>
 																		<ListItemIcon><Icon path={mdiAccountCircle} color='#707070' size='22' /></ListItemIcon>
-																		<ListItemText>{item.full_name}</ListItemText>
+																		<ListItemText>{item.fullName}</ListItemText>
 																		<ListItemSecondaryAction><small>{item.email}</small></ListItemSecondaryAction>
 																	</ListItem>)
 																})}
@@ -345,7 +348,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 												{products.filter(row=>row.action !== 'remove').map((row, index) => {
 													let productIndex = products.findIndex(r=>r.id===row.id);
 													let productPrice = calculateProductPrice(row);
-													let selectedOptions = (row.options_groups.filter(group=>{
+													let selectedOptions = (row.optionsGroups.filter(group=>{
 														return group.options.some(option=>option.selected);
 													})
 														.map(group=>{

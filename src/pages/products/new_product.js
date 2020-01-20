@@ -4,7 +4,8 @@ import { useMutation, useApolloClient } from '@apollo/react-hooks';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { setPageTitle, sanitizeProductData } from '../../utils';
+import { setPageTitle } from '../../utils';
+import { sanitizeProductData } from '../../utils/products';
 import PageForm from './form';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';

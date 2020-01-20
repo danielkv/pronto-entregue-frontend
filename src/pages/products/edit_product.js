@@ -6,8 +6,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
-import { setPageTitle, sanitizeProductData } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { sanitizeProductData } from '../../utils/products';
 import PageForm from './form';
 
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';

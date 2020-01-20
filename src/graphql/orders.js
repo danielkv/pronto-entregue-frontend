@@ -46,7 +46,7 @@ export const ORDER_PRODUCT_RELATED_FRAGMENT = gql`
 		price
 		description
 		image
-		options_groups(filter:$filter) {
+		optionsGroups(filter:$filter) {
 			...OptionsGroupFields
 		}
 	}
@@ -92,13 +92,13 @@ export const ORDER_FRAGMENT = gql`
 			name
 			price
 			quantity
-			product_related {
+			productRelated {
 				...ProductRelatedFields
 			}
-			options_groups {
+			optionsGroups {
 				id
 				name
-				options_group_related {
+				optionsGroupRelated {
 					id
 				}
 				#message
@@ -106,7 +106,7 @@ export const ORDER_FRAGMENT = gql`
 					id
 					name
 					price
-					option_related {
+					optionRelated {
 						id
 					}
 				}
@@ -120,8 +120,8 @@ export const ORDER_FRAGMENT = gql`
 `;
 
 export const CALCULATE_DELIVERY_PRICE = gql`
-	query CalculatedeliveryPrice ($zipcode:Int!) {
-		calculatedeliveryPrice(zipcode: $zipcode) {
+	mutation CalculateDeliveryPrice ($zipcode:Int!) {
+		calculateDeliveryPrice(zipcode: $zipcode) {
 			id
 			name
 			price

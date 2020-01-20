@@ -5,8 +5,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { ErrorBlock } from '../../layout/blocks';
-import { setPageTitle, sanitizeOrderData } from '../../utils';
+import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { sanitizeOrderData } from '../../utils/orders';
 import PageForm from './form';
 
 import { GET_SELECTED_COMPANY } from '../../graphql/companies';
@@ -57,14 +58,13 @@ function Page (props) {
 	}
 	
 	function chackZipcodeOk (value) {
-		const { type, zipcode } = this.parent
+		const { type } = this.parent
 
-		if (type)
-			return true;
+		//console.log(type, zipcode, value);
 
-		if (zipcode) return true;
+		if (type === 'takeout') return true;
 
-		return !!value;
+		return value;
 	}
 
 	function checkZipcode () {

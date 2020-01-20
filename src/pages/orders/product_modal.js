@@ -42,21 +42,21 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 	const handleOptionCheckboxSelect = (groupIndex, optionIndex, maxSelect) => (e) =>{
 		let newProd = { ...product };
 		if (e.target.checked) {
-			const selectedOptions = countSelectedOptions(newProd.options_groups[groupIndex]);
+			const selectedOptions = countSelectedOptions(newProd.optionsGroups[groupIndex]);
 			if (selectedOptions >= maxSelect) return alert(`Você pode selecionar apenas ${maxSelect} ${maxSelect > 1 ? 'opções' : 'opção'}`)
 		}
-		newProd.options_groups[groupIndex].options[optionIndex].selected = e.target.checked;
+		newProd.optionsGroups[groupIndex].options[optionIndex].selected = e.target.checked;
 		if (newProd.action === 'editable') newProd.action = 'update';
 		setProduct(newProd);
 	}
 
 	const handleOptionRadioSelect = (groupIndex, optionIndex) => (e) =>{
 		let newProd = { ...product };
-		newProd.options_groups[groupIndex].options = newProd.options_groups[groupIndex].options.map(row=>{
+		newProd.optionsGroups[groupIndex].options = newProd.optionsGroups[groupIndex].options.map(row=>{
 			row.selected = false;
 			return row;
 		});
-		newProd.options_groups[groupIndex].options[optionIndex].selected = e.target.checked;
+		newProd.optionsGroups[groupIndex].options[optionIndex].selected = e.target.checked;
 		if (newProd.action === 'editable') newProd.action = 'update';
 		setProduct(newProd);
 	}
@@ -66,7 +66,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 	}
 
 	const isRestrainingOptionSelected = (sourceGroup) => {
-		let restrainingGroup = product.options_groups.find(row=>row.group_related.id===sourceGroup.restrainedBy.id);
+		let restrainingGroup = product.optionsGroups.find(row=>row.group_related.id===sourceGroup.restrainedBy.id);
 		if (restrainingGroup) return restrainingGroup.options.find(row=>row.selected);
 
 		return false;
@@ -76,7 +76,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 		let maxSelect = group.maxSelect;
 		if (group.restrainedBy && group.restrainedBy.id) {
 			let restrainingOption = isRestrainingOptionSelected(group);
-			if (restrainingOption) maxSelect = restrainingOption.max_select_restrain_other;
+			if (restrainingOption) maxSelect = restrainingOption.maxSelectRestrainOther;
 		}
 		return maxSelect;
 	}
@@ -111,7 +111,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 
 	const validateAllBeforeSave = () => {
 		let errors = {}
-		const verifying = product.options_groups.every((group, index)=>{
+		const verifying = product.optionsGroups.every((group, index)=>{
 			let validation = validateGroup(group);
 			if (validation) errors[index] = validation;
 			return !validation;
@@ -177,7 +177,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 							</FormRow>
 						</BlockSeparator>
 						<BlockSeparator style={{ maxHeight: 400, overflowY: 'auto' }}>
-							{product.options_groups.map((group, groupIndex)=>{
+							{product.optionsGroups.map((group, groupIndex)=>{
 								let disabled = false;
 								let maxSelect = getGroupMaxSelect(group);
 								let maxSelectMsg = getGroupInitalMessage(group);
@@ -241,7 +241,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 																value={option.price}
 																onChange={(e)=>{
 																	let newProd = { ...product };
-																	newProd.options_groups[groupIndex].options[optionIndex].price = parseFloat(e.target.value.replace(',', '.'));
+																	newProd.optionsGroups[groupIndex].options[optionIndex].price = parseFloat(e.target.value.replace(',', '.'));
 																	if (newProd.action === 'editable') newProd.action = 'update';
 																	setProduct(newProd);
 																}}

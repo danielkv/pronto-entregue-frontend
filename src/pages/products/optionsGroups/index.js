@@ -9,7 +9,7 @@ import Icon from '@mdi/react';
 import { FieldArray } from 'formik';
 import { isEqual } from 'lodash';
 
-import { createEmptyOption } from '../../../utils';
+import { createEmptyOption } from '../../../utils/products';
 import Options from '../options';
 import {
 	OptionsContainer,
@@ -29,9 +29,9 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 		}
 	}, [editing]);
 
-	const nameError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].name ? errors.options_groups[groupIndex].name : '';
-	const minSelectError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].minSelect ? errors.options_groups[groupIndex].minSelect : '';
-	const maxSelectError = !!errors.options_groups && !!errors.options_groups[groupIndex] && !!errors.options_groups[groupIndex].maxSelect ? errors.options_groups[groupIndex].maxSelect : '';
+	const nameError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].name ? errors.optionsGroups[groupIndex].name : '';
+	const minSelectError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].minSelect ? errors.optionsGroups[groupIndex].minSelect : '';
+	const maxSelectError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].maxSelect ? errors.optionsGroups[groupIndex].maxSelect : '';
 	const groupRestrained = group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : '';
 	const restrainedBy = group.restrainedBy && group.restrainedBy.id;
 	
@@ -49,9 +49,9 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 	return (
 		<Draggable draggableId={`group.${groupIndex}.${group.id}`} index={groupIndex}>
 			{(provided)=>(
-				<FieldArray name={`options_groups.${groupIndex}.options`}>
+				<FieldArray name={`optionsGroups.${groupIndex}.options`}>
 					{({ insert, remove }) => (
-						<ExpansionPanel {...provided.draggableProps} ref={provided.innerRef} key={group.id} square expanded={!!group.open} onChange={(e, value)=>{setFieldValue(`options_groups.${groupIndex}.open`, value)}}>
+						<ExpansionPanel {...provided.draggableProps} ref={provided.innerRef} key={group.id} square expanded={!!group.open} onChange={(e, value)=>{setFieldValue(`optionsGroups.${groupIndex}.open`, value)}}>
 							<ExpansionPanelSummary style={{ minHeight: 0, padding: 0 }}>
 								<Table>
 									<TableBody>
@@ -62,7 +62,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 													<TextField
 														inputRef={inputName}
 														onClick={(e)=>e.stopPropagation()}
-														onBlur={()=>{setFieldValue(`options_groups.${groupIndex}.editing`, false)}}
+														onBlur={()=>{setFieldValue(`optionsGroups.${groupIndex}.editing`, false)}}
 														value={group.name}
 														error={!!nameError}
 														helperText={nameError}
@@ -72,18 +72,18 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 																name: e.target.value,
 															}
 															if (group.action === 'editable') newGroup.action = 'update';
-															setFieldValue(`options_groups.${groupIndex}`, newGroup);
+															setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 														}}
 														disabled={isSubmitting} />
 													: <span>
 														{group.name}
-														<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); setFieldValue(`options_groups.${groupIndex}.editing`, true);}}>
+														<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); setFieldValue(`optionsGroups.${groupIndex}.editing`, true);}}>
 															<Icon path={mdiPencil} size='14' color='#707070' />
 														</IconButton>
 													</span>
 												}
 												{
-													!!errors.options_groups && !!errors.options_groups[groupIndex] &&
+													!!errors.optionsGroups && !!errors.optionsGroups[groupIndex] &&
 											<Icon path={mdiAlertCircle} color='#f44336' size='18' />
 												}
 											</TableCell>
@@ -100,7 +100,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 																type: value,
 															}
 															if (group.action === 'editable') newGroup.action = 'update';
-															setFieldValue(`options_groups.${groupIndex}`, newGroup);
+															setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 														}}
 														aria-label="text alignment"
 													>
@@ -124,14 +124,14 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														value="checkedA"
 														onChange={(e, newValue)=>{
 															if (newValue) {
-																setFieldValue(`options_groups.${groupIndex}`, {
+																setFieldValue(`optionsGroups.${groupIndex}`, {
 																	...group,
 																	action: group.action === 'editable' ? 'update' : group.action,
 																	minSelect: 1,
 																	maxSelect: 1,
 																})
 															} else {
-																setFieldValue(`options_groups.${groupIndex}`, {
+																setFieldValue(`optionsGroups.${groupIndex}`, {
 																	...group,
 																	action: group.action === 'editable' ? 'update' : group.action,
 																	minSelect: 0,
@@ -148,7 +148,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 										<TableCell style={{ width: 150 }}>
 											<TextField
 												label='Seleção mínima'
-												name={`options_groups.${groupIndex}.minSelect`}
+												name={`optionsGroups.${groupIndex}.minSelect`}
 												value={group.minSelect}
 												type='number'
 												onClick={(e)=>{e.stopPropagation();}}
@@ -158,7 +158,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														minSelect: parseInt(e.target.value),
 													}
 													if (newGroup.action === 'editable') newGroup.action = 'update';
-													setFieldValue(`options_groups.${groupIndex}`, newGroup);
+													setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 												}}
 												error={!!minSelectError}
 												helperText={minSelectError}
@@ -169,7 +169,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 										<TableCell style={{ width: 150 }}>
 											<TextField
 												label='Seleção máxima'
-												name={`options_groups.${groupIndex}.maxSelect`}
+												name={`optionsGroups.${groupIndex}.maxSelect`}
 												value={group.maxSelect}
 												type='number'
 												onClick={(e)=>{e.stopPropagation();}}
@@ -179,7 +179,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														maxSelect: parseInt(e.target.value),
 													}
 													if (newGroup.action === 'editable') newGroup.action = 'update';
-													setFieldValue(`options_groups.${groupIndex}`, newGroup);
+													setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 												}}
 												error={!!maxSelectError}
 												helperText={maxSelectError}
@@ -209,7 +209,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														groups[groupOtherIndex].type = 'multi';
 													}
 
-													setFieldValue(`options_groups`, groups);
+													setFieldValue(`optionsGroups`, groups);
 												}}
 												value={groupRestrained}
 											>
@@ -230,7 +230,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 															active: !group.active,
 														}
 														if (group.action === 'editable') newGroup.action = 'update';
-														setFieldValue(`options_groups.${groupIndex}`, newGroup);
+														setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 													}}
 													value="checkedB"
 													size='small'
@@ -245,12 +245,12 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 															open: true,
 															action: group.action === 'editable' ? 'update' : group.action
 														}
-														setFieldValue(`options_groups.${groupIndex}`, newGroup);
+														setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 													}}>
 													<Icon path={mdiPlusCircle} size='16' color='#363E5E' />
 												</IconButton>
 												{(group.action === 'new_empty' || group.action === 'create') &&
-											<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); if (group.action === 'editable') setFieldValue(`options_groups.${groupIndex}.action`, 'update'); removeGroup(groupIndex)}}>
+											<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update'); removeGroup(groupIndex)}}>
 												<Icon path={mdiDelete} size='16' color='#363E5E' />
 											</IconButton>}
 											</TableCell>

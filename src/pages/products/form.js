@@ -13,7 +13,7 @@ import { FieldArray, Form, Field, ErrorMessage } from 'formik';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField, Loading } from '../../layout/components';
 
 import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
-import { createEmptyOptionsGroup } from '../../utils';
+import { createEmptyOptionsGroup } from '../../utils/products';
 import OptionsGroups from './optionsGroups';
 
 import { GET_CATEGORIES } from '../../graphql/categories';
