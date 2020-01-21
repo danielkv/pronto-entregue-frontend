@@ -56,6 +56,7 @@ export function extractOrder(order) {
 }
 
 export const getOrderStatusIcon = (status) => {
+	// isIn: [['waiting', 'preparing', 'delivery', 'delivered', 'canceled']],
 	switch(status) {
 		case 'waiting':
 			return <Icon path={mdiClock} size='18' color='#363E5E' alt='Aguardando' title='Aguardando' />
