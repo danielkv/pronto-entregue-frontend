@@ -49,10 +49,6 @@ export default function Layout () {
 						<Route path='/pedidos/novo' component={NewOrder} />
 						<Route path='/pedidos/alterar/:id' component={EditOrder} />
 						
-						<Route exact path='/categorias' component={Categories} />
-						<Route path='/categorias/novo' component={NewCategory} />
-						<Route path='/categorias/alterar/:id' component={EditCategory} />
-						
 						<Route exact path='/produtos' component={Products} />
 						<Route path='/produtos/novo' component={NewProduct} />
 						<Route path='/produtos/alterar/:id' component={EditProduct} />
@@ -67,6 +63,10 @@ export default function Layout () {
 								<Route exact path='/empresas' component={Companies} />
 								<Route path='/empresas/novo' component={NewCompany} />
 								<Route path='/empresas/alterar/:id' component={EditCompany} />
+
+								<Route exact path='/categorias' component={Categories} />
+								<Route path='/categorias/novo' component={NewCategory} />
+								<Route path='/categorias/alterar/:id' component={EditCategory} />
 								
 								<Route path='/clientes' render={()=><Users adm />} />
 								<Route path='/clientes/novo' render={()=><NewUser adm />} />

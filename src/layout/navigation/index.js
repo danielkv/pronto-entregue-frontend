@@ -36,13 +36,6 @@ function Navigation() {
 						Pedidos
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
-					<ListItemIcon>
-						<Icon path={mdiShape} size='22' color='#707070' /></ListItemIcon>
-					<ListItemText>
-						Categorias
-					</ListItemText>
-				</NavItem>
 				<NavItem to='/produtos' selected={isSelected('produtos')} alt='Produtos'>
 					<ListItemIcon>
 						<Icon path={mdiBasket} size='22' color='#707070' /></ListItemIcon>
@@ -81,8 +74,13 @@ function Navigation() {
 								Empresas
 							</ListItemText>
 						</NavItem>
-					</NavigationContainer>
-					<NavigationContainer dense={true}>
+						<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
+							<ListItemIcon>
+								<Icon path={mdiShape} size='22' color='#707070' /></ListItemIcon>
+							<ListItemText>
+								Categorias
+							</ListItemText>
+						</NavItem>
 						<NavItem to='/clientes' selected={isSelected('clientes')} alt='Clientes'>
 							<ListItemIcon>
 								<Icon path={mdiAccountMultiple} size='22' color='#707070' /></ListItemIcon>
