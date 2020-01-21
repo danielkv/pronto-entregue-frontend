@@ -11,13 +11,13 @@ import OrdersCanceled from '../../assets/images/orders-canceled.png';
 import OrdersDelivered from '../../assets/images/orders-delivered.png';
 import OrdersDelivering from '../../assets/images/orders-delivering.png';
 import OrdersPreparing from '../../assets/images/orders-preparing.png';
+import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { getOrderStatusIcon } from '../../utils/orders';
 import { OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer } from './styles';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ORDERS_QTY, GET_COMPANY_LAST_ORDERS } from '../../graphql/orders';
 import { GET_COMPANY_BEST_SELLERS } from '../../graphql/products';
 
@@ -28,7 +28,7 @@ function Page () {
 	const pagination = { page: 0, rowsPerPage: 4 };
 
 	//get selected company
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 
 	//get company best sellers
 	const { data: { company: { bestSellers = [] } = {} } = {} } = useQuery(GET_COMPANY_BEST_SELLERS, { variables: { id: selectedCompany, pagination, filter } });

@@ -5,11 +5,12 @@ import { Paper, Table, TableBody, TableHead, TableCell, TableRow, Switch } from 
 import { mdiCreditCardOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_SELECTED_COMPANY, GET_COMPANY_PAYMENT_METHODS, ENABLE_PAYMENT_METHOD, DISABLE_PAYMENT_METHOD } from '../../graphql/companies';
+import { GET_COMPANY_PAYMENT_METHODS, ENABLE_PAYMENT_METHOD, DISABLE_PAYMENT_METHOD } from '../../graphql/companies';
 import { GET_PAYMENT_METHODS } from '../../graphql/paymentMethods';
 
 function Page () {
@@ -19,7 +20,7 @@ function Page () {
 	const { data: { paymentMethods: paymentMethodsList =[] } ={}, loading: loadingPaymentMethods } = useQuery(GET_PAYMENT_METHODS);
 
 	//carrega métodos pagamento ativos na filial
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const {
 		data: { company: { paymentMethods: companyPaymentMethods = [] } = {} }= {},
 		loading: loadingCompanyPaymentMethods

@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useQuery, useSubscription } from '@apollo/react-hooks';
+import { useSubscription } from '@apollo/react-hooks';
 import { IconButton, Badge } from '@material-ui/core';
 import { mdiBell } from '@mdi/js';
 import Icon from '@mdi/react';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { Container } from './styles';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies'
 import { SUBSCRIBE_ORDER_CREATED } from '../../graphql/orders';
 
 export default function Notification() {
 	const history = useHistory();
 	const [newOrders, setNewOrders] = useState(0);
 
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const { data: { orderCreated } = {} } = useSubscription(SUBSCRIBE_ORDER_CREATED, { variables: { companyId: selectedCompany } });
 
 	useEffect(() => {

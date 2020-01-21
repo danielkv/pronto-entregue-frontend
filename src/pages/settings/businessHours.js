@@ -8,17 +8,17 @@ import { Form, Field, FieldArray, Formik } from 'formik';
 
 import { tField, FormRow, FieldControl } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 
 import { LOAD_BUSINESS_HOURS, UPDATE_BUSINESS_HOURS } from '../../graphql/businessHours';
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 
 function Page () {
 	setPageTitle('Configurações - Horário de atendimento');
 
 	//Carrega horas de trabalho
-	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const {
 		data: { company: { businessHours = [] } = {} } = {},
 		loading: loadingBusinessHours

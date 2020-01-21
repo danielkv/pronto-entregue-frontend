@@ -73,7 +73,7 @@ export const GET_COMPANY_USERS = gql`
 `;
 
 export const UPDATE_USER = gql`
-	mutation UpdateUser ($id: ID!, $data: UserInput!, $company_id: ID!) {
+	mutation UpdateUser ($id: ID!, $data: UserInput!, $companyId: ID!) {
 		updateUser (id: $id, data: $data) {
 			id
 			firstName
@@ -82,9 +82,9 @@ export const UPDATE_USER = gql`
 			createdAt
 			active
 			role
-			company(company_id: $company_id) {
+			company(companyId: $companyId) {
 				id
-				user_relation {
+				userRelation {
 					active
 				}
 			}

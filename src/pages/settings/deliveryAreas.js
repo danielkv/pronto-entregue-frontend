@@ -9,17 +9,18 @@ import * as Yup from 'yup';
 
 import { FormRow, FieldControl, tField } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+
 import { GET_COMPANY_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/deliveryAreas';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
 
 	// query load delivery_areas
-	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const {
 		data: { company: { deliveryAreas: deliveryAreasInitial = [] } = {} } = {},
 		loading: loadingDeliveryAreas

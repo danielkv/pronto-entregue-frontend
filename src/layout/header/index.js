@@ -7,12 +7,13 @@ import { mdiStore, mdiLogout, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import mainLogo from '../../assets/images/logo.png';
+import { useSelectedCompany } from '../../controller/hooks';
 import { logUserOut } from '../../services/init';
 import Notification from '../notification';
 import { HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser } from './styles';
 
 import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
-import { GET_USER_COMPANIES, GET_SELECTED_COMPANY, SET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_USER_COMPANIES, SET_SELECTED_COMPANY } from '../../graphql/companies';
 
 export default function Header () {
 	const history = useHistory();
@@ -24,9 +25,9 @@ export default function Header () {
 		data: { user: { companies = [] } = {} } = {},
 		loading: loadingCompanies,
 	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId } });
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
-
-	const [selectCompany] = useMutation(SET_SELECTED_COMPANY);
+	
+	const selectedCompany = useSelectedCompany();
+	const [setSelectCompany] = useMutation(SET_SELECTED_COMPANY);
 
 	function handleLogout () {
 		logUserOut();
@@ -47,7 +48,7 @@ export default function Header () {
 								<Select
 									disableUnderline={true}
 									value={selectedCompany || ''}
-									onChange={(e)=>selectCompany({ variables: { id: e.target.value } })}
+									onChange={(e)=>setSelectCompany({ variables: { id: e.target.value } })}
 									inputProps={{
 										name: 'company',
 										id: 'company',

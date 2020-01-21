@@ -10,12 +10,13 @@ import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, tField } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { getErrors } from '../../utils/error';
 import { createEmptyOrderProduct, calculateOrderPrice } from '../../utils/orders';
 import { calculateProductPrice } from '../../utils/products';
 import ProductModal from './product_modal';
 
-import { GET_SELECTED_COMPANY, GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
+import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { CALCULATE_DELIVERY_PRICE } from '../../graphql/orders';
 import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { SEARCH_USERS } from '../../graphql/users';
@@ -29,8 +30,8 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 	const [productModalCancel, setProductModalCancel] = useState(false);
 	const [loadingProduct, setLoadingProduct] = useState(false);
 
-	//Carrega filial selecionada
-	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	// get selecte company
+	const selectedCompany = useSelectedCompany();
 
 	//Query de busca de usuário
 	const [searchUsers, { data: usersData, loading: loadingUsers }] = useLazyQuery(SEARCH_USERS, { fetchPolicy: 'no-cache' });
@@ -462,7 +463,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									{!loadingSelectedData && !!paymentMethods.length &&
+									{!!paymentMethods.length &&
 									<TextField helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
 										{paymentMethods.map(row=>(
 											<MenuItem key={row.id} value={row.id}>{row.displayName}</MenuItem>

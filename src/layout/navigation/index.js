@@ -1,29 +1,22 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useQuery } from '@apollo/react-hooks';
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple } from '@mdi/js';
 import Icon from '@mdi/react';
 
-import { LoadingBlock } from '../blocks';
+import { useLoggedUserRole } from '../../controller/hooks';
 import { Container, NavigationContainer, NavItem } from './styles';
-
-import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
 
 function Navigation() {
 	const location = useLocation();
-
-	const { data: { loggedUserId } } = useQuery(LOGGED_USER_ID);
-	const { data: { user: { role = null } = {} } = {}, loading: loadingUser } = useQuery(GET_USER, { variables: { id: loggedUserId } });
+	const loggedUserRole = useLoggedUserRole();
 	
 	function isSelected(match) {
 		if (!location.pathname) return '';
 		const currentLocation = location.pathname.substr(1).split('/')[0];
 		return currentLocation === match ? true : false;
 	}
-
-	if (loadingUser) return <LoadingBlock />;
 
 	return (
 		<Container>
@@ -76,7 +69,7 @@ function Navigation() {
 				</NavItem>
 			</NavigationContainer>
 
-			{role === 'master' && (
+			{loggedUserRole === 'master' && (
 				<>
 					<Divider />
 
@@ -86,6 +79,15 @@ function Navigation() {
 								<Icon path={mdiStore} size='22' color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Empresas
+							</ListItemText>
+						</NavItem>
+					</NavigationContainer>
+					<NavigationContainer dense={true}>
+						<NavItem to='/clientes' selected={isSelected('clientes')} alt='Clientes'>
+							<ListItemIcon>
+								<Icon path={mdiAccountMultiple} size='22' color='#707070' /></ListItemIcon>
+							<ListItemText>
+								Clientes
 							</ListItemText>
 						</NavItem>
 					</NavigationContainer>

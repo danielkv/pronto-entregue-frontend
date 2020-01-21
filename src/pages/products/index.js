@@ -9,11 +9,11 @@ import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
 
 const initialFilter = {
@@ -47,7 +47,7 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 
-	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 
 	const {
 		data: { company: { countProducts = 0, products = [] } = {} } = {},
@@ -65,7 +65,7 @@ function Page (props) {
 	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_PRODUCT);
 
 	if (productsError) return <ErrorBlock error={getErrors(productsError)} />
-	if ((loadingProducts && !called) || loadingSelectedData) return (<LoadingBlock />);
+	if (loadingProducts && !called) return (<LoadingBlock />);
 
 	return (
 		<Fragment>

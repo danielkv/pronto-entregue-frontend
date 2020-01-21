@@ -5,6 +5,7 @@ import { ThemeProvider } from '@material-ui/styles';
 
 import { Container, HeaderArea, NavigationArea, Main } from './layout/components';
 
+import { useLoggedUserRole } from './controller/hooks';
 import Header from './layout/header';
 import Navigation from './layout/navigation';
 import theme from './layout/theme';
@@ -27,6 +28,8 @@ import EditUser from './pages/users/edit_user';
 import NewUser from './pages/users/new_user';
 
 export default function Layout () {
+	const loggedUserRole = useLoggedUserRole();
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Container>
@@ -41,10 +44,6 @@ export default function Layout () {
 						<Redirect exact from='/' to='/dashboard' />
 
 						<Route exact path='/dashboard' component={Dashboard} />
-
-						<Route exact path='/empresas' component={Companies} />
-						<Route path='/empresas/novo' component={NewCompany} />
-						<Route path='/empresas/alterar/:id' component={EditCompany} />
 						
 						<Route exact path='/pedidos' component={Orders} />
 						<Route path='/pedidos/novo' component={NewOrder} />
@@ -59,10 +58,20 @@ export default function Layout () {
 						<Route path='/produtos/alterar/:id' component={EditProduct} />
 						
 						<Route exact path='/usuarios' component={Users} />
-						<Route path='/usuarios/novo' component={NewUser} />
 						<Route path='/usuarios/alterar/:id' component={EditUser} />
 						
 						<Route path='/configuracoes' component={Settings} />
+
+						{loggedUserRole === 'master' && (
+							<>
+								<Route exact path='/empresas' component={Companies} />
+								<Route path='/empresas/novo' component={NewCompany} />
+								<Route path='/empresas/alterar/:id' component={EditCompany} />
+								
+								<Route path='/clientes' render={()=><Users adm />} />
+								<Route path='/clientes/novo' render={()=><NewUser adm />} />
+							</>
+						)}
 					</Switch>
 				</Main>
 			</Container>

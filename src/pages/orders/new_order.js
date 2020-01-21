@@ -1,22 +1,22 @@
 import React from 'react';
 
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { sanitizeOrderData } from '../../utils/orders';
 import PageForm from './form';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { CREATE_ORDER, GET_COMPANY_ORDERS } from '../../graphql/orders';
 
 function Page (props) {
 	setPageTitle('Novo pedido');
 
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const [createOrder, { error: errorSaving }] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
 
 	const order = {

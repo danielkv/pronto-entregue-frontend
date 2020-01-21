@@ -1,21 +1,21 @@
 import React from 'react';
 
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { joinMetas, initialMetas } from '../../utils/metas';
 import PageForm from './form';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_USERS, CREATE_USER } from '../../graphql/users';
 
 
 function Page (props) {
 	setPageTitle('Novo usuário');
 	
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const [createUser, { error: errorSaving }] = useMutation(CREATE_USER, { refetchQueries: [{ query: GET_COMPANY_USERS, variables: { id: selectedCompany } }] })
 
 	const metas = ['document', 'addresses', 'phones'];

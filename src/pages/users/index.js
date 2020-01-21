@@ -8,11 +8,12 @@ import Icon from '@mdi/react';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
+
 import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 
 const initialFilter = {
@@ -20,7 +21,7 @@ const initialFilter = {
 	search: '',
 }
 
-function Page (props) {
+function Page () {
 	setPageTitle('Usuários');
 
 	const searchRef = useRef(null);
@@ -47,7 +48,7 @@ function Page (props) {
 	}
 
 	//carrega empresa selecionada
-	const { data: { selectedCompany }, loading: loadingSelectedCompany } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 
 	//carrega usuários
 	const {
@@ -60,7 +61,7 @@ function Page (props) {
 	const [setUserEnabled, { loading }] = useMutation(UPDATE_USER, { variables: { companyId: selectedCompany } });
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
-	if (loadingSelectedCompany || (loadingUsersData && !called)) return (<LoadingBlock />);
+	if (loadingUsersData && !called) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
@@ -91,7 +92,7 @@ function Page (props) {
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>
-												<IconButton  disabled={loading}  onClick={()=>{props.history.push(`/usuarios/alterar/${row.id}`)}}>
+												<IconButton  disabled={loading} component={Link} to={(`/usuarios/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />
 												</IconButton>
 												<Switch

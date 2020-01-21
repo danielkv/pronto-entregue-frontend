@@ -3,13 +3,13 @@ import React, { useState, Fragment } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { extractUser, sanitizeUserData } from '../../utils/users';
 import PageForm from './form';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { UPDATE_USER, LOAD_USER } from '../../graphql/users';
 
 function Page (props) {
@@ -21,7 +21,7 @@ function Page (props) {
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
 	//busca usuário para edição
-	const { data: { selectedCompany } } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompany } });
 
 	const [updateUser, { error: errorSaving }] = useMutation(UPDATE_USER, { variables: { id: editId } });

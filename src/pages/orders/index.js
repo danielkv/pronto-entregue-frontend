@@ -9,13 +9,13 @@ import numeral from 'numeral'
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { getOrderStatusIcon } from '../../utils/orders';
 import { OrderCreated, OrderDate, OrderTime } from './styles';
 
-import { GET_SELECTED_COMPANY } from '../../graphql/companies';
 import { GET_COMPANY_ORDERS, UPDATE_ORDER } from '../../graphql/orders';
 
 const initialFilter = {
@@ -51,7 +51,7 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 
-	const { data: { selectedCompany }, loading: loadingSelectedData } = useQuery(GET_SELECTED_COMPANY);
+	const selectedCompany = useSelectedCompany();
 	const {
 		data: { company: { countOrders = 0, orders = [] } = {} } = {},
 		loading: loadingOrders, error, called
@@ -78,7 +78,7 @@ function Page (props) {
 	}
 
 	if (error || updateOrderError) return <ErrorBlock error={getErrors(error || updateOrderError)} />
-	if ((!called && loadingOrders) || loadingSelectedData) return (<LoadingBlock />);
+	if (!called && loadingOrders) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
