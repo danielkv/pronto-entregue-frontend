@@ -41,7 +41,7 @@ function Page () {
 		return updateBusinessHours({ variables: { data: dataSave } });
 	}
 	
-	if (loadingSelectedData || loadingBusinessHours) return <LoadingBlock />;
+	if (loadingBusinessHours) return <LoadingBlock />;
 
 	return (
 		<Paper>

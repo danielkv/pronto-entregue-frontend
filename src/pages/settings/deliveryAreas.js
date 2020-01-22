@@ -32,7 +32,7 @@ function Page () {
 	
 	
 	// still loading displays loading
-	if (loadingSelectedData || loadingDeliveryAreas) return <LoadingBlock />;
+	if (loadingDeliveryAreas) return <LoadingBlock />;
 
 	//form schema
 	const areasSchema = Yup.object().shape({
