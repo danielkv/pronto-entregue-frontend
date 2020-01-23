@@ -81,11 +81,11 @@ function Navigation() {
 								Categorias
 							</ListItemText>
 						</NavItem>
-						<NavItem to='/clientes' selected={isSelected('clientes')} alt='Clientes'>
+						<NavItem to='/pessoas' selected={isSelected('pessoas')} alt='Pessoas'>
 							<ListItemIcon>
 								<Icon path={mdiAccountMultiple} size='22' color='#707070' /></ListItemIcon>
 							<ListItemText>
-								Clientes
+								Pessoas
 							</ListItemText>
 						</NavItem>
 					</NavigationContainer>

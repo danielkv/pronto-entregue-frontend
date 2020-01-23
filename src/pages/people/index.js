@@ -22,7 +22,7 @@ const initialFilter = {
 }
 
 function Page () {
-	setPageTitle('Usuários');
+	setPageTitle('Pessoas');
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -50,7 +50,7 @@ function Page () {
 	//carrega empresa selecionada
 	const selectedCompany = useSelectedCompany();
 
-	//carrega usuários
+	//carrega pessoas
 	const {
 		data: { countUsers = 0, users = [] } = {},
 		loading: loadingUsersData,
@@ -69,9 +69,9 @@ function Page () {
 				{loadingUsersData ? <LoadingBlock /> :
 					<Block>
 						<BlockHeader>
-							<BlockTitle>Usuários</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/clientes/novo' component={Link}>Adicionar</Button>{loading && <CircularProgress />}
-							<NumberOfRows>{countUsers} usuários</NumberOfRows>
+							<BlockTitle>Pessoas</BlockTitle>
+							<Button size='small' variant="contained" color='secondary' to='/pessoas/nova' component={Link}>Adicionar</Button>{loading && <CircularProgress />}
+							<NumberOfRows>{countUsers} pessoas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
 							<Table>
@@ -92,7 +92,7 @@ function Page () {
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>
-												<IconButton  disabled={loading} component={Link} to={(`/usuarios/alterar/${row.id}`)}>
+												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />
 												</IconButton>
 												<Switch
@@ -124,7 +124,7 @@ function Page () {
 								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 						</Paper>
-						<NumberOfRows>{countUsers} usuários</NumberOfRows>
+						<NumberOfRows>{countUsers} pessoas</NumberOfRows>
 					</Block>}
 			</Content>
 			<SidebarContainer>

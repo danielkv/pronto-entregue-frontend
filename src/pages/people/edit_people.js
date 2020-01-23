@@ -32,14 +32,14 @@ const userSchema = Yup.object().shape({
 });
 
 function Page (props) {
-	setPageTitle('Alterar usuário');
+	setPageTitle('Alterar pessoa');
 
 	const editId = props.match.params.id;
 
 	//erro e confirmação
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	//busca usuário para edição
+	//busca pessoa para edição
 	const selectedCompany = useSelectedCompany();
 	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompany } });
 
@@ -57,7 +57,7 @@ function Page (props) {
 
 		return updateUser({ mutation: UPDATE_USER, variables: { data } })
 			.then(()=>{
-				setDisplaySuccess('O usuário foi salvo');
+				setDisplaySuccess('O pessoa foi salvo');
 			})
 	}
 
@@ -89,7 +89,7 @@ function Page (props) {
 				onSubmit={onSubmit}
 				validateOnChange={true}
 				validateOnBlur={false}
-				render={(props)=><PageForm {...props} edit pageTitle='Alterar usuário' />}
+				render={(props)=><PageForm {...props} edit pageTitle='Alterar pessoa' />}
 			/>
 		</Fragment>
 	)

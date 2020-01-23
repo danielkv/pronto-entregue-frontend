@@ -70,7 +70,7 @@ function Page () {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Usuários</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/usuarios/novo' component={Link}>Adicionar</Button>{loading && <CircularProgress />}
+							{loading && <CircularProgress />}
 							<NumberOfRows>{countUsers} usuários</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -92,7 +92,7 @@ function Page () {
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>
-												<IconButton  disabled={loading} component={Link} to={(`/usuarios/alterar/${row.id}`)}>
+												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />
 												</IconButton>
 												<Switch

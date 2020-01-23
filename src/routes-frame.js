@@ -19,14 +19,14 @@ import Dashboard from './pages/dashboard';
 import Orders from './pages/orders';
 import EditOrder from './pages/orders/edit_order';
 import NewOrder from './pages/orders/new_order';
+import People from './pages/people';
+import EditPeople from './pages/people/edit_people';
+import NewPeople from './pages/people/new_people';
+import Users from './pages/people/users';
 import Products from './pages/products';
 import EditProduct from './pages/products/edit_product';
 import NewProduct from './pages/products/new_product';
 import Settings from './pages/settings';
-import Users from './pages/users';
-import Customers from './pages/users/customers';
-import EditUser from './pages/users/edit_user';
-import NewUser from './pages/users/new_user';
 
 export default function Layout () {
 	const loggedUserRole = useLoggedUserRole();
@@ -55,7 +55,7 @@ export default function Layout () {
 						<Route path='/produtos/alterar/:id' component={EditProduct} />
 						
 						<Route exact path='/usuarios' component={Users} />
-						<Route path='/usuarios/alterar/:id' component={EditUser} />
+						<Route path='/pessoas/alterar/:id' component={EditPeople} />
 						
 						<Route path='/configuracoes' component={Settings} />
 
@@ -69,8 +69,8 @@ export default function Layout () {
 								<Route path='/categorias/novo' component={NewCategory} />
 								<Route path='/categorias/alterar/:id' component={EditCategory} />
 								
-								<Route exact path='/clientes' render={()=><Customers />} />
-								<Route path='/clientes/novo' render={()=><NewUser />} />
+								<Route exact path='/pessoas' render={()=><People />} />
+								<Route path='/pessoas/novo' render={()=><NewPeople />} />
 							</>
 						)}
 					</Switch>

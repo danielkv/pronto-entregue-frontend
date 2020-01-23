@@ -22,8 +22,8 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 	const { data: { roles = [] } = {} } = useQuery(GET_ROLES);
 
 	useEffect(() => {
-		if (!assignCompany) setFieldValue('role', 'customer');
-	}, [setFieldValue, assignCompany])
+		if (!assignCompany && (role !== 'master' && role !== 'customer')) setFieldValue('role', 'customer');
+	}, [setFieldValue, assignCompany, role])
 
 	return (
 		<Form>
