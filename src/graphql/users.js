@@ -57,7 +57,7 @@ export const SEARCH_USERS = gql`
 `;
 
 export const GET_COMPANY_USERS = gql`
-	query GetUsers ($id:ID!, $filter: Filter, $pagination: Pagination) {
+	query GetCompanyUsers ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		company (id:$id) {
 			id
 			countUsers (filter: $filter)
@@ -68,6 +68,19 @@ export const GET_COMPANY_USERS = gql`
 				createdAt
 				active
 			}
+		}
+	}
+`;
+
+export const GET_USERS = gql`
+	query GetUsers ($filter: Filter, $pagination: Pagination) {
+		countUsers (filter: $filter)
+		users (filter: $filter, pagination: $pagination) {
+			id
+			fullName
+			role
+			createdAt
+			active
 		}
 	}
 `;

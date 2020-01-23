@@ -24,6 +24,7 @@ import EditProduct from './pages/products/edit_product';
 import NewProduct from './pages/products/new_product';
 import Settings from './pages/settings';
 import Users from './pages/users';
+import Customers from './pages/users/customers';
 import EditUser from './pages/users/edit_user';
 import NewUser from './pages/users/new_user';
 
@@ -68,8 +69,8 @@ export default function Layout () {
 								<Route path='/categorias/novo' component={NewCategory} />
 								<Route path='/categorias/alterar/:id' component={EditCategory} />
 								
-								<Route path='/clientes' render={()=><Users adm />} />
-								<Route path='/clientes/novo' render={()=><NewUser adm />} />
+								<Route exact path='/clientes' render={()=><Customers />} />
+								<Route path='/clientes/novo' render={()=><NewUser />} />
 							</>
 						)}
 					</Switch>

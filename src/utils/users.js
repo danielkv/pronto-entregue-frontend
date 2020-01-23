@@ -12,8 +12,11 @@ export function extractUser(user) {
 		active: user.active,
 		role: user.role,
 		password: '',
-		assignCompany: user.company.userRelation,
-		...extractMetas(metaTypes, user.metas)
+		assignCompany: !!(user.company && user.company.userRelation),
+		...extractMetas(metaTypes, user.metas),
+
+		// extra fields
+		forcePassword: false,
 	};
 }
 

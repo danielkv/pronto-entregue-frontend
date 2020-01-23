@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock } from '../../layout/blocks';
@@ -9,7 +11,25 @@ import { getErrors } from '../../utils/error';
 import { joinMetas, initialMetas } from '../../utils/metas';
 import PageForm from './form';
 
+
 import { GET_COMPANY_USERS, CREATE_USER } from '../../graphql/users';
+
+const userSchema = Yup.object().shape({
+	firstName: Yup.string().required('Obrigatório'),
+	lastName: Yup.string().required('Obrigatório'),
+	email: Yup.string().required('Obrigatório'),
+	password: Yup.mixed().test('test_force_password', 'Você deve digitar uma senha', function () {
+		if (this.parent.forcePassword)
+			return false;
+		return true;
+	}),
+	document: Yup.object().shape({
+		value: Yup.string().required('Obrigatório')
+	}),
+	phones: Yup.array().of(Yup.object().shape({
+		value: Yup.string().required('Obrigatório')
+	})).min(1),
+});
 
 
 function Page (props) {
@@ -49,12 +69,13 @@ function Page (props) {
 	if (errorSaving) return <ErrorBlock error={getErrors(errorSaving)} />
 	
 	return (
-		<PageForm
-			onSubmit={onSubmit}
+		<Formik
+			validationSchema={userSchema}
 			initialValues={user}
-			selectedCompany={selectedCompany}
-			pageTitle='Novo usuário'
-			validateOnChange={false}
+			onSubmit={onSubmit}
+			validateOnChange={true}
+			validateOnBlur={false}
+			render={(props)=><PageForm {...props} pageTitle='Novo usuário' />}
 		/>
 	)
 }
