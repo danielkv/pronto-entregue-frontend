@@ -7,12 +7,14 @@ import { ThemeProvider } from '@material-ui/styles';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+
 import { FormRow, FieldControl } from '../../layout/components';
 
 import imageLogo from '../../assets/images/logo-full.png';
 import theme from '../../layout/theme';
 import { logUserIn } from '../../services/init';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 import { Container, LoginPanel, LoginArea, ImagePanel, LoginLabel } from './styles';
 
 import { LOGIN } from '../../graphql/authentication';
@@ -107,7 +109,7 @@ function Page () {
 									onClose={()=>{setError(null)}}
 									autoHideDuration={4000}
 								>
-									<SnackbarContent className='error' message={!!error && error} />
+									<SnackbarContent className='error' message={!!error && getErrors(error)} />
 								</Snackbar>
 							</LoginArea>)}
 					</Formik>

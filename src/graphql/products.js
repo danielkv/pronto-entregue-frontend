@@ -71,6 +71,25 @@ export const CREATE_PRODUCT = gql`
 	}
 `;
 
+export const SEARCH_PRODUCTS = gql`
+	mutation SearchProducts ($search: String, $exclude: [ID], $companies: [ID]) {
+		searchProducts(search: $search, exclude: $exclude, companies: $companies) {
+			id
+			name
+			image
+			price
+			company {
+				id
+				name
+			}
+			category {
+				id
+				name
+			}
+		}
+	}
+`;
+
 export const GET_COMPANY_PRODUCTS = gql`
 	query GetProducts ($id:ID!, $filter:Filter, $pagination: Pagination) {
 		company (id:$id) {

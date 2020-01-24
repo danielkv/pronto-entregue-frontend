@@ -19,7 +19,7 @@ import ProductModal from './product_modal';
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { CALCULATE_DELIVERY_PRICE } from '../../graphql/orders';
 import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
-import { SEARCH_USERS } from '../../graphql/users';
+import { SEARCH_COMPANY_USERS } from '../../graphql/users';
 
 export default function PageForm ({ values, setValues, setFieldValue, handleChange, isSubmitting, errors }) {
 	// carregamento inicial
@@ -34,7 +34,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 	const selectedCompany = useSelectedCompany();
 
 	//Query de busca de usuário
-	const [searchUsers, { data: usersData, loading: loadingUsers }] = useLazyQuery(SEARCH_USERS, { fetchPolicy: 'no-cache' });
+	const [searchUsers, { data: usersData, loading: loadingUsers }] = useLazyQuery(SEARCH_COMPANY_USERS, { fetchPolicy: 'no-cache' });
 	const usersFound = usersData && !loadingUsers ? usersData.searchCompanyUsers : [];
 	
 	//Query de busca de produto

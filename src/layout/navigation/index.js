@@ -50,6 +50,13 @@ function Navigation() {
 						Usuários
 					</ListItemText>
 				</NavItem>
+				<NavItem to='/campanhas' selected={isSelected('campanhas')} alt='Campanhas'>
+					<ListItemIcon>
+						<Icon path={mdiAccountTie} size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+						Campanhas
+					</ListItemText>
+				</NavItem>
 
 				
 

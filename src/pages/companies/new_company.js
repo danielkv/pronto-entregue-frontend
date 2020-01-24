@@ -9,7 +9,7 @@ import { initialMetas } from '../../utils/metas';
 import PageForm from './form';
 
 import { LOGGED_USER_ID } from '../../graphql/authentication';
-import { GET_USER_COMPANIES } from '../../graphql/companies';
+import { GET_COMPANIES } from '../../graphql/companies';
 
 const CREATE_COMPANY = gql`
 	mutation ($data:CompanyInput!) {
@@ -27,9 +27,7 @@ const CREATE_COMPANY = gql`
 function Page () {
 	setPageTitle('Nova empresa');
 	
-	const client = useApolloClient();
-	const { loggedUserId } = client.readQuery({ query: LOGGED_USER_ID });
-	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_USER_COMPANIES, variables: { id: loggedUserId } }] });
+	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES }] });
 
 	const company = {
 		name: '',

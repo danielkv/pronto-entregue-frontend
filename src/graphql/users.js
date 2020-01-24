@@ -37,7 +37,7 @@ export const CREATE_USER = gql`
 	}
 `;
 
-export const SEARCH_USERS = gql`
+export const SEARCH_COMPANY_USERS = gql`
 	query SearchUsers ($search:String!) {
 		searchCompanyUsers(search:$search) {
 			id
@@ -67,6 +67,25 @@ export const GET_COMPANY_USERS = gql`
 				role
 				createdAt
 				active
+			}
+		}
+	}
+`;
+
+export const SEARCH_USERS = gql`
+	mutation SearchtUsers ($search: String, $exclude: [ID], $companies: [ID]) {
+		searchUsers (search: $search, exclude: $exclude, companies: $companies) {
+			id
+			fullName
+			email
+			addresses {
+				id
+				street
+				number
+				zipcode
+				district
+				city
+				state
 			}
 		}
 	}

@@ -116,7 +116,7 @@ export default createMuiTheme({
 		},
 		MuiPaper: {
 			root: {
-				overflow: 'hidden',
+				// overflow: 'hidden',
 			}
 		},
 		MuiButton: {

@@ -69,8 +69,33 @@ export const DISABLE_PAYMENT_METHOD = gql`
 	}
 `;
 
+export const SEARCH_COMPANIES = gql`
+	mutation SearchCompanies ($search: String!, $exclude: [ID]) {
+		searchCompanies (search: $search, exclude: $exclude) {
+			id
+			name
+			displayName
+			createdAt
+		}
+	}
+`;
+
+export const GET_COMPANIES = gql`
+	query GetCompanies ($filter: Filter, $pagination: Pagination) {
+		countCompanies(filter: $filter)
+		companies (filter: $filter, pagination: $pagination) {
+			id
+			name
+			displayName
+			createdAt
+			lastMonthRevenue
+			active
+		}
+	}
+`;
+
 export const GET_USER_COMPANIES = gql`
-	query GetCompanies ($id: ID!, $filter: Filter, $pagination: Pagination) {
+	query GetUserCompanies ($id: ID!, $filter: Filter, $pagination: Pagination) {
 		user (id: $id) {
 			id
 			countCompanies(filter: $filter)

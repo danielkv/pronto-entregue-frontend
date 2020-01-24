@@ -14,7 +14,7 @@ import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
 import { LOGGED_USER_ID } from '../../graphql/authentication';
-import { GET_USER_COMPANIES, UPDATE_COMPANY } from '../../graphql/companies';
+import { GET_COMPANIES, UPDATE_COMPANY } from '../../graphql/companies';
 
 
 const initialFilter = {
@@ -50,13 +50,13 @@ function Page (props) {
 
 	const { data: { loggedUserId } } = useQuery(LOGGED_USER_ID);
 	const {
-		data: { user: { countCompanies = 0, companies = [] } = {} } = {},
+		data: { countCompanies = 0, companies = [] } = {},
 		loading: loadingCompanies,
 		error,
 		called,
-	} = useQuery(GET_USER_COMPANIES, { variables: { id: loggedUserId, filter, pagination } });
+	} = useQuery(GET_COMPANIES, { variables: { id: loggedUserId, filter, pagination } });
 
-	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY, { refetchQueries: [{ query: GET_USER_COMPANIES, variables: { id: loggedUserId, filter, pagination } }] });
+	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES, variables: { filter, pagination } }] });
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (loadingCompanies && !called) return (<LoadingBlock />);

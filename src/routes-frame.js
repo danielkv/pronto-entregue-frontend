@@ -9,6 +9,9 @@ import { useLoggedUserRole } from './controller/hooks';
 import Header from './layout/header';
 import Navigation from './layout/navigation';
 import theme from './layout/theme';
+import Campaigns from './pages/campaigns';
+import EditCampaign from './pages/campaigns/edit_campaign';
+import NewCampaign from './pages/campaigns/new_campaign';
 import Categories from './pages/categories';
 import EditCategory from './pages/categories/edit_category';
 import NewCategory from './pages/categories/new_category';
@@ -53,6 +56,10 @@ export default function Layout () {
 						<Route exact path='/produtos' component={Products} />
 						<Route path='/produtos/novo' component={NewProduct} />
 						<Route path='/produtos/alterar/:id' component={EditProduct} />
+						
+						<Route exact path='/campanhas' component={Campaigns} />
+						<Route path='/campanhas/novo' component={NewCampaign} />
+						<Route path='/campanhas/alterar/:id' component={EditCampaign} />
 						
 						<Route exact path='/usuarios' component={Users} />
 						<Route path='/pessoas/alterar/:id' component={EditPeople} />
