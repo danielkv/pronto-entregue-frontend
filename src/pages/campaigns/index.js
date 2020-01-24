@@ -7,14 +7,13 @@ import { mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import numeral from 'numeral';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, ProductImage } from '../../layout/components';
 
-import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_COMPANY_PRODUCTS, UPDATE_PRODUCT } from '../../graphql/products';
+import { GET_CAMPAIGNS, UPDATE_CAMPAIGN } from '../../graphql/campaigns';
 
 const initialFilter = {
 	showInactive: false,
@@ -47,35 +46,32 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 
-	const selectedCompany = useSelectedCompany();
-
 	const {
-		data: { company: { countProducts = 0, products = [] } = {} } = {},
-		loading: loadingProducts,
-		error: productsError,
+		data: { countCampaigns = 0, campaigns = [] } = {},
+		loading: loadingCampaigns,
+		error: campaignsError,
 		called,
-	} = useQuery(GET_COMPANY_PRODUCTS, {
+	} = useQuery(GET_CAMPAIGNS, {
 		variables: {
-			id: selectedCompany,
 			filter,
 			pagination
 		}
 	});
 
-	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_PRODUCT);
+	const [updateCompany, { loading: loadingUpdating }] = useMutation(UPDATE_CAMPAIGN);
 
-	if (productsError) return <ErrorBlock error={getErrors(productsError)} />
-	if (loadingProducts && !called) return (<LoadingBlock />);
+	if (campaignsError) return <ErrorBlock error={getErrors(campaignsError)} />
+	if (loadingCampaigns && !called) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
 			<Content>
-				{loadingProducts ? <LoadingBlock /> :
+				{loadingCampaigns ? <LoadingBlock /> :
 					<Block>
 						<BlockHeader>
-							<BlockTitle>Produtos</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button> {loading && <CircularProgress />}
-							<NumberOfRows>{countProducts} produtos</NumberOfRows>
+							<BlockTitle>Campanhas</BlockTitle>
+							<Button size='small' variant="contained" color='secondary' to='/campanhas/novo' component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
+							<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
 							<Table>
@@ -83,35 +79,40 @@ function Page (props) {
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
 										<TableCell>Produto</TableCell>
-										<TableCell>Categoria</TableCell>
-										<TableCell>Nº de opções</TableCell>
-										<TableCell>Preço</TableCell>
+										<TableCell>Tipo</TableCell>
+										<TableCell>Valor</TableCell>
 										<TableCell>Criada em</TableCell>
 										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{products.map(row => (
+									{campaigns.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><ProductImage src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell>{row.category.name}</TableCell>
-											<TableCell><CircleNumber>{row.countOptions}</CircleNumber></TableCell>
-											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
+											<TableCell>{row.type}</TableCell>
+											<TableCell>{row.valueType === 'percentage'
+												? numeral(row.value).format('0,0.00%')
+												: numeral(row.value).format('$0,0.00')
+											}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>
 											<TableCell>
-												<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
-													<Icon path={mdiPencil} size='18' color='#363E5E' />
-												</IconButton>
-												<Switch
-													disabled={loading}
-													checked={row.active}
-													onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } }) }
-													value="checkedB"
-													size='small'
-													color="secondary"
-													inputProps={{ 'aria-label': 'primary checkbox' }}
-												/>
+												{Boolean(row.masterOnly) && (
+													<>
+														<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/campanhas/alterar/${row.id}`)}}>
+															<Icon path={mdiPencil} size='18' color='#363E5E' />
+														</IconButton>
+														<Switch
+															disabled={loadingUpdating}
+															checked={row.active}
+															onChange={()=>updateCompany({ variables: { id: row.id, data: { active: !row.active } } }) }
+															value="checkedB"
+															size='small'
+															color="secondary"
+															inputProps={{ 'aria-label': 'primary checkbox' }}
+														/>
+													</>
+												)}
 											</TableCell>
 										</TableRow>
 									))}
@@ -125,14 +126,14 @@ function Page (props) {
 								nextIconButtonProps={{
 									'aria-label': 'next page',
 								}}
-								count={countProducts}
+								count={countCampaigns}
 								rowsPerPage={pagination.rowsPerPage}
 								page={pagination.page}
 								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
 								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 						</Paper>
-						<NumberOfRows>{countProducts} produtos</NumberOfRows>
+						<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
 					</Block>}
 			</Content>
 			<SidebarContainer>
@@ -161,19 +162,6 @@ function Page (props) {
 											label='Buscar'
 											inputRef={searchRef}
 										/>
-									</FieldControl>
-								</FormRow>
-								<FormRow>
-									<FieldControl>
-										{/* <TextField
-											select
-											label='Categoria'
-											onChange={(event)=>{}}
-											>
-											<MenuItem value='1'>Hamburguer</MenuItem>
-											<MenuItem value='2'>Lanches</MenuItem>
-											<MenuItem value='3'>Porções</MenuItem>
-										</TextField> */}
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>
