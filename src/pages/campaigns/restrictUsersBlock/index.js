@@ -21,7 +21,7 @@ export default function RestrictProductsBlock() {
 	function handleSelect (selected, { setState }) {
 		if (!selected) return;
 		setFieldValue('users', [...users, selected]);
-		setState({ inputValue: '' });
+		setState({ inputValue: '', selectedItem: null });
 	}
 	
 	const handleDelete = (index) => () => {
@@ -47,7 +47,7 @@ export default function RestrictProductsBlock() {
 						<FormControl>
 							<Downshift
 								onChange={handleSelect}
-								itemToString={(item => item ? item.name : '')}
+								itemToString={(item => item ? item.fullName : '')}
 								onInputValueChange={(value)=>{handleSearch(value)}}
 							>
 								{({

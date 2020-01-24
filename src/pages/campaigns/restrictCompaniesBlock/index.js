@@ -21,7 +21,7 @@ export default function RestrictProductsBlock() {
 	function handleSelect (selected, { setState }) {
 		if (!selected) return;
 		setFieldValue('companies', [...companies, selected]);
-		setState({ inputValue: '' });
+		setState({ inputValue: '', selectedItem: null });
 	}
 	
 	const handleDelete = (index) => () => {
@@ -73,7 +73,6 @@ export default function RestrictProductsBlock() {
 														>
 															<ListItemIcon><Icon path={mdiBasket} color='#707070' size='22' /></ListItemIcon>
 															<ListItemText>{company.name}</ListItemText>
-															{/* <ListItemSecondaryAction><small>{secondary}</small></ListItemSecondaryAction> */}
 														</ListItem>
 													))}
 											</List>

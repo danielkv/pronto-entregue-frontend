@@ -27,7 +27,7 @@ export default function RestrictProductsBlock() {
 	function handleSelect (selected, { setState }) {
 		if (!selected) return;
 		setFieldValue('products', [...products, selected]);
-		setState({ inputValue: '' });
+		setState({ inputValue: '', selectedItem: null });
 	}
 	
 	const handleDelete = (index) => () => {
