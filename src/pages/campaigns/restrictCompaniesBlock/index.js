@@ -13,7 +13,7 @@ import { Block, BlockHeader, BlockTitle, FormRow, FieldControl } from '../../../
 import { SEARCH_COMPANIES } from '../../../graphql/companies';
 
 export default function RestrictProductsBlock() {
-	const { values: { companies }, setFieldValue } = useFormikContext();
+	const { values: { companies }, setFieldValue, isSubmitting } = useFormikContext();
 	const [companiesFound, setCompaniesFound] = useState([]);
 
 	const [searchCompanies, { loading: loadingCompanies }] = useMutation(SEARCH_COMPANIES, { variables: { exclude: companies.map(c=>c.id) }, fetchPolicy: 'no-cache' });
@@ -58,7 +58,7 @@ export default function RestrictProductsBlock() {
 									highlightedIndex,
 								})=>(
 									<div style={{ width: '100%' }}>
-										<TextField label='Buscar empresa'  {...getInputProps()} />
+										<TextField label='Buscar empresa'  {...getInputProps()} disabled={isSubmitting} />
 										{isOpen && (
 											<List {...getMenuProps()} className="dropdown">
 												{loadingCompanies && <div style={{ padding: 20 }}><CircularProgress /></div>}

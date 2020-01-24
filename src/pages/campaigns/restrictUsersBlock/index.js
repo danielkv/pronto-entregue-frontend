@@ -13,7 +13,7 @@ import { Block, BlockHeader, BlockTitle, FormRow, FieldControl } from '../../../
 import { SEARCH_USERS } from '../../../graphql/users';
 
 export default function RestrictProductsBlock() {
-	const { values: { users }, setFieldValue } = useFormikContext();
+	const { values: { users }, setFieldValue, isSubmitting } = useFormikContext();
 	const [usersFound, setUsersFound] = useState([]);
 
 	const [searchUsers, { loading: loadingUsers }] = useMutation(SEARCH_USERS, { variables: { exclude: users.map(c=>c.id) }, fetchPolicy: 'no-cache' });
@@ -58,7 +58,7 @@ export default function RestrictProductsBlock() {
 									highlightedIndex,
 								})=>(
 									<div style={{ width: '100%' }}>
-										<TextField label='Buscar usuário'  {...getInputProps()} />
+										<TextField label='Buscar usuário'  {...getInputProps()} disabled={isSubmitting} />
 										{isOpen && (
 											<List {...getMenuProps()} className="dropdown">
 												{loadingUsers && <div style={{ padding: 20 }}><CircularProgress /></div>}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useApolloClient, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import { setPageTitle } from '../../utils';
@@ -8,7 +8,6 @@ import { metaTypes, sanitizeCompanyData } from '../../utils/companies';
 import { initialMetas } from '../../utils/metas';
 import PageForm from './form';
 
-import { LOGGED_USER_ID } from '../../graphql/authentication';
 import { GET_COMPANIES } from '../../graphql/companies';
 
 const CREATE_COMPANY = gql`

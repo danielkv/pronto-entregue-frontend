@@ -15,12 +15,10 @@ import { useLoggedUserRole } from '../../../controller/hooks';
 import { SEARCH_PRODUCTS } from '../../../graphql/products';
 
 export default function RestrictProductsBlock() {
-	const { values: { products, companies }, setFieldValue } = useFormikContext();
+	const { values: { products, companies }, setFieldValue, isSubmitting } = useFormikContext();
 	const [productsFound, setProductsFound] = useState([]);
 
 	const loggedUserRole = useLoggedUserRole();
-
-	console.log(loggedUserRole, companies);
 
 	const searchVariables = { exclude: products.map(p=>p.id) };
 	if (loggedUserRole !== 'master' || companies.length) searchVariables.companies = companies.map(c=>c.id);
@@ -67,7 +65,7 @@ export default function RestrictProductsBlock() {
 									highlightedIndex,
 								})=>(
 									<div style={{ width: '100%' }}>
-										<TextField label='Buscar produto'  {...getInputProps()} />
+										<TextField label='Buscar produto' {...getInputProps()} disabled={isSubmitting} />
 										{isOpen && (
 											<List {...getMenuProps()} className="dropdown">
 												{loadingProducts && <div style={{ padding: 20 }}><CircularProgress /></div>}

@@ -1,13 +1,12 @@
 import React from 'react';
 
 import DateFnsUtils from '@date-io/date-fns';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, MenuItem, InputAdornment, CircularProgress, Typography } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Typography } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
-import Icon from '@mdi/react';
-import brLocale from 'date-fns/locale/pt-BR'
-import { Form, Field, ErrorMessage } from 'formik';
+import brLocale from 'date-fns/locale/pt-BR';
+import { Form, Field } from 'formik';
 
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
@@ -18,7 +17,7 @@ import RestrictCompaniesBlock from './restrictCompaniesBlock';
 import RestrictProductsBlock from './restrictProductsBlock';
 import RestrictUsersBlock from './restrictUsersBlock';
 
-export default function PageForm ({ values, setFieldValue, handleChange, isSubmitting, errors }) {
+export default function PageForm ({ values, setFieldValue, errors }) {
 	const loggedUserRole = useLoggedUserRole();
 
 	const {
@@ -167,6 +166,11 @@ export default function PageForm ({ values, setFieldValue, handleChange, isSubmi
 									</FormControl>
 								</FieldControl>
 							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<Field component={tField} name='value' type='number' label='valor' />
+								</FieldControl>
+							</FormRow>
 						</BlockSeparator>
 						<BlockSeparator>
 							<FormRow>
@@ -174,7 +178,7 @@ export default function PageForm ({ values, setFieldValue, handleChange, isSubmi
 									<FormControl>
 										<FormLabel>Imagem</FormLabel>
 										<DropzoneBlock preview={preview} onDrop={handleDropFile(setFieldValue)} />
-										<FormHelperText error><ErrorMessage name="file" /></FormHelperText>
+										{!!errors.file && <FormHelperText error>{errors.file}</FormHelperText>}
 									</FormControl>
 								</FieldControl>
 							</FormRow>

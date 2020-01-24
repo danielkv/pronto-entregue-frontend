@@ -6,40 +6,41 @@ import * as Yup from 'yup';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
-import { getInitialValues } from '../../utils/campaign';
-import { sanitizeProductData } from '../../utils/products';
+import { getInitialValues, sanitizeCampaign } from '../../utils/campaign';
 import PageForm from './form';
 
-import { CREATE_PRODUCT, GET_COMPANY_PRODUCTS } from '../../graphql/products';
+import { CREATE_CAMPAIGN } from '../../graphql/campaigns';
 
 const FILE_SIZE = 500 * 1024;
 
-const productSchema = Yup.object().shape({
+const validationSchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
 	file: Yup.mixed().required('Selecione uma imagem')
 		.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
-	couponActive: Yup.string().required('Obrigatório'),
-	coupon: Yup.string().required('Obrigatório'),
 	description: Yup.string().required('Obrigatório'),
 	value: Yup.number().required('Obrigatório'),
 });
 
-function Page (props) {
+function Page () {
 	setPageTitle('Novo produto');
 
 	const loggedUserRole = useLoggedUserRole();
 
 	const selectedCompany = useSelectedCompany();
-	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANY_PRODUCTS, variables: { id: selectedCompany } }] });
+	const [createCampaign] = useMutation(CREATE_CAMPAIGN, { /* refetchQueries: [{ query: GET_COMPANY_PRODUCTS, variables: { id: selectedCompany } }] */ });
 
 	const initialValues = getInitialValues({ companies: (!loggedUserRole || loggedUserRole === 'master') ? [] : [{ id: selectedCompany }] });
 
 	function onSubmit(data) {
-		const dataSave = sanitizeProductData(data);
+		console.log(data);
+		const dataSave = sanitizeCampaign(data);
 
-		return createProduct({ variables: { data: dataSave } })
+		console.log(dataSave);
+
+		return createCampaign({ variables: { data: dataSave } })
 			.then(({ data: { createItem } })=>{
-				props.history.push(`/estoque/alterar/${createItem.id}`);
+				console.log(createItem);
+				//props.history.push(`/estoque/alterar/${createItem.id}`);
 			})
 			.catch((err)=>{
 				console.error(err);
@@ -49,7 +50,7 @@ function Page (props) {
 	return (
 		<Formik
 			enableReinitialize
-			validationSchema={productSchema}
+			validationSchema={validationSchema}
 			initialValues={initialValues}
 			onSubmit={onSubmit}
 			validateOnChange={true}
