@@ -58,7 +58,7 @@ export default function Layout () {
 						<Route path='/produtos/alterar/:id' component={EditProduct} />
 						
 						<Route exact path='/campanhas' component={Campaigns} />
-						<Route path='/campanhas/novo' component={NewCampaign} />
+						<Route path='/campanhas/nova' component={NewCampaign} />
 						<Route path='/campanhas/alterar/:id' component={EditCampaign} />
 						
 						<Route exact path='/usuarios' component={Users} />

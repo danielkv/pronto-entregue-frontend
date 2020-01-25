@@ -23,7 +23,7 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 	const {
 		preview,
 		active,
-		acceptOtherCompaign,
+		acceptOtherCampaign,
 		chargeCompany,
 		type,
 		valueType,
@@ -97,7 +97,7 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='secondary' checked={acceptOtherCompaign} onChange={()=>{setFieldValue('acceptOtherCompaign', !acceptOtherCompaign)}} value="includeDisabled" />
+											<Switch size='small' color='secondary' checked={acceptOtherCampaign} onChange={()=>{setFieldValue('acceptOtherCampaign', !acceptOtherCampaign)}} value="includeDisabled" />
 										}
 										label="Aceita outra campanha"
 									/>

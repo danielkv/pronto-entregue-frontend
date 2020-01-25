@@ -6,7 +6,7 @@ export function getInitialValues(overwrite={}) {
 		description: '',
 
 		chargeCompany: true,
-		acceptOtherCompaign: false,
+		acceptOtherCampaign: false,
 		active: true,
 		type: 'discount',
 		valueType: 'percentage',
@@ -22,13 +22,21 @@ export function getInitialValues(overwrite={}) {
 	}
 }
 
+export function extractCampaign(campaign) {
+	return {
+		...campaign,
+		expiresAt: new Date(campaign.expiresAt),
+		preview: campaign.image,
+	};
+}
+
 export function sanitizeCampaign(result) {
 	return {
 		name: result.name,
 		file: result.file || null,
 		description: result.description,
 		chargeCompany: Boolean(result.chargeCompany),
-		acceptOtherCompaign: Boolean(result.acceptOtherCompaign),
+		acceptOtherCampaign: Boolean(result.acceptOtherCampaign),
 
 		active: result.active,
 		type: result.type,

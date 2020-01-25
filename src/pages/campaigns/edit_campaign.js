@@ -7,51 +7,48 @@ import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { extractCampaign, sanitizeCampaign } from '../../utils/campaign';
 import { getErrors } from '../../utils/error';
-import { sanitizeProductData, extractProduct } from '../../utils/products';
 import PageForm from './form';
 
-import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
+import { LOAD_CAMPAIGN, UPDATE_CAMPAIGN } from '../../graphql/campaigns';
 
-const productSchema = Yup.object().shape({
+const FILE_SIZE = 500 * 1024;
+
+const validationSchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
-	price: Yup.number().required('Obrigatório'),
+	file: Yup.mixed().notRequired()
+		.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
 	description: Yup.string().required('Obrigatório'),
-	file: Yup.mixed().notRequired(),
-	optionsGroups: Yup.array().of(Yup.object().shape({
-		name: Yup.string().required('Obrigatório'),
-		options: Yup.array().of(Yup.object().shape({
-			name: Yup.string().required('Obrigatório'),
-			price: Yup.number().required('Obrigatório'),
-		})),
-	})),
+	value: Yup.number().required('Obrigatório'),
 });
 
 function Page (props) {
-	setPageTitle('Alterar produto');
+	setPageTitle('Alterar campanha');
 
 	const editId = props.match.params.id;
 
 	//erro e confirmação
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const { data, loading: loadingGetData, error } = useQuery(LOAD_PRODUCT, { variables: { id: editId, filter: { showInactive: true } } });
-	const [updateProduct, { error: savingError }] = useMutation(UPDATE_PRODUCT, {
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_CAMPAIGN, { variables: { id: editId, filter: { showInactive: true } } });
+	const [updateCampaign, { error: savingError }] = useMutation(UPDATE_CAMPAIGN, {
 		variables: { id: editId },
-		refetchQueries: [{ query: LOAD_PRODUCT, variables: { id: editId, filter: { showInactive: true } } }]
+		refetchQueries: [{ query: LOAD_CAMPAIGN, variables: { id: editId } }]
 	});
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
-	const initialValues = extractProduct(data.product);
+	const initialValues = extractCampaign(data.campaign);
 
+	
 	function onSubmit(data) {
-		const saveData = sanitizeProductData(data);
+		const saveData = sanitizeCampaign(data);
 
-		return updateProduct({ variables: { data: saveData } })
+		return updateCampaign({ variables: { data: saveData } })
 			.then(()=>{
-				setDisplaySuccess('O produto foi salvo');
+				setDisplaySuccess('A campanha foi salva');
 			})
 	}
 
@@ -78,7 +75,7 @@ function Page (props) {
 				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
 			</Snackbar>
 			<Formik
-				validationSchema={productSchema}
+				validationSchema={validationSchema}
 				initialValues={initialValues}
 				onSubmit={onSubmit}
 				validateOnChange={true}

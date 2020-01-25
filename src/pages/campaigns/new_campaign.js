@@ -9,7 +9,7 @@ import { setPageTitle } from '../../utils';
 import { getInitialValues, sanitizeCampaign } from '../../utils/campaign';
 import PageForm from './form';
 
-import { CREATE_CAMPAIGN } from '../../graphql/campaigns';
+import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from '../../graphql/campaigns';
 
 const FILE_SIZE = 500 * 1024;
 
@@ -27,7 +27,7 @@ function Page () {
 	const loggedUserRole = useLoggedUserRole();
 
 	const selectedCompany = useSelectedCompany();
-	const [createCampaign] = useMutation(CREATE_CAMPAIGN, { /* refetchQueries: [{ query: GET_COMPANY_PRODUCTS, variables: { id: selectedCompany } }] */ });
+	const [createCampaign] = useMutation(CREATE_CAMPAIGN, { refetchQueries: [{ query: GET_CAMPAIGNS }] });
 
 	const initialValues = getInitialValues({ companies: (!loggedUserRole || loggedUserRole === 'master') ? [] : [{ id: selectedCompany }] });
 

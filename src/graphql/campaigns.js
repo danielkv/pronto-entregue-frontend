@@ -10,6 +10,42 @@ export const CREATE_CAMPAIGN = gql`
 	}
 `;
 
+export const LOAD_CAMPAIGN = gql`
+	query CreateCampaign ($id: ID!) {
+		campaign (id: $id) {
+			id
+			name
+			image
+			description
+			chargeCompany
+			acceptOtherCampaign
+			expiresAt
+			masterOnly
+			type
+			valueType
+			value
+			createdAt
+			active
+
+			companies {
+				id
+				name
+				displayName
+			}
+			products {
+				id
+				name
+				image
+			}
+			users {
+				id
+				fullName
+				email
+			}
+		}
+	}
+`;
+
 export const UPDATE_CAMPAIGN = gql`
 	mutation UpdateCampaign ($id: ID!, $data: CampaignInput!) {
 		updateCampaign (id: $id, data: $data) {

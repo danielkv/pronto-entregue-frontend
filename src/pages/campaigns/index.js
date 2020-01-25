@@ -70,7 +70,7 @@ function Page (props) {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Campanhas</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/campanhas/novo' component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
+							<Button size='small' variant="contained" color='secondary' to='/campanhas/nova' component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
 							<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
