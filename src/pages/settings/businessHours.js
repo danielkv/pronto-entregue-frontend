@@ -11,6 +11,7 @@ import { tField, FormRow, FieldControl } from '../../layout/components';
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { sanitizeBusinessHours } from '../../utils/settings';
 
 import { LOAD_BUSINESS_HOURS, UPDATE_BUSINESS_HOURS } from '../../graphql/businessHours';
 
@@ -30,14 +31,7 @@ function Page () {
 	});
 
 	const onSubmit = ({ businessHours }) => {
-		const dataSave = businessHours.map(day=>{
-			delete day.__typename;
-			day.hours = day.hours.map(hour=>{
-				delete hour.__typename;
-				return hour;
-			})
-			return day;
-		})
+		const dataSave = sanitizeBusinessHours(businessHours)
 		return updateBusinessHours({ variables: { data: dataSave } });
 	}
 	

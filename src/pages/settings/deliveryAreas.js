@@ -15,6 +15,7 @@ import { setPageTitle } from '../../utils';
 
 
 import { GET_COMPANY_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/deliveryAreas';
+import { sanitizeDeliveryAreas } from '../../utils/settings';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
@@ -56,15 +57,7 @@ function Page () {
 	});
 
 	const handleSave = ({ deliveryAreas }) => {
-		const deliveryAreasSave = deliveryAreas.map(area=>({
-			id: area.id || null,
-			name: area.name,
-			type: area.type,
-			price: area.price,
-			zipcodeA: area.zipcodeA,
-			zipcodeB: area.zipcodeB || null,
-		}))
-
+		const deliveryAreasSave = sanitizeDeliveryAreas(deliveryAreas);
 		return modifyDeliveryAreas({ variables: { data: deliveryAreasSave } });
 	}
 

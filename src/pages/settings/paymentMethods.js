@@ -9,6 +9,7 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { extractPaymentMethods } from '../../utils/settings';
 
 import { GET_COMPANY_PAYMENT_METHODS, ENABLE_PAYMENT_METHOD, DISABLE_PAYMENT_METHOD } from '../../graphql/companies';
 import { GET_PAYMENT_METHODS } from '../../graphql/paymentMethods';
@@ -17,7 +18,7 @@ function Page () {
 	setPageTitle('Configurações - Formas de pagamento');
 
 	//carrega todos métodos de pagamento
-	const { data: { paymentMethods: paymentMethodsList =[] } ={}, loading: loadingPaymentMethods } = useQuery(GET_PAYMENT_METHODS);
+	const { data: { paymentMethods: allPaymentMethods = [] } ={}, loading: loadingPaymentMethods } = useQuery(GET_PAYMENT_METHODS);
 
 	//carrega métodos pagamento ativos na filial
 	const selectedCompany = useSelectedCompany();
@@ -32,12 +33,7 @@ function Page () {
 	if (enableError || disableError) return <ErrorBlock error={getErrors(enableError || disableError)} />;
 	if (loadingPaymentMethods || loadingCompanyPaymentMethods) return <LoadingBlock />;
 
-	const paymentMethods = paymentMethodsList.map(method => {
-		return {
-			...method,
-			active: !!companyPaymentMethods.length && !!companyPaymentMethods.find(row=>row.id===method.id)
-		}
-	});
+	const paymentMethods = extractPaymentMethods(companyPaymentMethods, allPaymentMethods);
 
 	const handleEnableDisable = (id, action) => {
 		if (action)

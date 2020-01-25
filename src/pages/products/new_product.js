@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
-import { sanitizeProductData } from '../../utils/products';
+import { sanitizeProduct, createEmptyProduct } from '../../utils/products';
 import PageForm from './form';
 
 import { CREATE_PRODUCT, GET_COMPANY_PRODUCTS } from '../../graphql/products';
@@ -34,21 +34,10 @@ function Page (props) {
 	const selectedCompany = useSelectedCompany();
 	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANY_PRODUCTS, variables: { id: selectedCompany } }] });
 
-	const initialValues = {
-		name: '',
-		description: '',
-		active: true,
-		type: 'inline',
-		price: '',
-		file: '',
-		featured: false,
-		preview: '',
-		category: { id: '' },
-		optionsGroups: []
-	};
+	const initialValues = createEmptyProduct();
 
 	function onSubmit(data) {
-		const dataSave = sanitizeProductData(data);
+		const dataSave = sanitizeProduct(data);
 
 		return createProduct({ variables: { data: dataSave } })
 			.then(({ data: { createItem } })=>{

@@ -1,42 +1,22 @@
 import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 
 import { setPageTitle } from '../../utils';
-import { metaTypes, sanitizeCompanyData } from '../../utils/companies';
-import { initialMetas } from '../../utils/metas';
+import { sanitizeCompany, createEmptyCompany } from '../../utils/companies';
 import PageForm from './form';
 
-import { GET_COMPANIES } from '../../graphql/companies';
-
-const CREATE_COMPANY = gql`
-	mutation ($data:CompanyInput!) {
-		createCompany (data:$data) {
-			id
-			name
-			displayName
-			lastMonthRevenue
-			createdAt
-			active
-		}
-	}
-`;
+import { GET_COMPANIES, CREATE_COMPANY } from '../../graphql/companies';
 
 function Page () {
 	setPageTitle('Nova empresa');
 	
 	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES }] });
 
-	const company = {
-		name: '',
-		displayName: '',
-		active: true,
-		...initialMetas(metaTypes)
-	};
+	const company = createEmptyCompany();
 
 	function onSubmit(result) {
-		const data = sanitizeCompanyData(result);
+		const data = sanitizeCompany(result);
 
 		return createCompany({ variables: { data } })
 			.catch((err)=>{

@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 
 import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { createEmptyCategory, sanitizeCategory } from '../../utils/categories';
 import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
@@ -14,16 +15,10 @@ function Page (props) {
 
 	const [createCategory, { error: errorSaving }] = useMutation(CREATE_CATEGORY, { refetchQueries: [{ query: GET_CATEGORIES }] })
 
-	const category = {
-		name: '',
-		description: '',
-		file: '',
-		preview: '',
-		active: true,
-	};
+	const category = createEmptyCategory();
 
-	function onSubmit(values) {
-		const data = { name: values.name, description: values.description, active: values.active, file: values.file };
+	function onSubmit(result) {
+		const data = sanitizeCategory(result);
 
 		return createCategory({ variables: { data } })
 			.then(({ data: { createCategory } })=>{

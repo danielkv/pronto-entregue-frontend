@@ -1,9 +1,18 @@
 import gql from "graphql-tag";
 
-/**
- * Atualiza infomações da empresa no servidor
- * 
- */
+export const CREATE_COMPANY = gql`
+	mutation ($data:CompanyInput!) {
+		createCompany (data:$data) {
+			id
+			name
+			displayName
+			lastMonthRevenue
+			createdAt
+			active
+		}
+	}
+`;
+
 export const UPDATE_COMPANY = gql`
 	mutation UpdateCompany ($id: ID!, $data:CompanyInput!) {
 		updateCompany (id: $id, data:$data) {

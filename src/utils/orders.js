@@ -6,6 +6,31 @@ import { uniqueId } from 'lodash';
 
 import { calculateProductPrice } from './products';
 
+export function createEmptyOrder(overwrite={}) {
+	return {
+		user: null,
+		paymentFee: 0,
+		deliveryPrice: 0,
+		price: 0,
+		type: '',
+		discount: 0,
+		status: 'waiting',
+		message: '',
+		street: '',
+		number: '',
+		complement: '',
+		city: '',
+		state: '',
+		district: '',
+		zipcode: '',
+		products: [],
+		paymentMethod: null,
+		zipcodeOk: false,
+
+		...overwrite,
+	};
+}
+
 export function extractOrder(order) {
 	return {
 		user: order.user,
@@ -79,7 +104,7 @@ export const calculateOrderPrice = (products, initialValue=0) => {
 	}, initialValue).toFixed(2).replace(',', '.'));
 }
 
-export const sanitizeOrderData = (data) => {
+export const sanitizeOrder = (data) => {
 	return {
 		userId: data.user.id || null,
 		type: data.type,

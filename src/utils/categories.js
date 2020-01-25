@@ -1,3 +1,15 @@
+export function createEmptyCategory(overwrite={}) {
+	return {
+		name: '',
+		description: '',
+		file: '',
+		preview: '',
+		active: true,
+
+		...overwrite,
+	};
+}
+
 export function extractCategory(category) {
 	return {
 		name: category.name,
@@ -8,7 +20,7 @@ export function extractCategory(category) {
 	};
 }
 
-export function sanitizeCategoryData(result) {
+export function sanitizeCategory(result) {
 	return {
 		name: result.name,
 		description: result.description,

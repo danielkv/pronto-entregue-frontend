@@ -8,7 +8,7 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { sanitizeOrderData } from '../../utils/orders';
+import { sanitizeOrder, createEmptyOrder } from '../../utils/orders';
 import PageForm from './form';
 
 import { CREATE_ORDER, GET_COMPANY_ORDERS } from '../../graphql/orders';
@@ -19,29 +19,10 @@ function Page (props) {
 	const selectedCompany = useSelectedCompany();
 	const [createOrder, { error: errorSaving }] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
 
-	const order = {
-		user: null,
-		paymentFee: 0,
-		deliveryPrice: 0,
-		price: 0,
-		type: '',
-		discount: 0,
-		status: 'waiting',
-		message: '',
-		street: '',
-		number: '',
-		complement: '',
-		city: '',
-		state: '',
-		district: '',
-		zipcode: '',
-		products: [],
-		paymentMethod: null,
-		zipcodeOk: false,
-	};
+	const order = createEmptyOrder();
 
 	function onSubmit(data) {
-		const dataSave = sanitizeOrderData(data);
+		const dataSave = sanitizeOrder(data);
 
 		return createOrder({ variables: { data: dataSave } })
 			.then(({ data: { createOrder } })=>{

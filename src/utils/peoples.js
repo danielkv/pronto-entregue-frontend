@@ -1,9 +1,24 @@
-import { extractMetas, joinMetas } from "./metas";
-
+import { initialMetas, joinMetas, extractMetas } from "./metas";
 
 export const metaTypes = ['document', 'addresses', 'phones'];
 
-export function extractUser(user) {
+export function createEmptyPeople(overwrite ={}) {
+	return {
+		firstName: '',
+		lastName: '',
+		email: '',
+		password: '',
+		active: true,
+		assignedCompany: {
+			active: true,
+		},
+		...initialMetas(metaTypes),
+		
+		...overwrite,
+	};
+}
+
+export function extractPeople(user) {
 
 	return {
 		firstName: user.firstName,
@@ -20,16 +35,18 @@ export function extractUser(user) {
 	};
 }
 
-export function sanitizeUserData(result) {
+export function sanitizePeople(result) {
+
 	return {
 		firstName: result.firstName,
 		lastName: result.lastName,
 		password: result.password,
-		role: result.role,
 		email: result.email,
 		active: result.active,
-		metas: joinMetas(metaTypes, result),
 
 		assignCompany: result.assignCompany,
+		role: result.role,
+
+		metas: joinMetas(metaTypes, result),
 	}
 }

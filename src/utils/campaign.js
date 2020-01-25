@@ -1,4 +1,4 @@
-export function getInitialValues(overwrite={}) {
+export function createEmptyCampaign(overwrite={}) {
 	return {
 		name: '',
 		preview: null, // image

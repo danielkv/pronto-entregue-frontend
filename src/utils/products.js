@@ -1,4 +1,22 @@
-export const createEmptyOptionsGroup = (overwrite={}) => {
+export function createEmptyProduct(overwrite={}) {
+	return {
+		name: '',
+		description: '',
+		active: true,
+		type: 'inline',
+		price: '',
+		file: '',
+		featured: false,
+		preview: '',
+		category: { id: '' },
+		optionsGroups: [],
+
+
+		...overwrite,
+	};
+}
+
+export function createEmptyOptionsGroup(overwrite={}) {
 	return {
 		name: '',
 		type: 'single',
@@ -12,7 +30,7 @@ export const createEmptyOptionsGroup = (overwrite={}) => {
 	}
 }
 
-export const createEmptyOption = (overwrite={}) => {
+export function createEmptyOption(overwrite={}) {
 	return {
 		name: '',
 		price: 0,
@@ -24,7 +42,7 @@ export const createEmptyOption = (overwrite={}) => {
 	}
 }
 
-export const calculateProductPrice = (product) => {
+export function calculateProductPrice(product) {
 	return product.optionsGroups.reduce((totalGroup, group)=>{
 		let optionsPrice = group.options.reduce((totalOption, option)=> {
 			return (option.selected) ?  totalOption + option.price : totalOption;
@@ -55,7 +73,7 @@ export function extractProduct(product) {
 	};
 }
 
-export const sanitizeProductData = (data) => {
+export function sanitizeProduct(data) {
 	return {
 		name: data.name,
 		file: data.file,

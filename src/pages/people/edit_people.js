@@ -9,7 +9,7 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { extractUser, sanitizeUserData } from '../../utils/users';
+import { extractPeople, sanitizePeople } from '../../utils/peoples';
 import PageForm from './form';
 
 import { UPDATE_USER, LOAD_USER } from '../../graphql/users';
@@ -49,11 +49,11 @@ function Page (props) {
 	if (loadingGetData) return (<LoadingBlock />);
 
 	// extract all user data
-	const user = extractUser(data.user);
+	const user = extractPeople(data.user);
 	
 	function onSubmit(values) {
 		// eslint-disable-next-line no-param-reassign
-		const data = sanitizeUserData(values);
+		const data = sanitizePeople(values);
 
 		return updateUser({ mutation: UPDATE_USER, variables: { data } })
 			.then(()=>{

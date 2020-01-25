@@ -5,7 +5,7 @@ import { Snackbar, SnackbarContent } from '@material-ui/core';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
-import { extractCompany, sanitizeCompanyData } from '../../utils/companies';
+import { extractCompany, sanitizeCompany } from '../../utils/companies';
 import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
@@ -31,7 +31,7 @@ function Page (props) {
 	const company = extractCompany(data.company);
 
 	function onSubmit(result) {
-		const data = sanitizeCompanyData(result);
+		const data = sanitizeCompany(result);
 
 		return updateCompany({ variables: { data } })
 			.then(()=>{

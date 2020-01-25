@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
-import { getInitialValues, sanitizeCampaign } from '../../utils/campaign';
+import { createEmptyCampaign, sanitizeCampaign } from '../../utils/campaign';
 import PageForm from './form';
 
 import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from '../../graphql/campaigns';
@@ -29,7 +29,7 @@ function Page () {
 	const selectedCompany = useSelectedCompany();
 	const [createCampaign] = useMutation(CREATE_CAMPAIGN, { refetchQueries: [{ query: GET_CAMPAIGNS }] });
 
-	const initialValues = getInitialValues({ companies: (!loggedUserRole || loggedUserRole === 'master') ? [] : [{ id: selectedCompany }] });
+	const initialValues = createEmptyCampaign({ companies: (!loggedUserRole || loggedUserRole === 'master') ? [] : [{ id: selectedCompany }] });
 
 	function onSubmit(data) {
 		console.log(data);

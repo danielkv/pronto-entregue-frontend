@@ -6,11 +6,11 @@ import gql from 'graphql-tag';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import { sanitizeCategory, extractCategory } from '../../utils/categories';
 import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { UPDATE_CATEGORY } from '../../graphql/categories';
-import { sanitizeCategoryData, extractCategory } from '../../utils/categories';
 
 const LOAD_CATEGORY = gql`
 	query ($id: ID!) {
@@ -43,7 +43,7 @@ function Page (props) {
 	const category = extractCategory(data.category);
 
 	function onSubmit(result) {
-		const data = sanitizeCategoryData(result);
+		const data = sanitizeCategory(result);
 
 		return updateCategory({ variables: { data } })
 			.then(()=>{

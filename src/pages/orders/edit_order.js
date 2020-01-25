@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { sanitizeOrderData, extractOrder } from '../../utils/orders';
+import { sanitizeOrder, extractOrder } from '../../utils/orders';
 import PageForm from './form';
 
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
@@ -31,7 +31,7 @@ function Page (props) {
 	const order = extractOrder(data.order);
 
 	function onSubmit(result) {
-		const data = sanitizeOrderData(result);
+		const data = sanitizeOrder(result);
 
 		return updateOrder({ variables: {  data } })
 			.then(() => {

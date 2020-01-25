@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { sanitizeProductData, extractProduct } from '../../utils/products';
+import { sanitizeProduct, extractProduct } from '../../utils/products';
 import PageForm from './form';
 
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
@@ -47,7 +47,7 @@ function Page (props) {
 	const initialValues = extractProduct(data.product);
 
 	function onSubmit(data) {
-		const saveData = sanitizeProductData(data);
+		const saveData = sanitizeProduct(data);
 
 		return updateProduct({ variables: { data: saveData } })
 			.then(()=>{
