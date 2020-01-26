@@ -94,7 +94,7 @@ function Page (props) {
 											<TableCell>{row.name}</TableCell>
 											<TableCell><Chip color='primary' label={getTypeLabel(row.type)} /></TableCell>
 											<TableCell>{row.valueType === 'percentage'
-												? numeral(row.value).format('0,0.00%')
+												? numeral(row.value/100).format('0,0.00%')
 												: numeral(row.value).format('$0,0.00')
 											}</TableCell>
 											<TableCell>{row.createdAt}</TableCell>

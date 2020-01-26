@@ -10,6 +10,7 @@ export function createEmptyProduct(overwrite={}) {
 		preview: '',
 		category: { id: '' },
 		optionsGroups: [],
+		campaigns: [],
 
 
 		...overwrite,
@@ -60,6 +61,7 @@ export function extractProduct(product) {
 		category: product.category,
 		price: product.price,
 		type: product.type,
+		campaigns: product.campaigns,
 		file: '',
 		preview: product.image,
 		optionsGroups: product.optionsGroups.map(optionsGroup => ({

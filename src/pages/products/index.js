@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress } from '@material-ui/core';
-import { mdiPencil, mdiFilter } from '@mdi/js';
+import { mdiPencil, mdiFilter, mdiSale } from '@mdi/js';
 import Icon from '@mdi/react';
+import moment from 'moment';
 import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage } from '../../layout/components';
@@ -86,7 +87,7 @@ function Page (props) {
 										<TableCell>Categoria</TableCell>
 										<TableCell>Nº de opções</TableCell>
 										<TableCell>Preço</TableCell>
-										<TableCell>Criada em</TableCell>
+										<TableCell>Criado em</TableCell>
 										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
 								</TableHead>
@@ -97,8 +98,17 @@ function Page (props) {
 											<TableCell>{row.name}</TableCell>
 											<TableCell>{row.category.name}</TableCell>
 											<TableCell><CircleNumber>{row.countOptions}</CircleNumber></TableCell>
-											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
-											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>
+												<div style={{ display: 'flex', alignItems: 'center' }}>
+													{numeral(row.price).format('$0,0.00')}
+													{!!row.countCampaigns && (
+														<span style={{ marginLeft: 5 }} title={`Há ${row.countCampaigns} ${row.countCampaigns === 1 ? 'campanha vinculada' : 'campanhas vinculadas'} a este produto`}>
+															<Icon path={mdiSale} color='#999' size='18' />
+														</span>
+													)}
+												</div>
+											</TableCell>
+											<TableCell>{moment(row.createdAt).fromNow()}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />

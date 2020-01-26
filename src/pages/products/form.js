@@ -1,17 +1,19 @@
 import React, { Fragment, useState, useCallback } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { useHistory } from 'react-router-dom';
 
 import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment, CircularProgress } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment, CircularProgress, Chip } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram } from '@mdi/js'
+import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram, mdiPencil } from '@mdi/js'
 import Icon from '@mdi/react';
 import Downshift from "downshift";
 import { FieldArray, Form, Field, ErrorMessage } from 'formik';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
+import { useLoggedUserRole } from '../../controller/hooks';
 import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
 import { createEmptyOptionsGroup } from '../../utils/products';
 import OptionsGroups from './optionsGroups';
@@ -19,7 +21,10 @@ import OptionsGroups from './optionsGroups';
 import { GET_CATEGORIES } from '../../graphql/categories';
 import { LOAD_OPTION_GROUP, SEARCH_OPTIONS_GROUPS } from '../../graphql/products';
 
-export default function PageForm ({ values: { active, featured, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isSubmitting, errors }) {
+export default function PageForm ({ values: { active, featured, campaigns, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isSubmitting, errors }) {
+	const history = useHistory();
+	const loggedUserRole = useLoggedUserRole();
+
 	const [loadingCopy, setLoadingCopy] = useState(false);
 	const [dragAlertOpen, setDragAlertOpen] = useState(false);
 	
@@ -177,6 +182,17 @@ export default function PageForm ({ values: { active, featured, price, type, pre
 								</TextField>
 							</FieldControl>
 						</FormRow>
+						{!!campaigns.length && <FormRow>
+							<FieldControl style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+								<FormLabel>Campanhas vinculadas</FormLabel>
+								<div style={{ display: 'block' }}>
+									{campaigns.map((campaign, index) => {
+										const onDelete = (campaign.masterOnly && loggedUserRole === 'master') || !campaign.masterOnly ? ()=>history.push(`/campanhas/alterar/${campaign.id}`) : null;
+										return <Chip color='primary' key={index} label={campaign.name} deleteIcon={<Icon path={mdiPencil} size='18' color='#ccc' />} onDelete={onDelete} />
+									})}
+								</div>
+							</FieldControl>
+						</FormRow>}
 					</Paper>
 				</Block>
 				<Block>

@@ -39,11 +39,10 @@ export function createEmptyCampaign(overwrite={}) {
 }
 
 export function extractCampaign(campaign) {
-	console.log(campaign.startsAt, campaign.expiresAt);
 	return {
 		...campaign,
-		startsAt: new Date(campaign.startsAt),
-		expiresAt: new Date(campaign.expiresAt),
+		startsAt: moment(campaign.startsAt),
+		expiresAt: moment(campaign.expiresAt),
 		preview: campaign.image,
 	};
 }
@@ -60,8 +59,8 @@ export function sanitizeCampaign(result) {
 		type: result.type,
 		valueType: result.valueType,
 		value: result.value,
-		startsAt: result.startsAt.getTime(),
-		expiresAt: result.expiresAt.getTime(),
+		startsAt: result.startsAt.valueOf(),
+		expiresAt: result.expiresAt.valueOf(),
 
 		companies: result.companies.map(row=>row.id),
 		products: result.products.map(row=>row.id),

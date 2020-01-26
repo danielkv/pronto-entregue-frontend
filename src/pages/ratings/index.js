@@ -8,7 +8,7 @@ import Icon from '@mdi/react';
 import 'moment/locale/pt-br';
 import moment from 'moment';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';

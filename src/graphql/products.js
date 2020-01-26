@@ -46,6 +46,11 @@ export const LOAD_PRODUCT = gql`
 			price
 			featured
 			description
+			campaigns {
+				id
+				name
+				masterOnly
+			}
 			category {
 				id
 				name
@@ -101,6 +106,7 @@ export const GET_COMPANY_PRODUCTS = gql`
 				image
 				active
 				price
+				countCampaigns
 				countOptions
 				createdAt
 				category {
