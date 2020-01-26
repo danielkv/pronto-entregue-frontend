@@ -29,6 +29,7 @@ import Users from './pages/people/users';
 import Products from './pages/products';
 import EditProduct from './pages/products/edit_product';
 import NewProduct from './pages/products/new_product';
+import Ratings from './pages/ratings';
 import Settings from './pages/settings';
 
 export default function Layout () {
@@ -63,6 +64,8 @@ export default function Layout () {
 						
 						<Route exact path='/usuarios' component={Users} />
 						<Route path='/pessoas/alterar/:id' component={EditPeople} />
+
+						<Route path='/pontuacao' component={Ratings} />
 						
 						<Route path='/configuracoes' component={Settings} />
 
