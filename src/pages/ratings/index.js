@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
-import { TextField, ButtonGroup, Button, Card, CardContent, Typography, Divider } from '@material-ui/core';
+import { TextField, ButtonGroup, Button, Card, CardContent, Typography, Divider, TablePagination } from '@material-ui/core';
 import {  mdiFilter, mdiStar } from '@mdi/js';
 import Icon from '@mdi/react';
 import 'moment/locale/pt-br';
@@ -83,8 +83,21 @@ function Page () {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Comentários</BlockTitle>
-							<NumberOfRows>{countRatings} comentários</NumberOfRows>
 						</BlockHeader>
+						<TablePagination
+							component="div"
+							backIconButtonProps={{
+								'aria-label': 'previous page',
+							}}
+							nextIconButtonProps={{
+								'aria-label': 'next page',
+							}}
+							count={countRatings}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+						/>
 						{ratings.map((rating, index)=>(
 							<Card style={{ marginBottom: 10 }} key={index}>
 								<CardContent>
@@ -103,6 +116,20 @@ function Page () {
 								</CardContent>
 							</Card>
 						))}
+						<TablePagination
+							component="div"
+							backIconButtonProps={{
+								'aria-label': 'previous page',
+							}}
+							nextIconButtonProps={{
+								'aria-label': 'next page',
+							}}
+							count={countRatings}
+							rowsPerPage={pagination.rowsPerPage}
+							page={pagination.page}
+							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+							onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+						/>
 					</Block>}
 			</Content>
 			<SidebarContainer>
