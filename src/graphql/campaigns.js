@@ -19,6 +19,7 @@ export const LOAD_CAMPAIGN = gql`
 			description
 			chargeCompany
 			acceptOtherCampaign
+			startsAt
 			expiresAt
 			masterOnly
 			type
@@ -52,6 +53,7 @@ export const UPDATE_CAMPAIGN = gql`
 			id
 			name
 			image
+			startsAt
 			expiresAt
 			masterOnly
 			type
@@ -70,6 +72,7 @@ export const GET_CAMPAIGNS = gql`
 			id
 			name
 			image
+			startsAt
 			expiresAt
 			masterOnly
 			type

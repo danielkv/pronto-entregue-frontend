@@ -1,4 +1,19 @@
+import moment from 'moment';
+
+export function getTypeLabel(type) {
+	switch(type) {
+		case 'cashback':
+			return 'Desconto';
+		case 'discount':
+		default:
+			return 'Cashback';
+	}
+}
+
 export function createEmptyCampaign(overwrite={}) {
+	const startsAt = moment();
+	const expiresAt = moment().add(2, 'days');
+
 	return {
 		name: '',
 		preview: null, // image
@@ -12,7 +27,8 @@ export function createEmptyCampaign(overwrite={}) {
 		valueType: 'percentage',
 		value: 0,
 
-		expiresAt: new Date(),
+		expiresAt,
+		startsAt,
 
 		products: [],
 		companies: [],
@@ -23,8 +39,10 @@ export function createEmptyCampaign(overwrite={}) {
 }
 
 export function extractCampaign(campaign) {
+	console.log(campaign.startsAt, campaign.expiresAt);
 	return {
 		...campaign,
+		startsAt: new Date(campaign.startsAt),
 		expiresAt: new Date(campaign.expiresAt),
 		preview: campaign.image,
 	};
@@ -42,6 +60,7 @@ export function sanitizeCampaign(result) {
 		type: result.type,
 		valueType: result.valueType,
 		value: result.value,
+		startsAt: result.startsAt.getTime(),
 		expiresAt: result.expiresAt.getTime(),
 
 		companies: result.companies.map(row=>row.id),

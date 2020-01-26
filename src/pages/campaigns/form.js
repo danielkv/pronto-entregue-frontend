@@ -28,6 +28,7 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 		type,
 		valueType,
 
+		startsAt,
 		expiresAt,
 	} = values;
 
@@ -116,9 +117,24 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 									</FieldControl>
 								</FormRow>
 							)}
-							<FormRow>
-								<FieldControl>
-									<MuiPickersUtilsProvider utils={DateFnsUtils} locale={brLocale}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils} locale={brLocale}>
+								<FormRow>
+									<FieldControl>
+										<DateTimePicker
+											ampm={false}
+											disablePast
+											hideTabs
+											format='dd/MM/yyyy HH:mm'
+											label="Inicia em"
+											value={startsAt}
+											onChange={(date)=>setFieldValue('startsAt', date)}
+											error={!!errors.startsAt}
+											helperText={!!errors.startsAt && errors.startsAt}
+										/>
+									</FieldControl>
+								</FormRow>
+								<FormRow>
+									<FieldControl>
 										<DateTimePicker
 											ampm={false}
 											disablePast
@@ -130,10 +146,9 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 											error={!!errors.expiresAt}
 											helperText={!!errors.expiresAt && errors.expiresAt}
 										/>
-									</MuiPickersUtilsProvider>
-								</FieldControl>
-							</FormRow>
-							
+									</FieldControl>
+								</FormRow>
+							</MuiPickersUtilsProvider>
 						</BlockSeparator>
 						<BlockSeparator>
 							<FormRow>
