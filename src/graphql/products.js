@@ -77,12 +77,13 @@ export const CREATE_PRODUCT = gql`
 `;
 
 export const SEARCH_PRODUCTS = gql`
-	mutation SearchProducts ($search: String, $exclude: [ID], $companies: [ID]) {
+	mutation SearchProducts ($search: String, $exclude: [ID], $companies: [ID], $campaignsNotIn: [ID]) {
 		searchProducts(search: $search, exclude: $exclude, companies: $companies) {
 			id
 			name
 			image
 			price
+			countCampaigns (notIn: $campaignsNotIn)
 			company {
 				id
 				name

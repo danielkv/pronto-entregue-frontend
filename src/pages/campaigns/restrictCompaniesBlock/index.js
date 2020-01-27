@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 
 import { useMutation } from '@apollo/react-hooks';
-import { Paper, FormHelperText, TextField, List, ListItem, ListItemIcon, CircularProgress, ListItemText, FormControl, Chip, Avatar } from '@material-ui/core'
-import { mdiBasket } from '@mdi/js';
+import { Paper, FormHelperText, TextField, List, ListItem, ListItemIcon, CircularProgress, ListItemText, FormControl, Chip } from '@material-ui/core'
+import { mdiStore } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { useFormikContext } from 'formik';
@@ -71,7 +71,7 @@ export default function RestrictProductsBlock() {
 															key={company.id}
 															{...getItemProps({ key: company.id, index, item: company })}
 														>
-															<ListItemIcon><Icon path={mdiBasket} color='#707070' size='22' /></ListItemIcon>
+															<ListItemIcon><Icon path={mdiStore} color='#707070' size='22' /></ListItemIcon>
 															<ListItemText>{company.name}</ListItemText>
 														</ListItem>
 													))}
@@ -90,7 +90,7 @@ export default function RestrictProductsBlock() {
 								key={company.id}
 								onDelete={handleDelete(index)}
 								label={company.displayName}
-								avatar={<Avatar>{company.displayName.substr(0, 1)}</Avatar>}
+								icon={<Icon path={mdiStore} color='#D41450' size='18' />}
 							/>
 						))}
 					</FieldControl>

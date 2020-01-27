@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { useMutation } from '@apollo/react-hooks';
 import { Paper, FormHelperText, TextField, List, ListItem, ListItemIcon, CircularProgress, ListItemText, FormControl, Chip, Avatar, ListItemSecondaryAction } from '@material-ui/core'
-import { mdiFaceProfile } from '@mdi/js';
+import { mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { useFormikContext } from 'formik';
@@ -71,7 +71,7 @@ export default function RestrictProductsBlock() {
 															key={user.id}
 															{...getItemProps({ key: user.id, index, item: user })}
 														>
-															<ListItemIcon><Icon path={mdiFaceProfile} color='#707070' size='22' /></ListItemIcon>
+															<ListItemIcon><Icon path={mdiAccountCircle} color='#707070' size='22' /></ListItemIcon>
 															<ListItemText>{user.fullName}</ListItemText>
 															<ListItemSecondaryAction><small>{user.email}</small></ListItemSecondaryAction>
 														</ListItem>
@@ -86,12 +86,12 @@ export default function RestrictProductsBlock() {
 				</FormRow>
 				<FormRow>
 					<FieldControl>
-						{users.map((company, index) => (
+						{users.map((user, index) => (
 							<Chip
-								key={company.id}
+								key={user.id}
 								onDelete={handleDelete(index)}
-								label={company.fullName}
-								avatar={<Avatar>{company.fullName.substr(0, 1)}</Avatar>}
+								label={user.fullName}
+								avatar={<Avatar src={user.image} />}
 							/>
 						))}
 					</FieldControl>

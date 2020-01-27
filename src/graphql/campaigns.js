@@ -37,6 +37,7 @@ export const LOAD_CAMPAIGN = gql`
 				id
 				name
 				image
+				countCampaigns (notIn: [$id])
 			}
 			users {
 				id
