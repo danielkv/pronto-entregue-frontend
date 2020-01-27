@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiStar } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiStar, mdiSale } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -52,7 +52,7 @@ function Navigation() {
 				</NavItem>
 				<NavItem to='/campanhas' selected={isSelected('campanhas')} alt='Campanhas'>
 					<ListItemIcon>
-						<Icon path={mdiAccountTie} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiSale} size='22' color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Campanhas
 					</ListItemText>

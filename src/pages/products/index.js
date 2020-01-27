@@ -2,8 +2,8 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiSale } from '@mdi/js';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Badge, Chip } from '@material-ui/core';
+import { mdiPencil, mdiFilter, mdiSale, mdiHeart } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -84,6 +84,7 @@ function Page (props) {
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
 										<TableCell>Produto</TableCell>
+										<TableCell>Favoritado por</TableCell>
 										<TableCell>Categoria</TableCell>
 										<TableCell>Nº de opções</TableCell>
 										<TableCell>Preço</TableCell>
@@ -96,8 +97,9 @@ function Page (props) {
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><ProductImage src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
+											<TableCell><Chip color={row.countFavoritedBy ? 'secondary' : ''} label={row.countFavoritedBy} /></TableCell>
 											<TableCell>{row.category.name}</TableCell>
-											<TableCell><CircleNumber>{row.countOptions}</CircleNumber></TableCell>
+											<TableCell><Chip color='primary' label={row.countOptions} /></TableCell>
 											<TableCell>
 												<div style={{ display: 'flex', alignItems: 'center' }}>
 													{numeral(row.price).format('$0,0.00')}
