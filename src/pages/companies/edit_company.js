@@ -1,7 +1,10 @@
 import React, { useState, Fragment } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
@@ -11,10 +14,37 @@ import PageForm from './form';
 
 import { UPDATE_COMPANY, LOAD_COMPANY } from '../../graphql/companies';
 
-function Page (props) {
+const companySchema = Yup.object().shape({
+	name: Yup.string().required('Obrigatório'),
+	displayName: Yup.string().required('Obrigatório'),
+	document: Yup.object().shape({
+		value: Yup.string().required('Obrigatório')
+	}),
+	contact: Yup.object().shape({
+		value: Yup.string().required('Obrigatório')
+	}),
+	address: Yup.object().shape({
+		value: Yup.object().shape({
+			street: Yup.string().required('Obrigatório'),
+			number: Yup.number().typeError('Deve ser um número').required('Obrigatório'),
+			zipcode: Yup.string().required('Obrigatório'),
+			district: Yup.string().required('Obrigatório'),
+			city: Yup.string().required('Obrigatório'),
+			state: Yup.string().required('Obrigatório'),
+		})
+	}),
+	phones: Yup.array().of(Yup.object().shape({
+		value: Yup.string().required('Obrigatório')
+	})).min(1),
+	emails: Yup.array().of(Yup.object().shape({
+		value: Yup.string().required('Obrigatório').email('Email não é válido'),
+	})).min(1),
+});
+
+function Page () {
 	setPageTitle('Alterar empresa');
 
-	const editId = props.match.params.id;
+	const { id: editId } = useParams();
 
 	//erro e confirmação
 	const [displaySuccess, setDisplaySuccess] = useState('');
@@ -28,7 +58,7 @@ function Page (props) {
 	if (loadingGetData) return (<LoadingBlock />);
 
 	// extract company data coming from DB
-	const company = extractCompany(data.company);
+	const initialValues = extractCompany(data.company);
 
 	function onSubmit(result) {
 		const data = sanitizeCompany(result);
@@ -61,11 +91,15 @@ function Page (props) {
 			>
 				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
 			</Snackbar>
-			<PageForm
+			<Formik
+				validationSchema={companySchema}
+				initialValues={initialValues}
 				onSubmit={onSubmit}
-				initialValues={company}
-				pageTitle='Alterar empresa'
-			/>
+				validateOnChange={true}
+				validateOnBlur={false}
+			>
+				{(props)=><PageForm {...props} pageTitle='Alterar empresa' />}
+			</Formik>
 		</Fragment>
 	)
 }

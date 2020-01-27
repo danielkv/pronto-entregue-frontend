@@ -2,9 +2,10 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip } from '@material-ui/core';
 import { mdiStore, mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
+import moment from 'moment';
 import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
@@ -77,8 +78,8 @@ function Page (props) {
 									<TableRow>
 										<TableCell style={{ width: 30, paddingRight: 10 }}></TableCell>
 										<TableCell>Empresa</TableCell>
+										<TableCell>Ramo</TableCell>
 										<TableCell>Faturamento último mês</TableCell>
-										{/* <TableCell>Número de filiais</TableCell> */}
 										<TableCell>Criada em</TableCell>
 										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
@@ -88,8 +89,9 @@ function Page (props) {
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
 											<TableCell>{row.name}</TableCell>
+											<TableCell><Chip variant='outlined' label={row.type.name} /></TableCell>
 											<TableCell>{numeral(row.lastMonthRevenue).format('$0,0.00')}</TableCell>
-											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} onClick={()=>{props.history.push(`/empresas/alterar/${row.id}`)}}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />

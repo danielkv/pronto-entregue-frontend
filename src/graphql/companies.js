@@ -59,6 +59,10 @@ export const LOAD_COMPANY = gql`
 			name
 			displayName
 			createdAt
+			type {
+				id
+				name
+			}
 			active
 			metas {
 				id
@@ -97,6 +101,10 @@ export const GET_COMPANIES = gql`
 			name
 			displayName
 			createdAt
+			type {
+				id
+				name
+			}
 			lastMonthRevenue
 			active
 		}
@@ -113,6 +121,7 @@ export const GET_USER_COMPANIES = gql`
 				name
 				displayName
 				createdAt
+				
 				lastMonthRevenue
 				active
 			}

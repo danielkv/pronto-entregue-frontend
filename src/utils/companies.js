@@ -17,6 +17,7 @@ export function extractCompany(company) {
 		name: company.name,
 		displayName: company.displayName,
 		active: company.active,
+		type: company.type,
 		...extractMetas(metaTypes, company.metas)
 	};
 }
@@ -26,6 +27,7 @@ export function sanitizeCompany(result) {
 		name: result.name,
 		displayName: result.displayName,
 		active: result.active,
+		companyTypeId: result.type.id,
 		metas: joinMetas(metaTypes, result)
 	}
 }
