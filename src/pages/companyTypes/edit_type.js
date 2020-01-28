@@ -1,51 +1,48 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Snackbar, SnackbarContent } from '@material-ui/core';
-import gql from 'graphql-tag';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
-import { sanitizeCategory, extractCategory } from '../../utils/categories';
+import { extractCompanyType, sanitizeCompanyType } from '../../utils/companyType';
 import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
-import { UPDATE_CATEGORY } from '../../graphql/categories';
+import { UPDATE_COMPANY_TYPE, LOAD_COMPANY_TYPE } from '../../graphql/companyTypes';
 
-const LOAD_CATEGORY = gql`
-	query ($id: ID!) {
-		category (id: $id) {
-			id
-			name
-			image
-			description
-			createdAt
-			active
-		}
-	}
-`;
+const FILE_SIZE = 500 * 1024;
 
-function Page (props) {
+const validationSchema = Yup.object().shape({
+	name: Yup.string().required('Obrigatório'),
+	description: Yup.string().required('Obrigatório'),
+	file: Yup.mixed().notRequired().test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE)
+});
+
+function Page () {
 	setPageTitle('Alterar categoria');
 
-	const editId = props.match.params.id;
+	const { id: editId } = useParams();
 
 	//erro e confirmação
 	const [displaySuccess, setDisplaySuccess] = useState('');
 	
-	const { data, loading: loadingGetData, error } = useQuery(LOAD_CATEGORY, { variables: { id: editId } });
-	const [updateCategory, { error: savingError }] = useMutation(UPDATE_CATEGORY, { variables: { id: editId } })
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_COMPANY_TYPE, { variables: { id: editId } });
+	const [updateCompanyType, { error: savingError }] = useMutation(UPDATE_COMPANY_TYPE, { variables: { id: editId } })
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	// extract category data coming from DB
-	const category = extractCategory(data.category);
+	const initialValues = extractCompanyType(data.companyType);
 
 	function onSubmit(result) {
-		const data = sanitizeCategory(result);
+		const data = sanitizeCompanyType(result);
 
-		return updateCategory({ variables: { data } })
+		return updateCompanyType({ variables: { data } })
 			.then(()=>{
 				setDisplaySuccess('A categoria salva');
 			})
@@ -73,12 +70,15 @@ function Page (props) {
 			>
 				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
 			</Snackbar>
-			<PageForm
-				pageTitle='Alterar categoria'
-				initialValues={category}
+			<Formik
+				validationSchema={validationSchema}
+				initialValues={initialValues}
 				onSubmit={onSubmit}
-				edit={editId}
-			/>
+				validateOnChange={true}
+				validateOnBlur={false}
+			>
+				{(props)=><PageForm {...props} pageTitle='Alterar ramo de atividade' />}
+			</Formik>
 		</>
 	)
 }

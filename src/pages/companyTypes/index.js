@@ -12,7 +12,7 @@ import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_COMPANY_TYPES, UPDATE_COMPANY_TYPES } from '../../graphql/companyTypes';
+import { GET_COMPANY_TYPES, UPDATE_COMPANY_TYPE } from '../../graphql/companyTypes';
 
 const initialFilter = {
 	showInactive: false,
@@ -45,7 +45,7 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 	
-	const [updateCompanyType, { loading: loadingUpdating }] = useMutation(UPDATE_COMPANY_TYPES);
+	const [updateCompanyType, { loading: loadingUpdating }] = useMutation(UPDATE_COMPANY_TYPE);
 	
 	const { data: { countCompanyTypes = 0, companyTypes = [] } = {}, loading: loadingCompanyTypes, error, called } = useQuery(GET_COMPANY_TYPES, {
 		variables: { filter, pagination }
@@ -83,7 +83,7 @@ function Page (props) {
 										<DraggableCell>{row.name}</DraggableCell>
 										<DraggableCell><Chip variant='outline' label={row.countCompanies} /></DraggableCell>
 										<DraggableCell>
-											<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/ramos de atividade/alterar/${row.id}`)}}>
+											<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/ramos/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />
 											</IconButton>
 											<Switch

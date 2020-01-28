@@ -1,7 +1,20 @@
 import gql from "graphql-tag";
 
+export const LOAD_COMPANY_TYPE = gql`
+	query LoadCompanyType ($id: ID!) {
+		companyType (id: $id) {
+			id
+			name
+			image
+			description
+			active
+		}
+	}
+`;
+
 export const GET_COMPANY_TYPES = gql`
-	query ($filter: Filter, $pagination: Pagination) {
+	query GetCompanyTypes ($filter: Filter, $pagination: Pagination) {
+		countCompanyTypes
 		companyTypes (filter: $filter, pagination: $pagination) {
 			id
 			name
@@ -12,8 +25,20 @@ export const GET_COMPANY_TYPES = gql`
 	}
 `;
 
-export const UPDATE_COMPANY_TYPES = gql`
-	mutation ($id: ID!, $data: CompanyTypeInput!) {
+export const CREATE_COMPANY_TYPE = gql`
+	mutation CreateCompanyType ($data: CompanyTypeInput!) {
+		createCompanyType (data: $data) {
+			id
+			name
+			image
+			countCompanies
+			active
+		}
+	}
+`;
+
+export const UPDATE_COMPANY_TYPE = gql`
+	mutation UpdateCompanyType ($id: ID!, $data: CompanyTypeInput!) {
 		updateCompanyType (id: $id, data: $data) {
 			id
 			name
@@ -25,7 +50,7 @@ export const UPDATE_COMPANY_TYPES = gql`
 `;
 
 export const SEARCH_COMPANY_TYPES = gql`
-	mutation ($search: String!) {
+	mutation SearchCompanyTypes ($search: String!) {
 		searchCompanyTypes (search: $search) {
 			id
 			name
