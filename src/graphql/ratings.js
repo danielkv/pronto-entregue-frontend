@@ -16,7 +16,7 @@ export const GET_COMPANY_RATINGS = gql`
 				}
 				order {
 					id
-					createdDate
+					createdAt
 				}
 			}
 		}

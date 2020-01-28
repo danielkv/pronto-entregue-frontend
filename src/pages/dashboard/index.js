@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 
 import { useQuery } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, CircularProgress, Avatar, Chip } from '@material-ui/core';
+import moment from 'moment';
 
 import { Content, BlockTitle } from '../../layout/components';
 
@@ -16,7 +17,7 @@ import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { getOrderStatusIcon } from '../../utils/orders';
-import { OrdersToday, OrderStatus, OrderCreated, OrderDate, OrderTime, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer } from './styles';
+import { OrdersToday, OrderStatus, DashContainer, OrdersTodayContainer, BestSellersContainer, LastSalesContainer } from './styles';
 
 import { GET_COMPANY_ORDERS_QTY, GET_COMPANY_LAST_ORDERS } from '../../graphql/orders';
 import { GET_COMPANY_BEST_SELLERS } from '../../graphql/products';
@@ -121,20 +122,19 @@ function Page () {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{lastOrders.map((row, index) => (
-										<TableRow key={index}>
-											<TableCell>
-												<OrderCreated>
-													<OrderDate>{row.createdDate}</OrderDate>
-													<OrderTime>{row.createdTime}</OrderTime>
-												</OrderCreated>
-											</TableCell>
-											<TableCell>{row.user.full_name}</TableCell>
-											<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.street}, ${row.number}`}</TableCell>
-											<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
-											<TableCell>{getOrderStatusIcon(row.status)}</TableCell>
-										</TableRow>
-									))}
+									{lastOrders.map((row, index) => {
+										const createdAt = moment(row.createdAt);
+										const displayDate = moment().diff(createdAt, 'day') >= 1 ? createdAt.format('DD/MM/YY HH:mm') : createdAt.fromNow();
+										return (
+											<TableRow key={index}>
+												<TableCell>{displayDate}</TableCell>
+												<TableCell>{row.user.full_name}</TableCell>
+												<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.street}, ${row.number}`}</TableCell>
+												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
+												<TableCell>{getOrderStatusIcon(row.status)}</TableCell>
+											</TableRow>
+										)
+									})}
 								</TableBody>
 							</Table>
 						</Paper>

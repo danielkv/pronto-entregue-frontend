@@ -81,7 +81,7 @@ function Page (props) {
 									>
 										<DraggableCell><Avatar src={row.image} /></DraggableCell>
 										<DraggableCell>{row.name}</DraggableCell>
-										<DraggableCell><Chip variant='outline' label={row.countCompanies} /></DraggableCell>
+										<DraggableCell><Chip variant='outlined' label={row.countCompanies} /></DraggableCell>
 										<DraggableCell>
 											<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/ramos/alterar/${row.id}`)}}>
 												<Icon path={mdiPencil} size='18' color='#363E5E' />

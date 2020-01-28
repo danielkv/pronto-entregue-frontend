@@ -97,7 +97,7 @@ function Page (props) {
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell><Chip color={row.countFavoritedBy ? 'secondary' : ''} label={row.countFavoritedBy} /></TableCell>
+											<TableCell><Chip color={row.countFavoritedBy ? 'secondary' : 'default'} label={row.countFavoritedBy} /></TableCell>
 											<TableCell><Chip variant='outlined' label={row.category.name} /></TableCell>
 											<TableCell><Chip variant='outlined' label={row.countOptions} /></TableCell>
 											<TableCell>
