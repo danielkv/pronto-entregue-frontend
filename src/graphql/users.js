@@ -37,25 +37,6 @@ export const CREATE_USER = gql`
 	}
 `;
 
-export const SEARCH_COMPANY_USERS = gql`
-	query SearchUsers ($search:String!) {
-		searchCompanyUsers(search:$search) {
-			id
-			fullName
-			email
-			addresses {
-				id
-				street
-				number
-				zipcode
-				district
-				city
-				state
-			}
-		}
-	}
-`;
-
 export const GET_COMPANY_USERS = gql`
 	query GetCompanyUsers ($id:ID!, $filter: Filter, $pagination: Pagination) {
 		company (id:$id) {
@@ -73,7 +54,7 @@ export const GET_COMPANY_USERS = gql`
 `;
 
 export const SEARCH_USERS = gql`
-	mutation SearchtUsers ($search: String, $exclude: [ID], $companies: [ID]) {
+	mutation SearchtUsers ($search: String!, $exclude: [ID], $companies: [ID]) {
 		searchUsers (search: $search, exclude: $exclude, companies: $companies) {
 			id
 			fullName

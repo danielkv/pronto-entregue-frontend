@@ -1,4 +1,4 @@
-import { initialMetas, joinMetas, extractMetas } from "./metas";
+import { initialMetas, sanitizeMetas, extractMetas } from "./metas";
 
 export const metaTypes = ['document', 'addresses', 'phones'];
 
@@ -46,7 +46,7 @@ export function sanitizePeople(result) {
 		assignCompany: result.assignCompany,
 		role: result.role,
 
-		metas: joinMetas(metaTypes, result),
+		metas: sanitizeMetas(metaTypes, result),
 	}
 
 	if (result.password) data.password = result.password;

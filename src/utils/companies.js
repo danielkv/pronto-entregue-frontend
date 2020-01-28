@@ -1,4 +1,4 @@
-import { extractMetas, joinMetas, initialMetas } from "./metas";
+import { extractMetas, sanitizeMetas, initialMetas } from "./metas";
 
 export const metaTypes = ['address', 'document', 'contact', 'phones', 'emails'];
 
@@ -28,6 +28,6 @@ export function sanitizeCompany(result) {
 		displayName: result.displayName,
 		active: result.active,
 		companyTypeId: result.type.id,
-		metas: joinMetas(metaTypes, result)
+		metas: sanitizeMetas(metaTypes, result)
 	}
 }

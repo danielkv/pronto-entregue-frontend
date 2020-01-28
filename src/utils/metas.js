@@ -5,18 +5,22 @@
  * @param {Object} values 
  */
 
-export const joinMetas = (metas, values={}) => {
+export const sanitizeMetas = (metas, values={}) => {
 	let returnMetas = [];
 	
 	metas.forEach(key => {
 		if (values[key]) {
-			let value = values[key];
+			const value = values[key];
 			switch (key) {
 				case 'address':
+					value.value.number = parseInt(value.value.number);
+					value.value.zipcode = parseInt(value.value.zipcode);
 					returnMetas.push({ ...value, value: JSON.stringify(value.value) });
 					break;
 				case 'addresses':
-					returnMetas = [...returnMetas, ...value.map(v => ({ ...v, value: JSON.stringify(v.value) }))];
+					returnMetas = [...returnMetas, ...value.map(v => {
+						return { ...sanitizeMetas(['address'], v) }
+					})];
 					break;
 				case 'phones':
 				case 'emails':
