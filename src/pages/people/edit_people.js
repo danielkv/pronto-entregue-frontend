@@ -18,9 +18,9 @@ const userSchema = Yup.object().shape({
 	firstName: Yup.string().required('Obrigatório'),
 	lastName: Yup.string().required('Obrigatório'),
 	email: Yup.string().required('Obrigatório'),
-	password: Yup.mixed().test('test_force_password', 'Você deve digitar uma senha', function () {
+	password: Yup.mixed().test('test_force_password', 'Você deve digitar uma senha', function (value) {
 		if (this.parent.forcePassword)
-			return false;
+			return Boolean(value);
 		return true;
 	}),
 	document: Yup.object().shape({
@@ -44,23 +44,23 @@ function Page (props) {
 	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompany } });
 
 	const [updateUser, { error: errorSaving }] = useMutation(UPDATE_USER, { variables: { id: editId, companyId: selectedCompany } });
-
+	
+	function onSubmit(values) {
+		// eslint-disable-next-line no-param-reassign
+		const data = sanitizePeople(values);
+		
+		return updateUser({ mutation: UPDATE_USER, variables: { data } })
+			.then(()=>{
+				setDisplaySuccess('O pessoa foi salvo');
+			})
+	}
+	
 	if (errorGetData) return <ErrorBlock error={getErrors(errorGetData)} />
 	if (loadingGetData) return (<LoadingBlock />);
 
 	// extract all user data
 	const user = extractPeople(data.user);
 	
-	function onSubmit(values) {
-		// eslint-disable-next-line no-param-reassign
-		const data = sanitizePeople(values);
-
-		return updateUser({ mutation: UPDATE_USER, variables: { data } })
-			.then(()=>{
-				setDisplaySuccess('O pessoa foi salvo');
-			})
-	}
-
 	return (
 		<Fragment>
 			<Snackbar

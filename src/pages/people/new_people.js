@@ -17,9 +17,9 @@ const userSchema = Yup.object().shape({
 	firstName: Yup.string().required('Obrigatório'),
 	lastName: Yup.string().required('Obrigatório'),
 	email: Yup.string().required('Obrigatório'),
-	password: Yup.mixed().test('test_force_password', 'Você deve digitar uma senha', function () {
+	password: Yup.mixed().test('test_force_password', 'Você deve digitar uma senha', function (value) {
 		if (this.parent.forcePassword)
-			return false;
+			return Boolean(value);
 		return true;
 	}),
 	document: Yup.object().shape({

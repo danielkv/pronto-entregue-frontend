@@ -37,10 +37,9 @@ export function extractPeople(user) {
 
 export function sanitizePeople(result) {
 
-	return {
+	const data = {
 		firstName: result.firstName,
 		lastName: result.lastName,
-		password: result.password,
 		email: result.email,
 		active: result.active,
 
@@ -49,4 +48,8 @@ export function sanitizePeople(result) {
 
 		metas: joinMetas(metaTypes, result),
 	}
+
+	if (result.password) data.password = result.password;
+
+	return data;
 }
