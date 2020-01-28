@@ -13,6 +13,10 @@ import { GET_COMPANIES, CREATE_COMPANY } from '../../graphql/companies';
 const companySchema = Yup.object().shape({
 	name: Yup.string().required('Obrigatório'),
 	displayName: Yup.string().required('Obrigatório'),
+	type: Yup.object().shape({
+		id: Yup.mixed().required('Obrigatório'),
+		name: Yup.string().required('Obrigatório')
+	}),
 	document: Yup.object().shape({
 		value: Yup.string().required('Obrigatório')
 	}),

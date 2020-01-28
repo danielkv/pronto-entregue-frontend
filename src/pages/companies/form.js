@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
-import { Paper, IconButton, FormControlLabel, Switch, ButtonGroup, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl } from '@material-ui/core';
+import { Paper, IconButton, FormControlLabel, Switch, ButtonGroup, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText } from '@material-ui/core';
 import { mdiPlusCircle, mdiDelete, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
@@ -13,7 +13,7 @@ import { metaModel } from '../../utils/metas';
 
 import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
-export default function PageForm ({ values: { active, phones, emails, type }, setFieldValue, handleChange, isSubmitting, pageTitle }) {
+export default function PageForm ({ values: { active, phones, emails, type }, errors, setFieldValue, handleChange, isSubmitting, pageTitle }) {
 
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }]= useMutation(SEARCH_COMPANY_TYPES);
 
@@ -179,6 +179,7 @@ export default function PageForm ({ values: { active, phones, emails, type }, se
 											})=>(
 												<div style={{ width: '100%' }}>
 													<TextField label='Buscar ramo' {...getInputProps()} disabled={isSubmitting} />
+													{!!errors.type && <FormHelperText error>{errors.type.name}</FormHelperText>}
 													{isOpen && (
 														<List {...getMenuProps()} className="dropdown">
 															{loadingCompanyTypes && <div style={{ padding: 20 }}><CircularProgress /></div>}

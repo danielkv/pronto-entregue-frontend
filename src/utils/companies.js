@@ -6,6 +6,7 @@ export function createEmptyCompany(overwrite={}) {
 	return {
 		name: '',
 		displayName: '',
+		type: { name: '', id: null },
 		active: true,
 		...initialMetas(metaTypes),
 		...overwrite,
