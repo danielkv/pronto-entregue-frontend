@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
 
 import { useQuery } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, CircularProgress } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, CircularProgress, Avatar, Chip } from '@material-ui/core';
 
-import { Content, BlockTitle, CircleNumber, ProductImage } from '../../layout/components';
+import { Content, BlockTitle } from '../../layout/components';
 
 
 import OrdersAwaiting from '../../assets/images/orders-awaiting.png';
@@ -98,9 +98,9 @@ function Page () {
 								<TableBody>
 									{bestSellers.map((row, index) => (
 										<TableRow key={index}>
-											<TableCell style={{ width: 80, paddingRight: 10 }}><ProductImage src={row.image} alt={row.name} /></TableCell>
+											<TableCell style={{ width: 80, paddingRight: 10 }}><Avatar src={row.image} alt={row.name} /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell style={{ width: 70 }}><CircleNumber>{row.qty}</CircleNumber></TableCell>
+											<TableCell style={{ width: 70 }}><Chip variant='outlined' label={row.qty} /></TableCell>
 										</TableRow>
 									))}
 								</TableBody>
@@ -131,7 +131,7 @@ function Page () {
 											</TableCell>
 											<TableCell>{row.user.full_name}</TableCell>
 											<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.street}, ${row.number}`}</TableCell>
-											<TableCell><CircleNumber>{row.countProducts}</CircleNumber></TableCell>
+											<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
 											<TableCell>{getOrderStatusIcon(row.status)}</TableCell>
 										</TableRow>
 									))}

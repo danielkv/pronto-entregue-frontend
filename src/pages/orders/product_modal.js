@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography, IconButton } from '@material-ui/core';
+import { Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography, IconButton, Avatar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { mdiPlusCircleOutline, mdiMinusCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash';
 
 import { FormRow, FieldControl, Block, BlockSeparator } from '../../layout/components';
 
-import { ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductImage, ProductInfo, QuantityContainer } from './modal_styles';
+import { ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductInfo, QuantityContainer } from './modal_styles';
 
 const CustomTextInput = withStyles({
 	root: {
@@ -134,7 +134,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 					<Block style={{ margin: 0 }}>
 						<BlockSeparator>
 							<ModalHeader>
-								<ProductImage src={product.image} />
+								<Avatar style={{ width: 110, height: 110 }} alt={product.name} src={product.image} />
 								<ProductInfo>
 									<ProductTitle>
 										<div>{product.name}</div>

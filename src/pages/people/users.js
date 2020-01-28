@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
+import moment from 'moment';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
@@ -12,7 +13,6 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-
 
 import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 
@@ -90,7 +90,7 @@ function Page () {
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
 											<TableCell>{row.fullName}</TableCell>
 											<TableCell>{row.role}</TableCell>
-											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />

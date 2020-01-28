@@ -3,11 +3,11 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Link } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Avatar, Chip } from '@material-ui/core';
 import { mdiDrag , mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar, ProductImage, DraggableCell } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, DraggableCell } from '../../layout/components';
 
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
@@ -102,7 +102,6 @@ function Page (props) {
 									<TableCell style={{ width: 50 }}></TableCell>
 									<TableCell>Nome</TableCell>
 									<TableCell style={{ width: 350 }}>Produtos vinculados</TableCell>
-									<TableCell style={{ width: 300 }}>Criada em</TableCell>
 									<TableCell style={{ width: 100 }}>Ações</TableCell>
 								</TableRow>
 							</TableHead>
@@ -129,10 +128,9 @@ function Page (props) {
 																{...provided.draggableProps}
 															>
 																<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></DraggableCell>
-																<DraggableCell selected={selected}><ProductImage src={row.image} /></DraggableCell>
+																<DraggableCell selected={selected}><Avatar alt={row.name} src={row.image} /></DraggableCell>
 																<DraggableCell selected={selected}>{row.name}</DraggableCell>
-																<DraggableCell selected={selected}><CircleNumber>{row.countProducts}</CircleNumber></DraggableCell>
-																<DraggableCell selected={selected}>{row.created_at}</DraggableCell>
+																<DraggableCell selected={selected}><Chip variant='outlined' label={row.countProducts} /></DraggableCell>
 																<DraggableCell selected={selected}>
 																	<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>
 																		<Icon path={mdiPencil} size='18' color='#363E5E' />

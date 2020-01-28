@@ -17,8 +17,7 @@ export const GET_COMPANY_LAST_ORDERS = gql`
 				number
 				countProducts
 				type
-				createdDate
-				createdTime
+				createdAt
 				status
 			}
 		}
@@ -113,8 +112,7 @@ export const ORDER_FRAGMENT = gql`
 			}
 		}
 		status
-		createdDate
-		createdTime
+		createdAt
 	}
 	${ORDER_PRODUCT_RELATED_FRAGMENT}
 `;
@@ -173,8 +171,7 @@ export const GET_COMPANY_ORDERS = gql`
 				price
 				countProducts
 				status
-				createdDate
-				createdTime
+				createdAt
 			}
 		}
 	}

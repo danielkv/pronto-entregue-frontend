@@ -2,12 +2,12 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
 import { mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import numeral from 'numeral';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, ProductImage } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
@@ -90,7 +90,7 @@ function Page (props) {
 								<TableBody>
 									{campaigns.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><ProductImage src={row.image} /></TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell><Chip color='primary' label={getTypeLabel(row.type)} /></TableCell>
 											<TableCell>{row.valueType === 'percentage'

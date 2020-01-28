@@ -18,6 +18,9 @@ import NewCategory from './pages/categories/new_category';
 import Companies from './pages/companies';
 import EditCompany from './pages/companies/edit_company';
 import NewCompany from './pages/companies/new_company';
+import CompanyTypes from './pages/companyTypes';
+import EditType from './pages/companyTypes/edit_type';
+import NewType from './pages/companyTypes/new_type';
 import Dashboard from './pages/dashboard';
 import Orders from './pages/orders';
 import EditOrder from './pages/orders/edit_order';
@@ -57,6 +60,10 @@ export default function Layout () {
 						<Route exact path='/produtos' component={Products} />
 						<Route path='/produtos/novo' component={NewProduct} />
 						<Route path='/produtos/alterar/:id' component={EditProduct} />
+
+						<Route exact path='/categorias' component={Categories} />
+						<Route path='/categorias/novo' component={NewCategory} />
+						<Route path='/categorias/alterar/:id' component={EditCategory} />
 						
 						<Route exact path='/campanhas' component={Campaigns} />
 						<Route path='/campanhas/nova' component={NewCampaign} />
@@ -75,9 +82,9 @@ export default function Layout () {
 								<Route path='/empresas/novo' component={NewCompany} />
 								<Route path='/empresas/alterar/:id' component={EditCompany} />
 
-								<Route exact path='/categorias' component={Categories} />
-								<Route path='/categorias/novo' component={NewCategory} />
-								<Route path='/categorias/alterar/:id' component={EditCategory} />
+								<Route exact path='/ramos' component={CompanyTypes} />
+								<Route path='/ramos/novo' component={NewType} />
+								<Route path='/ramos/alterar/:id' component={EditType} />
 								
 								<Route exact path='/pessoas' render={()=><People />} />
 								<Route path='/pessoas/novo' render={()=><NewPeople />} />

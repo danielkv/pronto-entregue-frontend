@@ -47,13 +47,3 @@ export const ProductPrice = styled.div`
 	font-weight:normal;
 	color:#707070;
 `;
-
-export const ProductImage = styled.div`
-	background-size: cover;
-	background-image:${props=>`url(${props.src})`};
-	width:110px;
-	height:110px;
-	border-radius:55px;
-	float:left;
-	margin-right:15px;
-`;

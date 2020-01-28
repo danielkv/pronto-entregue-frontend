@@ -141,20 +141,6 @@ export const NumberOfRows = styled.div`
 	margin-left:auto;
 `
 
-export const CircleNumber = styled.div`
-	background-color:#F0F0F0;
-	border-radius:20px;
-	width:36px;
-	height:36px;
-	text-align:center;
-	color:#D41450;
-	font-size:15px;
-	font-weight:bold;
-	display:flex;
-	align-items:center;
-	justify-content:center;
-`;
-
 export const FormRow = styled.div`
 	display:flex;
 	justify-items:stretch;
@@ -173,14 +159,6 @@ export const FieldControl = styled.div`
 	display:flex;
 	align-items:center;
 	margin: 0 15px;
-`;
-
-export const ProductImage = styled.div`
-	background-size: cover;
-	background-image:${props=>`url(${props.src})`};
-	width:60px;
-	height:60px;
-	border-radius:30px;
 `;
 
 //export function tField({field, label, action=false, type='text', inputProps, InputProps, form:{isSubmitting, errors, setFieldValue, values}, form}) {

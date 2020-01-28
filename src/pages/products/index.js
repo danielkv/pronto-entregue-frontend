@@ -2,13 +2,13 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiSale } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, ProductImage } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
@@ -95,11 +95,11 @@ function Page (props) {
 								<TableBody>
 									{products.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><ProductImage src={row.image} /></TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell><Chip color={row.countFavoritedBy ? 'secondary' : ''} label={row.countFavoritedBy} /></TableCell>
-											<TableCell>{row.category.name}</TableCell>
-											<TableCell><Chip color='primary' label={row.countOptions} /></TableCell>
+											<TableCell><Chip variant='outlined' label={row.category.name} /></TableCell>
+											<TableCell><Chip variant='outlined' label={row.countOptions} /></TableCell>
 											<TableCell>
 												<div style={{ display: 'flex', alignItems: 'center' }}>
 													{numeral(row.price).format('$0,0.00')}
@@ -110,7 +110,7 @@ function Page (props) {
 													)}
 												</div>
 											</TableCell>
-											<TableCell>{moment(row.createdAt).fromNow()}</TableCell>
+											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
 													<Icon path={mdiPencil} size='18' color='#363E5E' />

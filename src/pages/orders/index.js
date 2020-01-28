@@ -2,19 +2,19 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiDotsVertical } from '@mdi/js';
 import Icon from '@mdi/react';
+import moment from 'moment';
 import numeral from 'numeral'
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, CircleNumber, SidebarContainer, Sidebar } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { getOrderStatusIcon } from '../../utils/orders';
-import { OrderCreated, OrderDate, OrderTime } from './styles';
 
 import { GET_COMPANY_ORDERS, UPDATE_ORDER } from '../../graphql/orders';
 
@@ -132,7 +132,7 @@ function Page (props) {
 							<Table>
 								<TableHead>
 									<TableRow>
-										<TableCell style={{ width: 30, paddingRight: 10 }}></TableCell>
+										<TableCell style={{ width: 120, paddingRight: 10 }}></TableCell>
 										<TableCell>Cliente</TableCell>
 										<TableCell>Endereço de entrega</TableCell>
 										<TableCell>Valor</TableCell>
@@ -142,29 +142,27 @@ function Page (props) {
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{orders.map(row => (
-										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 30 }}>
-												<OrderCreated>
-													<OrderDate>{row.createdDate}</OrderDate>
-													<OrderTime>{row.createdTime}</OrderTime>
-												</OrderCreated>
-											</TableCell>
-											<TableCell>{row.user.fullName}</TableCell>
-											<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
-											<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
-											<TableCell><CircleNumber>{row.countProducts}</CircleNumber></TableCell>
-											<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
-											<TableCell style={{ width: 100 }}>
-												<IconButton disabled={loadingUpdateOrder} onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
-													<Icon path={mdiPencil} size='18' color='#363E5E' />
-												</IconButton>
-												<IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id} data-order-status={row.status}>
-													<Icon path={mdiDotsVertical} size='18' color='#363E5E' />
-												</IconButton>
-											</TableCell>
-										</TableRow>
-									))}
+									{orders.map(row => {
+										const createdAt = moment(row.createdAt);
+										const displayDate = moment().diff(createdAt, 'day') >= 1 ? createdAt.format('DD/MM/YY HH:mm') : createdAt.fromNow();
+										return (
+											<TableRow key={row.id}>
+												<TableCell>{displayDate}</TableCell>
+												<TableCell>{row.user.fullName}</TableCell>
+												<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
+												<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
+												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
+												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
+												<TableCell style={{ width: 100 }}>
+													<IconButton disabled={loadingUpdateOrder} onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
+														<Icon path={mdiPencil} size='18' color='#363E5E' />
+													</IconButton>
+													<IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id} data-order-status={row.status}>
+														<Icon path={mdiDotsVertical} size='18' color='#363E5E' />
+													</IconButton>
+												</TableCell>
+											</TableRow>
+										)})}
 								</TableBody>
 							</Table>
 							<TablePagination

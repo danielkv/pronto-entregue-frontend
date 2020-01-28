@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
-import { Paper, IconButton, FormControlLabel, Switch, ButtonGroup, Button, TextField, MenuItem, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl } from '@material-ui/core';
+import { Paper, IconButton, FormControlLabel, Switch, ButtonGroup, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl } from '@material-ui/core';
 import { mdiPlusCircle, mdiDelete, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';

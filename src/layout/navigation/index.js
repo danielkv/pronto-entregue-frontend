@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiStar, mdiSale } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiStar, mdiSale, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -41,6 +41,13 @@ function Navigation() {
 						<Icon path={mdiBasket} size='22' color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Produtos
+					</ListItemText>
+				</NavItem>
+				<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
+					<ListItemIcon>
+						<Icon path={mdiShape} size='22' color='#707070' /></ListItemIcon>
+					<ListItemText>
+								Categorias
 					</ListItemText>
 				</NavItem>
 				<NavItem to='/usuarios' selected={isSelected('usuarios')} alt='usuários'>
@@ -88,11 +95,11 @@ function Navigation() {
 								Empresas
 							</ListItemText>
 						</NavItem>
-						<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
+						<NavItem to='/ramos' selected={isSelected('ramos')} alt='Ramos de atividade'>
 							<ListItemIcon>
-								<Icon path={mdiShape} size='22' color='#707070' /></ListItemIcon>
+								<Icon path={mdiGroup} size='22' color='#707070' /></ListItemIcon>
 							<ListItemText>
-								Categorias
+								Ramos de atividade
 							</ListItemText>
 						</NavItem>
 						<NavItem to='/pessoas' selected={isSelected('pessoas')} alt='Pessoas'>

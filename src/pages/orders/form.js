@@ -1,14 +1,14 @@
 import React, { useState, Fragment, useEffect, useCallback } from 'react';
 
 import { useQuery, useApolloClient ,useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress } from '@material-ui/core';
+import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Avatar } from '@material-ui/core';
 import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { FieldArray, Form, Field } from 'formik';
 import numeral from 'numeral';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, ProductImage, tField } from '../../layout/components';
+import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { getErrors } from '../../utils/error';
@@ -358,7 +358,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 														}));
 													return(
 														<TableRow key={`${row.id}.${index}`}>
-															<TableCell style={{ width: 80, paddingRight: 10 }}><ProductImage src={row.image} alt={row.name} /></TableCell>
+															<TableCell style={{ width: 80, paddingRight: 10 }}><Avatar src={row.image} alt={row.name} /></TableCell>
 															<TableCell>
 																<div>{row.name}</div>
 																{!!selectedOptions.length &&

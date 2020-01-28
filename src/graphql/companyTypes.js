@@ -5,6 +5,20 @@ export const GET_COMPANY_TYPES = gql`
 		companyTypes (filter: $filter, pagination: $pagination) {
 			id
 			name
+			image
+			countCompanies
+			active
+		}
+	}
+`;
+
+export const UPDATE_COMPANY_TYPES = gql`
+	mutation ($id: ID!, $data: CompanyTypeInput!) {
+		updateCompanyType (id: $id, data: $data) {
+			id
+			name
+			image
+			countCompanies
 			active
 		}
 	}
