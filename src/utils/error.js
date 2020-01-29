@@ -20,7 +20,8 @@ export function getErrors (err) {
 
 export function errorObjectsToArray(errors) {
 	let array = [];
-	Object.entries(errors).forEach(([_, err]) => {
+	Object.entries(errors).forEach((error) => {
+		const err = error[1];
 		if (isString(err))
 			array.push(err)
 		else if (isObject(err))
