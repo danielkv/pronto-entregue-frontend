@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
-import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText } from '@material-ui/core';
+import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText, DialogTitle, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { mdiPlusCircle, mdiDelete, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { FieldArray, Form, Field } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
+import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
 
 import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
-export default function PageForm ({ values: { active, phones, emails, type }, errors, setFieldValue, handleChange, isSubmitting, pageTitle }) {
-
+export default function PageForm ({ values: { active, phones, emails, type }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
+	const [errorDialog, setErrorDialog] = useState(false);
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
 
 	function handleSelect(item) {
@@ -25,8 +27,14 @@ export default function PageForm ({ values: { active, phones, emails, type }, er
 		searchCompanyTypes({ variables: { search: value } })
 	}
 	
+	function handleCloseDialog() {
+		setErrorDialog(false)
+	}
+	useEffect(()=>{
+		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
+	}, [isValidating, errors])
+	
 	return (
-		
 		<Form>
 			<Content>
 				<Block>
@@ -58,25 +66,28 @@ export default function PageForm ({ values: { active, phones, emails, type }, er
 					</BlockHeader>
 					<Paper>
 						<FormRow>
-							<FieldControl>
-								<Field name='address.value.street' action='address.action' component={tField} label='Rua' />
-							</FieldControl>
 							<FieldControl style={{ flex: .3 }}>
-								<Field name='address.value.number' action='address.action' component={tField} label='Número' />
+								<Field name='address.name' component={tField} label='Identificação' />
 							</FieldControl>
-							<FieldControl style={{ flex: .3 }}>
-								<Field name='address.value.zipcode' action='address.action' component={tField} label='CEP' />
+							<FieldControl style={{ flex: .4 }}>
+								<Field name='address.street' component={tField} label='Rua' />
+							</FieldControl>
+							<FieldControl style={{ flex: .2 }}>
+								<Field name='address.number' component={tField} label='Número' />
+							</FieldControl>
+							<FieldControl style={{ flex: .2 }}>
+								<Field name='address.zipcode' component={tField} label='CEP' />
 							</FieldControl>
 						</FormRow>
 						<FormRow>
 							<FieldControl>
-								<Field name='address.value.district' action='address.action' component={tField} label='Bairro' />
+								<Field name='address.district' component={tField} label='Bairro' />
 							</FieldControl>
 							<FieldControl>
-								<Field name='address.value.city' action='address.action' component={tField} label='Cidade' />
+								<Field name='address.city' component={tField} label='Cidade' />
 							</FieldControl>
 							<FieldControl>
-								<Field name='address.value.state' action='address.action' component={tField} label='Estado' />
+								<Field name='address.state' component={tField} label='Estado' />
 							</FieldControl>
 						</FormRow>
 					</Paper>
@@ -207,5 +218,24 @@ export default function PageForm ({ values: { active, phones, emails, type }, er
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
-		</Form>)
+			<Dialog
+				open={errorDialog && !isEmpty(errors)}
+				onClose={handleCloseDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						<ul>
+							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+						</ul>
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+				</DialogActions>
+			</Dialog>
+		</Form>
+	)
 }

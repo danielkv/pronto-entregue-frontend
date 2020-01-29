@@ -1,6 +1,6 @@
-import { extractMetas, sanitizeMetas, initialMetas } from "./metas";
+import { extractMetas, sanitizeMetas, createEmptyMetas } from "./metas";
 
-export const metaTypes = ['address', 'document', 'contact', 'phones', 'emails'];
+export const metaTypes = ['document', 'contact', 'phones', 'emails'];
 
 export function createEmptyCompany(overwrite={}) {
 	return {
@@ -8,7 +8,7 @@ export function createEmptyCompany(overwrite={}) {
 		displayName: '',
 		type: { name: '', id: null },
 		active: true,
-		...initialMetas(metaTypes),
+		...createEmptyMetas(metaTypes),
 		...overwrite,
 	}
 }
@@ -19,6 +19,7 @@ export function extractCompany(company) {
 		displayName: company.displayName,
 		active: company.active,
 		type: company.type,
+		address: company.address,
 		...extractMetas(metaTypes, company.metas)
 	};
 }
@@ -29,6 +30,17 @@ export function sanitizeCompany(result) {
 		displayName: result.displayName,
 		active: result.active,
 		companyTypeId: result.type.id,
-		metas: sanitizeMetas(metaTypes, result)
+		address: {
+			name: result.address.name,
+			street: result.address.street,
+			number: parseInt(result.address.number),
+			complement: result.address.complement,
+			zipcode: parseInt(result.address.zipcode.replace(/[\D]/g, '')),
+			district: result.address.district,
+			city: result.address.city,
+			state: result.address.state
+		},
+
+		metas: sanitizeMetas(metaTypes, result),
 	}
 }

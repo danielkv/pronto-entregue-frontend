@@ -1,3 +1,5 @@
+import { isObject, isString } from 'lodash';
+
 export function getErrors (err) {
 	if (err.graphQLErrors) {
 		if (err.graphQLErrors[0] && err.graphQLErrors[0].message) {
@@ -14,4 +16,15 @@ export function getErrors (err) {
 	if (err.message) return err.message;
 
 	return err;
+}
+
+export function errorObjectsToArray(errors) {
+	let array = [];
+	Object.entries(errors).forEach(([_, err]) => {
+		if (isString(err))
+			array.push(err)
+		else if (isObject(err))
+			array = [...array, ...errorObjectsToArray(err)]
+	})
+	return array;
 }

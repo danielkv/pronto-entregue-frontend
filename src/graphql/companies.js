@@ -59,6 +59,17 @@ export const LOAD_COMPANY = gql`
 			name
 			displayName
 			createdAt
+			address {
+				name
+				street
+				number
+				complement
+				zipcode
+				district
+				city
+				state
+				location
+			}
 			type {
 				id
 				name

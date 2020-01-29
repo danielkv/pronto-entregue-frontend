@@ -15,29 +15,28 @@ import PageForm from './form';
 import { UPDATE_COMPANY, LOAD_COMPANY } from '../../graphql/companies';
 
 const companySchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	displayName: Yup.string().required('Obrigatório'),
+	name: Yup.string().required('Nome é obrigatório'),
+	displayName: Yup.string().required('Razão social é obrigatório'),
 	document: Yup.object().shape({
-		value: Yup.string().required('Obrigatório')
+		value: Yup.string().required('Documento é brigatório')
 	}),
 	contact: Yup.object().shape({
-		value: Yup.string().required('Obrigatório')
+		value: Yup.string().required('Responsável é obrigatório')
 	}),
 	address: Yup.object().shape({
-		value: Yup.object().shape({
-			street: Yup.string().required('Obrigatório'),
-			number: Yup.number().typeError('Deve ser um número').required('Obrigatório'),
-			zipcode: Yup.string().required('Obrigatório'),
-			district: Yup.string().required('Obrigatório'),
-			city: Yup.string().required('Obrigatório'),
-			state: Yup.string().required('Obrigatório'),
-		})
+		name: Yup.string(),
+		street: Yup.string().required('Rua obrigatório'),
+		number: Yup.number().typeError('Número do endereço deve ser um número').required('Número do endereço é brigatório'),
+		zipcode: Yup.string().required('CEP obrigatório'),
+		district: Yup.string().required('Bairro é obrigatório'),
+		city: Yup.string().required('Cidade é obrigatório'),
+		state: Yup.string().required('Estado é obrigatório'),
 	}),
 	phones: Yup.array().of(Yup.object().shape({
-		value: Yup.string().required('Obrigatório')
+		value: Yup.string().required('Telefone é obrigatório')
 	})).min(1),
 	emails: Yup.array().of(Yup.object().shape({
-		value: Yup.string().required('Obrigatório').email('Email não é válido'),
+		value: Yup.string().required('Email é obrigatório').email('O Email não é válido'),
 	})).min(1),
 });
 
@@ -95,7 +94,7 @@ function Page () {
 				validationSchema={companySchema}
 				initialValues={initialValues}
 				onSubmit={onSubmit}
-				validateOnChange={true}
+				validateOnChange={false}
 				validateOnBlur={false}
 			>
 				{(props)=><PageForm {...props} pageTitle='Alterar empresa' />}

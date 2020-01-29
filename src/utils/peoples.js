@@ -1,4 +1,4 @@
-import { initialMetas, sanitizeMetas, extractMetas } from "./metas";
+import { createEmptyMetas, sanitizeMetas, extractMetas } from "./metas";
 
 export const metaTypes = ['document', 'addresses', 'phones'];
 
@@ -12,7 +12,7 @@ export function createEmptyPeople(overwrite ={}) {
 		assignedCompany: {
 			active: true,
 		},
-		...initialMetas(metaTypes),
+		...createEmptyMetas(metaTypes),
 		
 		...overwrite,
 	};

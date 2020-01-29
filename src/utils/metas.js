@@ -12,16 +12,6 @@ export const sanitizeMetas = (metas, values={}) => {
 		if (values[key]) {
 			const value = values[key];
 			switch (key) {
-				case 'address':
-					value.value.number = parseInt(value.value.number);
-					value.value.zipcode = parseInt(value.value.zipcode);
-					returnMetas.push({ ...value, value: JSON.stringify(value.value) });
-					break;
-				case 'addresses':
-					returnMetas = [...returnMetas, ...value.map(v => {
-						return { ...sanitizeMetas(['address'], v) }
-					})];
-					break;
 				case 'phones':
 				case 'emails':
 					returnMetas = [...returnMetas, ...value];
@@ -50,30 +40,12 @@ export const metaModel = (key, value='', action='new_empty') => {
  * 
  * @param {Array} needed which meta keys are needed
  */
-export const initialMetas = (needed=[]) => {
+export const createEmptyMetas = (needed=[]) => {
 	if (!needed) throw new Error('Metas necessárias não definidas');
 	const metas = {};
 
 	needed.forEach(need => {
-		if (need === 'address') {
-			metas[need] = metaModel('address', {
-				street: '',
-				number: '',
-				district: '',
-				zipcode: '',
-				city: '',
-				state: '',
-			});
-		} else if (need === 'addresses') {
-			metas[need] = [metaModel('address', {
-				street: '',
-				number: '',
-				district: '',
-				zipcode: '',
-				city: '',
-				state: '',
-			})];
-		} else if (need === 'phones') {
+		if (need === 'phones') {
 			metas[need] = [metaModel('phone')];
 		} else if (need === 'emails') {
 			metas[need] = [metaModel('email')];
@@ -92,7 +64,7 @@ export const initialMetas = (needed=[]) => {
  */
 export const extractMetas = (needed, metas=[]) => {
 	// get default values
-	let returnMetas = initialMetas(needed);
+	let returnMetas = createEmptyMetas(needed);
 
 	// remove __typename
 	// eslint-disable-next-line no-param-reassign
@@ -103,11 +75,9 @@ export const extractMetas = (needed, metas=[]) => {
 	});
 
 	needed.forEach(key => {
-		let value, searchMeta;
+		let searchMeta;
 
-		if (key === 'addresses')
-			searchMeta = 'address';
-		else if (key === 'phones')
+		if (key === 'phones')
 			searchMeta = 'phone';
 		else if (key === 'emails')
 			searchMeta = 'email';
@@ -118,13 +88,6 @@ export const extractMetas = (needed, metas=[]) => {
 		
 		if (found.length) {
 			switch(key) {
-				case 'address':
-					value = found[0];
-					returnMetas[key] = { ...value, value: JSON.parse(value.value) };
-					break;
-				case 'addresses':
-					returnMetas[key] = found.map(meta=>({ ...meta, value: JSON.parse(meta.value) }));
-					break;
 				case 'phones':
 				case 'emails':
 					returnMetas[key] = found;
