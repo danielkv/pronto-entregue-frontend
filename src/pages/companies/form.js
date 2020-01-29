@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
-import { Paper, IconButton, FormControlLabel, Switch, ButtonGroup, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText } from '@material-ui/core';
+import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText } from '@material-ui/core';
 import { mdiPlusCircle, mdiDelete, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
@@ -15,7 +15,7 @@ import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
 export default function PageForm ({ values: { active, phones, emails, type }, errors, setFieldValue, handleChange, isSubmitting, pageTitle }) {
 
-	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }]= useMutation(SEARCH_COMPANY_TYPES);
+	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
 
 	function handleSelect(item) {
 		setFieldValue('type', item);
@@ -152,10 +152,7 @@ export default function PageForm ({ values: { active, phones, emails, type }, er
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<ButtonGroup fullWidth>
-										<Button disabled={isSubmitting} onClick={(e)=>{e.preventDefault()}} color='secondary'>Cancelar</Button>
-										<Button disabled={isSubmitting} type="submit" variant="contained" color='secondary'>Salvar</Button>
-									</ButtonGroup>
+									<Button fullWidth disabled={isSubmitting} type="submit" variant="contained" color='secondary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
