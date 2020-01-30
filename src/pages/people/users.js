@@ -92,9 +92,6 @@ function Page () {
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
-												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
-													<Icon path={mdiPencil} size='18' color='#363E5E' />
-												</IconButton>
 												<Switch
 													checked={row.active}
 													onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}

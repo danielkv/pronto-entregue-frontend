@@ -60,7 +60,7 @@ function Page () {
 			validationSchema={companySchema}
 			initialValues={initialValues}
 			onSubmit={onSubmit}
-			validateOnChange={true}
+			validateOnChange={false}
 			validateOnBlur={false}
 		>
 			{(props)=><PageForm {...props} pageTitle='Nova empresa' />}

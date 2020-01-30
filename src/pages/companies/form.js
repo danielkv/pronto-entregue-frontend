@@ -108,14 +108,14 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 						</FormRow>
 						<FormRow>
 							<FieldControl>
-								<MapContainer
+								{(address.location[0] && address.location[1]) && <MapContainer
 									googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GMAPS_KEY}&v=3.exp&libraries=geometry,drawing,places`}
 									loadingElement={<div style={{ height: `100%` }} />}
 									containerElement={<div style={{ width: '100%', height: `400px` }} />}
 									mapElement={<div style={{ height: `100%` }} />}
 									center={{ lat: address.location[0], lng: address.location[1] }}
 									onRepositionMarker={(result)=>{setFieldValue('address.location[0]', result.latLng.lat()); setFieldValue('address.location[1]', result.latLng.lng());}}
-								/>
+								/>}
 							</FieldControl>
 						</FormRow>
 					</Paper>
