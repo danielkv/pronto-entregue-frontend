@@ -10,12 +10,14 @@ import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
+import googleMapsClient from '../../services/googleMpasClient';
 import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
+import MapContainer from './maps';
 
 import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
-export default function PageForm ({ values: { active, phones, emails, type }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
+export default function PageForm ({ values: { active, phones, emails, type, address }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
 	const [errorDialog, setErrorDialog] = useState(false);
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
 
@@ -25,6 +27,17 @@ export default function PageForm ({ values: { active, phones, emails, type }, er
 
 	function handleSearch(value) {
 		searchCompanyTypes({ variables: { search: value } })
+	}
+
+	async function searchGeoCode({ street, number, state, city, district }) {
+		const { json: { results } } = await googleMapsClient.geocode({
+			address: `${street}, ${number}, ${district}, ${city} ${state}`
+		}).asPromise();
+
+		const { location } = results[0].geometry;
+
+		setFieldValue('address.location[0]', location.lat);
+		setFieldValue('address.location[1]', location.lng);
 	}
 	
 	function handleCloseDialog() {
@@ -88,6 +101,21 @@ export default function PageForm ({ values: { active, phones, emails, type }, er
 							</FieldControl>
 							<FieldControl>
 								<Field name='address.state' component={tField} label='Estado' />
+							</FieldControl>
+							<Field type='hidden' name='address.location[0]' />
+							<Field type='hidden' name='address.location[1]' />
+							<Button onClick={()=>searchGeoCode(address)}>Buscar</Button>
+						</FormRow>
+						<FormRow>
+							<FieldControl>
+								<MapContainer
+									googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GMAPS_KEY}&v=3.exp&libraries=geometry,drawing,places`}
+									loadingElement={<div style={{ height: `100%` }} />}
+									containerElement={<div style={{ width: '100%', height: `400px` }} />}
+									mapElement={<div style={{ height: `100%` }} />}
+									center={{ lat: address.location[0], lng: address.location[1] }}
+									onRepositionMarker={(result)=>{setFieldValue('address.location[0]', result.latLng.lat()); setFieldValue('address.location[1]', result.latLng.lng());}}
+								/>
 							</FieldControl>
 						</FormRow>
 					</Paper>

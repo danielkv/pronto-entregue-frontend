@@ -1,3 +1,5 @@
+import { isInteger } from 'lodash';
+
 import { extractMetas, sanitizeMetas, createEmptyMetas } from "./metas";
 
 export const metaTypes = ['document', 'contact', 'phones', 'emails'];
@@ -35,10 +37,11 @@ export function sanitizeCompany(result) {
 			street: result.address.street,
 			number: parseInt(result.address.number),
 			complement: result.address.complement,
-			zipcode: parseInt(result.address.zipcode.replace(/[\D]/g, '')),
+			zipcode: isInteger(result.address.zipcode) ? result.address.zipcode : parseInt(result.address.zipcode.replace(/[\D]/g, '')),
 			district: result.address.district,
 			city: result.address.city,
-			state: result.address.state
+			state: result.address.state,
+			location: result.address.location,
 		},
 
 		metas: sanitizeMetas(metaTypes, result),
