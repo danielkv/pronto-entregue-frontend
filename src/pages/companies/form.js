@@ -108,7 +108,7 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 						</FormRow>
 						<FormRow>
 							<FieldControl>
-								{(address.location[0] && address.location[1]) && <MapContainer
+								{(address && address.location && address.location[0] && address.location[1]) && <MapContainer
 									googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GMAPS_KEY}&v=3.exp&libraries=geometry,drawing,places`}
 									loadingElement={<div style={{ height: `100%` }} />}
 									containerElement={<div style={{ width: '100%', height: `400px` }} />}

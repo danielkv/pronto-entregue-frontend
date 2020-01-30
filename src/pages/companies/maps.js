@@ -7,7 +7,7 @@ function MapContainer({ center, onRepositionMarker }) {
 		
 		<GoogleMap
 			defaultZoom={14}
-			defaultCenter={center}
+			center={center}
 		>
 			<Marker draggable onDragEnd={onRepositionMarker} position={center} />
 		</GoogleMap>
