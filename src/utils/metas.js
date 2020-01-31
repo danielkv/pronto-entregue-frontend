@@ -1,3 +1,4 @@
+import { isString }from 'lodash';
 /**
  * Convert fields to metas for saving
  * 
@@ -11,6 +12,8 @@ export const sanitizeMetas = (metas, values={}) => {
 	metas.forEach(key => {
 		if (values[key]) {
 			const value = values[key];
+			if (!isString(value.value)) value.value = value.value.toString();
+
 			switch (key) {
 				case 'phones':
 				case 'emails':

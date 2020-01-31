@@ -52,6 +52,19 @@ export const ENABLE_PAYMENT_METHOD = gql`
 	}
 `;
 
+export const GET_COMPANY_GENERAL_SETTINGS = gql`
+	query GetCompanyGeneralSettings ($id: ID!, $keys: [String]) {
+		company(id: $id) {
+			id
+			metas(keys: $keys) {
+				id
+				key
+				value
+			}
+		}
+	}
+`;
+
 export const LOAD_COMPANY = gql`
 	query LoadCompany ($id: ID!) {
 		company (id: $id) {
