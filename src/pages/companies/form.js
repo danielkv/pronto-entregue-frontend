@@ -18,6 +18,7 @@ import MapContainer from './maps';
 import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
 export default function PageForm ({ values: { active, phones, emails, type, address }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
+	const [loadingLocation, setLoadingLocation] = useState(false);
 	const [errorDialog, setErrorDialog] = useState(false);
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
 
@@ -30,9 +31,13 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 	}
 
 	async function searchGeoCode({ street, number, state, city, district }) {
+		setLoadingLocation(true);
+
 		const { json: { results } } = await googleMapsClient.geocode({
 			address: `${street}, ${number}, ${district}, ${city} ${state}`
 		}).asPromise();
+
+		setLoadingLocation(false);
 
 		const { location } = results[0].geometry;
 
@@ -104,7 +109,15 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 							</FieldControl>
 							<Field type='hidden' name='address.location[0]' />
 							<Field type='hidden' name='address.location[1]' />
-							<Button onClick={()=>searchGeoCode(address)}>Buscar</Button>
+						</FormRow>
+						<FormRow>
+							<FieldControl>
+								<Button variant='outlined' color='secondary' disabled={loadingLocation} onClick={()=>searchGeoCode(address)}>
+									{loadingLocation
+										? <CircularProgress />
+										: 'Buscar localização no mapa'}
+								</Button>
+							</FieldControl>
 						</FormRow>
 						<FormRow>
 							<FieldControl>

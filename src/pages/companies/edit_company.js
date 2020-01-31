@@ -31,6 +31,7 @@ const companySchema = Yup.object().shape({
 		district: Yup.string().required('Bairro é obrigatório'),
 		city: Yup.string().required('Cidade é obrigatório'),
 		state: Yup.string().required('Estado é obrigatório'),
+		location: Yup.array().of(Yup.string()).min(2).max(2).required('Você não setou a localização.'),
 	}),
 	phones: Yup.array().of(Yup.object().shape({
 		value: Yup.string().required('Telefone é obrigatório')
