@@ -166,7 +166,7 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 									emails.filter((row)=>row.action !== 'delete').map((email, index) => {
 										return (<FormRow key={index}>
 											<FieldControl>
-												<Field name={`emails.${index}.value`}  action={`emails.${index}.action`} component={tField} label='Email' />
+												<Field name={`emails.${index}.value`} action={`emails.${index}.action`} component={tField} label='Email' />
 											</FieldControl>
 											<FieldControl>
 												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, metaModel('email'))}}>
