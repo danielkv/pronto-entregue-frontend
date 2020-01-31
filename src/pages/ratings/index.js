@@ -21,6 +21,7 @@ import { GET_COMPANY_RATINGS } from '../../graphql/ratings';
 const initialFilter = {
 	showInactive: false,
 	search: '',
+	radius: 10,
 }
 
 function Page () {
@@ -51,11 +52,11 @@ function Page () {
 
 	const selectedCompany = useSelectedCompany();
 	const {
-		data: { company: { countRatings = 0, ratings = [] } = {} } = {},
+		data: { company: { countRatings = 0, ratings = [], rankPosition = 0 } = {} } = {},
 		loading: loadingRatings,
 		error,
 		called,
-	} = useQuery(GET_COMPANY_RATINGS, { variables: { id: selectedCompany, filter, pagination } });
+	} = useQuery(GET_COMPANY_RATINGS, { variables: { id: selectedCompany, pagination, radius: filter.radius } });
 
 	function renderStars(rate) {
 		const colors = [];
@@ -80,57 +81,71 @@ function Page () {
 		<Fragment>
 			<Content>
 				{loadingRatings ? <LoadingBlock /> :
-					<Block>
-						<BlockHeader>
-							<BlockTitle>Comentários</BlockTitle>
-						</BlockHeader>
-						<TablePagination
-							component="div"
-							backIconButtonProps={{
-								'aria-label': 'previous page',
-							}}
-							nextIconButtonProps={{
-								'aria-label': 'next page',
-							}}
-							count={countRatings}
-							rowsPerPage={pagination.rowsPerPage}
-							page={pagination.page}
-							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
-						/>
-						{ratings.map((rating, index)=>(
-							<Card style={{ marginBottom: 10 }} key={index}>
+					<>
+						<Block>
+							<BlockHeader>
+								<BlockTitle>Ranking</BlockTitle>
+							</BlockHeader>
+							<Card style={{ marginBottom: 10 }}>
 								<CardContent>
 									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '8px 0' }}>
-										<Typography><b>{rating.user.fullName}</b> para pedido</Typography>
-										<Button size='small' component={Link} to={`/pedidos/alterar/${rating.order.id}`}>
-											#{rating.order.id}
-										</Button>
+										<Typography>Você está na posição <b>{rankPosition}</b>º na região selecionada (raio de {filter.radius}km)</Typography>
 									</div>
-									<Divider />
-									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '8px 0' }}>
-										<Typography variant='caption'>{moment(rating.createdAt).fromNow()}</Typography>
-										{renderStars(rating.rate)}
-									</div>
-									<Typography variant='body1'>{rating.comment}</Typography>
 								</CardContent>
 							</Card>
-						))}
-						<TablePagination
-							component="div"
-							backIconButtonProps={{
-								'aria-label': 'previous page',
-							}}
-							nextIconButtonProps={{
-								'aria-label': 'next page',
-							}}
-							count={countRatings}
-							rowsPerPage={pagination.rowsPerPage}
-							page={pagination.page}
-							onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-							onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
-						/>
-					</Block>}
+						</Block>
+						<Block>
+							<BlockHeader>
+								<BlockTitle>Comentários</BlockTitle>
+							</BlockHeader>
+							<TablePagination
+								component="div"
+								backIconButtonProps={{
+									'aria-label': 'previous page',
+								}}
+								nextIconButtonProps={{
+									'aria-label': 'next page',
+								}}
+								count={countRatings}
+								rowsPerPage={pagination.rowsPerPage}
+								page={pagination.page}
+								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+							/>
+							{ratings.map((rating, index)=>(
+								<Card style={{ marginBottom: 10 }} key={index}>
+									<CardContent>
+										<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '8px 0' }}>
+											<Typography><b>{rating.user.fullName}</b> para pedido</Typography>
+											<Button size='small' component={Link} to={`/pedidos/alterar/${rating.order.id}`}>
+												#{rating.order.id}
+											</Button>
+										</div>
+										<Divider />
+										<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '8px 0' }}>
+											<Typography variant='caption'>{moment(rating.createdAt).fromNow()}</Typography>
+											{renderStars(rating.rate)}
+										</div>
+										<Typography variant='body1'>{rating.comment}</Typography>
+									</CardContent>
+								</Card>
+							))}
+							<TablePagination
+								component="div"
+								backIconButtonProps={{
+									'aria-label': 'previous page',
+								}}
+								nextIconButtonProps={{
+									'aria-label': 'next page',
+								}}
+								count={countRatings}
+								rowsPerPage={pagination.rowsPerPage}
+								page={pagination.page}
+								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
+								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+							/>
+						</Block>
+					</>}
 			</Content>
 			<SidebarContainer>
 				<Block>
