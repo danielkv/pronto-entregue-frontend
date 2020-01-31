@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 
 import { useQuery } from '@apollo/react-hooks';
 import { Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid, FormLabel, ListSubheader } from '@material-ui/core';
-import { mdiMapMarker, mdiPlusCircle, mdiDelete } from '@mdi/js'
+import { mdiMapMarker, mdiPlusCircle, mdiDelete, mdiMapMarkerRadius } from '@mdi/js'
 import Icon from '@mdi/react';
 import { FieldArray, Form, Field } from 'formik';
 
@@ -133,19 +133,22 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								<FieldArray name='phones'>
-									{ () => (
+								<FieldArray name='addresses'>
+									{ ({ remove }) => (
 										addresses.filter((row)=>row.action !== 'delete').map((address, index) => {
 											return (
 												<TableRow key={index}>
 													<TableCell><Icon path={mdiMapMarker} color='#BCBCBC' size={1} /></TableCell>
-													<TableCell>{address.value.name}</TableCell>
-													<TableCell>{address.value.street}</TableCell>
-													<TableCell>{address.value.district}</TableCell>
-													<TableCell>{`${address.value.city} ${address.value.state}`}</TableCell>
-													<TableCell>{address.value.zipcode}</TableCell>
+													<TableCell>{address.name}</TableCell>
+													<TableCell>{address.street}</TableCell>
+													<TableCell>{address.district}</TableCell>
+													<TableCell>{`${address.city} ${address.state}`}</TableCell>
+													<TableCell>{address.zipcode}</TableCell>
 													<TableCell>
-														<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`addresses.${index}.action`, 'delete')}}>
+														<IconButton disabled={isSubmitting} target='_new' href={`https://www.google.com/maps/place/${address.location[0]},${address.location[1]}/@${address.location[0]},${address.location[1]},17z`}>
+															<Icon path={mdiMapMarkerRadius} color='#BCBCBC' size={1} />
+														</IconButton>
+														<IconButton disabled={isSubmitting} onClick={()=>{remove(index)}}>
 															<Icon path={mdiDelete} color='#BCBCBC' size={1} />
 														</IconButton>
 													</TableCell>

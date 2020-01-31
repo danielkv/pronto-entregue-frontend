@@ -16,6 +16,17 @@ export const LOAD_USER = gql`
 					active
 				}
 			}
+			addresses {
+				id
+				name
+				street
+				number
+				zipcode
+				district
+				city
+				state
+				location
+			}
 			metas {
 				id
 				key

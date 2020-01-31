@@ -1,6 +1,7 @@
+import { createEmptyAddress, extractAddress, sanitizeAddress } from "./address";
 import { createEmptyMetas, sanitizeMetas, extractMetas } from "./metas";
 
-export const metaTypes = ['document', 'addresses', 'phones'];
+export const metaTypes = ['document', 'phones'];
 
 export function createEmptyPeople(overwrite ={}) {
 	return {
@@ -12,6 +13,7 @@ export function createEmptyPeople(overwrite ={}) {
 		assignedCompany: {
 			active: true,
 		},
+		addresses: [createEmptyAddress()],
 		...createEmptyMetas(metaTypes),
 		
 		...overwrite,
@@ -28,6 +30,7 @@ export function extractPeople(user) {
 		role: user.role,
 		password: '',
 		assignCompany: !!(user.company && user.company.userRelation),
+		addresses: user.addresses.map(address => extractAddress(address)),
 		...extractMetas(metaTypes, user.metas),
 
 		// extra fields
@@ -43,6 +46,8 @@ export function sanitizePeople(result) {
 		email: result.email,
 		active: result.active,
 
+		addresses: result.addresses.map(address => sanitizeAddress(address)),
+
 		assignCompany: result.assignCompany,
 		role: result.role,
 
@@ -52,4 +57,16 @@ export function sanitizePeople(result) {
 	if (result.password) data.password = result.password;
 
 	return data;
+}
+
+export function getUserRoleLabel(role) {
+	switch(role) {
+		case 'master':
+			return 'Master';
+		case 'adm':
+			return 'Administrador';
+		case 'customer':
+		default:
+			return 'Cliente';
+	}
 }

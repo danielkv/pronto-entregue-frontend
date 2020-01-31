@@ -1,8 +1,8 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress } from '@material-ui/core';
-import { mdiFilter, mdiAccountCircle } from '@mdi/js';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
+import { mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 
@@ -12,6 +12,7 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { getUserRoleLabel } from '../../utils/peoples';
 
 import { GET_COMPANY_USERS, UPDATE_USER } from '../../graphql/users';
 
@@ -86,9 +87,11 @@ function Page () {
 								<TableBody>
 									{users.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size={1} /></TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}>
+												<Avatar src={row.image} />
+											</TableCell>
 											<TableCell>{row.fullName}</TableCell>
-											<TableCell>{row.role}</TableCell>
+											<TableCell><Chip variant='outlined' label={getUserRoleLabel(row.role)} /></TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<Switch

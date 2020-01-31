@@ -1,5 +1,4 @@
-import { isInteger } from 'lodash';
-
+import { createEmptyAddress, extractAddress, sanitizeAddress } from './address';
 import { extractMetas, sanitizeMetas, createEmptyMetas } from "./metas";
 
 export const metaTypes = ['document', 'contact', 'phones', 'emails'];
@@ -9,17 +8,7 @@ export function createEmptyCompany(overwrite={}) {
 		name: '',
 		displayName: '',
 		type: { name: '', id: null },
-		address: {
-			name: '',
-			street: '',
-			number: '',
-			complement: '',
-			zipcode: '',
-			district: '',
-			city: '',
-			state: '',
-			location: ['', ''],
-		},
+		address: createEmptyAddress(),
 		active: true,
 		...createEmptyMetas(metaTypes),
 		...overwrite,
@@ -32,7 +21,7 @@ export function extractCompany(company) {
 		displayName: company.displayName,
 		active: company.active,
 		type: company.type,
-		address: company.address,
+		address: extractAddress(company.address),
 		...extractMetas(metaTypes, company.metas)
 	};
 }
@@ -43,18 +32,7 @@ export function sanitizeCompany(result) {
 		displayName: result.displayName,
 		active: result.active,
 		companyTypeId: result.type.id,
-		address: {
-			name: result.address.name,
-			street: result.address.street,
-			number: parseInt(result.address.number),
-			complement: result.address.complement,
-			zipcode: isInteger(result.address.zipcode) ? result.address.zipcode : parseInt(result.address.zipcode.replace(/[\D]/g, '')),
-			district: result.address.district,
-			city: result.address.city,
-			state: result.address.state,
-			location: result.address.location,
-		},
-
+		address: sanitizeAddress(result.address),
 		metas: sanitizeMetas(metaTypes, result),
 	}
 }
