@@ -174,7 +174,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 																		key={item.id}
 																		{...getItemProps({ key: item.id, index, item })}
 																	>
-																		<ListItemIcon><Icon path={mdiAccountCircle} color='#707070' size='22' /></ListItemIcon>
+																		<ListItemIcon><Icon path={mdiAccountCircle} color='#707070' size={1} /></ListItemIcon>
 																		<ListItemText>{item.fullName}</ListItemText>
 																		<ListItemSecondaryAction><small>{item.email}</small></ListItemSecondaryAction>
 																	</ListItem>)
@@ -317,7 +317,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 																						key={item.id}
 																						{...getItemProps({ key: item.id, index, item })}
 																					>
-																						<ListItemIcon><Icon path={mdiBasket} color='#707070' size='20' /></ListItemIcon>
+																						<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
 																						<ListItemText>{item.name}</ListItemText>
 																						<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
 																					</ListItem>)
@@ -374,10 +374,10 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 															</TableCell>
 															<TableCell>
 																<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
-																	<Icon path={mdiPencil} size='18' color='#363E5E' />
+																	<Icon path={mdiPencil} size={1} color='#363E5E' />
 																</IconButton>
 																<IconButton>
-																	<Icon path={mdiContentDuplicate} size='18' color='#363E5E' />
+																	<Icon path={mdiContentDuplicate} size={1} color='#363E5E' />
 																</IconButton>
 																<IconButton
 																	disabled={isSubmitting}
@@ -388,7 +388,7 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 																		}
 																	}}
 																>
-																	<Icon path={mdiDelete} size='20' color='#707070' />
+																	<Icon path={mdiDelete} size={1} color='#707070' />
 																</IconButton>
 															</TableCell>
 														</TableRow>

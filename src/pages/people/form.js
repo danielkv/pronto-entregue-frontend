@@ -95,7 +95,7 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 											</FieldControl>
 											<FieldControl>
 												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, metaModel('phone')); return false}}>
-													<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
+													<Icon path={mdiPlusCircle} size={1} color='#363E5E' />
 												</IconButton>}
 												{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{
 													e.preventDefault();
@@ -103,7 +103,7 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 														return remove(index);
 													else
 														setFieldValue(`phones.${index}.action`, 'delete')}}>
-													<Icon path={mdiDelete} size='18' color='#707070' />
+													<Icon path={mdiDelete} size={1} color='#707070' />
 												</IconButton>}
 											</FieldControl>
 										</FormRow>)
@@ -138,7 +138,7 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 										addresses.filter((row)=>row.action !== 'delete').map((address, index) => {
 											return (
 												<TableRow key={index}>
-													<TableCell><Icon path={mdiMapMarker} color='#BCBCBC' size='18' /></TableCell>
+													<TableCell><Icon path={mdiMapMarker} color='#BCBCBC' size={1} /></TableCell>
 													<TableCell>{address.value.name}</TableCell>
 													<TableCell>{address.value.street}</TableCell>
 													<TableCell>{address.value.district}</TableCell>
@@ -146,7 +146,7 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 													<TableCell>{address.value.zipcode}</TableCell>
 													<TableCell>
 														<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`addresses.${index}.action`, 'delete')}}>
-															<Icon path={mdiDelete} color='#BCBCBC' size='18' />
+															<Icon path={mdiDelete} color='#BCBCBC' size={1} />
 														</IconButton>
 													</TableCell>
 												</TableRow>)

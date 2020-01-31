@@ -62,11 +62,11 @@ function Page () {
 											<TableCell style={{ width: 100 }}>
 												{day.hours.length<2 &&
 										<IconButton disabled={loadingUpdateBusinessHours} onClick={()=>insert(1, { from: '', to: '' })}>
-											<Icon path={mdiPlusCircle} color='#209055' size='18' />
+											<Icon path={mdiPlusCircle} color='#209055' size={1} />
 										</IconButton>}
 												{day.hours.length>1 &&
 										<IconButton disabled={loadingUpdateBusinessHours} onClick={()=>remove(1)}>
-											<Icon path={mdiMinusCircle} color='#dd2020' size='18' />
+											<Icon path={mdiMinusCircle} color='#dd2020' size={1} />
 										</IconButton>}
 											</TableCell>
 										</TableRow>

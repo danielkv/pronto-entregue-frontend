@@ -155,10 +155,10 @@ function Page (props) {
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
 												<TableCell style={{ width: 100 }}>
 													<IconButton disabled={loadingUpdateOrder} onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
-														<Icon path={mdiPencil} size='18' color='#363E5E' />
+														<Icon path={mdiPencil} size={1} color='#363E5E' />
 													</IconButton>
 													<IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id} data-order-status={row.status}>
-														<Icon path={mdiDotsVertical} size='18' color='#363E5E' />
+														<Icon path={mdiDotsVertical} size={1} color='#363E5E' />
 													</IconButton>
 												</TableCell>
 											</TableRow>
@@ -186,7 +186,7 @@ function Page (props) {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 					</BlockHeader>
 					<Sidebar>
 						<form noValidate onSubmit={submitFilterForm}>

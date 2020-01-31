@@ -136,10 +136,10 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 											</FieldControl>
 											<FieldControl>
 												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, metaModel('phone')); return false}}>
-													<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
+													<Icon path={mdiPlusCircle} size={1} color='#363E5E' />
 												</IconButton>}
 												{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (phone.action ==='create') return remove(index); setFieldValue(`phones.${index}.action`, 'delete')}}>
-													<Icon path={mdiDelete} size='18' color='#707070' />
+													<Icon path={mdiDelete} size={1} color='#707070' />
 												</IconButton>}
 											</FieldControl>
 										</FormRow>)
@@ -157,10 +157,10 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 											</FieldControl>
 											<FieldControl>
 												{index === 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); insert(index+1, metaModel('email'))}}>
-													<Icon path={mdiPlusCircle} size='18' color='#363E5E' />
+													<Icon path={mdiPlusCircle} size={1} color='#363E5E' />
 												</IconButton>}
 												{index > 0 && <IconButton disabled={isSubmitting} onClick={(e)=>{e.preventDefault(); if (email.action ==='create') return remove(index); setFieldValue(`emails.${index}.action`, 'delete');}}>
-													<Icon path={mdiDelete} size='18' color='#707070' />
+													<Icon path={mdiDelete} size={1} color='#707070' />
 												</IconButton>}
 											</FieldControl>
 										</FormRow>)
@@ -228,7 +228,7 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 																		key={type.id}
 																		{...getItemProps({ key: type.id, index, item: type })}
 																	>
-																		<ListItemIcon><Icon path={mdiGroup} color='#707070' size='22' /></ListItemIcon>
+																		<ListItemIcon><Icon path={mdiGroup} color='#707070' size={1} /></ListItemIcon>
 																		<ListItemText style={{ display: 'flex', alignItems: 'center' }}>
 																			{type.name}
 																		</ListItemText>

@@ -40,7 +40,7 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 		<Draggable draggableId={`option.${optionIndex}.${groupIndex}.${option.id}`} index={optionIndex}>
 			{(provided)=>(
 				<OptionRow {...provided.draggableProps} ref={provided.innerRef}>
-					<OptionColumn><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></OptionColumn>
+					<OptionColumn><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></OptionColumn>
 					<OptionColumn>
 						{(option.editing || !option.name) ?
 							<CustomTextInput
@@ -62,7 +62,7 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 							: <div>
 								{option.name}
 								<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, true);}}>
-									<Icon path={mdiPencil} size='14' color='#707070' />
+									<Icon path={mdiPencil} size={1} color='#707070' />
 								</IconButton>
 							</div>
 						}
@@ -126,7 +126,7 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 								if (option.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.action`, 'remove');
 								removeOption(optionIndex)}
 							}>
-								<Icon path={mdiDelete } size='16' color='#707070' />
+								<Icon path={mdiDelete } size={1} color='#707070' />
 							</IconButton>}
 						</OptionColumn>
 					</OptionsInfo>

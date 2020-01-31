@@ -188,7 +188,7 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 								<div style={{ display: 'block' }}>
 									{campaigns.map((campaign, index) => {
 										const onDelete = (campaign.masterOnly && loggedUserRole === 'master') || !campaign.masterOnly ? ()=>history.push(`/campanhas/alterar/${campaign.id}`) : null;
-										return <Chip color='primary' key={index} label={campaign.name} deleteIcon={<Icon path={mdiPencil} size='18' color='#ccc' />} onDelete={onDelete} />
+										return <Chip color='primary' key={index} label={campaign.name} deleteIcon={<Icon path={mdiPencil} size={1} color='#ccc' />} onDelete={onDelete} />
 									})}
 								</div>
 							</FieldControl>
@@ -250,7 +250,7 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 																					key={group.id}
 																					{...getItemProps({ key: group.id, index, group })}
 																				>
-																					<ListItemIcon><Icon path={icon} color='#707070' size='22' /></ListItemIcon>
+																					<ListItemIcon><Icon path={icon} color='#707070' size={1} /></ListItemIcon>
 																					<ListItemText>{text}</ListItemText>
 																					<ListItemSecondaryAction><small>{secondary}</small></ListItemSecondaryAction>
 																				</ListItem>)
@@ -352,10 +352,10 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 											aria-label="text alignment"
 										>
 											<ToggleButton disabled={isSubmitting} value="inline" title="Normal" aria-label="left aligned">
-												<Icon path={mdiCheckDecagram} size='16' color='#707070' />
+												<Icon path={mdiCheckDecagram} size={1} color='#707070' />
 											</ToggleButton>
 											<ToggleButton disabled={isSubmitting} value="panel" title="Painel" aria-label="left aligned">
-												<Icon path={mdiFormatListChecks} size='16' color='#707070' />
+												<Icon path={mdiFormatListChecks} size={1} color='#707070' />
 											</ToggleButton>
 										</ToggleButtonGroup>
 									</FormControl>

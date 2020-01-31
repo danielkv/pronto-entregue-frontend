@@ -102,7 +102,7 @@ function Page (props) {
 												{Boolean(row.masterOnly) && (
 													<>
 														<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/campanhas/alterar/${row.id}`)}}>
-															<Icon path={mdiPencil} size='18' color='#363E5E' />
+															<Icon path={mdiPencil} size={1} color='#363E5E' />
 														</IconButton>
 														<Switch
 															disabled={loadingUpdating}
@@ -141,7 +141,7 @@ function Page (props) {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
 								<Switch

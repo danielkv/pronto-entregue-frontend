@@ -87,14 +87,14 @@ function Page (props) {
 								<TableBody>
 									{companies.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Icon path={mdiStore} size='20' color='#BCBCBC' /></TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Icon path={mdiStore} size={1} color='#BCBCBC' /></TableCell>
 											<TableCell>{row.name}</TableCell>
 											<TableCell><Chip variant='outlined' label={row.type.name} /></TableCell>
 											<TableCell>{numeral(row.lastMonthRevenue).format('$0,0.00')}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} onClick={()=>{props.history.push(`/empresas/alterar/${row.id}`)}}>
-													<Icon path={mdiPencil} size='18' color='#363E5E' />
+													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
 												<Switch
 													disabled={loading}
@@ -131,7 +131,7 @@ function Page (props) {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
 								<Switch

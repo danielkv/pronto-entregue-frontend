@@ -12,10 +12,9 @@ import { FormRow, FieldControl, tField } from '../../layout/components';
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
-
+import { sanitizeDeliveryAreas } from '../../utils/settings';
 
 import { GET_COMPANY_DELIVERY_AREAS, REMOVE_DELIVERY_AREA, MODIFY_DELIVERY_AREA } from '../../graphql/deliveryAreas';
-import { sanitizeDeliveryAreas } from '../../utils/settings';
 
 function Page () {
 	setPageTitle('Configurações - Locais de entrega');
@@ -98,7 +97,7 @@ function Page () {
 
 												return (
 													<TableRow key={index}>
-														<TableCell><Icon path={mdiCashMarker} color='#707070' size='18' /></TableCell>
+														<TableCell><Icon path={mdiCashMarker} color='#707070' size={1} /></TableCell>
 														<TableCell><Field disabled={inputsDisabled} component={tField} name={`deliveryAreas.${index}.name`} inputProps={{ autoComplete: "false" }} /></TableCell>
 														<TableCell>
 															<TextField disabled={inputsDisabled} onChange={handleChange} name={`deliveryAreas.${index}.type`} value={area.type} select>
@@ -148,7 +147,7 @@ function Page () {
 																		}
 																	}}
 																>
-																	<Icon path={mdiDelete} color='#707070' size='18' />
+																	<Icon path={mdiDelete} color='#707070' size={1} />
 																</IconButton>}
 														</TableCell>
 													</TableRow>
@@ -166,7 +165,7 @@ function Page () {
 													color='secondary'
 													onClick={()=>{insert(deliveryAreas.length, { name: '', type: 'single', zipcodeA: '', zipcodeB: '', price: 0 })}}
 												>
-													<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size='20' /> Adicionar
+													<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size={1} /> Adicionar
 												</Button>
 												<Button
 													type='submit'

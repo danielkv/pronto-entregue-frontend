@@ -105,7 +105,7 @@ function Page (props) {
 													{numeral(row.price).format('$0,0.00')}
 													{!!row.countCampaigns && (
 														<span style={{ marginLeft: 5 }} title={`Há ${row.countCampaigns} ${row.countCampaigns === 1 ? 'campanha vinculada' : 'campanhas vinculadas'} a este produto`}>
-															<Icon path={mdiSale} color='#999' size='18' />
+															<Icon path={mdiSale} color='#999' size={1} />
 														</span>
 													)}
 												</div>
@@ -113,7 +113,7 @@ function Page (props) {
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
-													<Icon path={mdiPencil} size='18' color='#363E5E' />
+													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
 												<Switch
 													disabled={loading}
@@ -150,7 +150,7 @@ function Page (props) {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
 								<Switch

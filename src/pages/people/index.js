@@ -87,13 +87,13 @@ function Page () {
 								<TableBody>
 									{users.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size={1} /></TableCell>
 											<TableCell>{row.fullName}</TableCell>
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
-													<Icon path={mdiPencil} size='18' color='#363E5E' />
+													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
 												<Switch
 													checked={row.active}
@@ -130,7 +130,7 @@ function Page () {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
 								<Switch

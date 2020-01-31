@@ -81,9 +81,9 @@ export default function RestrictProductsBlock() {
 															key={product.id}
 															{...getItemProps({ key: product.id, index, item: product })}
 														>
-															<ListItemIcon><Icon path={mdiBasket} color='#707070' size='22' /></ListItemIcon>
+															<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
 															<ListItemText style={{ display: 'flex', alignItems: 'center' }}>
-																{product.name} {!!product.countCampaigns && <Icon title='Há outras campanhas vinculadas à este produto' path={mdiAlert} color='#FBAE17' size='18' />}
+																{product.name} {!!product.countCampaigns && <Icon title='Há outras campanhas vinculadas à este produto' path={mdiAlert} color='#FBAE17' size={1} />}
 															</ListItemText>
 															<ListItemSecondaryAction>
 																<small>{loggedUserRole === 'master' ? product.company.name : product.category.name}</small>
@@ -107,7 +107,7 @@ export default function RestrictProductsBlock() {
 								label={product.name }
 								color='primary'
 								title={!!product.countCampaigns && 'Há outras campanhas vinculadas à esse produto'}
-								icon={!!product.countCampaigns && <Icon path={mdiAlert} color='#FBAE17' size='18' />}
+								icon={!!product.countCampaigns && <Icon path={mdiAlert} color='#FBAE17' size={1} />}
 								avatar={!product.countCampaigns && <Avatar alt={product.name} src={product.image} />}
 							/>
 						))}

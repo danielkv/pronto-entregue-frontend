@@ -127,13 +127,13 @@ function Page (props) {
 																innerRef={provided.innerRef}
 																{...provided.draggableProps}
 															>
-																<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></DraggableCell>
+																<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></DraggableCell>
 																<DraggableCell selected={selected}><Avatar alt={row.name} src={row.image} /></DraggableCell>
 																<DraggableCell selected={selected}>{row.name}</DraggableCell>
 																<DraggableCell selected={selected}><Chip variant='outlined' label={row.countProducts} /></DraggableCell>
 																<DraggableCell selected={selected}>
 																	<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>
-																		<Icon path={mdiPencil} size='18' color='#363E5E' />
+																		<Icon path={mdiPencil} size={1} color='#363E5E' />
 																	</IconButton>
 																	<Switch
 																		checked={row.active}
@@ -174,7 +174,7 @@ function Page (props) {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
 								<Switch

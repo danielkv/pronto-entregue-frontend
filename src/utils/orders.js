@@ -84,15 +84,15 @@ export const getOrderStatusIcon = (status) => {
 	// isIn: [['waiting', 'preparing', 'delivery', 'delivered', 'canceled']],
 	switch(status) {
 		case 'waiting':
-			return <Icon path={mdiClock} size='18' color='#363E5E' alt='Aguardando' title='Aguardando' />
+			return <Icon path={mdiClock} size={1} color='#363E5E' alt='Aguardando' title='Aguardando' />
 		case 'preparing':
-			return <Icon path={mdiSilverwareSpoon} size='18' color='#363E5E' alt='Preparando' title='Preparando' />
+			return <Icon path={mdiSilverwareSpoon} size={1} color='#363E5E' alt='Preparando' title='Preparando' />
 		case 'delivering':
-			return <Icon path={mdiMoped} size='18' color='#363E5E' alt='Na entrega' title='Na entrega' />
+			return <Icon path={mdiMoped} size={1} color='#363E5E' alt='Na entrega' title='Na entrega' />
 		case 'delivered':
-			return <Icon path={mdiCheckCircle} size='18' color='#058F0A' alt='Entregues' title='Entregues' />
+			return <Icon path={mdiCheckCircle} size={1} color='#058F0A' alt='Entregues' title='Entregues' />
 		case 'canceled':
-			return <Icon path={mdiCloseCircle} size='18' color='#E63A3A' alt='Cancelado' title='Cancelado' />
+			return <Icon path={mdiCloseCircle} size={1} color='#E63A3A' alt='Cancelado' title='Cancelado' />
 		default: return '';
 	}
 }

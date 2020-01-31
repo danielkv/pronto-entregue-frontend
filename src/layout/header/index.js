@@ -42,7 +42,7 @@ export default function Header () {
 			{loadingCompanies ? <CircularProgress /> :
 				<Fragment>
 					<SelectContainer>
-						<Icon path={mdiStore} size='24' color='#D41450' />
+						<Icon path={mdiStore} size={1} color='#D41450' />
 						<FormControl fullWidth={false}>
 							{(!selectedCompany || !companies.length) ? 'Nenhuma empresa' :
 								<Select
@@ -67,10 +67,10 @@ export default function Header () {
 				<RightSide>
 					<Notification />
 					<LoggedUser>
-						<Icon path={mdiAccountCircle} color='#999' size='24' />
+						<Icon  path={mdiAccountCircle} color='#999'  size={1} />
 						<span>{user.full_name} <small>({user.email})</small></span>
 					</LoggedUser>
-					<Fab onClick={handleLogout} variant='extended' size='medium' color='secondary'><Icon path={mdiLogout} size='20' color='#fff' /> Logout</Fab>
+					<Fab onClick={handleLogout} variant='extended' size='medium' color='secondary'><Icon  path={mdiLogout}  size={1} color='#fff' /> Logout</Fab>
 				</RightSide>}
 		</HeaderContainer>
 	)

@@ -71,7 +71,7 @@ export default function RestrictProductsBlock() {
 															key={user.id}
 															{...getItemProps({ key: user.id, index, item: user })}
 														>
-															<ListItemIcon><Icon path={mdiAccountCircle} color='#707070' size='22' /></ListItemIcon>
+															<ListItemIcon><Icon path={mdiAccountCircle} color='#707070' size={1} /></ListItemIcon>
 															<ListItemText>{user.fullName}</ListItemText>
 															<ListItemSecondaryAction><small>{user.email}</small></ListItemSecondaryAction>
 														</ListItem>

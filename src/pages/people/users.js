@@ -1,9 +1,8 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiAccountCircle } from '@mdi/js';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress } from '@material-ui/core';
+import { mdiFilter, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 
@@ -87,7 +86,7 @@ function Page () {
 								<TableBody>
 									{users.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size='20' /></TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Icon path={mdiAccountCircle} color='#BCBCBC' size={1} /></TableCell>
 											<TableCell>{row.fullName}</TableCell>
 											<TableCell>{row.role}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
@@ -127,7 +126,7 @@ function Page () {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 						<FormControlLabel
 							control={
 								<Switch

@@ -64,11 +64,11 @@ function Page () {
 		}
 		return (
 			<div style={{ marginLeft: 10 }} title={`${rate} ${rate > 1 ? 'estrelas' : 'estrela'}`}>
-				<Icon path={mdiStar} size='18' color={colors[0]} />
-				<Icon path={mdiStar} size='18' color={colors[1]} />
-				<Icon path={mdiStar} size='18' color={colors[2]} />
-				<Icon path={mdiStar} size='18' color={colors[3]} />
-				<Icon path={mdiStar} size='18' color={colors[4]} />
+				<Icon path={mdiStar} size={1} color={colors[0]} />
+				<Icon path={mdiStar} size={1} color={colors[1]} />
+				<Icon path={mdiStar} size={1} color={colors[2]} />
+				<Icon path={mdiStar} size={1} color={colors[3]} />
+				<Icon path={mdiStar} size={1} color={colors[4]} />
 			</div>
 		);
 	}
@@ -135,7 +135,7 @@ function Page () {
 			<SidebarContainer>
 				<Block>
 					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size='18' color='#D41450' /> Filtros</BlockTitle>
+						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
 					</BlockHeader>
 					<Sidebar>
 						<form noValidate onSubmit={submitFilterForm}>

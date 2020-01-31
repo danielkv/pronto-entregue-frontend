@@ -71,7 +71,7 @@ export default function RestrictProductsBlock() {
 															key={company.id}
 															{...getItemProps({ key: company.id, index, item: company })}
 														>
-															<ListItemIcon><Icon path={mdiStore} color='#707070' size='22' /></ListItemIcon>
+															<ListItemIcon><Icon path={mdiStore} color='#707070' size={1} /></ListItemIcon>
 															<ListItemText>{company.name}</ListItemText>
 														</ListItem>
 													))}
@@ -90,7 +90,7 @@ export default function RestrictProductsBlock() {
 								key={company.id}
 								onDelete={handleDelete(index)}
 								label={company.displayName}
-								icon={<Icon path={mdiStore} color='#D41450' size='18' />}
+								icon={<Icon path={mdiStore} color='#D41450' size={1} />}
 							/>
 						))}
 					</FieldControl>

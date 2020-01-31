@@ -140,11 +140,11 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 										<div>{product.name}</div>
 										<QuantityContainer>
 											<IconButton onClick={()=>{if (product.quantity > 1) setProduct({ ...product, quantity: product.quantity-1, action: product.action === 'editable' ? 'update' : product.action })}}>
-												<Icon path={mdiMinusCircleOutline} size='24' />
+												<Icon path={mdiMinusCircleOutline} size={1} />
 											</IconButton>
 											<div>{product.quantity}</div>
 											<IconButton onClick={()=>{setProduct({ ...product, quantity: product.quantity+1, action: product.action === 'editable' ? 'update' : product.action })}}>
-												<Icon path={mdiPlusCircleOutline} size='24' />
+												<Icon path={mdiPlusCircleOutline} size={1} />
 											</IconButton>
 										</QuantityContainer>
 									</ProductTitle>

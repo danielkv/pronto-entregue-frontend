@@ -56,7 +56,7 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 								<Table>
 									<TableBody>
 										<TableRow>
-											<TableCell style={{ width: 15 }}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size='20' color='#BCBCBC' /></div></TableCell>
+											<TableCell style={{ width: 15 }}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></TableCell>
 											<TableCell>
 												{(group.editing || !group.name) ?
 													<TextField
@@ -78,13 +78,13 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 													: <span>
 														{group.name}
 														<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); setFieldValue(`optionsGroups.${groupIndex}.editing`, true);}}>
-															<Icon path={mdiPencil} size='14' color='#707070' />
+															<Icon path={mdiPencil} size={1} color='#707070' />
 														</IconButton>
 													</span>
 												}
 												{
 													!!errors.optionsGroups && !!errors.optionsGroups[groupIndex] &&
-											<Icon path={mdiAlertCircle} color='#f44336' size='18' />
+											<Icon path={mdiAlertCircle} color='#f44336' size={1} />
 												}
 											</TableCell>
 											<TableCell  style={{ width: 70 }}>
@@ -105,10 +105,10 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														aria-label="text alignment"
 													>
 														<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="single" title="Única" aria-label="left aligned">
-															<Icon path={mdiRadioboxMarked} size='16' color='#707070' />
+															<Icon path={mdiRadioboxMarked} size={1} color='#707070' />
 														</ToggleButton>
 														<ToggleButton disabled={isSubmitting || !!groupRestrained || !!restrainedBy} value="multi" title="Múltipla" aria-label="left aligned">
-															<Icon path={mdiFormatListBulleted} size='16' color='#707070' />
+															<Icon path={mdiFormatListBulleted} size={1} color='#707070' />
 														</ToggleButton>
 													</ToggleButtonGroup>
 												</FormControl>
@@ -247,11 +247,11 @@ function OptionGroup ({ groups, group, groupIndex, setFieldValue, removeGroup, h
 														}
 														setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
 													}}>
-													<Icon path={mdiPlusCircle} size='16' color='#363E5E' />
+													<Icon path={mdiPlusCircle} size={1} color='#363E5E' />
 												</IconButton>
 												{(group.action === 'new_empty' || group.action === 'create') &&
 											<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update'); removeGroup(groupIndex)}}>
-												<Icon path={mdiDelete} size='16' color='#363E5E' />
+												<Icon path={mdiDelete} size={1} color='#363E5E' />
 											</IconButton>}
 											</TableCell>
 										</TableRow>

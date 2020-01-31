@@ -23,7 +23,7 @@ function Navigation() {
 			<NavigationContainer>
 				<NavItem to='/dashboard' selected={isSelected('dashboard')} alt='Dashboard'>
 					<ListItemIcon>
-						<Icon className='teste' path={mdiViewDashboard} size='22' color='#707070' />
+						<Icon className='teste' path={mdiViewDashboard} size={1} color='#707070' />
 					</ListItemIcon>
 					<ListItemText>
 						Inicio
@@ -31,42 +31,42 @@ function Navigation() {
 				</NavItem>
 				<NavItem to='/pedidos' selected={isSelected('pedidos')} alt='Pedidos'>
 					<ListItemIcon>
-						<Icon path={mdiViewList} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiViewList} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Pedidos
 					</ListItemText>
 				</NavItem>
 				<NavItem to='/produtos' selected={isSelected('produtos')} alt='Produtos'>
 					<ListItemIcon>
-						<Icon path={mdiBasket} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiBasket} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Produtos
 					</ListItemText>
 				</NavItem>
 				<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
 					<ListItemIcon>
-						<Icon path={mdiShape} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiShape} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 								Categorias
 					</ListItemText>
 				</NavItem>
 				<NavItem to='/usuarios' selected={isSelected('usuarios')} alt='usuários'>
 					<ListItemIcon>
-						<Icon path={mdiAccountTie } size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiAccountTie } size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Usuários
 					</ListItemText>
 				</NavItem>
 				<NavItem to='/campanhas' selected={isSelected('campanhas')} alt='Campanhas'>
 					<ListItemIcon>
-						<Icon path={mdiSale} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiSale} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Campanhas
 					</ListItemText>
 				</NavItem>
 				<NavItem to='/pontuacao' selected={isSelected('pontuacao')} alt='pontuacao'>
 					<ListItemIcon>
-						<Icon path={mdiStar} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiStar} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Pontuação
 					</ListItemText>
@@ -76,7 +76,7 @@ function Navigation() {
 
 				<NavItem selected={isSelected('configuracoes')} className={`settings`} to='/configuracoes' alt='Configurações'>
 					<ListItemIcon>
-						<Icon path={mdiSettings} size='22' color='#707070' /></ListItemIcon>
+						<Icon path={mdiSettings} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Configurações
 					</ListItemText>
@@ -90,21 +90,21 @@ function Navigation() {
 					<NavigationContainer dense={true}>
 						<NavItem to='/empresas' selected={isSelected('empresas')} alt='Empresas'>
 							<ListItemIcon>
-								<Icon path={mdiStore} size='22' color='#707070' /></ListItemIcon>
+								<Icon path={mdiStore} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Empresas
 							</ListItemText>
 						</NavItem>
 						<NavItem to='/ramos' selected={isSelected('ramos')} alt='Ramos de atividade'>
 							<ListItemIcon>
-								<Icon path={mdiGroup} size='22' color='#707070' /></ListItemIcon>
+								<Icon path={mdiGroup} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Ramos de atividade
 							</ListItemText>
 						</NavItem>
 						<NavItem to='/pessoas' selected={isSelected('pessoas')} alt='Pessoas'>
 							<ListItemIcon>
-								<Icon path={mdiAccountMultiple} size='22' color='#707070' /></ListItemIcon>
+								<Icon path={mdiAccountMultiple} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Pessoas
 							</ListItemText>

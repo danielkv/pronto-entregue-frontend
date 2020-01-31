@@ -55,7 +55,7 @@ function Page () {
 				<TableBody>
 					{paymentMethods.map((method, index)=> (
 						<TableRow key={index}>
-							<TableCell><Icon path={mdiCreditCardOutline} color='#707070' size='18' /></TableCell>
+							<TableCell><Icon path={mdiCreditCardOutline} color='#707070' size={1} /></TableCell>
 							<TableCell>{method.displayName}</TableCell>
 							<TableCell>
 								<Switch

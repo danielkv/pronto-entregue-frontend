@@ -26,7 +26,7 @@ export default function Notification() {
 		<Container>
 			<IconButton onClick={()=>history.push('/pedidos')}>
 				<Badge badgeContent={newOrders} color='secondary'>
-					<Icon path={mdiBell} color='#ccc' size='22' />
+					<Icon path={mdiBell} color='#ccc' size={1} />
 				</Badge>
 			</IconButton>
 		</Container>
