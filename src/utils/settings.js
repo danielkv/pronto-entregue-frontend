@@ -1,3 +1,5 @@
+import { isString } from 'lodash';
+
 export function sanitizeBusinessHours(businessHours) {
 	return businessHours.map(day=>{
 		delete day.__typename;
@@ -12,11 +14,8 @@ export function sanitizeBusinessHours(businessHours) {
 export function sanitizeDeliveryAreas(deliveryAreas) {
 	return deliveryAreas.map(area=>({
 		id: area.id || null,
-		name: area.name,
-		type: area.type,
+		distance: isString(area.distance) ? parseInt(area.distance) : area.distance,
 		price: area.price,
-		zipcodeA: area.zipcodeA,
-		zipcodeB: area.zipcodeB || null,
 	}))
 }
 

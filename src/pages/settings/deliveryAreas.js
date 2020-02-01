@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableCell, TextField, IconButton, TableRow, MenuItem, ButtonGroup, Button, InputAdornment, CircularProgress } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableCell, IconButton, TableRow, ButtonGroup, Button, InputAdornment, CircularProgress, FormHelperText, FormControl } from '@material-ui/core';
 import { mdiCashMarker, mdiDelete, mdiPlusCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Formik, Field, FieldArray, Form } from 'formik';
@@ -37,20 +37,7 @@ function Page () {
 	//form schema
 	const areasSchema = Yup.object().shape({
 		deliveryAreas: Yup.array().of(Yup.object().shape({
-			name: Yup.string().required('Obrigatório'),
-			type: Yup.string().required('Obrigatório'),
-			zipcodeA: Yup.mixed().when('type', (type, schema)=> {
-				if (type === 'joker')
-					return schema.test('zipcode_test', 'Campo inválido', value=> /^([\d]+)$/.test(value) );
-
-				return schema.test('zipcode_test', 'CEP inválido', value=> /^([\d]{5})-?([\d]{3})$/.test(value) )
-			}),
-			zipcodeB: Yup.mixed().when('type', (type, schema) => {
-				if (type === 'set')
-					return schema.required('Obrigatório').test('zipcode_test', 'CEP inválido', value=> /^([\d]{5})-?([\d]{3})$/.test(value) );
-				
-				return schema.notRequired();
-			}),
+			distance: Yup.number().typeError('A distancia dever ser em kilometros').required('Obrigatório'),
 			price: Yup.number().required('Obrigatório'),
 		}))
 	});
@@ -69,7 +56,7 @@ function Page () {
 			validateOnBlur={true}
 			initialValues={{ deliveryAreas: deliveryAreasInitial }}
 		>
-			{({ values: { deliveryAreas }, handleChange, setFieldValue, isSubmitting })=>{
+			{({ values: { deliveryAreas }, setFieldValue, isSubmitting })=>{
 				const inputsDisabled = loadingRemoveDeliveryArea || isSubmitting;
 
 				return (<Paper>
@@ -81,101 +68,74 @@ function Page () {
 										<TableHead>
 											<TableRow>
 												<TableCell></TableCell>
-												<TableCell>Nome</TableCell>
-												<TableCell>Tipo</TableCell>
-												<TableCell style={{ width: 240 }}>CEP</TableCell>
-												<TableCell>Valor</TableCell>
+												<TableCell>Distancia (km)</TableCell>
+												<TableCell>Valor da entrega</TableCell>
 												<TableCell></TableCell>
 											</TableRow>
 										</TableHead>
 										<TableBody>
-											{deliveryAreas.map((area, index)=>
-											{
-												let placeholder = 'Digite o CEP';
-												if (area.type === 'set') placeholder = 'CEP inicial';
-												if (area.type === 'joker') placeholder = 'Números iniciais do CEP';
-
-												return (
-													<TableRow key={index}>
-														<TableCell><Icon path={mdiCashMarker} color='#707070' size={1} /></TableCell>
-														<TableCell><Field disabled={inputsDisabled} component={tField} name={`deliveryAreas.${index}.name`} inputProps={{ autoComplete: "false" }} /></TableCell>
-														<TableCell>
-															<TextField disabled={inputsDisabled} onChange={handleChange} name={`deliveryAreas.${index}.type`} value={area.type} select>
-																<MenuItem value='single'>Simples</MenuItem>
-																<MenuItem value='set'>Variação</MenuItem>
-																<MenuItem value='joker'>Coringa</MenuItem>
-															</TextField>
-														</TableCell>
-														<TableCell>
-															<FieldControl style={{ margin: 0 }}>
-																<Field
-																	disabled={inputsDisabled}
-																	component={tField} name={`deliveryAreas.${index}.zipcodeA`}
-																	inputProps={{ placeholder }}
-																/>
-																{area.type === 'set' && <span style={{ marginLeft: 10 }}>
-																	<Field
-																		disabled={inputsDisabled}
-																		component={tField} name={`deliveryAreas.${index}.zipcodeB`}
-																		inputProps={{ placeholder: 'CEP final' }}
-																	/>
-																</span>}
-															</FieldControl>
-														</TableCell>
-														<TableCell>
-															<Field
+											{deliveryAreas.map((area, index)=> (
+												<TableRow key={index}>
+													<TableCell><Icon path={mdiCashMarker} color='#707070' size={1} /></TableCell>
+													<TableCell>
+														<Field disabled={inputsDisabled} component={tField} name={`deliveryAreas.${index}.distance`} inputProps={{ autoComplete: "false" }} />
+													</TableCell>
+													<TableCell>
+														<Field
+															disabled={inputsDisabled}
+															component={tField}
+															type='number'
+															name={`deliveryAreas.${index}.price`}
+															InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
+															inputProps={{ step: '0.01' }}
+														/>
+													</TableCell>
+													<TableCell>
+														{area.removing ?
+															<CircularProgress />
+															:
+															<IconButton
 																disabled={inputsDisabled}
-																component={tField}
-																type='number'
-																name={`deliveryAreas.${index}.price`}
-																InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
-																inputProps={{ step: '0.01' }}
-															/>
-														</TableCell>
-														<TableCell>
-															{area.removing ?
-																<CircularProgress />
-																:
-																<IconButton
-																	disabled={inputsDisabled}
-																	onClick={()=>{
-																		if (!area.id)
-																			remove(index);
-																		else {
-																			setFieldValue(`deliveryAreas.${index}.removing`, true);
-																			removeDeliveryArea({ variables: { id: area.id } });
-																		}
-																	}}
-																>
-																	<Icon path={mdiDelete} color='#707070' size={1} />
-																</IconButton>}
-														</TableCell>
-													</TableRow>
-												)})}
-								
+																onClick={()=>{
+																	if (!area.id)
+																		remove(index);
+																	else {
+																		setFieldValue(`deliveryAreas.${index}.removing`, true);
+																		removeDeliveryArea({ variables: { id: area.id } });
+																	}
+																}}
+															>
+																<Icon path={mdiDelete} color='#707070' size={1} />
+															</IconButton>}
+													</TableCell>
+												</TableRow>
+											))}
 										</TableBody>
 									</Table>
 									<FormRow></FormRow>
 									<FormRow>
 										<FieldControl>
-											<ButtonGroup disabled={inputsDisabled}>
-												{/* <Button color='secondary'>Cancelar</Button> */}
-												<Button
-													variant="contained"
-													color='secondary'
-													onClick={()=>{insert(deliveryAreas.length, { name: '', type: 'single', zipcodeA: '', zipcodeB: '', price: 0 })}}
-												>
-													<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size={1} /> Adicionar
-												</Button>
-												<Button
-													type='submit'
-													variant="contained"
-													color='secondary'
-												>
+											<FormControl>
+												<ButtonGroup disabled={inputsDisabled}>
+													{/* <Button color='secondary'>Cancelar</Button> */}
+													<Button
+														variant="contained"
+														color='secondary'
+														onClick={()=>{insert(deliveryAreas.length, { distance: '', price: 0 })}}
+													>
+														<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size={1} /> Adicionar
+													</Button>
+													<Button
+														type='submit'
+														variant="contained"
+														color='secondary'
+													>
 											Salvar
-												</Button>
-											</ButtonGroup>
-											{!!isSubmitting && <CircularProgress />}
+													</Button>
+												</ButtonGroup>
+												{!!isSubmitting && <CircularProgress />}
+												<FormHelperText>Seu estelecimento será listado no app para os clientes que estão dentro raio de entrega da maior distância definida acima.</FormHelperText>
+											</FormControl>
 										</FieldControl>
 									</FormRow>
 								</Fragment>

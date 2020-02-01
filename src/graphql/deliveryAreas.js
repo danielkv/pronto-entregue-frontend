@@ -6,11 +6,8 @@ export const GET_COMPANY_DELIVERY_AREAS = gql`
 			id
 			deliveryAreas {
 				id
-				type
-				name
+				distance
 				price
-				zipcodeA
-				zipcodeB
 			}
 		}
 	}
@@ -20,11 +17,8 @@ export const REMOVE_DELIVERY_AREA = gql`
 	mutation RemoveDeliveryArea ($id: ID!) {
 		removeDeliveryArea (id: $id) {
 			id
-			type
-			name
+			distance
 			price
-			zipcodeA
-			zipcodeB
 		}
 	}
 `;
@@ -33,11 +27,8 @@ export const MODIFY_DELIVERY_AREA = gql`
 	mutation ModifyDeliveryArea ($data:[DeliveryAreaInput]!) {
 		modifyDeliveryAreas (data:$data) {
 			id
-			type
-			name
+			distance
 			price
-			zipcodeA
-			zipcodeB
 		}
 	}
 `;
