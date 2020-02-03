@@ -87,7 +87,7 @@ export default function Layout () {
 								<Route path='/ramos/alterar/:id' component={EditType} />
 								
 								<Route exact path='/pessoas' render={()=><People />} />
-								<Route path='/pessoas/novo' render={()=><NewPeople />} />
+								<Route path='/pessoas/nova' render={()=><NewPeople />} />
 							</>
 						)}
 					</Switch>
