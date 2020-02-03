@@ -210,7 +210,7 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 										<MenuItem key='customer' value='customer'>Cliente</MenuItem>
 										{assignCompany && <ListSubheader>Permissões</ListSubheader>}
 										{assignCompany &&
-											roles.map(role => (<MenuItem key={role.id} value={role.id}>{role.displayName}</MenuItem>))
+											roles.map(r => (<MenuItem key={r.id} value={r.id}>{r.displayName}</MenuItem>))
 										}
 									</TextField>
 								</FieldControl>

@@ -89,8 +89,9 @@ function Page (props) {
 				onSubmit={onSubmit}
 				validateOnChange={true}
 				validateOnBlur={false}
-				render={(props)=><PageForm {...props} edit pageTitle='Alterar pessoa' />}
-			/>
+			>
+				{(props)=><PageForm {...props} edit pageTitle='Alterar pessoa' />}
+			</Formik>
 		</Fragment>
 	)
 }

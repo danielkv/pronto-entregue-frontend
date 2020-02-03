@@ -39,9 +39,7 @@ function Page (props) {
 	}
 	
 	function chackZipcodeOk (value) {
-		const { type } = this.parent
-
-		//console.log(type, zipcode, value);
+		const { type } = this.parent;
 
 		if (type === 'takeout') return true;
 

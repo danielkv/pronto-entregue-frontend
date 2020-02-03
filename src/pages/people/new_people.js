@@ -57,8 +57,9 @@ function Page (props) {
 			onSubmit={onSubmit}
 			validateOnChange={true}
 			validateOnBlur={false}
-			render={(props)=><PageForm {...props} pageTitle='Novo usuário' />}
-		/>
+		>
+			{(props)=><PageForm {...props} pageTitle='Novo usuário' />}
+		</Formik>
 	)
 }
 

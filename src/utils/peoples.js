@@ -10,6 +10,7 @@ export function createEmptyPeople(overwrite ={}) {
 		email: '',
 		password: '',
 		active: true,
+		role: '',
 		assignedCompany: {
 			active: true,
 		},

@@ -32,10 +32,7 @@ function Page () {
 	const initialValues = createEmptyCampaign({ companies: (!loggedUserRole || loggedUserRole === 'master') ? [] : [{ id: selectedCompany }] });
 
 	function onSubmit(data) {
-		console.log(data);
 		const dataSave = sanitizeCampaign(data);
-
-		console.log(dataSave);
 
 		return createCampaign({ variables: { data: dataSave } })
 			.then(({ data: { createItem } })=>{
