@@ -3,9 +3,9 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/styles';
 
+import ProtectedRoute from './components/ProtectedRoute';
 import { Container, HeaderArea, NavigationArea, Main } from './layout/components';
 
-import { useLoggedUserRole } from './controller/hooks';
 import Header from './layout/header';
 import Navigation from './layout/navigation';
 import theme from './layout/theme';
@@ -36,7 +36,7 @@ import Ratings from './pages/ratings';
 import Settings from './pages/settings';
 
 export default function Layout () {
-	const loggedUserRole = useLoggedUserRole();
+	
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -71,25 +71,20 @@ export default function Layout () {
 						
 						<Route exact path='/usuarios' component={Users} />
 						<Route path='/pessoas/alterar/:id' component={EditPeople} />
+						<ProtectedRoute role='master' exact path='/pessoas' component={People} />
+						<ProtectedRoute role='master' path='/pessoas/nova' component={NewPeople} />
 
 						<Route path='/pontuacao' component={Ratings} />
 						
 						<Route path='/configuracoes' component={Settings} />
 
-						{loggedUserRole === 'master' && (
-							<>
-								<Route exact path='/empresas' component={Companies} />
-								<Route path='/empresas/novo' component={NewCompany} />
-								<Route path='/empresas/alterar/:id' component={EditCompany} />
+						<ProtectedRoute exact role='master' path='/empresas' component={Companies} />
+						<ProtectedRoute role='master' path='/empresas/novo' component={NewCompany} />
+						<ProtectedRoute role='master' path='/empresas/alterar/:id' component={EditCompany} />
 
-								<Route exact path='/ramos' component={CompanyTypes} />
-								<Route path='/ramos/novo' component={NewType} />
-								<Route path='/ramos/alterar/:id' component={EditType} />
-								
-								<Route exact path='/pessoas' render={()=><People />} />
-								<Route path='/pessoas/nova' render={()=><NewPeople />} />
-							</>
-						)}
+						<ProtectedRoute role='master' exact path='/ramos' component={CompanyTypes} />
+						<ProtectedRoute role='master' path='/ramos/novo' component={NewType} />
+						<ProtectedRoute role='master' path='/ramos/alterar/:id' component={EditType} />
 					</Switch>
 				</Main>
 			</Container>
