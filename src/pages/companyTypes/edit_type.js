@@ -17,9 +17,9 @@ import { UPDATE_COMPANY_TYPE, LOAD_COMPANY_TYPE } from '../../graphql/companyTyp
 const FILE_SIZE = 500 * 1024;
 
 const validationSchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	description: Yup.string().required('Obrigatório'),
-	file: Yup.mixed().notRequired().test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE)
+	name: Yup.string().required('O nome é obrigatório'),
+	description: Yup.string().required('A descrição é obrigatória'),
+	file: Yup.mixed().notRequired().test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE)
 });
 
 function Page () {
@@ -74,7 +74,7 @@ function Page () {
 				validationSchema={validationSchema}
 				initialValues={initialValues}
 				onSubmit={onSubmit}
-				validateOnChange={true}
+				validateOnChange={false}
 				validateOnBlur={false}
 			>
 				{(props)=><PageForm {...props} pageTitle='Alterar ramo de atividade' />}

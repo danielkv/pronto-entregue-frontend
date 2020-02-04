@@ -9,11 +9,12 @@ import Icon from '@mdi/react';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar, DraggableCell } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_CATEGORIES, UPDATE_CATEGORY, UPDATE_CATEGORIES_ORDER } from '../../graphql/categories';
+import { GET_COMPANY_CATEGORIES, UPDATE_CATEGORY, UPDATE_CATEGORIES_ORDER } from '../../graphql/categories';
 
 const sort = (a, b) => {
 	if (a.order > b.order) return 1;
@@ -53,13 +54,15 @@ function Page (props) {
 		setFilter(initialFilter);
 	}
 	
+	const selectedCompany = useSelectedCompany();
+
 	const [setCategoryEnabled, { loading }] = useMutation(UPDATE_CATEGORY);
 	const [updateCategoriesOrder, { loading: loadingCategoriesOrder }] = useMutation(UPDATE_CATEGORIES_ORDER, {
-		refetchQueries: [{ query: GET_CATEGORIES, variables: { filter, pagination } }]
+		refetchQueries: [{ query: GET_COMPANY_CATEGORIES, variables: { filter, pagination, id: selectedCompany } }]
 	});
 	
-	const { data: { countCategories = 0, categories = [] } = {}, loading: loadingCategories, error, called } = useQuery(GET_CATEGORIES, {
-		variables: { filter, pagination }
+	const { data: { company: { countCategories = 0, categories = [] } = {} } = {}, loading: loadingCategories, error, called } = useQuery(GET_COMPANY_CATEGORIES, {
+		variables: { filter, pagination, id: selectedCompany }
 	});
 
 	//temp order

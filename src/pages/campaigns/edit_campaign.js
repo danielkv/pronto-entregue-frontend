@@ -16,11 +16,11 @@ import { LOAD_CAMPAIGN, UPDATE_CAMPAIGN } from '../../graphql/campaigns';
 const FILE_SIZE = 500 * 1024;
 
 const validationSchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
+	name: Yup.string().required('O nome é obrigatório'),
 	file: Yup.mixed().notRequired()
-		.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
-	description: Yup.string().required('Obrigatório'),
-	value: Yup.number().required('Obrigatório'),
+		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
+	description: Yup.string().required('A descrição é obrigatória'),
+	value: Yup.number().required('O valor é obrigatório'),
 });
 
 function Page (props) {
@@ -78,7 +78,7 @@ function Page (props) {
 				validationSchema={validationSchema}
 				initialValues={initialValues}
 				onSubmit={onSubmit}
-				validateOnChange={true}
+				validateOnChange={false}
 				validateOnBlur={false}
 				component={PageForm}
 			/>

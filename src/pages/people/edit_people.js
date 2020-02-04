@@ -15,19 +15,19 @@ import PageForm from './form';
 import { UPDATE_USER, LOAD_USER } from '../../graphql/users';
 
 const userSchema = Yup.object().shape({
-	firstName: Yup.string().required('Obrigatório'),
-	lastName: Yup.string().required('Obrigatório'),
-	email: Yup.string().required('Obrigatório'),
+	firstName: Yup.string().required('O primeiro nome é obrigatório'),
+	lastName: Yup.string().required('O sobrenome é obrigatório'),
+	email: Yup.string().required('O email é obrigatório'),
 	password: Yup.mixed().test('test_force_password', 'Você deve digitar uma senha', function (value) {
 		if (this.parent.forcePassword)
 			return Boolean(value);
 		return true;
 	}),
 	document: Yup.object().shape({
-		value: Yup.string().required('Obrigatório')
+		value: Yup.string().required('Digite o documento')
 	}),
 	phones: Yup.array().of(Yup.object().shape({
-		value: Yup.string().required('Obrigatório')
+		value: Yup.string().required('Digite pelo menos 1 número de telefone')
 	})).min(1),
 });
 
@@ -87,7 +87,7 @@ function Page (props) {
 				validationSchema={userSchema}
 				initialValues={user}
 				onSubmit={onSubmit}
-				validateOnChange={true}
+				validateOnChange={false}
 				validateOnBlur={false}
 			>
 				{(props)=><PageForm {...props} edit pageTitle='Alterar pessoa' />}

@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { Form, Field, ErrorMessage } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { DropzoneBlock } from '../../layout/blocks';
+import { errorObjectsToArray } from '../../utils/error';
 
-export default function PageForm ({ values: { active, preview }, setFieldValue, isSubmitting, pageTitle }) {
+export default function PageForm ({ values: { active, preview }, setFieldValue, isSubmitting, pageTitle, errors, isValidating }) {
+	const [errorDialog, setErrorDialog] = useState(false);
+
+	function handleCloseDialog() {
+		setErrorDialog(false)
+	}
+	useEffect(()=>{
+		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
+	}, [isValidating, errors])
+
 	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
 		if ( Array.isArray(acceptedFiles)) {
 			const file = acceptedFiles[0];
@@ -76,6 +87,24 @@ export default function PageForm ({ values: { active, preview }, setFieldValue, 
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
+			<Dialog
+				open={errorDialog && !isEmpty(errors)}
+				onClose={handleCloseDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						<ul>
+							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+						</ul>
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+				</DialogActions>
+			</Dialog>
 		</Form>
 	);
 }

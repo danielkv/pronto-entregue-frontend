@@ -43,10 +43,10 @@ function Page (props) {
 		if (type === 'takeout')
 			return Yup.mixed().notRequired();
 		
-		return (_type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
+		return (_type === 'number') ? Yup.number().required('Há algo de errado com o endereço') : Yup.string().required('Há algo de errado com o endereço')
 	}
 	
-	function chackZipcode (value) {
+	function checkZipcodeOk (value) {
 		const { type, zipcode } = this.parent
 
 		if (type)
@@ -66,11 +66,11 @@ function Page (props) {
 	}
 
 	const productSchema = Yup.object().shape({
-		status: Yup.string().required('Obrigatório'),
+		status: Yup.string().required('O status é obrigatório'),
 		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
 		message: Yup.string().notRequired(),
-		type: Yup.string().required('Obrigatório'),
-		paymentMethod: Yup.string().typeError('Obrigatório').required('Obrigatório'),
+		type: Yup.string().required('Selecione como o pedido será retirado'),
+		paymentMethod: Yup.string().typeError('O Método de pagamento é obrigatório').required('O Método de pagamento é obrigatório'),
 
 		street: Yup.mixed().when('type', checkAddress('string')),
 		number: Yup.mixed().when('type', checkAddress('number')),
@@ -79,7 +79,7 @@ function Page (props) {
 		district: Yup.mixed().when('type', checkAddress('string')),
 
 		zipcode: Yup.mixed().test('checkZipcode', 'Obrigatório', checkZipcode),
-		zipcodeOk: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', chackZipcode),
+		zipcodeOk: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', checkZipcodeOk),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
 		deliveryPrice: Yup.number().typeError('Digite um número').required('Obrigatório'),
@@ -113,7 +113,7 @@ function Page (props) {
 				validationSchema={productSchema}
 				initialValues={order}
 				onSubmit={onSubmit}
-				validateOnChange={true}
+				validateOnChange={false}
 				validateOnBlur={false}
 				component={PageForm}
 			/>

@@ -1,17 +1,18 @@
 import React, { useState, Fragment, useEffect, useCallback } from 'react';
 
 import { useQuery, useApolloClient ,useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Avatar } from '@material-ui/core';
+import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { FieldArray, Form, Field } from 'formik';
+import { isEmpty } from 'lodash';
 import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
-import { getErrors } from '../../utils/error';
+import { getErrors, errorObjectsToArray } from '../../utils/error';
 import { createEmptyOrderProduct, calculateOrderPrice } from '../../utils/orders';
 import { calculateProductPrice } from '../../utils/products';
 import ProductModal from './product_modal';
@@ -21,14 +22,23 @@ import { CALCULATE_DELIVERY_PRICE } from '../../graphql/orders';
 import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { SEARCH_USERS } from '../../graphql/users';
 
-export default function PageForm ({ values, setValues, setFieldValue, handleChange, isSubmitting, errors }) {
+export default function PageForm ({ values, setValues, setFieldValue, handleChange, isSubmitting, errors, isValidating }) {
 	// carregamento inicial
+	const [errorDialog, setErrorDialog] = useState(false);
 	const { user, type, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
 	const { zipcode } = values;
 	const client = useApolloClient();
 	const [editingProductIndex, setEditingProductIndex] = useState(null);
 	const [productModalCancel, setProductModalCancel] = useState(false);
 	const [loadingProduct, setLoadingProduct] = useState(false);
+
+	// errors
+	function handleCloseDialog() {
+		setErrorDialog(false)
+	}
+	useEffect(()=>{
+		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
+	}, [isValidating, errors])
 
 	// get selecte company
 	const selectedCompany = useSelectedCompany();
@@ -474,6 +484,24 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
+			<Dialog
+				open={errorDialog && !isEmpty(errors)}
+				onClose={handleCloseDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						<ul>
+							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+						</ul>
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+				</DialogActions>
+			</Dialog>
 		</Form>
 	)
 }

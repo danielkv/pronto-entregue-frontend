@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useCallback } from 'react';
+import React, { Fragment, useState, useCallback, useEffect } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useHistory } from 'react-router-dom';
 
@@ -10,30 +10,41 @@ import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram, mdiPencil } 
 import Icon from '@mdi/react';
 import Downshift from "downshift";
 import { FieldArray, Form, Field, ErrorMessage } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
-import { useLoggedUserRole } from '../../controller/hooks';
+import { useLoggedUserRole, useSelectedCompany } from '../../controller/hooks';
 import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
+import { errorObjectsToArray } from '../../utils/error';
 import { createEmptyOptionsGroup } from '../../utils/products';
 import OptionsGroups from './optionsGroups';
 
-import { GET_CATEGORIES } from '../../graphql/categories';
+import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
 import { LOAD_OPTION_GROUP, SEARCH_OPTIONS_GROUPS } from '../../graphql/products';
 
-export default function PageForm ({ values: { active, featured, campaigns, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isSubmitting, errors }) {
+export default function PageForm ({ values: { active, featured, campaigns, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
 	const history = useHistory();
+	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
 
 	const [loadingCopy, setLoadingCopy] = useState(false);
 	const [dragAlertOpen, setDragAlertOpen] = useState(false);
 	
-	const { data: { categories = [] } = {}, loading: loadingcategories } = useQuery(GET_CATEGORIES);
+	const selectedCompany = useSelectedCompany();
+	const { data: { company: { categories = [] } = {} } = {}, loading: loadingcategories } = useQuery(GET_COMPANY_CATEGORIES, { variables: { id: selectedCompany } });
 
 	const [searchOptionsGroups, { data: groupsData, loading: loadingGroups }] = useLazyQuery(SEARCH_OPTIONS_GROUPS, { fetchPolicy: 'no-cache' });
 	const groups = groupsData ? groupsData.searchOptionsGroups : [];
 	const client = useApolloClient();
-	
+
+	// errors
+	function handleCloseDialog() {
+		setErrorDialog(false)
+	}
+	useEffect(()=>{
+		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
+	}, [isValidating, errors])
 	
 	const sanitizeOptionsGroupsOrder = useCallback((groups) => {
 		return groups.map((row, index) => {
@@ -376,6 +387,24 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
+			<Dialog
+				open={errorDialog && !isEmpty(errors)}
+				onClose={handleCloseDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						<ul>
+							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+						</ul>
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+				</DialogActions>
+			</Dialog>
 		</Form>
 	)
 }

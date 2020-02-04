@@ -1,20 +1,23 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 import { useQuery } from '@apollo/react-hooks';
-import { Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid, FormLabel, ListSubheader } from '@material-ui/core';
+import { Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid, FormLabel, ListSubheader, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { mdiMapMarker, mdiPlusCircle, mdiDelete, mdiMapMarkerRadius } from '@mdi/js'
 import Icon from '@mdi/react';
 import { FieldArray, Form, Field } from 'formik';
+import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
+import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
 
 import { LOAD_COMPANY } from '../../graphql/companies';
 import { GET_ROLES } from '../../graphql/roles';
 
-export default function PageForm ({ edit, pageTitle, values: { active, phones, role, assignCompany, addresses, forcePassword }, setFieldValue, handleChange, isSubmitting }) {
+export default function PageForm ({ edit, pageTitle, errors, isValidating, values: { active, phones, role, assignCompany, addresses, forcePassword }, setFieldValue, handleChange, isSubmitting }) {
+	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
 	const selectedCompany = useSelectedCompany();
 	const { data: { company = null } = {} } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
@@ -24,6 +27,13 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 	useEffect(() => {
 		if (!assignCompany && (role !== 'master' && role !== 'customer')) setFieldValue('role', 'customer');
 	}, [setFieldValue, assignCompany, role])
+
+	function handleCloseDialog() {
+		setErrorDialog(false)
+	}
+	useEffect(()=>{
+		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
+	}, [isValidating, errors])
 
 	return (
 		<Form>
@@ -219,6 +229,24 @@ export default function PageForm ({ edit, pageTitle, values: { active, phones, r
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
+			<Dialog
+				open={errorDialog && !isEmpty(errors)}
+				onClose={handleCloseDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						<ul>
+							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+						</ul>
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+				</DialogActions>
+			</Dialog>
 		</Form>
 	);
 }

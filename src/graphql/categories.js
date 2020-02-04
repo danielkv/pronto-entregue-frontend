@@ -1,30 +1,33 @@
 import gql from "graphql-tag";
 
-export const GET_CATEGORY = gql`
-	query LoadCategory ($id:ID!) {
-		category (id:$id) {
+export const LOAD_CATEGORY = gql`
+	query ($id: ID!) {
+		category (id: $id) {
 			id
 			name
-			description
-			order
-			active
 			image
+			description
+			createdAt
+			active
 		}
 	}
 `;
 
 
-export const GET_CATEGORIES = gql`
-	query GetCategories ($filter: Filter!, $pagination: Pagination) {
-		countCategories(filter: $filter)
-		categories(filter: $filter, pagination: $pagination) {
+export const GET_COMPANY_CATEGORIES = gql`
+	query GetCompanyCategories ($id: ID!, $filter: Filter, $pagination: Pagination) {
+		company (id: $id) {
 			id
-			name
-			image
-			order
-			countProducts
-			createdAt
-			active
+			countCategories(filter: $filter)
+			categories(filter: $filter, pagination: $pagination) {
+				id
+				name
+				image
+				order
+				countProducts
+				createdAt
+				active
+			}
 		}
 	}
 `;

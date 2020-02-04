@@ -14,16 +14,16 @@ import { CREATE_PRODUCT, GET_COMPANY_PRODUCTS } from '../../graphql/products';
 const FILE_SIZE = 500 * 1024;
 
 const productSchema = Yup.object().shape({
-	name: Yup.string().required('Obrigatório'),
-	price: Yup.number().required('Obrigatório'),
-	description: Yup.string().required('Obrigatório'),
+	name: Yup.string().required('O nome é obrigatório'),
+	price: Yup.number().required('O preço é obrigatório (pode ser 0)'),
+	description: Yup.string().required('A descrição é obrigatória'),
 	file: Yup.mixed().required('Selecione uma imagem')
-		.test('fileSize', 'Essa imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
 	optionsGroups: Yup.array().of(Yup.object().shape({
-		name: Yup.string().required('Obrigatório'),
+		name: Yup.string().required('O nome do grupo é obrigatório'),
 		options: Yup.array().of(Yup.object().shape({
-			name: Yup.string().required('Obrigatório'),
-			price: Yup.number().required('Obrigatório'),
+			name: Yup.string().required('O nome da opção é obrigatório'),
+			price: Yup.number().required('O valor da opção obrigatório (pode ser 0)'),
 		})),
 	})),
 });
@@ -53,7 +53,7 @@ function Page (props) {
 			validationSchema={productSchema}
 			initialValues={initialValues}
 			onSubmit={onSubmit}
-			validateOnChange={true}
+			validateOnChange={false}
 			validateOnBlur={false}
 			component={PageForm}
 		/>

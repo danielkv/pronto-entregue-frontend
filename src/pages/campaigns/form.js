@@ -1,24 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import DateFnsUtils from '@date-io/date-fns';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Typography } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
 import brLocale from 'date-fns/locale/pt-BR';
 import { Form, Field } from 'formik';
-
+import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useLoggedUserRole } from '../../controller/hooks';
 import { DropzoneBlock } from '../../layout/blocks';
+import { errorObjectsToArray } from '../../utils/error';
 import RestrictCompaniesBlock from './restrictCompaniesBlock';
 import RestrictProductsBlock from './restrictProductsBlock';
 import RestrictUsersBlock from './restrictUsersBlock';
 
-export default function PageForm ({ values, setFieldValue, errors }) {
+export default function PageForm ({ values, setFieldValue, errors, isValidating }) {
 	const loggedUserRole = useLoggedUserRole();
+	const [errorDialog, setErrorDialog] = useState(false);
 
 	const {
 		preview,
@@ -40,6 +42,13 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 			setFieldValue('file', file);
 		}
 	}
+
+	function handleCloseDialog() {
+		setErrorDialog(false)
+	}
+	useEffect(()=>{
+		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
+	}, [isValidating, errors])
 	
 	return (
 		<Form>
@@ -201,6 +210,24 @@ export default function PageForm ({ values, setFieldValue, errors }) {
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
+			<Dialog
+				open={errorDialog && !isEmpty(errors)}
+				onClose={handleCloseDialog}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
+				<DialogContent>
+					<DialogContentText id="alert-dialog-description">
+						<ul>
+							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+						</ul>
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+				</DialogActions>
+			</Dialog>
 		</Form>
 	)
 }

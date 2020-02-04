@@ -38,7 +38,7 @@ function Page (props) {
 		return (_type === 'number') ? Yup.number().required('Obrigatório') : Yup.string().required('Obrigatório')
 	}
 	
-	function chackZipcodeOk (value) {
+	function checkZipcodeOk (value) {
 		const { type } = this.parent;
 
 		if (type === 'takeout') return true;
@@ -54,11 +54,11 @@ function Page (props) {
 	}
 
 	const productSchema = Yup.object().shape({
-		status: Yup.string().required('Obrigatório'),
+		status: Yup.string().required('O status é obrigatório'),
 		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
 		message: Yup.string().notRequired(),
-		type: Yup.string().required('Obrigatório'),
-		paymentMethod: Yup.string().typeError('Obrigatório').required('Obrigatório'),
+		type: Yup.string().required('Selecione como o pedido será retirado'),
+		paymentMethod: Yup.string().typeError('O Método de pagamento é obrigatório').required('O Método de pagamento é obrigatório'),
 
 		street: Yup.mixed().when('type', checkAddress('string')),
 		number: Yup.mixed().when('type', checkAddress('number')),
@@ -66,8 +66,8 @@ function Page (props) {
 		state: Yup.mixed().when('type', checkAddress('string')),
 		district: Yup.mixed().when('type', checkAddress('string')),
 
-		zipcode: Yup.mixed().test({ test: checkZipcode }),
-		zipcodeOk: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', chackZipcodeOk),
+		zipcode: Yup.mixed().test('checkZipcode', 'Obrigatório', checkZipcode),
+		zipcodeOk: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', checkZipcodeOk),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
 		deliveryPrice: Yup.number().typeError('Digite um número').required('Obrigatório'),
