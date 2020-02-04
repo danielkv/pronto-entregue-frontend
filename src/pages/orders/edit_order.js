@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { sanitizeOrder, extractOrder } from '../../utils/orders';
+import { sanitizeOrder, extractOrder, checkAddress, checkDelivery } from '../../utils/orders';
 import PageForm from './form';
 
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
@@ -39,32 +39,6 @@ function Page (props) {
 			})
 	}
 
-	const checkAddress = (_type) => (type) => {
-		if (type === 'takeout')
-			return Yup.mixed().notRequired();
-		
-		return (_type === 'number') ? Yup.number().required('Há algo de errado com o endereço') : Yup.string().required('Há algo de errado com o endereço')
-	}
-	
-	function checkZipcodeOk (value) {
-		const { type, zipcode } = this.parent
-
-		if (type)
-			return true;
-
-		if (zipcode) return true;
-
-		return !!value;
-	}
-
-	function checkZipcode (value) {
-		if (this.parent.type === 'takeout')
-			return true;
-
-		return  /^([\d]{5})-?([\d]{3})$/.test(value);
-			
-	}
-
 	const productSchema = Yup.object().shape({
 		status: Yup.string().required('O status é obrigatório'),
 		user: Yup.object().typeError('O pedido não tem um cliente selecionado'),
@@ -72,14 +46,22 @@ function Page (props) {
 		type: Yup.string().required('Selecione como o pedido será retirado'),
 		paymentMethod: Yup.string().typeError('O Método de pagamento é obrigatório').required('O Método de pagamento é obrigatório'),
 
-		street: Yup.mixed().when('type', checkAddress('string')),
-		number: Yup.mixed().when('type', checkAddress('number')),
-		city: Yup.mixed().when('type', checkAddress('string')),
-		state: Yup.mixed().when('type', checkAddress('string')),
-		district: Yup.mixed().when('type', checkAddress('string')),
+		address: Yup.object().shape({
+			street: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha o nome da rua')),
+			number: Yup.mixed().when('type', checkAddress('number', 'Endereço - Preencha o número')),
+			city: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha a cidade')),
+			state: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha o estado')),
+			district: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha o bairro')),
+			zipcode: Yup.mixed().when('type', checkAddress('number', 'Endereço - Preencha o CEP')),
+			location: Yup.mixed().when('type', (type) => {
+				if (type === 'takeout')
+					return Yup.mixed().notRequired();
+				else
+					return Yup.array().of(Yup.string().required('Endereço - Você não setou a localização.')).min(2).max(2);
+			}),
+		}),
 
-		zipcode: Yup.mixed().test('checkZipcode', 'Obrigatório', checkZipcode),
-		zipcodeOk: Yup.mixed().test('zipcode_not_found', 'Não há entregas para essa área', checkZipcodeOk),
+		deliveryOk: Yup.mixed().test('location_not_found', 'Não há entregas para essa localização', checkDelivery),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),
 		deliveryPrice: Yup.number().typeError('Digite um número').required('Obrigatório'),

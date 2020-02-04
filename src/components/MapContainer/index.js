@@ -1,19 +1,20 @@
 import React from 'react';
-import { GoogleMap, Marker, withScriptjs, withGoogleMap } from "react-google-maps"
+
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
 
-function MapContainer({ center, onRepositionMarker, disabled=false, marker }) {
+export default function MapContainer({ center, onRepositionMarker, disabled=false, marker, style={ width: '100%', height: 500 } }) {
 	return (
-		
-		<GoogleMap
-			defaultZoom={18}
-			center={center}
+		<LoadScript
+			googleMapsApiKey={process.env.REACT_APP_GMAPS_KEY}
 		>
-			<Marker draggable={!disabled} icon={marker} onDragEnd={onRepositionMarker} position={center} />
-		</GoogleMap>
-			
-
+			<GoogleMap
+				mapContainerStyle={style}
+				zoom={18}
+				center={center}
+			>
+				<Marker draggable={!disabled} onDragEnd={onRepositionMarker} position={center} />
+			</GoogleMap>
+		</LoadScript>
 	)
 }
-
-export default withScriptjs(withGoogleMap((props)=><MapContainer {...props} />));
