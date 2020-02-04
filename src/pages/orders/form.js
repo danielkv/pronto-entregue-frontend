@@ -1,7 +1,7 @@
-import React, { useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 
 import { useQuery, useApolloClient ,useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, Select, MenuItem, InputLabel, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, MenuItem, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
@@ -9,28 +9,31 @@ import { FieldArray, Form, Field } from 'formik';
 import { isEmpty } from 'lodash';
 import numeral from 'numeral';
 
+
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { getErrors, errorObjectsToArray } from '../../utils/error';
 import { createEmptyOrderProduct, calculateOrderPrice } from '../../utils/orders';
 import { calculateProductPrice } from '../../utils/products';
+import Delivery from './delivery';
 import ProductModal from './product_modal';
 
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
-import { CALCULATE_DELIVERY_PRICE } from '../../graphql/orders';
 import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { SEARCH_USERS } from '../../graphql/users';
 
-export default function PageForm ({ values, setValues, setFieldValue, handleChange, isSubmitting, errors, isValidating }) {
+export default function PageForm ({ values, setFieldValue, isSubmitting, errors, isValidating }) {
 	// carregamento inicial
+	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
+
+	// hooks
+	
 	const [errorDialog, setErrorDialog] = useState(false);
-	const { user, type, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
-	const { zipcode } = values;
-	const client = useApolloClient();
 	const [editingProductIndex, setEditingProductIndex] = useState(null);
 	const [productModalCancel, setProductModalCancel] = useState(false);
 	const [loadingProduct, setLoadingProduct] = useState(false);
+	const client = useApolloClient();
 
 	// errors
 	function handleCloseDialog() {
@@ -51,9 +54,6 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 		data: { company: { products: productsFound = [] } = {} } = {}, loading: loadingProducts
 	}] = useLazyQuery(GET_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache', variables: { id: selectedCompany } });
 
-	const [calculateDeliveryPrice, { loading: loadingdeliveryPrice }] = useMutation(CALCULATE_DELIVERY_PRICE);
-
-
 	//Query formas de pagamento
 	const {
 		data: { company: { paymentMethods = [] } = {} } = {},
@@ -64,17 +64,6 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 	}
 	const handleSearchProducts = (value) => {
 		searchProducts({ variables: { filter: { search: value } } });
-	}
-	const handleSelectAddress = ({ street, number, zipcode, district, city, state }) => {
-		setValues({
-			...values,
-			street,
-			number,
-			zipcode,
-			district,
-			city,
-			state,
-		})
 	}
 
 	const handleAddProduct = (item, { clearSelection })=>{
@@ -116,34 +105,10 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 		setEditingProductIndex(null);
 	}
 
-	const handleCalculateDeliveryPrice = useCallback((_zipcode)=>{
-		setFieldValue('zipcodeOk', false);
-		if (!_zipcode) return;
-		
-		// eslint-disable-next-line no-param-reassign
-		if (typeof _zipcode === 'string') _zipcode = parseInt(_zipcode.replace(/-/g, ''));
-		if (_zipcode.toString().length !== 8) return;
-		
-		calculateDeliveryPrice({ variables: { zipcode: _zipcode } })
-			.then(({ data: { calculateDeliveryPrice: area } }) => {
-				setFieldValue('deliveryPrice', area.price);
-				setFieldValue('zipcodeOk', true);
-			})
-			.catch(()=> {
-				setFieldValue('deliveryPrice', 0);
-				setFieldValue('zipcodeOk', false);
-			})
-			
-
-	},[calculateDeliveryPrice, setFieldValue]);
-
 	useEffect(()=>{
 		setFieldValue('price', calculateOrderPrice(products, deliveryPrice + paymentFee - discount))
 	}, [products, deliveryPrice, paymentFee, discount, setFieldValue]);
-	
-	useEffect(()=>{
-		handleCalculateDeliveryPrice(zipcode);
-	}, [zipcode, handleCalculateDeliveryPrice]);
+
 
 	return (
 		<Form>
@@ -206,210 +171,141 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 						</FormRow>
 					</Paper>
 				</Block>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Retirada do pedido</BlockTitle>
-					</BlockHeader>
-					<Paper>
-						<FormRow>
-							<FieldControl style={{ flex: .3 }}>
-								<FormControl>
-									<InputLabel htmlFor="type">Tipo</InputLabel>
-									<Select
-										disableUnderline={true}
-										name='type'
-										value={type}
-										error={!!errors.type}
-										onChange={handleChange}
-										inputProps={{
-											name: 'type',
-											id: 'type',
-										}}
-									>
-										<MenuItem value='delivery'>Entrega</MenuItem>
-										<MenuItem value='takeout'>Retirada no local</MenuItem>
-									</Select>
-									{!!errors.type && <FormHelperText error>{errors.type}</FormHelperText>}
-								</FormControl>
-							</FieldControl>
-							{type === 'delivery' &&
-							<FieldControl>
-								<FormControl>
-									<InputLabel htmlFor="user_addresses">Endereços cadastrados</InputLabel>
-									<Select
-										disableUnderline={true}
-										value={''}
-										onChange={(e)=>handleSelectAddress(user.addresses[e.target.value])}
-										inputProps={{
-											name: 'user_addresses',
-											id: 'user_addresses',
-										}}
-									>
-										{!!user && !!user.addresses && user.addresses.map((address, index)=>(
-											<MenuItem key={index} value={index}>{`${address.street}, ${address.number} (${address.city} ${address.state})`}</MenuItem>
-										))}
-									</Select>
-								</FormControl>
-							</FieldControl>}
-						</FormRow>
-						{type === 'delivery' &&
-						<Fragment>
-							<FormRow>
-								<FieldControl>
-									<Field name='street' component={tField} label='Rua' />
-								</FieldControl>
-								<FieldControl style={{ flex: .3 }}>
-									<Field type='number' name='number' component={tField} label='Número' />
-								</FieldControl>
-								<FieldControl style={{ flex: .3 }}>
-									<FormControl>
-										<Field name='zipcode' type='number' component={tField} label='CEP (apenas número)' />
-										{!!errors.zipcodeOk && <FormHelperText error>{errors.zipcodeOk}</FormHelperText>}
-									</FormControl>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
-								<FieldControl>
-									<Field name='district' component={tField} label='Bairro' />
-								</FieldControl>
-								<FieldControl>
-									<Field name='city' component={tField} label='Cidade' />
-								</FieldControl>
-								<FieldControl>
-									<Field name='state' component={tField} label='Estado' />
-								</FieldControl>
-							</FormRow>
-						</Fragment>}
-					</Paper>
-				</Block>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Produtos {!!loadingProduct && <CircularProgress />}</BlockTitle>
-					</BlockHeader>
-					<Paper>
-						<FieldArray name='products'>
-							{({ remove }) =>
-								(<Fragment>
-									<BlockSeparator>
-										<FormRow>
-											<FieldControl>
-												<FormControl>
-													<Downshift
-														onChange={handleAddProduct}
-														itemToString={(item => item ? item.name : '')}
-														onInputValueChange={(value)=>{handleSearchProducts(value)}}
-													>
-														{({
-															getInputProps,
-															getItemProps,
-															getMenuProps,
-															isOpen,
-															highlightedIndex,
-															clearSelection
-														})=>{
-															return (
-																<div>
-																	<TextField
-																		{...getInputProps({
-																			disabled: isSubmitting || loadingProduct,
-																			onBlur: clearSelection,
-																		})
-																		}
-																	/>
-																	{isOpen && (
-																		<List {...getMenuProps()} className="dropdown">
-																			{loadingProducts ? <div style={{ padding: 20 }}><CircularProgress /></div>
-																				:
-																				productsFound.map((item, index) => {
-																					return (<ListItem
-																						className="dropdown-item"
-																						selected={highlightedIndex === index}
-																						key={item.id}
-																						{...getItemProps({ key: item.id, index, item })}
-																					>
-																						<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
-																						<ListItemText>{item.name}</ListItemText>
-																						<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
-																					</ListItem>)
-																				})}
-																		</List>
-																	)}
-																</div>
-															)
-														}}
-													</Downshift>
-													<FormHelperText error={!!errors.products}>{errors.products || 'Digite para buscar produtos'}</FormHelperText>
-												</FormControl>
-											</FieldControl>
-										</FormRow>
-									</BlockSeparator>
-									<BlockSeparator>
-										<Table>
-											<TableHead>
-												<TableRow>
-													<TableCell style={{ width: 70, paddingRight: 10 }}></TableCell>
-													<TableCell>Produto</TableCell>
-													<TableCell style={{ width: 110 }}>Quantidade</TableCell>
-													<TableCell style={{ width: 110 }}>Valor</TableCell>
-													<TableCell style={{ width: 130 }}>Ações</TableCell>
-												</TableRow>
-											</TableHead>
-											<TableBody>
-												{products.filter(row=>row.action !== 'remove').map((row, index) => {
-													let productIndex = products.findIndex(r=>r.id===row.id);
-													let productPrice = calculateProductPrice(row);
-													let selectedOptions = (row.optionsGroups.filter(group=>{
-														return group.options.some(option=>option.selected);
-													})
-														.map(group=>{
-															let options = group.options.filter(option=>option.selected).map(option=>option.name);
-															return (options.length) ? options.join(', ') : '';
-														}));
-													return(
-														<TableRow key={`${row.id}.${index}`}>
-															<TableCell style={{ width: 80, paddingRight: 10 }}><Avatar src={row.image} alt={row.name} /></TableCell>
-															<TableCell>
-																<div>{row.name}</div>
-																{!!selectedOptions.length &&
-															<FormHelperText>
-																{selectedOptions.join(', ')}
-															</FormHelperText>
-																}
-															</TableCell>
-															<TableCell>
-																{row.quantity}
-															</TableCell>
-															<TableCell>
-																{numeral(productPrice).format('$0,0.00')}
-															</TableCell>
-															<TableCell>
-																<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
-																	<Icon path={mdiPencil} size={1} color='#363E5E' />
-																</IconButton>
-																<IconButton>
-																	<Icon path={mdiContentDuplicate} size={1} color='#363E5E' />
-																</IconButton>
-																<IconButton
-																	disabled={isSubmitting}
-																	onClick={()=>{
-																		if (row.action === 'create') remove(productIndex);
-																		else {
-																			setFieldValue(`products.${productIndex}.action`, 'remove');
-																		}
-																	}}
-																>
-																	<Icon path={mdiDelete} size={1} color='#707070' />
-																</IconButton>
-															</TableCell>
+				{(user && user.id) && (
+					<>
+						<Block>
+							<Delivery />
+						</Block>
+						<Block>
+							<BlockHeader>
+								<BlockTitle>Produtos {!!loadingProduct && <CircularProgress />}</BlockTitle>
+							</BlockHeader>
+							<Paper>
+								<FieldArray name='products'>
+									{({ remove }) =>
+										(<Fragment>
+											<BlockSeparator>
+												<FormRow>
+													<FieldControl>
+														<FormControl>
+															<Downshift
+																onChange={handleAddProduct}
+																itemToString={(item => item ? item.name : '')}
+																onInputValueChange={(value)=>{handleSearchProducts(value)}}
+															>
+																{({
+																	getInputProps,
+																	getItemProps,
+																	getMenuProps,
+																	isOpen,
+																	highlightedIndex,
+																	clearSelection
+																})=>{
+																	return (
+																		<div>
+																			<TextField
+																				{...getInputProps({
+																					disabled: isSubmitting || loadingProduct,
+																					onBlur: clearSelection,
+																				})
+																				}
+																			/>
+																			{isOpen && (
+																				<List {...getMenuProps()} className="dropdown">
+																					{loadingProducts ? <div style={{ padding: 20 }}><CircularProgress /></div>
+																						:
+																						productsFound.map((item, index) => {
+																							return (<ListItem
+																								className="dropdown-item"
+																								selected={highlightedIndex === index}
+																								key={item.id}
+																								{...getItemProps({ key: item.id, index, item })}
+																							>
+																								<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
+																								<ListItemText>{item.name}</ListItemText>
+																								<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
+																							</ListItem>)
+																						})}
+																				</List>
+																			)}
+																		</div>
+																	)
+																}}
+															</Downshift>
+															<FormHelperText error={!!errors.products}>{errors.products || 'Digite para buscar produtos'}</FormHelperText>
+														</FormControl>
+													</FieldControl>
+												</FormRow>
+											</BlockSeparator>
+											<BlockSeparator>
+												<Table>
+													<TableHead>
+														<TableRow>
+															<TableCell style={{ width: 70, paddingRight: 10 }}></TableCell>
+															<TableCell>Produto</TableCell>
+															<TableCell style={{ width: 110 }}>Quantidade</TableCell>
+															<TableCell style={{ width: 110 }}>Valor</TableCell>
+															<TableCell style={{ width: 130 }}>Ações</TableCell>
 														</TableRow>
-													)})}
-											</TableBody>
-										</Table>
-									</BlockSeparator>
-								</Fragment>)}
-						</FieldArray>
-					</Paper>
-				</Block>
+													</TableHead>
+													<TableBody>
+														{products.filter(row=>row.action !== 'remove').map((row, index) => {
+															let productIndex = products.findIndex(r=>r.id===row.id);
+															let productPrice = calculateProductPrice(row);
+															let selectedOptions = (row.optionsGroups.filter(group=>{
+																return group.options.some(option=>option.selected);
+															})
+																.map(group=>{
+																	let options = group.options.filter(option=>option.selected).map(option=>option.name);
+																	return (options.length) ? options.join(', ') : '';
+																}));
+															return(
+																<TableRow key={`${row.id}.${index}`}>
+																	<TableCell style={{ width: 80, paddingRight: 10 }}><Avatar src={row.image} alt={row.name} /></TableCell>
+																	<TableCell>
+																		<div>{row.name}</div>
+																		{!!selectedOptions.length &&
+																<FormHelperText>
+																	{selectedOptions.join(', ')}
+																</FormHelperText>
+																		}
+																	</TableCell>
+																	<TableCell>
+																		{row.quantity}
+																	</TableCell>
+																	<TableCell>
+																		{numeral(productPrice).format('$0,0.00')}
+																	</TableCell>
+																	<TableCell>
+																		<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
+																			<Icon path={mdiPencil} size={1} color='#363E5E' />
+																		</IconButton>
+																		<IconButton>
+																			<Icon path={mdiContentDuplicate} size={1} color='#363E5E' />
+																		</IconButton>
+																		<IconButton
+																			disabled={isSubmitting}
+																			onClick={()=>{
+																				if (row.action === 'create') remove(productIndex);
+																				else {
+																					setFieldValue(`products.${productIndex}.action`, 'remove');
+																				}
+																			}}
+																		>
+																			<Icon path={mdiDelete} size={1} color='#707070' />
+																		</IconButton>
+																	</TableCell>
+																</TableRow>
+															)})}
+													</TableBody>
+												</Table>
+											</BlockSeparator>
+										</Fragment>)}
+								</FieldArray>
+							</Paper>
+						</Block>
+					</>
+				)}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -446,7 +342,6 @@ export default function PageForm ({ values, setValues, setFieldValue, handleChan
 										component={tField}
 									/>
 								</FieldControl>
-								{!!loadingdeliveryPrice && <CircularProgress />}
 							</FormRow>
 							<FormRow>
 								<FieldControl>

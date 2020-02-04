@@ -4,6 +4,7 @@ import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle 
 import Icon from '@mdi/react';
 import { uniqueId } from 'lodash';
 
+import { createEmptyAddress, sanitizeAddress, extractAddress } from './address';
 import { calculateProductPrice } from './products';
 
 export function createEmptyOrder(overwrite={}) {
@@ -16,13 +17,9 @@ export function createEmptyOrder(overwrite={}) {
 		discount: 0,
 		status: 'waiting',
 		message: '',
-		street: '',
-		number: '',
-		complement: '',
-		city: '',
-		state: '',
-		district: '',
-		zipcode: '',
+
+		address: createEmptyAddress(),
+
 		products: [],
 		paymentMethod: null,
 		zipcodeOk: false,
@@ -41,12 +38,7 @@ export function extractOrder(order) {
 		discount: order.discount,
 		status: order.status,
 		message: order.message,
-		street: order.street,
-		number: order.number || '',
-		city: order.city,
-		state: order.state,
-		district: order.district,
-		zipcode: order.zipcode,
+		address: extractAddress(order.address),
 		paymentMethod: order.paymentMethod,
 		products: order.products.map(product=>{
 			return {
@@ -117,13 +109,7 @@ export const sanitizeOrder = (data) => {
 		price: calculateOrderPrice(data.products, data.paymentFee + data.deliveryPrice - data.discount),
 		message: data.message,
 		
-		street: data.street,
-		number: data.number || null,
-		complement: data.complement,
-		city: data.city,
-		state: data.state,
-		district: data.district,
-		zipcode: data.zipcode || null,
+		address: sanitizeAddress(data.address),
 		
 		products: data.products.map(product => {
 			let newProduct = {

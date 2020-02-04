@@ -72,12 +72,15 @@ export const SEARCH_USERS = gql`
 			email
 			addresses {
 				id
+				name
 				street
 				number
 				zipcode
+				complement
 				district
 				city
 				state
+				location
 			}
 		}
 	}

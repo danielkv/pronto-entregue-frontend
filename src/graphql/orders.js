@@ -65,12 +65,16 @@ export const ORDER_FRAGMENT = gql`
 			id
 		}
 
-		street
-		number
-		city
-		state
-		district
-		zipcode
+		address {
+			id
+			street
+			number
+			city
+			state
+			district
+			zipcode
+			location
+		}
 
 		user {
 			id
@@ -118,10 +122,10 @@ export const ORDER_FRAGMENT = gql`
 `;
 
 export const CALCULATE_DELIVERY_PRICE = gql`
-	mutation CalculateDeliveryPrice ($zipcode:Int!) {
-		calculateDeliveryPrice(zipcode: $zipcode) {
+	mutation CalculateDeliveryPrice ($companyId: ID!, $address: AddressInput!) {
+		calculateDeliveryPrice(companyId: $companyId, address: $address) {
 			id
-			name
+			distance
 			price
 		}
 	}
@@ -166,8 +170,10 @@ export const GET_COMPANY_ORDERS = gql`
 					id
 					fullName
 				}
-				street
-				number
+				address {
+					street
+					number
+				}
 				price
 				countProducts
 				status

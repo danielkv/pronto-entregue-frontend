@@ -149,7 +149,7 @@ function Page (props) {
 											<TableRow key={row.id}>
 												<TableCell>{displayDate}</TableCell>
 												<TableCell>{row.user.fullName}</TableCell>
-												<TableCell>{row.type === 'delivery' ? `${row.street}, ${row.number}` : 'Retirada no local'}</TableCell>
+												<TableCell>{row.type === 'delivery' ? `${row.address.street}, ${row.address.number}` : 'Retirada no local'}</TableCell>
 												<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
