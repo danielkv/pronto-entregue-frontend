@@ -60,7 +60,7 @@ export default function Delivery() {
 					setFieldValue('deliveryPrice', 0);
 					setFieldValue('deliveryOk', false);
 				})
-	}, [address, calculateDeliveryPrice]);
+	}, [address, calculateDeliveryPrice, setFieldValue]);
 
 	return (
 		<>
