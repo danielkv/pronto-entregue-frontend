@@ -20,7 +20,7 @@ const productSchema = Yup.object().shape({
 	price: Yup.number().required('O preço é obrigatório (pode ser 0)'),
 	description: Yup.string().required('A descrição é obrigatória'),
 	file: Yup.mixed().notRequired()
-		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
 	optionsGroups: Yup.array().of(Yup.object().shape({
 		name: Yup.string().required('O nome do grupo é obrigatório'),
 		options: Yup.array().of(Yup.object().shape({

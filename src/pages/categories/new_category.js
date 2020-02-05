@@ -35,7 +35,7 @@ function Page ({ history }) {
 
 		return createCategory({ variables: { data } })
 			.then(({ data: { createCategory } })=>{
-				history.push(`/category/alterar/${createCategory.id}`);
+				history.push(`/categorias/alterar/${createCategory.id}`);
 			})
 	}
 
