@@ -1,26 +1,22 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { useQuery, useApolloClient ,useLazyQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, IconButton, FormControl, Button, MenuItem, FormHelperText, Table, TableBody, TableRow, TableCell, TableHead, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
-import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiAccountCircle, mdiBasket } from '@mdi/js';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
-import { FieldArray, Form, Field } from 'formik';
+import { Form, Field } from 'formik';
 import { isEmpty } from 'lodash';
-import numeral from 'numeral';
-
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
-import { getErrors, errorObjectsToArray } from '../../utils/error';
-import { createEmptyOrderProduct, calculateOrderPrice } from '../../utils/orders';
-import { calculateProductPrice } from '../../utils/products';
+import { errorObjectsToArray } from '../../utils/error';
+import { calculateOrderPrice } from '../../utils/orders';
 import Delivery from './delivery';
-import ProductModal from './product_modal';
+import Products from './products';
 
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
-import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../graphql/products';
 import { SEARCH_USERS } from '../../graphql/users';
 
 export default function PageForm ({ values, setFieldValue, isSubmitting, errors, isValidating }) {
@@ -28,12 +24,7 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
 
 	// hooks
-	
 	const [errorDialog, setErrorDialog] = useState(false);
-	const [editingProductIndex, setEditingProductIndex] = useState(null);
-	const [productModalCancel, setProductModalCancel] = useState(false);
-	const [loadingProduct, setLoadingProduct] = useState(false);
-	const client = useApolloClient();
 
 	// errors
 	function handleCloseDialog() {
@@ -47,12 +38,8 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 	const selectedCompany = useSelectedCompany();
 
 	//Query de busca de usuário
-	const [searchUsers, { data: { searchUsers: usersFound = [] } = {}, loading: loadingUsers }] = useMutation(SEARCH_USERS, { fetchPolicy: 'no-cache' });
+	const [searchUsers, { data: { searchUsers: usersFound = [] } = {}, loading: loadingUsers }] = useMutation(SEARCH_USERS, { fetchPolicy: 'no-cache' })
 	
-	//Query de busca de produto
-	const [searchProducts, {
-		data: { company: { products: productsFound = [] } = {} } = {}, loading: loadingProducts
-	}] = useLazyQuery(GET_COMPANY_PRODUCTS, { fetchPolicy: 'no-cache', variables: { id: selectedCompany } });
 
 	//Query formas de pagamento
 	const {
@@ -62,48 +49,6 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 	const handleSearchCustomer = (value) => {
 		searchUsers({ variables: { search: value } });
 	}
-	const handleSearchProducts = (value) => {
-		searchProducts({ variables: { filter: { search: value } } });
-	}
-
-	const handleAddProduct = (item, { clearSelection })=>{
-		if (!item) return;
-		getProductFromItem(item)
-			.then(product=>{
-				let newProducts = [...products];
-				newProducts.unshift(product);
-				setFieldValue('products', newProducts);
-				setProductModalCancel(()=>()=>{
-					let newProducts = Array.from(products);
-					setFieldValue('products', newProducts);
-				});
-				setEditingProductIndex(0);
-				clearSelection();
-			})
-	}
-
-	const getProductFromItem = (item) => {
-		setLoadingProduct(true);
-		return client.query({ query: LOAD_PRODUCT, variables: { id: item.id } })
-			.then(({ data: { product } })=>{
-				return createEmptyOrderProduct({ ...product, action: 'create' });
-			})
-			.catch((err)=> {
-				console.error(getErrors(err));
-			})
-			.finally(()=>{
-				setLoadingProduct(false);
-			})
-	}
-
-	const handleSaveProductModal = (data) => {
-		setFieldValue(`products.${editingProductIndex}`, data);
-	}
-
-	const handleCloseProductModal = () => {
-		setProductModalCancel(null);
-		setEditingProductIndex(null);
-	}
 
 	useEffect(()=>{
 		setFieldValue('price', calculateOrderPrice(products, deliveryPrice + paymentFee - discount))
@@ -112,7 +57,6 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 
 	return (
 		<Form>
-			<ProductModal onCancel={productModalCancel} prod={products[editingProductIndex]} open={editingProductIndex!==null} onSave={handleSaveProductModal} onClose={handleCloseProductModal} />
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -173,137 +117,8 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 				</Block>
 				{(user && user.id) && (
 					<>
-						<Block>
-							<Delivery />
-						</Block>
-						<Block>
-							<BlockHeader>
-								<BlockTitle>Produtos {!!loadingProduct && <CircularProgress />}</BlockTitle>
-							</BlockHeader>
-							<Paper>
-								<FieldArray name='products'>
-									{({ remove }) =>
-										(<Fragment>
-											<BlockSeparator>
-												<FormRow>
-													<FieldControl>
-														<FormControl>
-															<Downshift
-																onChange={handleAddProduct}
-																itemToString={(item => item ? item.name : '')}
-																onInputValueChange={(value)=>{handleSearchProducts(value)}}
-															>
-																{({
-																	getInputProps,
-																	getItemProps,
-																	getMenuProps,
-																	isOpen,
-																	highlightedIndex,
-																	clearSelection
-																})=>{
-																	return (
-																		<div>
-																			<TextField
-																				{...getInputProps({
-																					disabled: isSubmitting || loadingProduct,
-																					onBlur: clearSelection,
-																				})
-																				}
-																			/>
-																			{isOpen && (
-																				<List {...getMenuProps()} className="dropdown">
-																					{loadingProducts ? <div style={{ padding: 20 }}><CircularProgress /></div>
-																						:
-																						productsFound.map((item, index) => {
-																							return (<ListItem
-																								className="dropdown-item"
-																								selected={highlightedIndex === index}
-																								key={item.id}
-																								{...getItemProps({ key: item.id, index, item })}
-																							>
-																								<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
-																								<ListItemText>{item.name}</ListItemText>
-																								<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
-																							</ListItem>)
-																						})}
-																				</List>
-																			)}
-																		</div>
-																	)
-																}}
-															</Downshift>
-															<FormHelperText error={!!errors.products}>{errors.products || 'Digite para buscar produtos'}</FormHelperText>
-														</FormControl>
-													</FieldControl>
-												</FormRow>
-											</BlockSeparator>
-											<BlockSeparator>
-												<Table>
-													<TableHead>
-														<TableRow>
-															<TableCell style={{ width: 70, paddingRight: 10 }}></TableCell>
-															<TableCell>Produto</TableCell>
-															<TableCell style={{ width: 110 }}>Quantidade</TableCell>
-															<TableCell style={{ width: 110 }}>Valor</TableCell>
-															<TableCell style={{ width: 130 }}>Ações</TableCell>
-														</TableRow>
-													</TableHead>
-													<TableBody>
-														{products.filter(row=>row.action !== 'remove').map((row, index) => {
-															let productIndex = products.findIndex(r=>r.id===row.id);
-															let productPrice = calculateProductPrice(row);
-															let selectedOptions = (row.optionsGroups.filter(group=>{
-																return group.options.some(option=>option.selected);
-															})
-																.map(group=>{
-																	let options = group.options.filter(option=>option.selected).map(option=>option.name);
-																	return (options.length) ? options.join(', ') : '';
-																}));
-															return(
-																<TableRow key={`${row.id}.${index}`}>
-																	<TableCell style={{ width: 80, paddingRight: 10 }}><Avatar src={row.image} alt={row.name} /></TableCell>
-																	<TableCell>
-																		<div>{row.name}</div>
-																		{!!selectedOptions.length &&
-																<FormHelperText>
-																	{selectedOptions.join(', ')}
-																</FormHelperText>
-																		}
-																	</TableCell>
-																	<TableCell>
-																		{row.quantity}
-																	</TableCell>
-																	<TableCell>
-																		{numeral(productPrice).format('$0,0.00')}
-																	</TableCell>
-																	<TableCell>
-																		<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
-																			<Icon path={mdiPencil} size={1} color='#363E5E' />
-																		</IconButton>
-																		<IconButton>
-																			<Icon path={mdiContentDuplicate} size={1} color='#363E5E' />
-																		</IconButton>
-																		<IconButton
-																			disabled={isSubmitting}
-																			onClick={()=>{
-																				if (row.action === 'create') remove(productIndex);
-																				else {
-																					setFieldValue(`products.${productIndex}.action`, 'remove');
-																				}
-																			}}
-																		>
-																			<Icon path={mdiDelete} size={1} color='#707070' />
-																		</IconButton>
-																	</TableCell>
-																</TableRow>
-															)})}
-													</TableBody>
-												</Table>
-											</BlockSeparator>
-										</Fragment>)}
-								</FieldArray>
-							</Paper>
-						</Block>
+						<Delivery />
+						<Products />
 					</>
 				)}
 			</Content>

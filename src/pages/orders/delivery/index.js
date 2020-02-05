@@ -5,7 +5,7 @@ import { Paper, InputLabel, Select, MenuItem, FormControl, FormHelperText, Butto
 import { useFormikContext, Field } from 'formik';
 
 import MapContainer from '../../../components/MapContainer';
-import { BlockHeader, BlockTitle, FormRow, FieldControl, tField } from '../../../layout/components';
+import { BlockHeader, BlockTitle, FormRow, FieldControl, tField, Block } from '../../../layout/components';
 
 import { useSelectedCompany } from '../../../controller/hooks';
 import googleMapsClient from '../../../services/googleMpasClient';
@@ -63,7 +63,7 @@ export default function Delivery() {
 	}, [address, calculateDeliveryPrice, setFieldValue]);
 
 	return (
-		<>
+		<Block>
 			<BlockHeader>
 				<BlockTitle>Retirada do pedido</BlockTitle>
 			</BlockHeader>
@@ -165,6 +165,6 @@ export default function Delivery() {
 							</FormRow>
 						</>}
 			</Paper>
-		</>
+		</Block>
 	)
 }

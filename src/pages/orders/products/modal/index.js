@@ -6,9 +6,9 @@ import { mdiPlusCircleOutline, mdiMinusCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 import { cloneDeep } from 'lodash';
 
-import { FormRow, FieldControl, Block, BlockSeparator } from '../../layout/components';
+import { FormRow, FieldControl, Block, BlockSeparator } from '../../../../layout/components';
 
-import { ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductInfo, QuantityContainer } from './modal_styles';
+import { ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductInfo, QuantityContainer } from './styles';
 
 const CustomTextInput = withStyles({
 	root: {
