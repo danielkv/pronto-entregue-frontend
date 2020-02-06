@@ -150,6 +150,11 @@ export default createMuiTheme({
 		}
 	},
 	props: {
+		MuiCircularProgress: {
+			color: 'secondary',
+			size: 25,
+			thickness: 4,
+		},
 		MuiTextField: {
 			fullWidth: true,
 		},

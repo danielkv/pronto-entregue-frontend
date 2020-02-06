@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
 import { Paper, TextField, FormControlLabel, Switch, Button, FormControl, FormHelperText, MenuItem, Table, TableBody, TableRow, TableCell, TableHead, IconButton, Grid, FormLabel, ListSubheader, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
@@ -12,11 +13,13 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContain
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
 import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
+import Credits from './credits';
 
 import { LOAD_COMPANY } from '../../graphql/companies';
 import { GET_ROLES } from '../../graphql/roles';
 
 export default function PageForm ({ edit, pageTitle, errors, isValidating, values: { active, phones, role, assignCompany, addresses, forcePassword }, setFieldValue, handleChange, isSubmitting }) {
+	const { id: editId } = useParams();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
 	const selectedCompany = useSelectedCompany();
@@ -171,6 +174,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 					</BlockSeparator>
 				</Paper>
 			</Block>}
+				{Boolean(editId) && <Credits userId={editId} />}
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -209,7 +213,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 										control={
 											<Switch size='small' color='primary' checked={assignCompany} onChange={()=>{setFieldValue('assignCompany', !assignCompany)}} />
 										}
-										label="Ativo"
+										label={assignCompany ? 'Vinculado' : 'Desvinculado'}
 									/>
 								</FieldControl>
 							</FormRow>
