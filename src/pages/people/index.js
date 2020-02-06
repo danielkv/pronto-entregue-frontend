@@ -9,7 +9,7 @@ import moment from 'moment';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
-import { useSelectedCompany } from '../../controller/hooks';
+import { useSelectedCompany, useLoggedUserId } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
@@ -24,6 +24,8 @@ const initialFilter = {
 
 function Page () {
 	setPageTitle('Pessoas');
+
+	const loggedUserId = useLoggedUserId();
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -98,15 +100,17 @@ function Page () {
 												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
-												<Switch
-													checked={row.active}
-													onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
-													value="checkedB"
-													disabled={loading}
-													size='small'
-													color="secondary"
-													inputProps={{ 'aria-label': 'primary checkbox' }}
-												/>
+												{row.id !== loggedUserId && row.role !== 'master' && (
+													<Switch
+														checked={row.active}
+														onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
+														value="checkedB"
+														disabled={loading}
+														size='small'
+														color="secondary"
+														inputProps={{ 'aria-label': 'primary checkbox' }}
+													/>
+												)}
 											</TableCell>
 										</TableRow>
 									))}

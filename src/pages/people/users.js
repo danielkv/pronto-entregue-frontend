@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
-import { useSelectedCompany } from '../../controller/hooks';
+import { useSelectedCompany, useLoggedUserId } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
@@ -22,6 +22,8 @@ const initialFilter = {
 
 function Page () {
 	setPageTitle('Usuários');
+
+	const loggedUserId = useLoggedUserId()
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -91,15 +93,17 @@ function Page () {
 											<TableCell>{row.fullName}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
-												<Switch
-													checked={row.active}
-													onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
-													value="checkedB"
-													disabled={loading}
-													size='small'
-													color="secondary"
-													inputProps={{ 'aria-label': 'primary checkbox' }}
-												/>
+												{row.id !== loggedUserId && (
+													<Switch
+														checked={row.active}
+														onChange={()=>setUserEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
+														value="checkedB"
+														disabled={loading}
+														size='small'
+														color="secondary"
+														inputProps={{ 'aria-label': 'primary checkbox' }}
+													/>
+												)}
 											</TableCell>
 										</TableRow>
 									))}
