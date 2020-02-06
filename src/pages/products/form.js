@@ -1,15 +1,13 @@
-import React, { Fragment, useState, useCallback, useEffect } from 'react';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useQuery, useApolloClient ,useLazyQuery } from '@apollo/react-hooks';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment, CircularProgress, Chip } from '@material-ui/core';
+import { useQuery } from '@apollo/react-hooks';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment, Chip } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { mdiPlus, mdiBasket, mdiFormatListChecks, mdiCheckDecagram, mdiPencil } from '@mdi/js'
+import { mdiFormatListChecks, mdiCheckDecagram, mdiPencil } from '@mdi/js'
 import Icon from '@mdi/react';
-import Downshift from "downshift";
-import { FieldArray, Form, Field, ErrorMessage } from 'formik';
+import { Form, Field, ErrorMessage } from 'formik';
 import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
@@ -17,26 +15,17 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContain
 import { useLoggedUserRole, useSelectedCompany } from '../../controller/hooks';
 import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
 import { errorObjectsToArray } from '../../utils/error';
-import { createEmptyOptionsGroup } from '../../utils/products';
-import OptionsGroups from './optionsGroups';
+import OptionsBlock from './optionsBlock';
 
 import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
-import { LOAD_OPTION_GROUP, SEARCH_OPTIONS_GROUPS } from '../../graphql/products';
 
-export default function PageForm ({ values: { active, featured, campaigns, price, type, preview, category, optionsGroups }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
+export default function PageForm ({ values: { active, featured, campaigns, price, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
 	const history = useHistory();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
-
-	const [loadingCopy, setLoadingCopy] = useState(false);
-	const [dragAlertOpen, setDragAlertOpen] = useState(false);
 	
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { categories = [] } = {} } = {}, loading: loadingcategories } = useQuery(GET_COMPANY_CATEGORIES, { variables: { id: selectedCompany } });
-
-	const [searchOptionsGroups, { data: groupsData, loading: loadingGroups }] = useLazyQuery(SEARCH_OPTIONS_GROUPS, { fetchPolicy: 'no-cache' });
-	const groups = groupsData ? groupsData.searchOptionsGroups : [];
-	const client = useApolloClient();
 
 	// errors
 	function handleCloseDialog() {
@@ -45,82 +34,6 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 	useEffect(()=>{
 		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
 	}, [isValidating, errors])
-	
-	const sanitizeOptionsGroupsOrder = useCallback((groups) => {
-		return groups.map((row, index) => {
-			row.order = index;
-			if (row.action==='editable') row.action = 'update';
-			return row;
-		})
-	}, [])
-	
-	const sanitizeOptionsOrder = useCallback((group) => {
-		group.options.map((row, index) => {
-			row.order = index;
-			if (row.action==='editable') row.action = 'update';
-			return row;
-		});
-		if (group.action === 'editable') group.action = 'update';
-		return group;
-	}, []);
-	
-	const onDragEnd = (groups, setFieldValue) => (result)=>{
-		if (!result.destination || result.destination.index === result.source.index) return;
-		
-		const list = Array.from(groups);
-		
-		if (result.type === 'group') {
-			let [removed] = list.splice(result.source.index, 1);
-			list.splice(result.destination.index, 0, removed);
-			
-			setFieldValue('optionsGroups', sanitizeOptionsGroupsOrder(list));
-		}
-		
-		if (result.type === 'option') {
-			let droppableSource = result.source.droppableId.split('.')[1];
-			let droppableDestination = result.destination.droppableId.split('.')[1];
-			
-			let draggableId = result.draggableId.split('.')[3];
-			
-			if (droppableSource !== droppableDestination && list[droppableDestination].options.find(row=>row.id===draggableId)) {
-				setDragAlertOpen(true);
-				return;
-			}
-			
-			let [removed] = list[droppableSource].options.splice(result.source.index, 1);
-			list[droppableDestination].options.splice(result.destination.index, 0, removed);
-			
-			list[droppableSource] = sanitizeOptionsOrder(list[droppableSource]);
-			list[droppableDestination] = sanitizeOptionsOrder(list[droppableDestination]);
-			
-			setFieldValue('optionsGroups', list);
-		}
-	}
-	
-	const handleSearchGroups = (search) => {
-		searchOptionsGroups({ variables: { search } });
-	}
-	
-	const getCopiedOptionGroup = (group) => {
-		setLoadingCopy(true);
-		return client.query({ query: LOAD_OPTION_GROUP, variables: { id: group.id } })
-			.then(({ data: { optionsGroup } })=>{
-				delete optionsGroup.id;
-				optionsGroup.action = 'create';
-				optionsGroup.options = optionsGroup.options.map(row =>{
-					delete row.id;
-					row.action='create';
-					return row
-				});
-				return optionsGroup;
-			})
-			.catch(e=>{
-				console.error(e);
-			})
-			.finally(()=>{
-				setLoadingCopy(false);
-			})
-	}
 	
 	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
 		if (Array.isArray(acceptedFiles)) {
@@ -131,30 +44,10 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 		}
 	}
 
-	const handleChangeCallback = useCallback(handleChange, []);
-
 	if (loadingcategories) return <LoadingBlock />;
 	
 	return (
 		<Form>
-			<Dialog
-				open={dragAlertOpen}
-				onClose={()=>setDragAlertOpen(false)}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">Você não pode soltar esse item aqui</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						Essa opção já está dentro desse grupo, tente criar uma nova.
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={()=>setDragAlertOpen(false)} color="primary" autoFocus>
-						Ok
-					</Button>
-				</DialogActions>
-			</Dialog>
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -206,112 +99,7 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 						</FormRow>}
 					</Paper>
 				</Block>
-				<Block>
-					<BlockHeader>
-						<BlockTitle>Opções</BlockTitle>
-						{loadingCopy && <CircularProgress />}
-					</BlockHeader>
-					<Paper style={{ overflow: 'visible' }}>
-						<FieldArray  name={`optionsGroups`}>
-							{() => (
-								<Fragment>
-									<BlockSeparator>
-										<FormRow>
-											<FieldControl>
-												<FormControl>
-													<Downshift
-														onChange={async (selected)=>{
-															if (selected.action !== 'create') {
-																// eslint-disable-next-line no-param-reassign
-																selected = await getCopiedOptionGroup(selected);
-															}
-															const list = Array.from(optionsGroups);
-															list.unshift({ ...selected, id: Math.round(Math.random()*1000) });
-															setFieldValue('optionsGroups', sanitizeOptionsGroupsOrder(list));
-														}}
-														itemToString={(item => item ? item.name : '')}
-														onInputValueChange={(value)=>{handleSearchGroups(value)}}
-													>
-														{({
-															getInputProps,
-															getItemProps,
-															getMenuProps,
-															isOpen,
-															inputValue,
-															highlightedIndex,
-														})=>{
-															if (inputValue && (!groups.length || !groups[groups.length-1].action))
-																groups.push(createEmptyOptionsGroup({ id: Math.round(Math.random()*1000), name: inputValue, action: 'create' }));
-
-															return (
-																<div>
-																	<TextField disabled={loadingCopy} {...getInputProps()} />
-																	{isOpen && (
-																		<List {...getMenuProps()} className="dropdown">
-																			{loadingGroups && <div style={{ padding: 20 }}><CircularProgress /></div>}
-																		
-																			{groups.map((group, index) => {
-																				let icon = group.action && group.action === 'create' ? mdiPlus : mdiBasket;
-																				let text = group.action && group.action === 'create' ? inputValue : <span>{`${group.name} `}<small>{`(${group.countOptions})`}</small></span>;
-																				let secondary = group.action && group.action === 'create' ? 'criar novo grupo' : `copiar de ${group.product.name}`;
-
-																				return (<ListItem
-																					className="dropdown-item"
-																					selected={highlightedIndex === index}
-																					key={group.id}
-																					{...getItemProps({ key: group.id, index, group })}
-																				>
-																					<ListItemIcon><Icon path={icon} color='#707070' size={1} /></ListItemIcon>
-																					<ListItemText>{text}</ListItemText>
-																					<ListItemSecondaryAction><small>{secondary}</small></ListItemSecondaryAction>
-																				</ListItem>)
-																			})}
-																		</List>
-																	)}
-																</div>
-															)
-														}}
-													</Downshift>
-													<FormHelperText>Crie um grupo novo ou copie um grupo já existente</FormHelperText>
-												</FormControl>
-											</FieldControl>
-										</FormRow>
-									</BlockSeparator>
-									<BlockSeparator>
-										<DragDropContext onDragEnd={onDragEnd(optionsGroups, setFieldValue)}>
-											<Droppable droppableId={`groups`} type='group'>
-												{(provided)=>(
-													
-													<div {...provided.droppableProps} ref={provided.innerRef}>
-														{optionsGroups.map((group, groupIndex)=>{
-															const props = {
-																groups: optionsGroups,
-																group,
-																sanitizeOptionsGroupsOrder,
-																sanitizeOptionsOrder,
-																groupIndex,
-																/* insertGroup:insert,
-																removeGroup:remove, */
-																isSubmitting,
-
-																setFieldValue,
-																handleChangeCallback,
-																errors
-															}
-															return <OptionsGroups key={`${group.id}.${groupIndex}`} {...props} />
-														})}
-														{provided.placeholder}
-													</div>
-														
-												)}
-											</Droppable>
-										</DragDropContext>
-									</BlockSeparator>
-								</Fragment>
-							)}
-						</FieldArray>
-					</Paper>
-				</Block>
+				<OptionsBlock />
 			</Content>
 			<SidebarContainer>
 				<Block>

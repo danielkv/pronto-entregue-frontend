@@ -29,7 +29,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 `;
 
 export const LOAD_OPTION_GROUP = gql`
-	query ($id: ID!, $filter:Filter) {
+	query ($id: ID!) {
 		optionsGroup (id:$id) {
 			...OptionsGroupFields
 		}
@@ -38,7 +38,7 @@ export const LOAD_OPTION_GROUP = gql`
 `;
 
 export const LOAD_PRODUCT = gql`
-	query LoadProduct ($id: ID!, $filter:Filter) {
+	query LoadProduct ($id: ID!, $filter: Filter) {
 		product (id: $id) {
 			id
 			name

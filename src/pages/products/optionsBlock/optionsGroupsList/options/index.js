@@ -5,6 +5,7 @@ import { TextField, InputAdornment, IconButton, Switch } from '@material-ui/core
 import { withStyles } from '@material-ui/core/styles';
 import { mdiDrag, mdiDelete, mdiPencil } from '@mdi/js'
 import Icon from '@mdi/react';
+import { useFormikContext } from 'formik';
 import { isEqual } from 'lodash';
 
 import {
@@ -21,9 +22,12 @@ const CustomTextInput = withStyles({
 	}
 })(TextField);
 
-function Option ({ group, option, groupIndex, optionIndex, setFieldValue, removeOption, errors, isSubmitting, groupRestrained }) {
+function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
+	const { values: { optionsGroups }, errors, isSubmitting, setFieldValue } = useFormikContext();
 	const inputName = useRef(null);
 	const editing = !!option.editing;
+	const group = optionsGroups[groupIndex];
+	const groupRestrained = group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : '';
 	
 	useEffect(()=>{
 		if (editing && inputName.current) {
@@ -124,9 +128,9 @@ function Option ({ group, option, groupIndex, optionIndex, setFieldValue, remove
 							<IconButton onClick={()=>{
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 								if (option.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.action`, 'remove');
-								removeOption(optionIndex)}
+								optionsHelpers.remove(optionIndex)}
 							}>
-								<Icon path={mdiDelete } size={1} color='#707070' />
+								<Icon path={mdiDelete } size={.7} color='#707070' />
 							</IconButton>}
 						</OptionColumn>
 					</OptionsInfo>
