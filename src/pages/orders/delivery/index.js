@@ -9,6 +9,7 @@ import { BlockHeader, BlockTitle, FormRow, FieldControl, tField, Block } from '.
 
 import { useSelectedCompany } from '../../../controller/hooks';
 import googleMapsClient from '../../../services/googleMpasClient';
+import { sanitizeAddress } from '../../../utils/address';
 
 import { CALCULATE_DELIVERY_PRICE } from '../../../graphql/orders';
 
@@ -50,17 +51,20 @@ export default function Delivery() {
 	const [calculateDeliveryPrice, { loading: loadingdeliveryPrice }] = useMutation(CALCULATE_DELIVERY_PRICE, { variables: { companyId: selectedCompany } });
 
 	useEffect(()=>{
-		if (address.location[0] !== '' && address.location[1] !== '')
-			calculateDeliveryPrice({ variables: { address } })
-				.then(({ data: { calculateDeliveryPrice: area } }) => {
-					setFieldValue('deliveryPrice', area.price);
-					setFieldValue('deliveryOk', true);
-				})
-				.catch(()=> {
-					setFieldValue('deliveryPrice', 0);
-					setFieldValue('deliveryOk', false);
-				})
-	}, [address, calculateDeliveryPrice, setFieldValue]);
+		if (type === 'delivery') {
+			if (address.location[0] !== '' && address.location[1] !== '') {
+				calculateDeliveryPrice({ variables: { address: sanitizeAddress(address) } })
+					.then(({ data: { calculateDeliveryPrice: area } }) => {
+						setFieldValue('deliveryPrice', area.price);
+						setFieldValue('deliveryOk', true);
+					})
+					.catch(()=> {
+						setFieldValue('deliveryPrice', 0);
+						setFieldValue('deliveryOk', false);
+					})
+			}
+		}
+	}, [type, address, calculateDeliveryPrice, setFieldValue]);
 
 	return (
 		<Block>
@@ -115,30 +119,30 @@ export default function Delivery() {
 						<>
 							<FormRow>
 								<FieldControl style={{ flex: .3 }}>
-									<Field controlDisabled={loadingdeliveryPrice || isSubmitting} name='address.name' component={tField} label='Identificação' />
+									<Field controldisabled={loadingdeliveryPrice || isSubmitting} name='address.name' component={tField} label='Identificação' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
-									<Field controlDisabled={loadingdeliveryPrice || isSubmitting} name='address.street' component={tField} label='Rua' />
+									<Field controldisabled={loadingdeliveryPrice || isSubmitting} name='address.street' component={tField} label='Rua' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
-									<Field controlDisabled={loadingdeliveryPrice || isSubmitting} type='number' name='address.number' component={tField} label='Número' />
+									<Field controldisabled={loadingdeliveryPrice || isSubmitting} type='number' name='address.number' component={tField} label='Número' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
 									<FormControl>
-										<Field controlDisabled={loadingdeliveryPrice || isSubmitting} name='address.zipcode' type='number' component={tField} label='CEP (apenas número)' />
+										<Field controldisabled={loadingdeliveryPrice || isSubmitting} name='address.zipcode' type='number' component={tField} label='CEP (apenas número)' />
 										{!!errors.zipcodeOk && <FormHelperText error>{errors.zipcodeOk}</FormHelperText>}
 									</FormControl>
 								</FieldControl>
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Field controlDisabled={loadingdeliveryPrice || isSubmitting} name='address.district' component={tField} label='Bairro' />
+									<Field controldisabled={loadingdeliveryPrice || isSubmitting} name='address.district' component={tField} label='Bairro' />
 								</FieldControl>
 								<FieldControl>
-									<Field controlDisabled={loadingdeliveryPrice || isSubmitting} name='address.city' component={tField} label='Cidade' />
+									<Field controldisabled={loadingdeliveryPrice || isSubmitting} name='address.city' component={tField} label='Cidade' />
 								</FieldControl>
 								<FieldControl>
-									<Field controlDisabled={loadingdeliveryPrice || isSubmitting} name='address.state' component={tField} label='Estado' />
+									<Field controldisabled={loadingdeliveryPrice || isSubmitting} name='address.state' component={tField} label='Estado' />
 								</FieldControl>
 							</FormRow>
 							<FormRow>

@@ -171,6 +171,7 @@ export const GET_COMPANY_ORDERS = gql`
 					fullName
 				}
 				address {
+					id
 					street
 					number
 				}

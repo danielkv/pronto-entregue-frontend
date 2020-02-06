@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
 	value: Yup.number().required('O valor é obrigatório'),
 });
 
-function Page () {
+function Page ({ history }) {
 	setPageTitle('Novo produto');
 
 	const loggedUserRole = useLoggedUserRole();
@@ -35,9 +35,8 @@ function Page () {
 		const dataSave = sanitizeCampaign(data);
 
 		return createCampaign({ variables: { data: dataSave } })
-			.then(({ data: { createItem } })=>{
-				console.log(createItem);
-				//props.history.push(`/estoque/alterar/${createItem.id}`);
+			.then(({ data: { createCampaign } })=>{
+				history.push(`/campanhas/alterar/${createCampaign.id}`);
 			})
 			.catch((err)=>{
 				console.error(err);

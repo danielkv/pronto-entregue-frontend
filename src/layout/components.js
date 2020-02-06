@@ -166,7 +166,7 @@ export function tField(props) {
 	let { field, form: { isSubmitting, errors, setFieldValue, values } } = props;
 	let error = '';
 	const nesting = field.name.split('.');
-	let controlDisabled = typeof props.controlDisabled !== "undefined" ? props.controlDisabled : isSubmitting;
+	let controldisabled = typeof props.controldisabled !== "undefined" ? props.controldisabled : isSubmitting;
 	
 	if (errors[nesting[0]]) error = nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, errors);
 
@@ -185,7 +185,7 @@ export function tField(props) {
 
 	return (
 	//		<TextField {...field} inputProps={inputProps} InputProps={InputProps} onClick={(e)=>{e.stopPropagation();}} type={type} label={label}  helperText={error} disabled={isSubmitting}  />
-		<TextField {...props} {...field} disabled={controlDisabled} error={!!error} helperText={error}  />
+		<TextField {...props} {...field} disabled={controldisabled} error={!!error} helperText={error}  />
 	)
 }
 

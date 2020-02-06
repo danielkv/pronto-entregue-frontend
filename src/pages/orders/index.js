@@ -143,7 +143,6 @@ function Page (props) {
 								</TableHead>
 								<TableBody>
 									{orders.map(row => {
-										console.log(row);
 										const createdAt = moment(row.createdAt);
 										const displayDate = moment().diff(createdAt, 'day') >= 1 ? createdAt.format('DD/MM/YY HH:mm') : createdAt.fromNow();
 										return (
