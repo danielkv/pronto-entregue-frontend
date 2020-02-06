@@ -16,7 +16,7 @@ export default function ProductList({ setEditingProductIndex }) {
 	return (
 		<BlockSeparator>
 			<FieldArray name='products'>
-				{({ remove }) =>
+				{({ insert, remove }) =>
 					(<>
 						<Table>
 							<TableHead>
@@ -60,7 +60,12 @@ export default function ProductList({ setEditingProductIndex }) {
 												<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
 													<Icon path={mdiPencil} size={.7} color='#363E5E' />
 												</IconButton>
-												<IconButton>
+												<IconButton
+													onClick={()=>{
+														insert(productIndex+1, row);
+														setEditingProductIndex(productIndex+1);
+													}}
+												>
 													<Icon path={mdiContentDuplicate} size={.7} color='#363E5E' />
 												</IconButton>
 												<IconButton
