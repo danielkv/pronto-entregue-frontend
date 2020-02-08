@@ -2,6 +2,9 @@ import React from 'react';
 import { hot } from 'react-hot-loader/root';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
+// config import
+import 'moment/locale/pt-br';
+
 import { LoadingBlock, ErrorBlock } from './layout/blocks';
 import Login from './pages/login';
 import RoutesFrame from './routes-frame';

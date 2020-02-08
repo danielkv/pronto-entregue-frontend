@@ -5,7 +5,6 @@ import { useQuery } from '@apollo/react-hooks';
 import { TextField, ButtonGroup, Button, Card, CardContent, Typography, Divider, TablePagination } from '@material-ui/core';
 import {  mdiFilter, mdiStar } from '@mdi/js';
 import Icon from '@mdi/react';
-import 'moment/locale/pt-br';
 import moment from 'moment';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, SidebarContainer, Sidebar } from '../../layout/components';
