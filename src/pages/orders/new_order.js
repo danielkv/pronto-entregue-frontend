@@ -1,25 +1,27 @@
 import React from 'react';
 
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
-import { ErrorBlock } from '../../layout/blocks';
+import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { sanitizeOrder, createEmptyOrder, checkDelivery, checkAddress } from '../../utils/orders';
 import PageForm from './form';
 
+import { LOAD_COMPANY } from '../../graphql/companies';
 import { CREATE_ORDER, GET_COMPANY_ORDERS } from '../../graphql/orders';
 
 function Page (props) {
 	setPageTitle('Novo pedido');
 
 	const selectedCompany = useSelectedCompany();
+	const { data: { company: { acceptTakeout = false } = {} } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
 	const [createOrder, { error: errorSaving }] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
 
-	const order = createEmptyOrder();
+	const order = createEmptyOrder({ type: acceptTakeout === false ? 'delivery' : '' });
 
 	function onSubmit(data) {
 		const dataSave = sanitizeOrder(data);
@@ -59,6 +61,7 @@ function Page (props) {
 		discount: Yup.number().typeError('Digite um número').required('O desconto é obrigatório (pode ser 0)')
 	});
 
+	if (loadingCompany) return <LoadingBlock />
 	if (errorSaving) return <ErrorBlock error={getErrors(errorSaving)} />
 
 	return (

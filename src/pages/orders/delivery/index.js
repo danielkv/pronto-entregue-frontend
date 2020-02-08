@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react'
 
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Paper, InputLabel, Select, MenuItem, FormControl, FormHelperText, Button, CircularProgress } from '@material-ui/core';
 import { useFormikContext, Field } from 'formik';
+import { useSnackbar } from 'notistack';
 
 import MapContainer from '../../../components/MapContainer';
 import { BlockHeader, BlockTitle, FormRow, FieldControl, tField, Block } from '../../../layout/components';
 
 import { useSelectedCompany } from '../../../controller/hooks';
+import { LoadingBlock } from '../../../layout/blocks';
 import googleMapsClient from '../../../services/googleMpasClient';
 import { sanitizeAddress } from '../../../utils/address';
 
+import { LOAD_COMPANY } from '../../../graphql/companies';
 import { CALCULATE_DELIVERY_PRICE } from '../../../graphql/orders';
+
 
 
 export default function Delivery() {
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const { values: { address, type, user }, handleChange, errors, setFieldValue, isSubmitting } = useFormikContext();
 	const selectedCompany = useSelectedCompany();
+	const { data: { company: { acceptTakeout = false } = {} } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
+	const { enqueueSnackbar } = useSnackbar();
 
 	const handleSelectAddress = ({ name, street, number, zipcode, complement, district, city, state, location }) => {
 		setFieldValue('address', {
@@ -34,6 +40,9 @@ export default function Delivery() {
 	}
 
 	async function searchGeoCode({ street, number, state, city, district }) {
+		// case user didn't fill street or number
+		if (!street || !number) return enqueueSnackbar('Preencha pelo menos o nome da rua e o número', { variant: 'error' });
+
 		setLoadingLocation(true);
 
 		const { json: { results } } = await googleMapsClient.geocode({
@@ -41,6 +50,9 @@ export default function Delivery() {
 		}).asPromise();
 
 		setLoadingLocation(false);
+
+		// if no location is found
+		if (!results.length) return enqueueSnackbar('Nenhuma localização encontrada', { variant: 'error' });
 
 		const { location } = results[0].geometry;
 
@@ -66,6 +78,8 @@ export default function Delivery() {
 		}
 	}, [type, address, calculateDeliveryPrice, setFieldValue]);
 
+	if (loadingCompany) return <LoadingBlock />
+
 	return (
 		<Block>
 			<BlockHeader>
@@ -78,7 +92,7 @@ export default function Delivery() {
 							<InputLabel htmlFor="type">Tipo</InputLabel>
 							<Select
 								disableUnderline={true}
-								disabled={loadingdeliveryPrice || isSubmitting}
+								disabled={!acceptTakeout || loadingdeliveryPrice || isSubmitting}
 								name='type'
 								value={type}
 								error={!!errors.type}

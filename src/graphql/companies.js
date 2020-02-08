@@ -70,6 +70,7 @@ export const LOAD_COMPANY = gql`
 		company (id: $id) {
 			id
 			name
+			acceptTakeout
 			displayName
 			createdAt
 			address {
