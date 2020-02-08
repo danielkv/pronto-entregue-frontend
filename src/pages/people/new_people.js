@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
@@ -31,21 +32,26 @@ const userSchema = Yup.object().shape({
 });
 
 
-function Page (props) {
+function Page ({ history }) {
 	setPageTitle('Novo usuário');
 	
 	const selectedCompany = useSelectedCompany();
 	const [createUser, { error: errorSaving }] = useMutation(CREATE_USER, { refetchQueries: [{ query: GET_COMPANY_USERS, variables: { id: selectedCompany } }] })
 
 	const user = createEmptyPeople();
+	const { enqueueSnackbar } = useSnackbar();
 
 	function onSubmit(result) {
 		const data = sanitizePeople(result);
 		
 		return createUser({ variables: { data } })
 			.then(({ data: { createUser } })=>{
-				props.history.push(`/usuarios/alterar/${createUser.id}`);
-			});
+				enqueueSnackbar('O usuário foi criado com sucesso', { variant: 'success' });
+				history.push(`/usuarios/alterar/${createUser.id}`);
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
+			})
 	}
 
 	if (errorSaving) return <ErrorBlock error={getErrors(errorSaving)} />

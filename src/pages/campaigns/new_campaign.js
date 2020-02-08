@@ -2,14 +2,17 @@ import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
 import { createEmptyCampaign, sanitizeCampaign } from '../../utils/campaign';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from '../../graphql/campaigns';
+
 
 const FILE_SIZE = 500 * 1024;
 
@@ -24,6 +27,7 @@ const validationSchema = Yup.object().shape({
 function Page ({ history }) {
 	setPageTitle('Novo produto');
 
+	const { enqueueSnackbar } = useSnackbar();
 	const loggedUserRole = useLoggedUserRole();
 
 	const selectedCompany = useSelectedCompany();
@@ -36,11 +40,12 @@ function Page ({ history }) {
 
 		return createCampaign({ variables: { data: dataSave } })
 			.then(({ data: { createCampaign } })=>{
+				enqueueSnackbar('A campanha foi criada com sucesso', { variant: 'success' });
 				history.push(`/campanhas/alterar/${createCampaign.id}`);
 			})
 			.catch((err)=>{
-				console.error(err);
-			});
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
+			})
 	}
 	
 	return (

@@ -1,8 +1,9 @@
-import React, { useState, Fragment } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Snackbar, SnackbarContent } from '@material-ui/core';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
@@ -13,16 +14,14 @@ import PageForm from './form';
 
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
 
-function Page (props) {
+function Page () {
 	setPageTitle('Alterar pedido');
 
-	const editId = props.match.params.id;
-
-	//erro e confirmação
-	const [displaySuccess, setDisplaySuccess] = useState('');
+	const { id: editId } = useParams();
+	const { enqueueSnackbar } = useSnackbar();
 	
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_ORDER, { variables: { id: editId } });
-	const [updateOrder, { error: errorSaving }] = useMutation(UPDATE_ORDER, { variables: { id: editId } });
+	const [updateOrder] = useMutation(UPDATE_ORDER, { variables: { id: editId } });
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
@@ -34,8 +33,11 @@ function Page (props) {
 		const data = sanitizeOrder(result);
 
 		return updateOrder({ variables: {  data } })
-			.then(() => {
-				setDisplaySuccess('O pedido foi salvo');
+			.then(()=>{
+				enqueueSnackbar('O pedodo foi alterado com sucesso', { variant: 'success' });
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 
@@ -69,37 +71,14 @@ function Page (props) {
 	});
 
 	return (
-		<Fragment>
-			<Snackbar
-				open={!!errorSaving}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-			>
-				<SnackbarContent className='error' message={!!errorSaving && getErrors(errorSaving)} />
-			</Snackbar>
-			<Snackbar
-				open={!!displaySuccess}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				onClose={()=>{setDisplaySuccess('')}}
-				autoHideDuration={4000}
-			>
-				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
-			</Snackbar>
-
-			<Formik
-				validationSchema={productSchema}
-				initialValues={order}
-				onSubmit={onSubmit}
-				validateOnChange={false}
-				validateOnBlur={false}
-				component={PageForm}
-			/>
-		</Fragment>
+		<Formik
+			validationSchema={productSchema}
+			initialValues={order}
+			onSubmit={onSubmit}
+			validateOnChange={false}
+			validateOnBlur={false}
+			component={PageForm}
+		/>
 	)
 }
 

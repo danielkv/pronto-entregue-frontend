@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { ErrorBlock } from '../../layout/blocks';
@@ -24,6 +25,7 @@ const validationSchema = Yup.object().shape({
 function Page () {
 	setPageTitle('Nova categoria');
 	const history = useHistory();
+	const { enqueueSnackbar } = useSnackbar();
 
 	const [createCompanyType, { error: errorSaving }] = useMutation(CREATE_COMPANY_TYPE, { refetchQueries: [{ query: GET_COMPANY_TYPES }] })
 
@@ -34,7 +36,11 @@ function Page () {
 
 		return createCompanyType({ variables: { data } })
 			.then(({ data: { createCompanyType } })=>{
+				enqueueSnackbar('O ramo de atividade foi criado com sucesso', { variant: 'success' });
 				history.push(`/ramos/alterar/${createCompanyType.id}`);
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 

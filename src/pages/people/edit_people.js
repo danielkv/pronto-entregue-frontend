@@ -1,8 +1,9 @@
-import React, { useState, Fragment } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Snackbar, SnackbarContent } from '@material-ui/core';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
@@ -31,19 +32,17 @@ const userSchema = Yup.object().shape({
 	})).min(1),
 });
 
-function Page (props) {
+function Page () {
 	setPageTitle('Alterar pessoa');
 
-	const editId = props.match.params.id;
-
-	//erro e confirmação
-	const [displaySuccess, setDisplaySuccess] = useState('');
+	const { id: editId } = useParams();
+	const { enqueueSnackbar } = useSnackbar();
 	
 	//busca pessoa para edição
 	const selectedCompany = useSelectedCompany();
 	const { data, loading: loadingGetData, error: errorGetData } = useQuery(LOAD_USER, { variables: { id: editId, companyId: selectedCompany } });
 
-	const [updateUser, { error: errorSaving }] = useMutation(UPDATE_USER, { variables: { id: editId, companyId: selectedCompany } });
+	const [updateUser] = useMutation(UPDATE_USER, { variables: { id: editId, companyId: selectedCompany } });
 	
 	function onSubmit(values) {
 		// eslint-disable-next-line no-param-reassign
@@ -51,7 +50,10 @@ function Page (props) {
 		
 		return updateUser({ mutation: UPDATE_USER, variables: { data } })
 			.then(()=>{
-				setDisplaySuccess('O pessoa foi salvo');
+				enqueueSnackbar('O usuário foi alterada com sucesso', { variant: 'success' });
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 	
@@ -62,37 +64,15 @@ function Page (props) {
 	const user = extractPeople(data.user);
 	
 	return (
-		<Fragment>
-			<Snackbar
-				open={!!errorSaving}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-			>
-				<SnackbarContent className='error' message={!!errorSaving && getErrors(errorSaving)} />
-			</Snackbar>
-			<Snackbar
-				open={!!displaySuccess}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				onClose={()=>{setDisplaySuccess('')}}
-				autoHideDuration={4000}
-			>
-				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
-			</Snackbar>
-			<Formik
-				validationSchema={userSchema}
-				initialValues={user}
-				onSubmit={onSubmit}
-				validateOnChange={false}
-				validateOnBlur={false}
-			>
-				{(props)=><PageForm {...props} edit pageTitle='Alterar pessoa' />}
-			</Formik>
-		</Fragment>
+		<Formik
+			validationSchema={userSchema}
+			initialValues={user}
+			onSubmit={onSubmit}
+			validateOnChange={false}
+			validateOnBlur={false}
+		>
+			{(props)=><PageForm {...props} edit pageTitle='Alterar pessoa' />}
+		</Formik>
 	)
 }
 

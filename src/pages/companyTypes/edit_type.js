@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Snackbar, SnackbarContent } from '@material-ui/core';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
@@ -26,12 +26,10 @@ function Page () {
 	setPageTitle('Alterar categoria');
 
 	const { id: editId } = useParams();
-
-	//erro e confirmação
-	const [displaySuccess, setDisplaySuccess] = useState('');
+	const { enqueueSnackbar } = useSnackbar();
 	
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_COMPANY_TYPE, { variables: { id: editId } });
-	const [updateCompanyType, { error: savingError }] = useMutation(UPDATE_COMPANY_TYPE, { variables: { id: editId } })
+	const [updateCompanyType] = useMutation(UPDATE_COMPANY_TYPE, { variables: { id: editId } })
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!data || loadingGetData) return (<LoadingBlock />);
@@ -44,42 +42,23 @@ function Page () {
 
 		return updateCompanyType({ variables: { data } })
 			.then(()=>{
-				setDisplaySuccess('A categoria salva');
+				enqueueSnackbar('O Ramos de atividade foi alterado com sucesso', { variant: 'success' });
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 
 	return (
-		<>
-			<Snackbar
-				open={!!savingError}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-			>
-				<SnackbarContent className='error' message={!!savingError && getErrors(savingError)} />
-			</Snackbar>
-			<Snackbar
-				open={!!displaySuccess}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-				onClose={()=>{setDisplaySuccess('')}}
-				autoHideDuration={4000}
-			>
-				<SnackbarContent className='success' message={!!displaySuccess && displaySuccess} />
-			</Snackbar>
-			<Formik
-				validationSchema={validationSchema}
-				initialValues={initialValues}
-				onSubmit={onSubmit}
-				validateOnChange={false}
-				validateOnBlur={false}
-			>
-				{(props)=><PageForm {...props} pageTitle='Alterar ramo de atividade' />}
-			</Formik>
-		</>
+		<Formik
+			validationSchema={validationSchema}
+			initialValues={initialValues}
+			onSubmit={onSubmit}
+			validateOnChange={false}
+			validateOnBlur={false}
+		>
+			{(props)=><PageForm {...props} pageTitle='Alterar ramo de atividade' />}
+		</Formik>
 	)
 }
 

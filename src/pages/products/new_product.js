@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
@@ -10,6 +11,7 @@ import { sanitizeProduct, createEmptyProduct } from '../../utils/products';
 import PageForm from './form';
 
 import { CREATE_PRODUCT, GET_COMPANY_PRODUCTS } from '../../graphql/products';
+import { getErrors } from '../../utils/error';
 
 const FILE_SIZE = 500 * 1024;
 
@@ -28,24 +30,26 @@ const productSchema = Yup.object().shape({
 	})),
 });
 
-function Page (props) {
+function Page ({ history }) {
 	setPageTitle('Novo produto');
 
 	const selectedCompany = useSelectedCompany();
 	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANY_PRODUCTS, variables: { id: selectedCompany } }] });
 
 	const initialValues = createEmptyProduct();
+	const { enqueueSnackbar } = useSnackbar();
 
 	function onSubmit(data) {
 		const dataSave = sanitizeProduct(data);
 
 		return createProduct({ variables: { data: dataSave } })
-			.then(({ data: { createItem } })=>{
-				props.history.push(`/estoque/alterar/${createItem.id}`);
+			.then(({ data: { createProduct } })=>{
+				enqueueSnackbar('O produto foi criado com sucesso', { variant: 'success' });
+				history.push(`/estoque/alterar/${createProduct.id}`);
 			})
 			.catch((err)=>{
-				console.error(err);
-			});
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
+			})
 	}
 	
 	return (

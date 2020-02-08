@@ -39,7 +39,7 @@ function Page (props) {
 					</List>
 				</Grid>
 				<Grid item xs={7}>
-					<Redirect from="/" to={`${props.match.path}/horarios`} />
+					<Redirect from="/" to={`${props.match.path}/geral`} />
 					<Route path={`${props.match.path}/geral`} component={General} />
 					<Route path={`${props.match.path}/horarios`} component={BusinessHours} />
 					<Route path={`${props.match.path}/locais`} component={DeliveryAreas} />

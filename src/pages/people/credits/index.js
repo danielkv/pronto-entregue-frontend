@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableHead, TableRow, TableCell, TextField, TableBody, TablePagination, CircularProgress, Button, InputAdornment, Chip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core'
+import { Paper, Table, TableHead, TableRow, TableCell, TextField, TableBody, TablePagination, CircularProgress, Button, InputAdornment, Chip } from '@material-ui/core'
 import { useFormik } from 'formik'
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 import numeral from 'numeral';
 import * as Yup from 'yup';
 
@@ -24,7 +25,7 @@ const initialValues = {
 }
 
 export default function Credits({ userId }) {
-	const [errorDialog, setErrorDialog] = useState(null);
+	const { enqueueSnackbar } = useSnackbar();
 	const [pagination, setPagination] = useState({
 		page: 0,
 		rowsPerPage: 10,
@@ -37,15 +38,12 @@ export default function Credits({ userId }) {
 		const data = sanitizeCreditHistory(result);
 		return createCreditHistory({ variables: { data } })
 			.then(() => {
+				enqueueSnackbar('Histórico criado com sucesso', { variant: 'success' });
 				resetForm();
 			})
 			.catch((err)=>{
-				setErrorDialog(getErrors(err));
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
-	}
-
-	function handleCloseDialog() {
-		setErrorDialog(null);
 	}
 
 	const { handleSubmit, handleChange, isSubmitting, errors, values } = useFormik({
@@ -56,22 +54,6 @@ export default function Credits({ userId }) {
 
 	return (
 		<Block>
-			<Dialog
-				open={Boolean(errorDialog)}
-				onClose={handleCloseDialog}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">Ocorreu durante o envio do histórico</DialogTitle>
-				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						{errorDialog}
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
-				</DialogActions>
-			</Dialog>
 			<BlockHeader>
 				<BlockTitle>Créditos</BlockTitle>
 				{loadingCreditHistory ? <CircularProgress /> : <Chip color='primary' label={numeral(creditBalance).format('$0,00.00')} />}

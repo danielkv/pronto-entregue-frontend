@@ -22,7 +22,6 @@ export const LOAD_CAMPAIGN = gql`
 			startsAt
 			expiresAt
 			masterOnly
-			type
 			valueType
 			value
 			createdAt
@@ -57,7 +56,6 @@ export const UPDATE_CAMPAIGN = gql`
 			startsAt
 			expiresAt
 			masterOnly
-			type
 			valueType
 			value
 			createdAt
@@ -76,7 +74,6 @@ export const GET_CAMPAIGNS = gql`
 			startsAt
 			expiresAt
 			masterOnly
-			type
 			valueType
 			value
 			createdAt

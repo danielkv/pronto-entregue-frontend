@@ -27,7 +27,6 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 		active,
 		acceptOtherCampaign,
 		chargeCompany,
-		type,
 		valueType,
 
 		startsAt,
@@ -163,21 +162,6 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 							<FormRow>
 								<FieldControl>
 									<FormControl>
-										<FormLabel>Tipo</FormLabel>
-										<ToggleButtonGroup color='secondary' exclusive value={type} onChange={(_, newValue)=>{setFieldValue('type', newValue)}}>
-											<ToggleButton value='cashback'>
-												<Typography>Cashback</Typography>
-											</ToggleButton>
-											<ToggleButton value='discount'>
-												<Typography>Desconto</Typography>
-											</ToggleButton>
-										</ToggleButtonGroup>
-									</FormControl>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
-								<FieldControl>
-									<FormControl>
 										<FormLabel>Tipo de valor</FormLabel>
 										<ToggleButtonGroup exclusive value={valueType} onChange={(_, newValue)=>{setFieldValue('valueType', newValue)}}>
 											<ToggleButton value='percentage'>
@@ -192,7 +176,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Field component={tField} name='value' type='number' label='valor' />
+									<Field component={tField} name='value' type='number' label='Valor' />
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

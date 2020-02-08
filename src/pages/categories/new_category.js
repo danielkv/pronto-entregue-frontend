@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
@@ -24,6 +25,7 @@ const validationSchema = Yup.object().shape({
 
 function Page ({ history }) {
 	setPageTitle('Nova categoria');
+	const { enqueueSnackbar } = useSnackbar();
 
 	const selectedCompany = useSelectedCompany();
 	const [createCategory, { error: errorSaving }] = useMutation(CREATE_CATEGORY, { refetchQueries: [{ query: GET_COMPANY_CATEGORIES, variables: { id: selectedCompany } }] })
@@ -35,7 +37,11 @@ function Page ({ history }) {
 
 		return createCategory({ variables: { data } })
 			.then(({ data: { createCategory } })=>{
+				enqueueSnackbar('A categoria foi criada com sucesso', { variant: 'success' });
 				history.push(`/categorias/alterar/${createCategory.id}`);
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 

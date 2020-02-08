@@ -11,7 +11,6 @@ import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, Field
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
-import { getTypeLabel } from '../../utils/campaign';
 import { getErrors } from '../../utils/error';
 
 import { GET_CAMPAIGNS, UPDATE_CAMPAIGN } from '../../graphql/campaigns';
@@ -92,7 +91,7 @@ function Page (props) {
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell><Chip color='primary' label={getTypeLabel(row.type)} /></TableCell>
+											<TableCell><Chip color='primary' label='Cashback' /></TableCell>
 											<TableCell>{row.valueType === 'percentage'
 												? numeral(row.value/100).format('0,0.00%')
 												: numeral(row.value).format('$0,0.00')

@@ -2,13 +2,16 @@ import React from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { setPageTitle } from '../../utils';
 import { sanitizeCompany, createEmptyCompany } from '../../utils/companies';
+import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { GET_COMPANIES, CREATE_COMPANY } from '../../graphql/companies';
+
 
 const companySchema = Yup.object().shape({
 	name: Yup.string().required('Nome é obrigatório'),
@@ -40,9 +43,10 @@ const companySchema = Yup.object().shape({
 	})).min(1),
 });
 
-function Page () {
+function Page ({ history }) {
 	setPageTitle('Nova empresa');
 	
+	const { enqueueSnackbar } = useSnackbar();
 	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES }] });
 
 	const initialValues = createEmptyCompany();
@@ -51,8 +55,12 @@ function Page () {
 		const data = sanitizeCompany(result);
 
 		return createCompany({ variables: { data } })
+			.then(({ data: { createCompany } })=>{
+				enqueueSnackbar('A empresa foi criada com sucesso', { variant: 'success' });
+				history.push(`/empresas/alterar/${createCompany.id}`);
+			})
 			.catch((err)=>{
-				console.error(err);
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 	

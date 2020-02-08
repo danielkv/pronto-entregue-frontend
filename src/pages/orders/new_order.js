@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Formik } from 'formik';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
@@ -14,8 +15,9 @@ import PageForm from './form';
 import { LOAD_COMPANY } from '../../graphql/companies';
 import { CREATE_ORDER, GET_COMPANY_ORDERS } from '../../graphql/orders';
 
-function Page (props) {
+function Page ({ history }) {
 	setPageTitle('Novo pedido');
+	const { enqueueSnackbar } = useSnackbar();
 
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { acceptTakeout = false } = {} } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
@@ -28,7 +30,11 @@ function Page (props) {
 
 		return createOrder({ variables: { data: dataSave } })
 			.then(({ data: { createOrder } })=>{
-				props.history.push(`/pedidos/alterar/${createOrder.id}`);
+				enqueueSnackbar('O pedido foi criado com sucesso', { variant: 'success' });
+				history.push(`/pedidos/alterar/${createOrder.id}`);
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
 
