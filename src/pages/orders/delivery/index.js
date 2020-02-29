@@ -10,7 +10,7 @@ import { BlockHeader, BlockTitle, FormRow, FieldControl, tField, Block } from '.
 
 import { useSelectedCompany } from '../../../controller/hooks';
 import { LoadingBlock } from '../../../layout/blocks';
-import googleMapsClient from '../../../services/googleMpasClient';
+import googleMapsClient from '../../../services/googleMapsClient';
 import { sanitizeAddress } from '../../../utils/address';
 
 import { LOAD_COMPANY } from '../../../graphql/companies';

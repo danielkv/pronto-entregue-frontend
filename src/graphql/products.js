@@ -44,8 +44,15 @@ export const LOAD_PRODUCT = gql`
 			name
 			type
 			price
-			featured
 			description
+			sale {
+				id
+				price
+				active
+				progress
+				expiresAt
+				startsAt
+			}
 			campaigns {
 				id
 				name
@@ -72,6 +79,14 @@ export const CREATE_PRODUCT = gql`
 			name
 			createdAt
 			active
+		}
+	}
+`;
+
+export const REMOVE_SALE = gql`
+	mutation RemoveSale ($id: ID!) {
+		removeSale (id: $id) {
+			id
 		}
 	}
 `;
@@ -131,6 +146,14 @@ export const UPDATE_PRODUCT = gql`
 			category {
 				id
 				name
+			}
+			sale {
+				id
+				price
+				active
+				progress
+				expiresAt
+				startsAt
 			}
 			image
 			active

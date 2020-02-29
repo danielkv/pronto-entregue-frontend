@@ -1,3 +1,5 @@
+import { extractSale, sanitizeSale, createEmptySale } from "./sale";
+
 export function createEmptyProduct(overwrite={}) {
 	return {
 		name: '',
@@ -6,11 +8,11 @@ export function createEmptyProduct(overwrite={}) {
 		type: 'inline',
 		price: '',
 		file: '',
-		featured: false,
 		preview: '',
 		category: { id: '' },
 		optionsGroups: [],
 		campaigns: [],
+		sale: createEmptySale(),
 
 
 		...overwrite,
@@ -55,7 +57,6 @@ export function calculateProductPrice(product) {
 export function extractProduct(product) {
 	return {
 		name: product.name,
-		featured: product.featured,
 		description: product.description,
 		active: product.active,
 		category: product.category,
@@ -64,6 +65,8 @@ export function extractProduct(product) {
 		campaigns: product.campaigns,
 		file: '',
 		preview: product.image,
+		sale: extractSale(product.sale),
+		
 		optionsGroups: product.optionsGroups.map(optionsGroup => ({
 			action: 'editable',
 			...optionsGroup,
@@ -81,10 +84,11 @@ export function sanitizeProduct(data) {
 		file: data.file,
 		description: data.description,
 		type: data.type,
-		featured: data.featured,
 		price: data.price,
 		active: data.active,
 		categoryId: data.category.id,
+		sale: sanitizeSale(data.sale),
+
 		optionsGroups: data.optionsGroups.map(group=>{
 			let g = {
 				action: group.action,

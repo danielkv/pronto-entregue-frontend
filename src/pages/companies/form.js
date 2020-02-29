@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 import MapContainer from '../../components/MapContainer';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
-import googleMapsClient from '../../services/googleMpasClient';
+import googleMapsClient from '../../services/googleMapsClient';
 import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
 

@@ -1,28 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useQuery } from '@apollo/react-hooks';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, MenuItem, InputAdornment, Chip } from '@material-ui/core';
+
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, TextField, Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, InputAdornment, Chip, CircularProgress, Typography } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { mdiFormatListChecks, mdiCheckDecagram, mdiPencil } from '@mdi/js'
 import Icon from '@mdi/react';
 import { Form, Field, ErrorMessage } from 'formik';
 import { isEmpty } from 'lodash';
+import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useLoggedUserRole, useSelectedCompany } from '../../controller/hooks';
 import { DropzoneBlock, LoadingBlock } from '../../layout/blocks';
 import { errorObjectsToArray } from '../../utils/error';
+import { createEmptySale } from '../../utils/sale';
 import OptionsBlock from './optionsBlock';
+import Sale from './sale';
 
 import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
+import { REMOVE_SALE } from '../../graphql/products';
 
-export default function PageForm ({ values: { active, featured, campaigns, price, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
+export default function PageForm ({ values: { sale, active, campaigns, price, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
 	const history = useHistory();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
+
+	// sale
+	const [openSale, setOpenSale] = useState(false);
+	const [removeSale, { loading: loadingRemoveSale }] = useMutation(REMOVE_SALE, { variables: { id: sale && sale.id ? sale.id : null } });
+
+	function handleRemoveSale() {
+		removeSale()
+			.then(()=>{
+				setFieldValue('sale', createEmptySale());
+			})
+	}
+	function handleCloseSale() {
+		setOpenSale(false);
+	}
 	
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { categories = [] } = {} } = {}, loading: loadingcategories } = useQuery(GET_COMPANY_CATEGORIES, { variables: { id: selectedCompany } });
@@ -119,22 +138,54 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 									/>
 								</FieldControl>
 							</FormRow>
-							<FormRow>
-								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
-									<FormControlLabel
-										labelPlacement='start'
-										control={
-											<Switch size='small' color='secondary' checked={featured} onChange={()=>{setFieldValue('featured', !featured)}} value="includeDisabled" />
-										}
-										label="Destaque"
-									/>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
-								<FieldControl>
-									<Button fullWidth type='submit' variant="contained" color='secondary'>Salvar</Button>
-								</FieldControl>
-							</FormRow>
+							{sale && sale.id
+								? (
+									<>
+										<FormRow>
+											<FieldControl>
+												<FormControl>
+													<Button onClick={handleRemoveSale} variant='contained'>
+														{loadingRemoveSale
+															? <CircularProgress />
+															: 'Cancelar promoção'}
+													</Button>
+													<FormHelperText>Não é possível alterar o produto com uma promoção ativa. Lembre-se que apertando o botão acima, você cancela a promoção imadiatamente.</FormHelperText>
+												</FormControl>
+											</FieldControl>
+										</FormRow>
+										<FormRow>
+											<FieldControl>
+												<FormControl>
+													<Typography>{`Valor da promoção: ${numeral(sale.price).format('$0,00.00')}`}</Typography>
+													<Typography variant='caption'>{`Inicia em: ${sale.startsAt.format('DD/MM/YY HH:mm')}`}</Typography>
+													<Typography variant='caption'>{`Termina em: ${sale.expiresAt.format('DD/MM/YY HH:mm')}`}</Typography>
+												</FormControl>
+											</FieldControl>
+										</FormRow>
+									</>
+								)
+								: (
+									<>
+										<FormRow>
+											<FieldControl>
+												<Button fullWidth type='submit' variant="contained" color='secondary'>Salvar</Button>
+											</FieldControl>
+										</FormRow>
+										<FormRow>
+											<FieldControl>
+												<Button
+													fullWidth
+													variant={sale.action !== 'new_empty' ? "contained" : 'outlined'}
+													color='primary'
+													onClick={()=>setOpenSale(true)}
+													disabled={sale.active}
+												>
+													{sale.action !== 'new_empty' ? 'Modificar promoção' : 'Criar Promoção'}
+												</Button>
+											</FieldControl>
+										</FormRow>
+									</>
+								)}
 						</BlockSeparator>
 						<BlockSeparator>
 							<FormRow>
@@ -183,15 +234,19 @@ export default function PageForm ({ values: { active, featured, campaigns, price
 			>
 				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
 				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						<ul>
-							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
-						</ul>
-					</DialogContentText>
+					<ul>
+						{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+					</ul>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
 				</DialogActions>
+			</Dialog>
+
+			<Dialog
+				open={openSale}
+			>
+				<Sale closeModal={handleCloseSale} />
 			</Dialog>
 		</Form>
 	)

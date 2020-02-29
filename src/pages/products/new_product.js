@@ -7,11 +7,11 @@ import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
+import { getErrors } from '../../utils/error';
 import { sanitizeProduct, createEmptyProduct } from '../../utils/products';
 import PageForm from './form';
 
 import { CREATE_PRODUCT, GET_COMPANY_PRODUCTS } from '../../graphql/products';
-import { getErrors } from '../../utils/error';
 
 const FILE_SIZE = 500 * 1024;
 

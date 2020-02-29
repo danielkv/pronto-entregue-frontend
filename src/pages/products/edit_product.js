@@ -10,28 +10,32 @@ import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { sanitizeProduct, extractProduct } from '../../utils/products';
+import { extractSale } from '../../utils/sale';
 import PageForm from './form';
 
 import { LOAD_PRODUCT, UPDATE_PRODUCT } from '../../graphql/products';
 
 const FILE_SIZE = 500 * 1024;
 
-const productSchema = Yup.object().shape({
-	name: Yup.string().required('O nome é obrigatório'),
-	price: Yup.number().required('O preço é obrigatório (pode ser 0)'),
-	description: Yup.string().required('A descrição é obrigatória'),
-	file: Yup.mixed().notRequired()
-		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
-	optionsGroups: Yup.array().of(Yup.object().shape({
-		name: Yup.string().required('O nome do grupo é obrigatório'),
-		options: Yup.array().of(Yup.object().shape({
-			name: Yup.string().required('O nome da opção é obrigatório'),
-			price: Yup.number().required('O valor da opção obrigatório (pode ser 0)'),
-		})),
-	})),
-});
+
 
 function Page () {
+	const productSchema = Yup.object().shape({
+		name: Yup.string().required('O nome é obrigatório'),
+		price: Yup.number().required('O preço é obrigatório (pode ser 0)'),
+		description: Yup.string().required('A descrição é obrigatória'),
+		file: Yup.mixed().notRequired()
+			.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
+		optionsGroups: Yup.array().of(Yup.object().shape({
+			name: Yup.string().required('O nome do grupo é obrigatório'),
+			options: Yup.array().of(Yup.object().shape({
+				name: Yup.string().required('O nome da opção é obrigatório'),
+				price: Yup.number().required('O valor da opção obrigatório (pode ser 0)'),
+			})),
+		}))
+	});
+
+
 	setPageTitle('Alterar produto');
 
 	const { id: editId } = useParams();
@@ -48,12 +52,17 @@ function Page () {
 
 	const initialValues = extractProduct(data.product);
 
-	function onSubmit(data) {
+	function onSubmit(data, { setFieldValue }) {
 		const saveData = sanitizeProduct(data);
 
 		return updateProduct({ variables: { data: saveData } })
-			.then(()=>{
+			.then(({ data: { updateProduct: product } })=>{
 				enqueueSnackbar('O produto foi alterado com sucesso', { variant: 'success' });
+
+				if (product.sale) {
+					const sale = extractSale(product.sale);
+					setFieldValue('sale', sale);
+				}
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });
