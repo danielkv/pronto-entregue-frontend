@@ -130,6 +130,14 @@ export const GET_COMPANY_PRODUCTS = gql`
 					id
 					name
 				}
+				sale {
+					id
+					price
+					startsAt
+					expiresAt
+					progress
+					active
+				}
 			}
 		}
 	}

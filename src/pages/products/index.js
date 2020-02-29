@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiSale } from '@mdi/js';
+import { mdiPencil, mdiFilter, mdiSale, mdiBrightnessPercent } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -96,7 +96,29 @@ function Page (props) {
 									{products.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
-											<TableCell>{row.name}</TableCell>
+											<TableCell>
+												<div style={{ alignItems: "center", flexDirection: 'row', display: 'flex' }}>
+													<div style={{ marginRight: 5 }}>{row.name}</div>
+													{row.sale
+														&& <Icon
+															path={mdiBrightnessPercent}
+															size={.8}
+															color={
+																row.sale.progress
+																	? '#0a2'
+																	: row.sale.active
+																		? '#f95'
+																		: '#ccc'
+															}
+															title={
+																row.sale.progress
+																	? `Promoção em andamento, termina em ${moment(row.sale.expiresAt).format('DD/MM/YY HH:MM')}`
+																	: row.sale.active
+																		? `Promoção inicia em ${moment(row.sale.startsAt).format('DD/MM/YY HH:MM')}`
+																		: 'Promoção aguardando aprovação'}
+														/>}
+												</div>
+											</TableCell>
 											<TableCell><Chip color={row.countFavoritedBy ? 'secondary' : 'default'} label={row.countFavoritedBy} /></TableCell>
 											<TableCell><Chip variant='outlined' label={row.category.name} /></TableCell>
 											<TableCell><Chip variant='outlined' label={row.countOptions} /></TableCell>
@@ -116,13 +138,14 @@ function Page (props) {
 													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
 												<Switch
-													disabled={loading}
+													disabled={loading || row.sale}
 													checked={row.active}
 													onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } }) }
 													value="checkedB"
 													size='small'
 													color="secondary"
 													inputProps={{ 'aria-label': 'primary checkbox' }}
+													title={row.sale && 'Não é possível alterar um produto, com uma promoção ativa'}
 												/>
 											</TableCell>
 										</TableRow>
