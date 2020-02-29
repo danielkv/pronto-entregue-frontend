@@ -24,7 +24,7 @@ import Sale from './sale';
 import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
 import { REMOVE_SALE } from '../../graphql/products';
 
-export default function PageForm ({ values: { sale, active, campaigns, price, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
+export default function PageForm ({ values: { sale, active, campaigns, price, fromPrice, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
 	const history = useHistory();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
@@ -77,13 +77,20 @@ export default function PageForm ({ values: { sale, active, campaigns, price, ty
 							<FieldControl>
 								<Field component={tField} name='name' label='Nome do produto' />
 							</FieldControl>
+							<FieldControl>
+								<TextField select value={category.id} label='Categoria' name='category.id' onChange={handleChange}>
+									{!!categories.length && categories.map(categoryItem=>(
+										<MenuItem key={categoryItem.id} value={categoryItem.id}>{categoryItem.name}</MenuItem>
+									))}
+								</TextField>
+							</FieldControl>
 						</FormRow>
 						<FormRow>
 							<FieldControl>
 								<Field component={tField} name='description' label='Descrição' />
 							</FieldControl>
 						</FormRow>
-						<FormRow>
+						<FormRow style={{ alignItems: 'flex-start' }}>
 							<FieldControl>
 								<TextField
 									type='number'
@@ -98,11 +105,17 @@ export default function PageForm ({ values: { sale, active, campaigns, price, ty
 									inputProps={{ step: 0.01 }} />
 							</FieldControl>
 							<FieldControl>
-								<TextField select value={category.id} label='Categoria' name='category.id' onChange={handleChange}>
-									{!!categories.length && categories.map(categoryItem=>(
-										<MenuItem key={categoryItem.id} value={categoryItem.id}>{categoryItem.name}</MenuItem>
-									))}
-								</TextField>
+								<TextField
+									type='number'
+									value={fromPrice}
+									label='A partir de'
+									name='fromPrice'
+									onChange={handleChange}
+									disabled={isSubmitting}
+									error={!!errors.fromPrice}
+									helperText={errors.fromPrice ? errors.fromPrice : 'Esse valor será mostrado quando o produto for exibido em lista no app'}
+									InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
+									inputProps={{ step: 0.01 }} />
 							</FieldControl>
 						</FormRow>
 						{!!campaigns.length && <FormRow>

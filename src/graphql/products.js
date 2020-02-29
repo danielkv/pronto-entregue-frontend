@@ -44,6 +44,7 @@ export const LOAD_PRODUCT = gql`
 			name
 			type
 			price
+			fromPrice
 			description
 			sale {
 				id
