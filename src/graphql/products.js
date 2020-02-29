@@ -124,7 +124,6 @@ export const GET_COMPANY_PRODUCTS = gql`
 				active
 				price
 				countFavoritedBy
-				countCampaigns
 				countOptions
 				createdAt
 				category {

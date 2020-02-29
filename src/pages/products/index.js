@@ -2,8 +2,8 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiSale, mdiBrightnessPercent } from '@mdi/js';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar, Typography } from '@material-ui/core';
+import { mdiPencil, mdiFilter, mdiBrightnessPercent } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -123,13 +123,14 @@ function Page (props) {
 											<TableCell><Chip variant='outlined' label={row.category.name} /></TableCell>
 											<TableCell><Chip variant='outlined' label={row.countOptions} /></TableCell>
 											<TableCell>
-												<div style={{ display: 'flex', alignItems: 'center' }}>
-													{numeral(row.price).format('$0,0.00')}
-													{!!row.countCampaigns && (
-														<span style={{ marginLeft: 5 }} title={`Há ${row.countCampaigns} ${row.countCampaigns === 1 ? 'campanha vinculada' : 'campanhas vinculadas'} a este produto`}>
-															<Icon path={mdiSale} color='#999' size={1} />
-														</span>
-													)}
+												<div style={{ display: 'flex', flexDirection: 'column' }}>
+													{row.sale && <Typography variant='caption' style={{ textDecoration: 'line-through', marginRight: 5 }}>{numeral(row.price).format('$0,0.00')}</Typography>}
+													<Typography>
+														{row.sale
+															? numeral(row.sale.price).format('$0,0.00')
+															: numeral(row.price).format('$0,0.00')}
+													</Typography>
+													
 												</div>
 											</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
