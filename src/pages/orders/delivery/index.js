@@ -41,7 +41,7 @@ export default function Delivery() {
 
 	async function searchGeoCode({ street, number, state, city, district }) {
 		// case user didn't fill street or number
-		if (!street || !number) return enqueueSnackbar('Preencha pelo menos o nome da rua e o número', { variant: 'error' });
+		if (!street && !city && state) return enqueueSnackbar('Preencha o endereço antes de buscar a localização', { variant: 'error' });
 
 		setLoadingLocation(true);
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
-import { mdiStore, mdiPencil, mdiFilter } from '@mdi/js';
+import { mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral';

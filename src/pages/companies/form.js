@@ -5,8 +5,9 @@ import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, L
 import { mdiPlusCircle, mdiDelete, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
-import { FieldArray, Form, Field, ErrorMessage } from 'formik';
+import { FieldArray, Form, Field } from 'formik';
 import { isEmpty } from 'lodash';
+import { useSnackbar } from 'notistack';
 
 import MapContainer from '../../components/MapContainer';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
@@ -22,6 +23,7 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const [errorDialog, setErrorDialog] = useState(false);
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
+	const { enqueueSnackbar } = useSnackbar();
 
 	function handleSelect(item) {
 		setFieldValue('type', item);
@@ -32,6 +34,9 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 	}
 
 	async function searchGeoCode({ street, number, state, city, district }) {
+		// case user didn't fill street or number
+		if (!street && !city && state) return enqueueSnackbar('Preencha o endereço antes de buscar a localização', { variant: 'error' });
+
 		setLoadingLocation(true);
 
 		const { json: { results } } = await googleMapsClient.geocode({
