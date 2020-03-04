@@ -72,6 +72,7 @@ export const LOAD_COMPANY = gql`
 			name
 			acceptTakeout
 			displayName
+			image
 			createdAt
 			address {
 				name
@@ -125,6 +126,7 @@ export const GET_COMPANIES = gql`
 			id
 			name
 			displayName
+			image
 			createdAt
 			type {
 				id

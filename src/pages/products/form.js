@@ -54,7 +54,7 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
 	}, [isValidating, errors])
 	
-	const handleDropFile = (setFieldValue) => (acceptedFiles) => {
+	function handleDropFile(acceptedFiles) {
 		if (Array.isArray(acceptedFiles)) {
 			const file = acceptedFiles[0];
 			const preview = URL.createObjectURL(file);
@@ -230,7 +230,7 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 								<FieldControl>
 									<FormControl>
 										<FormLabel>Imagem</FormLabel>
-										<DropzoneBlock preview={preview} onDrop={handleDropFile(setFieldValue)} />
+										<DropzoneBlock preview={preview} onDrop={handleDropFile} />
 										<FormHelperText error><ErrorMessage name="file" /></FormHelperText>
 									</FormControl>
 								</FieldControl>

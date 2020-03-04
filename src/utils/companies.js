@@ -19,6 +19,7 @@ export function extractCompany(company) {
 	return {
 		name: company.name,
 		displayName: company.displayName,
+		preview: company.image,
 		active: company.active,
 		type: company.type,
 		address: extractAddress(company.address),
@@ -30,6 +31,7 @@ export function sanitizeCompany(result) {
 	return {
 		name: result.name,
 		displayName: result.displayName,
+		file: result.file,
 		active: result.active,
 		companyTypeId: result.type.id,
 		address: sanitizeAddress(result.address),

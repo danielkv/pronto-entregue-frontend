@@ -81,7 +81,7 @@ export default function PageForm ({ values: { active, preview }, errors, setFiel
 									<FormControl>
 										<FormLabel>Imagem</FormLabel>
 										<DropzoneBlock preview={preview} onDrop={handleDropFile(setFieldValue)} />
-										<FormHelperText error><ErrorMessage name="file" /></FormHelperText>
+										<FormHelperText error>{errors.file}</FormHelperText>
 									</FormControl>
 								</FieldControl>
 							</FormRow>

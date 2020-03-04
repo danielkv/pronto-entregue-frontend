@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
 import { useMutation } from '@apollo/react-hooks';
-import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText, DialogTitle, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText, DialogTitle, Dialog, DialogContent, DialogActions, FormLabel } from '@material-ui/core';
 import { mdiPlusCircle, mdiDelete, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
-import { FieldArray, Form, Field } from 'formik';
+import { FieldArray, Form, Field, ErrorMessage } from 'formik';
 import { isEmpty } from 'lodash';
 
 import MapContainer from '../../components/MapContainer';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
+import { DropzoneBlock } from '../../layout/blocks';
 import googleMapsClient from '../../services/googleMapsClient';
 import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
 
 import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
-export default function PageForm ({ values: { active, phones, emails, type, address }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
+export default function PageForm ({ values: { active, phones, emails, type, address, preview }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const [errorDialog, setErrorDialog] = useState(false);
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
@@ -43,6 +44,15 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 
 		setFieldValue('address.location[0]', location.lat);
 		setFieldValue('address.location[1]', location.lng);
+	}
+
+	function handleDropFile(acceptedFiles) {
+		if (Array.isArray(acceptedFiles)) {
+			const file = acceptedFiles[0];
+			const preview = URL.createObjectURL(file);
+			setFieldValue('preview', preview);
+			setFieldValue('file', file);
+		}
 	}
 	
 	function handleCloseDialog() {
@@ -256,6 +266,17 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
+						<BlockSeparator>
+							<FormRow>
+								<FieldControl>
+									<FormControl>
+										<FormLabel>Imagem</FormLabel>
+										<DropzoneBlock preview={preview} onDrop={handleDropFile} />
+										<FormHelperText error>{errors.file}</FormHelperText>
+									</FormControl>
+								</FieldControl>
+							</FormRow>
+						</BlockSeparator>
 					</Sidebar>
 				</Block>
 			</SidebarContainer>
@@ -267,11 +288,9 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 			>
 				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
 				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						<ul>
-							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
-						</ul>
-					</DialogContentText>
+					<ul>
+						{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+					</ul>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>

@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
 import { mdiStore, mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
@@ -16,7 +16,6 @@ import { getErrors } from '../../utils/error';
 
 import { LOGGED_USER_ID } from '../../graphql/authentication';
 import { GET_COMPANIES, UPDATE_COMPANY } from '../../graphql/companies';
-
 
 const initialFilter = {
 	showInactive: false,
@@ -87,8 +86,8 @@ function Page (props) {
 								<TableBody>
 									{companies.map(row => (
 										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Icon path={mdiStore} size={1} color='#BCBCBC' /></TableCell>
-											<TableCell>{row.name}</TableCell>
+											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Avatar alt={row.displayName} src={row.image} /></TableCell>
+											<TableCell>{row.displayName}</TableCell>
 											<TableCell><Chip variant='outlined' label={row.type.name} /></TableCell>
 											<TableCell>{numeral(row.lastMonthRevenue).format('$0,0.00')}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>

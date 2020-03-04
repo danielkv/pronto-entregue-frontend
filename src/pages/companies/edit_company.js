@@ -14,9 +14,13 @@ import PageForm from './form';
 
 import { UPDATE_COMPANY, LOAD_COMPANY } from '../../graphql/companies';
 
+const FILE_SIZE = 500 * 1024;
+
 const companySchema = Yup.object().shape({
 	name: Yup.string().required('Nome é obrigatório'),
 	displayName: Yup.string().required('Razão social é obrigatório'),
+	file: Yup.mixed().notRequired()
+		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
 	document: Yup.object().shape({
 		value: Yup.string().required('Documento é brigatório')
 	}),
