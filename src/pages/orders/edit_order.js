@@ -6,6 +6,7 @@ import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
@@ -19,6 +20,7 @@ function Page () {
 
 	const { id: editId } = useParams();
 	const { enqueueSnackbar } = useSnackbar();
+	const selectedCompany = useSelectedCompany();
 	
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_ORDER, { variables: { id: editId } });
 	const [updateOrder] = useMutation(UPDATE_ORDER, { variables: { id: editId } });
@@ -27,10 +29,11 @@ function Page () {
 	if (!data || loadingGetData) return (<LoadingBlock />);
 
 	// extract order data from DB
-	const order = extractOrder(data.order);
+	const order = extractOrder(data.order, { companyId: selectedCompany });
 
 	function onSubmit(result) {
 		const data = sanitizeOrder(result);
+		console.log(JSON.stringify(data));
 
 		return updateOrder({ variables: {  data } })
 			.then(()=>{

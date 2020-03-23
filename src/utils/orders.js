@@ -30,7 +30,7 @@ export function createEmptyOrder(overwrite={}) {
 	};
 }
 
-export function extractOrder(order) {
+export function extractOrder(order, overwrite={}) {
 	return {
 		user: order.user,
 		paymentFee: order.paymentFee,
@@ -71,6 +71,7 @@ export function extractOrder(order) {
 				}),
 			}
 		}),
+		...overwrite
 	};
 }
 
@@ -104,6 +105,7 @@ export const sanitizeOrder = (data) => {
 		type: data.type,
 		status: data.status,
 		paymentMethodId: data.paymentMethod && data.paymentMethod.id ? data.paymentMethod.id : '',
+		companyId: data.companyId,
 
 		paymentFee: data.paymentFee,
 		deliveryPrice: data.deliveryPrice,

@@ -23,7 +23,7 @@ function Page ({ history }) {
 	const { data: { company: { acceptTakeout = false } = {} } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
 	const [createOrder, { error: errorSaving }] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
 
-	const order = createEmptyOrder({ type: acceptTakeout === false ? 'delivery' : '' });
+	const order = createEmptyOrder({ type: acceptTakeout === false ? 'delivery' : '', companyId: selectedCompany });
 
 	function onSubmit(data) {
 		const dataSave = sanitizeOrder(data);

@@ -88,6 +88,7 @@ export const ORDER_FRAGMENT = gql`
 				district
 				city
 				state
+				location
 			}
 		}
 		products {
