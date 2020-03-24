@@ -1,9 +1,7 @@
 import React from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableCell, TableRow, Switch } from '@material-ui/core';
-import { mdiCreditCardOutline } from '@mdi/js';
-import Icon from '@mdi/react';
+import { Paper, Table, TableBody, TableHead, TableCell, TableRow, Switch, Typography } from '@material-ui/core';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
@@ -18,7 +16,7 @@ function Page () {
 	setPageTitle('Configurações - Formas de pagamento');
 
 	//carrega todos métodos de pagamento
-	const { data: { paymentMethods: allPaymentMethods = [] } ={}, loading: loadingPaymentMethods } = useQuery(GET_PAYMENT_METHODS);
+	const { data: { moneyMethods = [], deliveryMethods = [], appMethods = []  } ={}, loading: loadingPaymentMethods } = useQuery(GET_PAYMENT_METHODS);
 
 	//carrega métodos pagamento ativos na filial
 	const selectedCompany = useSelectedCompany();
@@ -33,7 +31,11 @@ function Page () {
 	if (enableError || disableError) return <ErrorBlock error={getErrors(enableError || disableError)} />;
 	if (loadingPaymentMethods || loadingCompanyPaymentMethods) return <LoadingBlock />;
 
-	const paymentMethods = extractPaymentMethods(companyPaymentMethods, allPaymentMethods);
+	const moneyPaymentMethods = extractPaymentMethods(companyPaymentMethods, moneyMethods);
+	const deliveryPaymentMethods = extractPaymentMethods(companyPaymentMethods, deliveryMethods);
+	const appPaymentMethods = extractPaymentMethods(companyPaymentMethods, appMethods);
+
+	console.log(moneyMethods);
 
 	const handleEnableDisable = (id, action) => {
 		if (action)
@@ -48,14 +50,62 @@ function Page () {
 				<TableHead>
 					<TableRow>
 						<TableCell style={{ width: 30 }}></TableCell>
-						<TableCell>Forma de pagamento</TableCell>
-						<TableCell style={{ width: 30 }}>Ações</TableCell>
+						<TableCell><Typography variant='overline'>Pagamento em Dinheiro</Typography></TableCell>
+						<TableCell style={{ width: 30, textAlign: 'right' }}>Ativo</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{paymentMethods.map((method, index)=> (
+					{moneyPaymentMethods.map((method, index)=> (
 						<TableRow key={index}>
-							<TableCell><Icon path={mdiCreditCardOutline} color='#707070' size={1} /></TableCell>
+							<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
+							<TableCell>{method.displayName}</TableCell>
+							<TableCell>
+								<Switch
+									disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}
+									onClick={()=>{handleEnableDisable(method.id, !method.active)}}
+									checked={method.active}
+								/>
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+			<Table>
+				<TableHead>
+					<TableRow>
+						<TableCell style={{ width: 30 }}></TableCell>
+						<TableCell><Typography variant='overline'>Pagamento na entrega (seleciona as bandeiras)</Typography></TableCell>
+						<TableCell style={{ width: 30, textAlign: 'right' }}>Ativo</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{deliveryPaymentMethods.map((method, index)=> (
+						<TableRow key={index}>
+							<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
+							<TableCell>{method.displayName}</TableCell>
+							<TableCell>
+								<Switch
+									disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}
+									onClick={()=>{handleEnableDisable(method.id, !method.active)}}
+									checked={method.active}
+								/>
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+			<Table>
+				<TableHead>
+					<TableRow>
+						<TableCell style={{ width: 30 }}></TableCell>
+						<TableCell><Typography variant='overline'>Pagamento no app (Cartão de crédito)</Typography></TableCell>
+						<TableCell style={{ width: 30, textAlign: 'right' }}>Ativo</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{appPaymentMethods.map((method, index)=> (
+						<TableRow key={index}>
+							<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
 							<TableCell>{method.displayName}</TableCell>
 							<TableCell>
 								<Switch

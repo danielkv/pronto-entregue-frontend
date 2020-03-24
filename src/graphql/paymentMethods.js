@@ -2,9 +2,19 @@ import gql from "graphql-tag";
 
 export const GET_PAYMENT_METHODS = gql`
 	query GetPaymentMethods {
-		paymentMethods {
+		moneyMethods: paymentMethods(type: "money") {
 			id
-			name
+			image
+			displayName
+		}
+		deliveryMethods: paymentMethods(type: "delivery") {
+			id
+			image
+			displayName
+		}
+		appMethods: paymentMethods(type: "app") {
+			id
+			image
 			displayName
 		}
 	}

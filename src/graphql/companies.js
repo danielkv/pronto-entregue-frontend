@@ -36,18 +36,8 @@ export const GET_COMPANY_PAYMENT_METHODS = gql`
 			id
 			paymentMethods {
 				id
-				name
 				displayName
 			}
-		}
-	}
-`;
-
-export const ENABLE_PAYMENT_METHOD = gql`
-	mutation EnablePaymentMethod ($id:ID!) {
-		enablePaymentMethod(id: $id) {
-			id
-			name
 		}
 	}
 `;
@@ -99,11 +89,18 @@ export const LOAD_COMPANY = gql`
 	}
 `;
 
+export const ENABLE_PAYMENT_METHOD = gql`
+	mutation EnablePaymentMethod ($id:ID!) {
+		enablePaymentMethod(id: $id) {
+			id
+		}
+	}
+`;
+
 export const DISABLE_PAYMENT_METHOD = gql`
 	mutation DisablePaymentMethod ($id:ID!) {
 		disablePaymentMethod (id:$id) {
 			id
-			name
 		}
 	}
 `;

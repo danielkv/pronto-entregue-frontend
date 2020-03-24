@@ -10,7 +10,7 @@ import resolvers from '../resolvers';
 import { GET_USER_TOKEN, IS_USER_LOGGED_IN } from '../graphql/authentication';
 import { GET_SELECTED_COMPANY } from "../graphql/companies";
 
-const host = process.env.NODE_ENV === 'development' ? 'http://localhost:4000/graphql' : 'https://flakery-backend.herokuapp.com/graphql';
+const host = process.env.NODE_ENV === 'production' ? 'https://pronto-entregue-backend.herokuapp.com/graphql' : 'http://localhost:4000/graphql';
 
 const cache = new InMemoryCache({});
 

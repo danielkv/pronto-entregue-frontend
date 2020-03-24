@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
-import { Form, Field, ErrorMessage } from 'formik';
+import { Form, Field } from 'formik';
 import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
