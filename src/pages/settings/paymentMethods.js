@@ -2,6 +2,9 @@ import React from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableCell, TableRow, Switch, Typography } from '@material-ui/core';
+import { mdiAlertCircle } from '@mdi/js';
+import Icon from '@mdi/react';
+import numeral from 'numeral';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
@@ -35,89 +38,53 @@ function Page () {
 	const deliveryPaymentMethods = extractPaymentMethods(companyPaymentMethods, deliveryMethods);
 	const appPaymentMethods = extractPaymentMethods(companyPaymentMethods, appMethods);
 
-	console.log(moneyMethods);
-
 	const handleEnableDisable = (id, action) => {
 		if (action)
 			enablePaymentMethod({ variables: { id } });
 		else
 			disablePaymentMethod({ variables: { id } });
 	}
+
+	const methodsGroups = [
+		{ title: 'Pagamento no app (Cartão de crédito)', methods: appPaymentMethods },
+		{ title: 'Pagamento em Dinheiro na entrega', methods: moneyPaymentMethods },
+		{ title: 'Pagamento na entrega (seleciona as bandeiras)', methods: deliveryPaymentMethods },
+	]
 	
 	return (
 		<Paper>
-			<Table>
-				<TableHead>
-					<TableRow>
-						<TableCell style={{ width: 30 }}></TableCell>
-						<TableCell><Typography variant='overline'>Pagamento em Dinheiro</Typography></TableCell>
-						<TableCell style={{ width: 30, textAlign: 'right' }}>Ativo</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{moneyPaymentMethods.map((method, index)=> (
-						<TableRow key={index}>
-							<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
-							<TableCell>{method.displayName}</TableCell>
-							<TableCell>
-								<Switch
-									disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}
-									onClick={()=>{handleEnableDisable(method.id, !method.active)}}
-									checked={method.active}
-								/>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-			<Table>
-				<TableHead>
-					<TableRow>
-						<TableCell style={{ width: 30 }}></TableCell>
-						<TableCell><Typography variant='overline'>Pagamento na entrega (seleciona as bandeiras)</Typography></TableCell>
-						<TableCell style={{ width: 30, textAlign: 'right' }}>Ativo</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{deliveryPaymentMethods.map((method, index)=> (
-						<TableRow key={index}>
-							<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
-							<TableCell>{method.displayName}</TableCell>
-							<TableCell>
-								<Switch
-									disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}
-									onClick={()=>{handleEnableDisable(method.id, !method.active)}}
-									checked={method.active}
-								/>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-			<Table>
-				<TableHead>
-					<TableRow>
-						<TableCell style={{ width: 30 }}></TableCell>
-						<TableCell><Typography variant='overline'>Pagamento no app (Cartão de crédito)</Typography></TableCell>
-						<TableCell style={{ width: 30, textAlign: 'right' }}>Ativo</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{appPaymentMethods.map((method, index)=> (
-						<TableRow key={index}>
-							<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
-							<TableCell>{method.displayName}</TableCell>
-							<TableCell>
-								<Switch
-									disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}
-									onClick={()=>{handleEnableDisable(method.id, !method.active)}}
-									checked={method.active}
-								/>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+			{methodsGroups.filter(m => m.methods.length).map(group =>
+				(
+					<Table key={group.title}>
+						<TableHead>
+							<TableRow>
+								<TableCell style={{ width: 30 }}></TableCell>
+								<TableCell><Typography variant='overline'>{group.title}</Typography></TableCell>
+								<TableCell style={{ width: 30, textAlign: 'right' }}></TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{group.methods.map((method, index)=> (
+								<TableRow key={index}>
+									<TableCell><img alt={method.displayName} src={method.image} style={{ height: 30 }} /></TableCell>
+									<TableCell>
+										{method.displayName}
+										<Typography variant='caption'>{Boolean(method.fee) && ` (Taxa: ${method.feeType === 'pct' ? numeral(method.fee/100).format('0,0.00%') : numeral(method.fee).format('$0,0.00')})`}</Typography>
+										{!method.active && <Icon path={mdiAlertCircle} title='Você pode habilitar essa forma de pagamento, mas ela foi desativada pelo administrador e não será mostrada no app' size={.8} color='#fa0' />}
+									</TableCell>
+									<TableCell>
+										<Switch
+											disabled={loadingEnablePaymentMethod || loadingDisablePaymentMethod}
+											onClick={()=>{handleEnableDisable(method.id, !method.enabled)}}
+											checked={method.enabled}
+										/>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				)
+			)}
 		</Paper>
 	)
 }

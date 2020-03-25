@@ -23,7 +23,7 @@ export function extractPaymentMethods(companyPaymentMethods, allPaymentMethods) 
 	return allPaymentMethods.map(method => {
 		return {
 			...method,
-			active: !!companyPaymentMethods.length && !!companyPaymentMethods.find(row=>row.id===method.id)
+			enabled: !!companyPaymentMethods.length && !!companyPaymentMethods.find(row=>row.id===method.id)
 		}
 	});
 }

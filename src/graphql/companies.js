@@ -34,7 +34,7 @@ export const GET_COMPANY_PAYMENT_METHODS = gql`
 	query GetCompanyPaymentMethods ($id: ID!) {
 		company (id: $id) {
 			id
-			paymentMethods {
+			paymentMethods(filter: { showInactive: true }) {
 				id
 				displayName
 			}

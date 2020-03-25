@@ -2,19 +2,28 @@ import gql from "graphql-tag";
 
 export const GET_PAYMENT_METHODS = gql`
 	query GetPaymentMethods {
-		moneyMethods: paymentMethods(type: "money") {
+		moneyMethods: paymentMethods(filter: { showInactive: true, type: "money" }) {
 			id
+			active
 			image
+			fee
+			feeType
 			displayName
 		}
-		deliveryMethods: paymentMethods(type: "delivery") {
+		deliveryMethods: paymentMethods(filter: { showInactive: true, type: "delivery" }) {
 			id
 			image
+			active
+			fee
+			feeType
 			displayName
 		}
-		appMethods: paymentMethods(type: "app") {
+		appMethods: paymentMethods(filter: { showInactive: true, type: "app" }) {
 			id
 			image
+			active
+			fee
+			feeType
 			displayName
 		}
 	}
