@@ -46,7 +46,7 @@ function Page ({ history }) {
 		return createProduct({ variables: { data: dataSave } })
 			.then(({ data: { createProduct } })=>{
 				enqueueSnackbar('O produto foi criado com sucesso', { variant: 'success' });
-				history.push(`/estoque/alterar/${createProduct.id}`);
+				history.push(`/produtos/alterar/${createProduct.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });
