@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
-import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
+import { useSelectedCompany, useLoggedUserRole, useLoggedUserId } from '../../controller/hooks';
 import { errorObjectsToArray } from '../../utils/error';
 import { metaModel } from '../../utils/metas';
 import Credits from './credits';
@@ -20,6 +20,7 @@ import { GET_ROLES } from '../../graphql/roles';
 
 export default function PageForm ({ edit, pageTitle, errors, isValidating, values: { active, phones, role, assignCompany, addresses, forcePassword }, setFieldValue, handleChange, isSubmitting }) {
 	const { id: editId } = useParams();
+	const loggedUserId = useLoggedUserId();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
 	const selectedCompany = useSelectedCompany();
@@ -211,7 +212,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 									<FormControlLabel
 										labelPlacement='end'
 										control={
-											<Switch size='small' color='primary' checked={assignCompany} onChange={()=>{setFieldValue('assignCompany', !assignCompany)}} />
+											<Switch disabled={loggedUserId === editId} size='small' color='primary' checked={assignCompany} onChange={()=>{setFieldValue('assignCompany', !assignCompany)}} />
 										}
 										label={assignCompany ? 'Vinculado' : 'Desvinculado'}
 									/>
@@ -219,7 +220,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<TextField name='role' value={role} onChange={handleChange} select label='Função'>
+									<TextField disabled={loggedUserId === editId} name='role' value={role} onChange={handleChange} select label='Função'>
 										{loggedUserRole === 'master' && <MenuItem key='master' value='master'>ADM (Master)</MenuItem>}
 										<MenuItem key='customer' value='customer'>Cliente</MenuItem>
 										{assignCompany && <ListSubheader>Permissões</ListSubheader>}
