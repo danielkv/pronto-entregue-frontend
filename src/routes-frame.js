@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
@@ -37,6 +37,8 @@ import Ratings from './pages/ratings';
 import Settings from './pages/settings';
 
 export default function Layout () {
+	const { path } = useRouteMatch();
+	
 	return (
 		<ThemeProvider theme={theme}>
 			<SnackbarProvider>
@@ -49,42 +51,40 @@ export default function Layout () {
 					</NavigationArea>
 					<Main>
 						<Switch>
-							<Redirect exact from='/' to='/dashboard' />
-
-							<Route exact path='/dashboard' component={Dashboard} />
+							<Route exact path={`${path}/`} component={Dashboard} />
 						
-							<Route exact path='/pedidos' component={Orders} />
-							<Route path='/pedidos/novo' component={NewOrder} />
-							<Route path='/pedidos/alterar/:id' component={EditOrder} />
+							<Route exact path={`${path}/pedidos/`} component={Orders} />
+							<Route path={`${path}/pedidos/novo`} component={NewOrder} />
+							<Route path={`${path}/pedidos/alterar/:id`} component={EditOrder} />
 						
-							<Route exact path='/produtos' component={Products} />
-							<Route path='/produtos/novo' component={NewProduct} />
-							<Route path='/produtos/alterar/:id' component={EditProduct} />
+							<Route exact path={`${path}/produtos`} component={Products} />
+							<Route path={`${path}/produtos/novo`} component={NewProduct} />
+							<Route path={`${path}/produtos/alterar/:id`} component={EditProduct} />
 
-							<Route exact path='/categorias' component={Categories} />
-							<Route path='/categorias/novo' component={NewCategory} />
-							<Route path='/categorias/alterar/:id' component={EditCategory} />
+							<Route exact path={`${path}/categorias`} component={Categories} />
+							<Route path={`${path}/categorias/nova`} component={NewCategory} />
+							<Route path={`${path}/categorias/alterar/:id`} component={EditCategory} />
 						
-							<Route exact path='/campanhas' component={Campaigns} />
-							<Route path='/campanhas/nova' component={NewCampaign} />
-							<Route path='/campanhas/alterar/:id' component={EditCampaign} />
+							<Route exact path={`${path}/campanhas`} component={Campaigns} />
+							<Route path={`${path}/campanhas/nova`} component={NewCampaign} />
+							<Route path={`${path}/campanhas/alterar/:id`} component={EditCampaign} />
 						
-							<Route exact path='/usuarios' component={Users} />
-							<Route path='/pessoas/alterar/:id' component={EditPeople} />
-							<ProtectedRoute role='master' exact path='/pessoas' component={People} />
-							<ProtectedRoute role='master' path='/pessoas/nova' component={NewPeople} />
+							<Route exact path={`${path}/usuarios`} component={Users} />
+							<Route path={`${path}/pessoas/alterar/:id`} component={EditPeople} />
+							<ProtectedRoute role='master' exact path={`${path}/pessoas`} component={People} />
+							<ProtectedRoute role='master' path={`${path}/pessoas/nova`} component={NewPeople} />
 
-							<Route path='/pontuacao' component={Ratings} />
+							<Route path={`${path}/pontuacao`} component={Ratings} />
 						
-							<Route path='/configuracoes' component={Settings} />
+							<Route path={`${path}/configuracoes`} component={Settings} />
 
-							<ProtectedRoute exact role='master' path='/empresas' component={Companies} />
-							<ProtectedRoute role='master' path='/empresas/novo' component={NewCompany} />
-							<ProtectedRoute role='master' path='/empresas/alterar/:id' component={EditCompany} />
+							<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
+							<ProtectedRoute role='master' path={`${path}/empresas/novo`} component={NewCompany} />
+							<ProtectedRoute role='master' path={`${path}/empresas/alterar/:id`} component={EditCompany} />
 
-							<ProtectedRoute role='master' exact path='/ramos' component={CompanyTypes} />
-							<ProtectedRoute role='master' path='/ramos/novo' component={NewType} />
-							<ProtectedRoute role='master' path='/ramos/alterar/:id' component={EditType} />
+							<ProtectedRoute role='master' exact path={`${path}/ramos`} component={CompanyTypes} />
+							<ProtectedRoute role='master' path={`${path}/ramos/novo`} component={NewType} />
+							<ProtectedRoute role='master' path={`${path}/ramos/alterar/:id`} component={EditType} />
 						</Switch>
 					</Main>
 				</Container>

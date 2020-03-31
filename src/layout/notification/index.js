@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useRouteMatch, Link } from 'react-router-dom';
 
 import { useSubscription } from '@apollo/react-hooks';
 import { IconButton, Badge } from '@material-ui/core';
@@ -12,7 +12,7 @@ import { Container } from './styles';
 import { SUBSCRIBE_ORDER_CREATED } from '../../graphql/orders';
 
 export default function Notification() {
-	const history = useHistory();
+	const { url } = useRouteMatch();
 	const [newOrders, setNewOrders] = useState(0);
 
 	const selectedCompany = useSelectedCompany();
@@ -24,7 +24,7 @@ export default function Notification() {
 
 	return (
 		<Container>
-			<IconButton onClick={()=>history.push('/pedidos')}>
+			<IconButton component={Link} to={`${url}/pedidos`}>
 				<Badge badgeContent={newOrders} color='secondary'>
 					<Icon path={mdiBell} color='#ccc' size={1} />
 				</Badge>

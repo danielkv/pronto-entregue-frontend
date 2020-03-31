@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
@@ -24,6 +24,7 @@ const initialFilter = {
 
 function Page () {
 	setPageTitle('Pessoas');
+	const { url } = useRouteMatch();
 
 	const loggedUserId = useLoggedUserId();
 
@@ -73,7 +74,7 @@ function Page () {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Pessoas</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/pessoas/nova' component={Link}>Adicionar</Button>{loading && <CircularProgress />}
+							<Button size='small' variant="contained" color='secondary' to={`${url}/nova`} component={Link}>Adicionar</Button>{loading && <CircularProgress />}
 							<NumberOfRows>{countUsers} pessoas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -97,7 +98,7 @@ function Page () {
 											<TableCell><Chip variant='outlined' label={getUserRoleLabel(row.role)} /></TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
-												<IconButton  disabled={loading} component={Link} to={(`/pessoas/alterar/${row.id}`)}>
+												<IconButton disabled={loading} component={Link} to={(`${url}/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
 												{row.id !== loggedUserId && row.role !== 'master' && (

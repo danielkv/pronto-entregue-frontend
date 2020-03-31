@@ -32,8 +32,10 @@ const userSchema = Yup.object().shape({
 });
 
 
-function Page ({ history }) {
+function Page ({ history, match: { url } }) {
 	setPageTitle('Novo usuário');
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
 	
 	const selectedCompany = useSelectedCompany();
 	const [createUser, { error: errorSaving }] = useMutation(CREATE_USER, { refetchQueries: [{ query: GET_COMPANY_USERS, variables: { id: selectedCompany } }] })
@@ -47,7 +49,7 @@ function Page ({ history }) {
 		return createUser({ variables: { data } })
 			.then(({ data: { createUser } })=>{
 				enqueueSnackbar('O usuário foi criado com sucesso', { variant: 'success' });
-				history.push(`/usuarios/alterar/${createUser.id}`);
+				history.push(`${prefixUrl}/alterar/${createUser.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

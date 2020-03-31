@@ -22,7 +22,7 @@ const initialFilter = {
 	search: '',
 }
 
-function Page (props) {
+function Page ({ match: { url } }) {
 	setPageTitle('Pedidos');
 	
 	const [anchorEl, setAnchorEl] = useState(null)
@@ -119,7 +119,7 @@ function Page (props) {
 								size='small'
 								variant="contained"
 								color='secondary'
-								to='/pedidos/novo'
+								to={`${url}/novo`}
 								component={Link}
 								disabled={loadingUpdateOrder}
 							>
@@ -154,7 +154,7 @@ function Page (props) {
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
 												<TableCell style={{ width: 100 }}>
-													<IconButton disabled={loadingUpdateOrder} onClick={()=>{props.history.push(`/pedidos/alterar/${row.id}`);}}>
+													<IconButton disabled={loadingUpdateOrder} component={Link} to={`${url}/alterar/${row.id}`}>
 														<Icon path={mdiPencil} size={1} color='#363E5E' />
 													</IconButton>
 													<IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id} data-order-status={row.status}>

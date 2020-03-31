@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Formik } from 'formik';
@@ -22,9 +21,11 @@ const validationSchema = Yup.object().shape({
 	file: Yup.mixed().required('Selecione uma imagem').test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE)
 });
 
-function Page () {
+function Page ({ history, match: { url } }) {
 	setPageTitle('Nova categoria');
-	const history = useHistory();
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
+
 	const { enqueueSnackbar } = useSnackbar();
 
 	const [createCompanyType, { error: errorSaving }] = useMutation(CREATE_COMPANY_TYPE, { refetchQueries: [{ query: GET_COMPANY_TYPES }] })
@@ -37,7 +38,7 @@ function Page () {
 		return createCompanyType({ variables: { data } })
 			.then(({ data: { createCompanyType } })=>{
 				enqueueSnackbar('O ramo de atividade foi criado com sucesso', { variant: 'success' });
-				history.push(`/ramos/alterar/${createCompanyType.id}`);
+				history.push(`${prefixUrl}/alterar/${createCompanyType.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

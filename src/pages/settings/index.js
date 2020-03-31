@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect, Link } from 'react-router-dom';
+import { Route, Redirect, Link, useRouteMatch } from 'react-router-dom';
 
 import { Grid, Paper, List, ListItem, ListItemText } from '@material-ui/core';
 
@@ -11,8 +11,9 @@ import DeliveryAreas from './deliveryAreas';
 import General from './general';
 import PaymentMethods from './paymentMethods';
 
-function Page (props) {
+export default function Settings(props) {
 	setPageTitle('Configurações');
+	const { path, url } = useRouteMatch();
 
 	function isSelected(location) {
 		const currentLocation = props.location.pathname.substr(1).split('/')[1];
@@ -24,30 +25,28 @@ function Page (props) {
 			<Grid container spacing={5}>
 				<Grid item xs={3}>
 					<List component={Paper}>
-						<ListItem button component={Link} selected={isSelected('geral')} to='/configuracoes/geral'>
+						<ListItem button component={Link} selected={isSelected('geral')} to={`${url}/geral`}>
 							<ListItemText primary="Geral" />
 						</ListItem>
-						<ListItem button component={Link} selected={isSelected('horarios')} to='/configuracoes/horarios'>
+						<ListItem button component={Link} selected={isSelected('horarios')} to={`${url}/horarios`}>
 							<ListItemText primary="Horário de atendimeto" />
 						</ListItem>
-						<ListItem button component={Link} selected={isSelected('locais')} to='/configuracoes/locais'>
+						<ListItem button component={Link} selected={isSelected('locais')} to={`${url}/locais`}>
 							<ListItemText primary="Locais de entrega" />
 						</ListItem>
-						<ListItem button component={Link} selected={isSelected('pagamentos')} to='/configuracoes/pagamentos'>
+						<ListItem button component={Link} selected={isSelected('pagamentos')} to={`${url}/pagamentos`}>
 							<ListItemText primary="Formas de pagamento" />
 						</ListItem>
 					</List>
 				</Grid>
 				<Grid item xs={7}>
-					<Redirect from="/" to={`${props.match.path}/geral`} />
-					<Route path={`${props.match.path}/geral`} component={General} />
-					<Route path={`${props.match.path}/horarios`} component={BusinessHours} />
-					<Route path={`${props.match.path}/locais`} component={DeliveryAreas} />
-					<Route path={`${props.match.path}/pagamentos`} component={PaymentMethods} />
+					<Redirect from="/" to={`${url}/geral`} />
+					<Route path={`${path}/geral`} component={General} />
+					<Route path={`${path}/horarios`} component={BusinessHours} />
+					<Route path={`${path}/locais`} component={DeliveryAreas} />
+					<Route path={`${path}/pagamentos`} component={PaymentMethods} />
 				</Grid>
 			</Grid>
 		</Content>
 	)
 }
-
-export default Page;

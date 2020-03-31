@@ -15,8 +15,11 @@ import PageForm from './form';
 import { LOAD_COMPANY } from '../../graphql/companies';
 import { CREATE_ORDER, GET_COMPANY_ORDERS } from '../../graphql/orders';
 
-function Page ({ history }) {
+function Page ({ history, match: { url } }) {
 	setPageTitle('Novo pedido');
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
+
 	const { enqueueSnackbar } = useSnackbar();
 
 	const selectedCompany = useSelectedCompany();
@@ -31,7 +34,7 @@ function Page ({ history }) {
 		return createOrder({ variables: { data: dataSave } })
 			.then(({ data: { createOrder } })=>{
 				enqueueSnackbar('O pedido foi criado com sucesso', { variant: 'success' });
-				history.push(`/pedidos/alterar/${createOrder.id}`);
+				history.push(`${prefixUrl}/alterar/${createOrder.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

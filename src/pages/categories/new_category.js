@@ -13,6 +13,7 @@ import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { GET_COMPANY_CATEGORIES, CREATE_CATEGORY } from '../../graphql/categories';
+import { useRouteMatch } from 'react-router-dom';
 
 const FILE_SIZE = 500 * 1024;
 
@@ -25,6 +26,10 @@ const validationSchema = Yup.object().shape({
 
 function Page ({ history }) {
 	setPageTitle('Nova categoria');
+	const { url } = useRouteMatch();
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
+
 	const { enqueueSnackbar } = useSnackbar();
 
 	const selectedCompany = useSelectedCompany();
@@ -38,7 +43,7 @@ function Page ({ history }) {
 		return createCategory({ variables: { data } })
 			.then(({ data: { createCategory } })=>{
 				enqueueSnackbar('A categoria foi criada com sucesso', { variant: 'success' });
-				history.push(`/categorias/alterar/${createCategory.id}`);
+				history.push(`${prefixUrl}/alterar/${createCategory.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

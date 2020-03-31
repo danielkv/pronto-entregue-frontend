@@ -28,8 +28,9 @@ const initialFilter = {
 	search: '',
 }
 
-function Page (props) {
+function Page ({ match: { url } }) {
 	setPageTitle('Categorias');
+	//const { url } = useRouteMatch();
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -94,7 +95,7 @@ function Page (props) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Categorias</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/categorias/novo' component={Link}>Adicionar</Button> {(loading || loadingCategoriesOrder) && <CircularProgress />}
+						<Button size='small' variant="contained" color='secondary' to={`${url}/nova`} component={Link}>Adicionar</Button> {(loading || loadingCategoriesOrder) && <CircularProgress />}
 						<NumberOfRows>{countCategories} categorias</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -135,7 +136,7 @@ function Page (props) {
 																<DraggableCell selected={selected}>{row.name}</DraggableCell>
 																<DraggableCell selected={selected}><Chip variant='outlined' label={row.countProducts} /></DraggableCell>
 																<DraggableCell selected={selected}>
-																	<IconButton disabled={loading} onClick={()=>{props.history.push(`/categorias/alterar/${row.id}`)}}>
+																	<IconButton disabled={loading} component={Link} to={`${url}/alterar/${row.id}`}>
 																		<Icon path={mdiPencil} size={1} color='#363E5E' />
 																	</IconButton>
 																	<Switch

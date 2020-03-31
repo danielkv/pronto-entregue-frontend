@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useRouteMatch } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiStar, mdiSale, mdiGroup } from '@mdi/js';
@@ -11,17 +11,17 @@ import { Container, NavigationContainer, NavItem } from './styles';
 function Navigation() {
 	const location = useLocation();
 	const loggedUserRole = useLoggedUserRole();
+	const { path, url } = useRouteMatch();
 	
 	function isSelected(match) {
 		if (!location.pathname) return '';
-		const currentLocation = location.pathname.substr(1).split('/')[0];
-		return currentLocation === match ? true : false;
+		return location.pathname === `${path}/${match}`
 	}
 
 	return (
 		<Container>
 			<NavigationContainer>
-				<NavItem to='/dashboard' selected={isSelected('dashboard')} alt='Dashboard'>
+				<NavItem to={`${url}`} selected={isSelected('dashboard')} alt='Dashboard'>
 					<ListItemIcon>
 						<Icon className='teste' path={mdiViewDashboard} size={1} color='#707070' />
 					</ListItemIcon>
@@ -29,42 +29,42 @@ function Navigation() {
 						Inicio
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/pedidos' selected={isSelected('pedidos')} alt='Pedidos'>
+				<NavItem to={`${url}/pedidos`} selected={isSelected('pedidos')} alt='Pedidos'>
 					<ListItemIcon>
 						<Icon path={mdiViewList} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Pedidos
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/produtos' selected={isSelected('produtos')} alt='Produtos'>
+				<NavItem to={`${url}/produtos`} selected={isSelected('produtos')} alt='Produtos'>
 					<ListItemIcon>
 						<Icon path={mdiBasket} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Produtos
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/categorias' selected={isSelected('categorias')} alt='Categorias'>
+				<NavItem to={`${url}/categorias`} selected={isSelected('categorias')} alt='Categorias'>
 					<ListItemIcon>
 						<Icon path={mdiShape} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 								Categorias
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/usuarios' selected={isSelected('usuarios')} alt='usuários'>
+				<NavItem to={`${url}/usuarios`} selected={isSelected('usuarios')} alt='usuários'>
 					<ListItemIcon>
 						<Icon path={mdiAccountTie } size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Usuários
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/campanhas' selected={isSelected('campanhas')} alt='Campanhas'>
+				<NavItem to={`${url}/campanhas`} selected={isSelected('campanhas')} alt='Campanhas'>
 					<ListItemIcon>
 						<Icon path={mdiSale} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Campanhas
 					</ListItemText>
 				</NavItem>
-				<NavItem to='/pontuacao' selected={isSelected('pontuacao')} alt='pontuacao'>
+				<NavItem to={`${url}/pontuacao`} selected={isSelected('pontuacao')} alt='pontuacao'>
 					<ListItemIcon>
 						<Icon path={mdiStar} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
@@ -74,7 +74,7 @@ function Navigation() {
 
 				
 
-				<NavItem selected={isSelected('configuracoes')} className={`settings`} to='/configuracoes' alt='Configurações'>
+				<NavItem selected={isSelected('configuracoes')} className={`settings`} to={`${url}/configuracoes`} alt='Configurações'>
 					<ListItemIcon>
 						<Icon path={mdiSettings} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
@@ -88,21 +88,21 @@ function Navigation() {
 					<Divider />
 
 					<NavigationContainer dense={true}>
-						<NavItem to='/empresas' selected={isSelected('empresas')} alt='Empresas'>
+						<NavItem to={`${url}/empresas`} selected={isSelected('empresas')} alt='Empresas'>
 							<ListItemIcon>
 								<Icon path={mdiStore} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Empresas
 							</ListItemText>
 						</NavItem>
-						<NavItem to='/ramos' selected={isSelected('ramos')} alt='Ramos de atividade'>
+						<NavItem to={`${url}/ramos`} selected={isSelected('ramos')} alt='Ramos de atividade'>
 							<ListItemIcon>
 								<Icon path={mdiGroup} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Ramos de atividade
 							</ListItemText>
 						</NavItem>
-						<NavItem to='/pessoas' selected={isSelected('pessoas')} alt='Pessoas'>
+						<NavItem to={`${url}/pessoas`} selected={isSelected('pessoas')} alt='Pessoas'>
 							<ListItemIcon>
 								<Icon path={mdiAccountMultiple} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>

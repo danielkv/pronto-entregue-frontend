@@ -20,12 +20,16 @@ const Routes = ()  => {
 	return (
 		<BrowserRouter>
 			<Switch>
-				<Route path='/login'>
-					{isUserLoggedIn !== true ? <Login /> : <Redirect to='/' />}
-				</Route>
+				<Route path='/dashboard'>
+					<Switch>
+						<Route path='/dashboard/login'>
+							{isUserLoggedIn !== true ? <Login /> : <Redirect to='/dashboard' />}
+						</Route>
 
-				<Route path='/' >
-					{isUserLoggedIn === true ? <RoutesFrame /> : <Redirect to='/login' />}
+						<Route path='/dashboard' >
+							{isUserLoggedIn === true ? <RoutesFrame /> : <Redirect to='/dashboard/login' />}
+						</Route>
+					</Switch>
 				</Route>
 			</Switch>
 		</BrowserRouter>

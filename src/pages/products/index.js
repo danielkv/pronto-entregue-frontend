@@ -22,7 +22,7 @@ const initialFilter = {
 	search: '',
 }
 
-function Page (props) {
+function Page ({ match: { url } }) {
 	setPageTitle('Produtos');
 
 	const searchRef = useRef(null);
@@ -75,7 +75,7 @@ function Page (props) {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Produtos</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/produtos/novo' component={Link}>Adicionar</Button> {loading && <CircularProgress />}
+							<Button size='small' variant="contained" color='secondary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loading && <CircularProgress />}
 							<NumberOfRows>{countProducts} produtos</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -135,7 +135,7 @@ function Page (props) {
 											</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
-												<IconButton disabled={loading} onClick={()=>{props.history.push(`/produtos/alterar/${row.id}`)}}>
+												<IconButton disabled={loading} component={Link} to={`${url}/alterar/${row.id}`}>
 													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>
 												<Switch

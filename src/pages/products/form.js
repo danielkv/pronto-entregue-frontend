@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
@@ -28,6 +28,8 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 	const history = useHistory();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
+	const { url } = useRouteMatch();
+	const dashboardUrl = '/' + url.substr(1).split('/')[0];
 
 	// sale
 	const [openSale, setOpenSale] = useState(false);
@@ -123,7 +125,7 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 								<FormLabel>Campanhas vinculadas</FormLabel>
 								<div style={{ display: 'block' }}>
 									{campaigns.map((campaign, index) => {
-										const onDelete = (campaign.masterOnly && loggedUserRole === 'master') || !campaign.masterOnly ? ()=>history.push(`/campanhas/alterar/${campaign.id}`) : null;
+										const onDelete = (campaign.masterOnly && loggedUserRole === 'master') || !campaign.masterOnly ? ()=>history.push(`${dashboardUrl}/campanhas/alterar/${campaign.id}`) : null;
 										return <Chip color='primary' key={index} label={campaign.name} deleteIcon={<Icon path={mdiPencil} size={1} color='#ccc' />} onDelete={onDelete} />
 									})}
 								</div>

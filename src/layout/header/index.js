@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { FormControl, Select, MenuItem, Fab, CircularProgress } from '@material-ui/core';
@@ -17,6 +17,8 @@ import { GET_USER_COMPANIES, SET_SELECTED_COMPANY } from '../../graphql/companie
 
 export default function Header () {
 	const history = useHistory();
+	const { url } = useRouteMatch();
+	const dashboardUrl = '/' + url.substr(1).split('/')[0];
 	
 	const { data: { loggedUserId } } = useQuery(LOGGED_USER_ID);
 	const { data: { user = {} } = {}, loading: loadingLoggedUser } = useQuery(GET_USER, { variables: { id: loggedUserId } });
@@ -31,7 +33,7 @@ export default function Header () {
 
 	function handleLogout () {
 		logUserOut();
-		history.push('/login');
+		history.push(`${dashboardUrl}/login`);
 	}
 
 	return (

@@ -12,6 +12,7 @@ import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from '../../graphql/campaigns';
+import { useRouteMatch } from 'react-router-dom';
 
 
 const FILE_SIZE = 500 * 1024;
@@ -26,6 +27,9 @@ const validationSchema = Yup.object().shape({
 
 function Page ({ history }) {
 	setPageTitle('Novo produto');
+	const { url } = useRouteMatch();
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
 
 	const { enqueueSnackbar } = useSnackbar();
 	const loggedUserRole = useLoggedUserRole();
@@ -41,7 +45,7 @@ function Page ({ history }) {
 		return createCampaign({ variables: { data: dataSave } })
 			.then(({ data: { createCampaign } })=>{
 				enqueueSnackbar('A campanha foi criada com sucesso', { variant: 'success' });
-				history.push(`/campanhas/alterar/${createCampaign.id}`);
+				history.push(`${prefixUrl}/alterar/${createCampaign.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

@@ -19,7 +19,7 @@ const initialFilter = {
 	search: '',
 }
 
-function Page (props) {
+function Page ({ match: { url } }) {
 	setPageTitle('Categorias');
 
 	const searchRef = useRef(null);
@@ -60,7 +60,7 @@ function Page (props) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Ramos de ativodade</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to='/ramos/novo' component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
+						<Button size='small' variant="contained" color='secondary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
 						<NumberOfRows>{countCompanyTypes} ramos de atividade</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -83,7 +83,7 @@ function Page (props) {
 										<DraggableCell>{row.name}</DraggableCell>
 										<DraggableCell><Chip variant='outlined' label={row.countCompanies} /></DraggableCell>
 										<DraggableCell>
-											<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/ramos/alterar/${row.id}`)}}>
+											<IconButton disabled={loadingUpdating} component={Link} onClick={`${url}/alterar/${row.id}`}>
 												<Icon path={mdiPencil} size={1} color='#363E5E' />
 											</IconButton>
 											<Switch

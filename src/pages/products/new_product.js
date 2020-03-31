@@ -31,8 +31,10 @@ const productSchema = Yup.object().shape({
 	})),
 });
 
-function Page ({ history }) {
+function Page ({ history, match: { url } }) {
 	setPageTitle('Novo produto');
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
 
 	const selectedCompany = useSelectedCompany();
 	const [createProduct] = useMutation(CREATE_PRODUCT, { refetchQueries: [{ query: GET_COMPANY_PRODUCTS, variables: { id: selectedCompany } }] });
@@ -46,7 +48,7 @@ function Page ({ history }) {
 		return createProduct({ variables: { data: dataSave } })
 			.then(({ data: { createProduct } })=>{
 				enqueueSnackbar('O produto foi criado com sucesso', { variant: 'success' });
-				history.push(`/produtos/alterar/${createProduct.id}`);
+				history.push(`${prefixUrl}/alterar/${createProduct.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

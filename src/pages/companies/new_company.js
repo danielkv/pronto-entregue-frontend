@@ -46,8 +46,10 @@ const companySchema = Yup.object().shape({
 	})).min(1),
 });
 
-function Page ({ history }) {
+function Page ({ history, match: { url } }) {
 	setPageTitle('Nova empresa');
+	const splitedUrl = url.substr(1).split('/')
+	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
 	
 	const { enqueueSnackbar } = useSnackbar();
 	const [createCompany] = useMutation(CREATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES }] });
@@ -60,7 +62,7 @@ function Page ({ history }) {
 		return createCompany({ variables: { data } })
 			.then(({ data: { createCompany } })=>{
 				enqueueSnackbar('A empresa foi criada com sucesso', { variant: 'success' });
-				history.push(`/empresas/alterar/${createCompany.id}`);
+				history.push(`${prefixUrl}/alterar/${createCompany.id}`);
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

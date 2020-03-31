@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
 import { TextField, ButtonGroup, Button, Card, CardContent, Typography, Divider, TablePagination } from '@material-ui/core';
@@ -25,6 +25,8 @@ const initialFilter = {
 
 function Page () {
 	setPageTitle('Empresas');
+	const { url } = useRouteMatch();
+	const dashboardUrl = '/' + url.substr(1).split('/')[0];
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -116,7 +118,7 @@ function Page () {
 									<CardContent>
 										<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '8px 0' }}>
 											<Typography><b>{rating.user.fullName}</b> para pedido</Typography>
-											<Button size='small' component={Link} to={`/pedidos/alterar/${rating.order.id}`}>
+											<Button size='small' component={Link} to={`${dashboardUrl}/pedidos/alterar/${rating.order.id}`}>
 												#{rating.order.id}
 											</Button>
 										</div>

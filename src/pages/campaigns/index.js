@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
@@ -21,8 +21,9 @@ const initialFilter = {
 	search: '',
 }
 
-function Page (props) {
+function Page () {
 	setPageTitle('Produtos');
+	const { url } = useRouteMatch();
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -71,7 +72,7 @@ function Page (props) {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Campanhas</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to='/campanhas/nova' component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
+							<Button size='small' variant="contained" color='secondary' to={`${url}/nova`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
 							<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -100,7 +101,7 @@ function Page (props) {
 											<TableCell>
 												{Boolean(row.masterOnly) && (
 													<>
-														<IconButton disabled={loadingUpdating} onClick={()=>{props.history.push(`/campanhas/alterar/${row.id}`)}}>
+														<IconButton disabled={loadingUpdating} component={Link} to={`${url}/alterar/${row.id}`}>
 															<Icon path={mdiPencil} size={1} color='#363E5E' />
 														</IconButton>
 														<Switch
