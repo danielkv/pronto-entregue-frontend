@@ -4,39 +4,39 @@ import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
 
-import ProtectedRoute from './components/ProtectedRoute';
-import { Container, HeaderArea, NavigationArea, Main } from './layout/components';
+import ProtectedRoute from '../components/ProtectedRoute';
+import { Container, HeaderArea, NavigationArea, Main } from '../layout/components';
 
-import Header from './layout/header';
-import Navigation from './layout/navigation';
-import theme from './layout/theme';
-import Campaigns from './pages/campaigns';
-import EditCampaign from './pages/campaigns/edit_campaign';
-import NewCampaign from './pages/campaigns/new_campaign';
-import Categories from './pages/categories';
-import EditCategory from './pages/categories/edit_category';
-import NewCategory from './pages/categories/new_category';
-import Companies from './pages/companies';
-import EditCompany from './pages/companies/edit_company';
-import NewCompany from './pages/companies/new_company';
-import CompanyTypes from './pages/companyTypes';
-import EditType from './pages/companyTypes/edit_type';
-import NewType from './pages/companyTypes/new_type';
-import Dashboard from './pages/dashboard';
-import Orders from './pages/orders';
-import EditOrder from './pages/orders/edit_order';
-import NewOrder from './pages/orders/new_order';
-import People from './pages/people';
-import EditPeople from './pages/people/edit_people';
-import NewPeople from './pages/people/new_people';
-import Users from './pages/people/users';
-import Products from './pages/products';
-import EditProduct from './pages/products/edit_product';
-import NewProduct from './pages/products/new_product';
-import Ratings from './pages/ratings';
-import Settings from './pages/settings';
+import Header from '../layout/header';
+import Navigation from '../layout/navigation';
+import theme from '../layout/theme';
+import Campaigns from '../pages/campaigns';
+import EditCampaign from '../pages/campaigns/edit_campaign';
+import NewCampaign from '../pages/campaigns/new_campaign';
+import Categories from '../pages/categories';
+import EditCategory from '../pages/categories/edit_category';
+import NewCategory from '../pages/categories/new_category';
+import Companies from '../pages/companies';
+import EditCompany from '../pages/companies/edit_company';
+import NewCompany from '../pages/companies/new_company';
+import CompanyTypes from '../pages/companyTypes';
+import EditType from '../pages/companyTypes/edit_type';
+import NewType from '../pages/companyTypes/new_type';
+import Dashboard from '../pages/dashboard';
+import Orders from '../pages/orders';
+import EditOrder from '../pages/orders/edit_order';
+import NewOrder from '../pages/orders/new_order';
+import People from '../pages/people';
+import EditPeople from '../pages/people/edit_people';
+import NewPeople from '../pages/people/new_people';
+import Users from '../pages/people/users';
+import Products from '../pages/products';
+import EditProduct from '../pages/products/edit_product';
+import NewProduct from '../pages/products/new_product';
+import Ratings from '../pages/ratings';
+import Settings from '../pages/settings';
 
-export default function Layout () {
+export default function DashboardPages() {
 	const { path } = useRouteMatch();
 	
 	return (
