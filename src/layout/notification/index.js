@@ -25,7 +25,7 @@ export default function Notification() {
 	return (
 		<Container>
 			<IconButton component={Link} to={`${url}/pedidos`}>
-				<Badge badgeContent={newOrders} color='secondary'>
+				<Badge badgeContent={newOrders} color='primary'>
 					<Icon path={mdiBell} color='#ccc' size={1} />
 				</Badge>
 			</IconButton>

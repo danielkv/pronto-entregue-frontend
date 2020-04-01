@@ -95,7 +95,7 @@ function Page ({ match: { url } }) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Categorias</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to={`${url}/nova`} component={Link}>Adicionar</Button> {(loading || loadingCategoriesOrder) && <CircularProgress />}
+						<Button size='small' variant="contained" color='primary' to={`${url}/nova`} component={Link}>Adicionar</Button> {(loading || loadingCategoriesOrder) && <CircularProgress />}
 						<NumberOfRows>{countCategories} categorias</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -145,7 +145,7 @@ function Page ({ match: { url } }) {
 																		onChange={()=>setCategoryEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
 																		value="checkedB"
 																		size='small'
-																		color="secondary"
+																		color='primary'
 																		inputProps={{ 'aria-label': 'primary checkbox' }}
 																	/>
 																</DraggableCell>

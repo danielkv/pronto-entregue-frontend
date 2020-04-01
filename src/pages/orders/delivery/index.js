@@ -161,7 +161,7 @@ export default function Delivery() {
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Button variant='outlined' color='secondary' disabled={loadingLocation} onClick={()=>searchGeoCode(address)}>
+									<Button variant='outlined' color='primary' disabled={loadingLocation} onClick={()=>searchGeoCode(address)}>
 										{loadingLocation
 											? <CircularProgress />
 											: 'Buscar localização no mapa'}

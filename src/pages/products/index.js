@@ -75,7 +75,7 @@ function Page ({ match: { url } }) {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Produtos</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loading && <CircularProgress />}
+							<Button size='small' variant="contained" color='primary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loading && <CircularProgress />}
 							<NumberOfRows>{countProducts} produtos</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -144,7 +144,7 @@ function Page ({ match: { url } }) {
 													onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } }) }
 													value="checkedB"
 													size='small'
-													color="secondary"
+													color='primary'
 													inputProps={{ 'aria-label': 'primary checkbox' }}
 													title={row.sale && 'Não é possível alterar um produto, com uma promoção ativa'}
 												/>

@@ -60,7 +60,7 @@ function Page ({ match: { url } }) {
 				<Block>
 					<BlockHeader>
 						<BlockTitle>Ramos de ativodade</BlockTitle>
-						<Button size='small' variant="contained" color='secondary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
+						<Button size='small' variant="contained" color='primary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
 						<NumberOfRows>{countCompanyTypes} ramos de atividade</NumberOfRows>
 					</BlockHeader>
 					<Paper>
@@ -92,7 +92,7 @@ function Page ({ match: { url } }) {
 												onChange={()=>updateCompanyType({ variables: { id: row.id, data: { active: !row.active } } })}
 												value="checkedB"
 												size='small'
-												color="secondary"
+												color='primary'
 												inputProps={{ 'aria-label': 'primary checkbox' }}
 											/>
 										</DraggableCell>

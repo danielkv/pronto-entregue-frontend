@@ -128,8 +128,7 @@ export const BlockTitle = styled.h2`
 	font-size:18px;
 	font-weight:normal;
 	color:#707070;
-	margin:0;
-	margin-right:10px;
+	margin: 0 0 15px 0;
 `
 
 export const NumberOfRows = styled.div`

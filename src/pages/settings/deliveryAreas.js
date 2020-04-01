@@ -117,10 +117,10 @@ function Page () {
 										<FieldControl>
 											<FormControl>
 												<ButtonGroup disabled={inputsDisabled}>
-													{/* <Button color='secondary'>Cancelar</Button> */}
+													{/* <Button color='primary'>Cancelar</Button> */}
 													<Button
 														variant="contained"
-														color='secondary'
+														color='primary'
 														onClick={()=>{insert(deliveryAreas.length, { distance: '', price: 0 })}}
 													>
 														<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size={1} /> Adicionar
@@ -128,7 +128,7 @@ function Page () {
 													<Button
 														type='submit'
 														variant="contained"
-														color='secondary'
+														color='primary'
 													>
 											Salvar
 													</Button>

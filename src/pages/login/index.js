@@ -3,15 +3,13 @@ import React, { useState } from 'react';
 
 import { useApolloClient } from '@apollo/react-hooks';
 import { TextField, Button, Snackbar, SnackbarContent } from '@material-ui/core';
-import { ThemeProvider } from '@material-ui/styles';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 
 import { FormRow, FieldControl } from '../../layout/components';
 
-import imageLogo from '../../assets/images/logo-full.png';
-import theme from '../../layout/theme';
+import imageLogo from '../../assets/images/logo-vertical-v2.png';
 import { logUserIn } from '../../services/init';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
@@ -68,57 +66,55 @@ function Page () {
 	}
 
 	return (
-		<ThemeProvider theme={theme}>
-			<Container>
-				<LoginPanel>
-					<img src={imageLogo} alt='Flakery - Flaker Delivery' />
-					<Formik
-						initialValues={initialValues}
-						validationSchema={LoginSchema}
-						onSubmit={handleLogin}
-						validateOnChange={false}
-					>
-						{({ handleChange, handleSubmit, errors, values }) =>
-							(<LoginArea >
-								<FormRow>
-									<FieldControl>
-										<LoginLabel>Faça o login</LoginLabel>
-									</FieldControl>
-								</FormRow>
-								<FormRow>
-									<FieldControl>
-										<TextField disabled={loading} name='email' value={values.email} error={!!errors.email} helperText={errors.email} onChange={handleChange} label='Email' />
-									</FieldControl>
-								</FormRow>
-								<FormRow>
-									<FieldControl>
-										<TextField disabled={loading} name='password' value={values.password} error={!!errors.password} helperText={errors.password} onChange={handleChange} type="password" label='Senha' />
-									</FieldControl>
-								</FormRow>
-								<FormRow>
-									<FieldControl>
-										<Button disabled={loading} onClick={handleSubmit} fullWidth type='submit' variant="contained" color='secondary'>Acessar</Button>
-									</FieldControl>
-								</FormRow>
-								<Snackbar
-									open={!!error}
-									anchorOrigin={{
-										vertical: 'bottom',
-										horizontal: 'left',
-									}}
-									onClose={()=>{setError(null)}}
-									autoHideDuration={4000}
-								>
-									<SnackbarContent className='error' message={!!error && getErrors(error)} />
-								</Snackbar>
-							</LoginArea>)}
-					</Formik>
-				</LoginPanel>
-				<ImagePanel image={image}>
-
-				</ImagePanel>
-			</Container>
-		</ThemeProvider>
+		
+		<Container>
+			<LoginPanel>
+				<img src={imageLogo} alt='Pronto, Entregue!' style={{ alignSelf: 'center' }}  />
+				<Formik
+					initialValues={initialValues}
+					validationSchema={LoginSchema}
+					onSubmit={handleLogin}
+					validateOnChange={false}
+				>
+					{({ handleChange, handleSubmit, errors, values }) =>
+						(<LoginArea>
+							<FormRow>
+								<FieldControl>
+									<LoginLabel>Faça o login</LoginLabel>
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<TextField disabled={loading} name='email' value={values.email} error={!!errors.email} helperText={errors.email} onChange={handleChange} label='Email' />
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<TextField disabled={loading} name='password' value={values.password} error={!!errors.password} helperText={errors.password} onChange={handleChange} type="password" label='Senha' />
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<Button disabled={loading} onClick={handleSubmit} fullWidth type='submit' variant="contained" color='primary'>Acessar</Button>
+								</FieldControl>
+							</FormRow>
+							<Snackbar
+								open={!!error}
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'left',
+								}}
+								onClose={()=>{setError(null)}}
+								autoHideDuration={4000}
+							>
+								<SnackbarContent className='error' message={!!error && getErrors(error)} />
+							</Snackbar>
+						</LoginArea>)}
+				</Formik>
+			</LoginPanel>
+			<ImagePanel image={image} />
+		</Container>
+		
 	)
 }
 

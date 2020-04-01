@@ -94,7 +94,7 @@ export default function Sale ({ closeModal }) {
 			<DialogActions>
 				<Typography variant='caption'  style={{ textAlign: 'right' }}>A promoção ficará suspensa até ser avaliada. Esse processo pode levar até 24h.</Typography>
 				<Button variant='contained' onClick={handleCancel}>{action !== 'new_empty' ? 'Cancelar promoção' : 'Cancelar'}</Button>
-				<Button variant='contained' onClick={handleSave} color='secondary'>OK</Button>
+				<Button variant='contained' onClick={handleSave} color='primary'>OK</Button>
 			</DialogActions>
 		</Container>
 	);

@@ -100,7 +100,7 @@ function Page () {
 														value="checkedB"
 														disabled={loading}
 														size='small'
-														color="secondary"
+														color='primary'
 														inputProps={{ 'aria-label': 'primary checkbox' }}
 													/>
 												)}

@@ -41,7 +41,7 @@ export default function Landing() {
 					<Container style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 						<TopNav>
 							<LogoImg src={logoUrl} />
-							<Button variant='contained' color='secondary'>Acessar Dashboard</Button>
+							<Button variant='contained' color='primary'>Acessar Dashboard</Button>
 						</TopNav>
 						<TopContent>
 							<Typography variant='h1' style={{ fontSize: '3em', textTransform: 'uppercase' }}>Sistema para <b>entrega</b></Typography>
@@ -115,12 +115,12 @@ export default function Landing() {
 				</Container>
 			</FeatureDetailsContainer>
 			<Footer>
-				<Typography variant='h4' color='secondary' style={{ fontWeight: 'bold', marginBottom: 20 }}>Baixe nosso APP</Typography>
+				<Typography variant='h4' color='primary' style={{ fontWeight: 'bold', marginBottom: 20 }}>Baixe nosso APP</Typography>
 				<AppsDownloadContainer>
 					<img src={appStoreImage} alt='App Store' />
 					<img src={googlePlayImage} alt='Google Play' />
 				</AppsDownloadContainer>
-				<Typography variant='h5' color='secondary' >Quer saber mais? Entre em contato</Typography>
+				<Typography variant='h5' color='primary' >Quer saber mais? Entre em contato</Typography>
 				<PhoneNumber>
 					<div><PhoneIcon /></div>
 					<Typography variant='body1'>48 99189 3016</Typography>

@@ -72,7 +72,7 @@ function Page () {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Campanhas</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to={`${url}/nova`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
+							<Button size='small' variant="contained" color='primary' to={`${url}/nova`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
 							<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -110,7 +110,7 @@ function Page () {
 															onChange={()=>updateCompany({ variables: { id: row.id, data: { active: !row.active } } }) }
 															value="checkedB"
 															size='small'
-															color="secondary"
+															color='primary'
 															inputProps={{ 'aria-label': 'primary checkbox' }}
 														/>
 													</>

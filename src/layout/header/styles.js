@@ -10,7 +10,7 @@ export const HeaderContainer = styled(Paper).attrs(()=>({ elevation: 2 }))`
 `;
 
 export const LogoContainer = styled.div`
-	background-color:#FBAE17;
+	background-color: ${({ theme })=>theme.palette.primary.main};
 	display:flex;
 	align-items:center;
 	padding:0 45px 0 35px;

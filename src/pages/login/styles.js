@@ -12,18 +12,18 @@ export const LoginPanel = styled(Paper)`
 	border-radius:0 !important;
 	display:flex;
 	flex-direction:column;
-	align-items:center;
-	justify-content:flex-start;
+	align-items:stretch;
+	justify-content:center;
 	width:23%;
-	padding-top:10%;
+	margin-top:-200px;
 	min-width:350px;
 	max-width:550px;
 	box-sizing:border-box;
 `;
 
 export const LoginArea = styled.form`
-	margin-top:30px;
-	width:100%;
+	display: block;
+	margin:30px 30px 0 30px;
 `;
 
 export const LoginLabel = styled.h1`

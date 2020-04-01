@@ -118,7 +118,7 @@ function Page ({ match: { url } }) {
 							<Button
 								size='small'
 								variant="contained"
-								color='secondary'
+								color='primary'
 								to={`${url}/novo`}
 								component={Link}
 								disabled={loadingUpdateOrder}

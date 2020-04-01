@@ -262,8 +262,8 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
 									<ButtonGroup style={{ marginLeft: 'auto' }}>
-										<Button onClick={handleCancel} color='secondary'>Cancelar</Button>
-										<Button onClick={handleSave} variant="contained" color='secondary'>Salvar</Button>
+										<Button onClick={handleCancel} color='primary'>Cancelar</Button>
+										<Button onClick={handleSave} variant="contained" color='primary'>Salvar</Button>
 									</ButtonGroup>
 								</FieldControl>
 							</FormRow>

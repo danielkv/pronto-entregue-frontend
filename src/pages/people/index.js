@@ -74,7 +74,7 @@ function Page () {
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Pessoas</BlockTitle>
-							<Button size='small' variant="contained" color='secondary' to={`${url}/nova`} component={Link}>Adicionar</Button>{loading && <CircularProgress />}
+							<Button size='small' variant="contained" color='primary' to={`${url}/nova`} component={Link}>Adicionar</Button>{loading && <CircularProgress />}
 							<NumberOfRows>{countUsers} pessoas</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -108,7 +108,7 @@ function Page () {
 														value="checkedB"
 														disabled={loading}
 														size='small'
-														color="secondary"
+														color='primary'
 														inputProps={{ 'aria-label': 'primary checkbox' }}
 													/>
 												)}

@@ -2,6 +2,9 @@ import { createMuiTheme } from '@material-ui/core/styles';
 
 export default createMuiTheme({
 	spacing: 6,
+	shape: {
+		borderRadius: 20
+	},
 	overrides: {
 		MuiTable: {
 			root: {
@@ -150,6 +153,7 @@ export default createMuiTheme({
 		}
 	},
 	props: {
+		
 		MuiCircularProgress: {
 			color: 'secondary',
 			size: 25,
@@ -175,10 +179,10 @@ export default createMuiTheme({
 	},
 	palette: {
 		primary: {
-			main: '#666666'
+			main: '#F11761'
 		},
 		secondary: {
-			main: '#D41450'
+			main: '#A4D82B'
 		},
 	}
 });

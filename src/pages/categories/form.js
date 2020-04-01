@@ -71,7 +71,7 @@ export default function PageForm ({ values: { active, preview }, errors, setFiel
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Button type='submit' disabled={isSubmitting} fullWidth variant="contained" color='secondary'>Salvar</Button>
+									<Button type='submit' disabled={isSubmitting} fullWidth variant="contained" color='primary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

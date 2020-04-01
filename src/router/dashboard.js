@@ -1,6 +1,8 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
+import { SnackbarProvider } from 'notistack';
+
 import { LoadingBlock, ErrorBlock } from '../layout/blocks';
 import Login from '../pages/login';
 import { useInitialize } from '../services/init';
@@ -14,16 +16,16 @@ export default function DashboardRoutes() {
 	if (error) return <ErrorBlock error={getErrors(error)} />;
 
 	return (
-		<Switch>
-			<Route path='/dashboard/login'>
-				{isUserLoggedIn !== true ? <Login /> : <Redirect to='/dashboard' />}
-			</Route>
+		<SnackbarProvider>
+			<Switch>
+				<Route path='/dashboard/login'>
+					{isUserLoggedIn !== true ? <Login /> : <Redirect to='/dashboard' />}
+				</Route>
 
-			<Route path='/dashboard' >
-				{isUserLoggedIn === true ? <DashboardPages /> : <Redirect to='/dashboard/login' />}
-			</Route>
-		</Switch>
+				<Route path='/dashboard' >
+					{isUserLoggedIn === true ? <DashboardPages /> : <Redirect to='/dashboard/login' />}
+				</Route>
+			</Switch>
+		</SnackbarProvider>
 	);
 }
-
-//export default hot(Routes);

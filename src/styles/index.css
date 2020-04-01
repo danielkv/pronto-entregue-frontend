@@ -19,9 +19,9 @@ svg {
 	width: 100%;
 	height: 100%;
 }
-svg[role='presentation'] {
+/* svg[role='presentation'] {
 	display:none;
-}
+} */
 
 form {
 	display: contents;

@@ -127,7 +127,7 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 						</FormRow>
 						<FormRow>
 							<FieldControl>
-								<Button variant='outlined' color='secondary' disabled={loadingLocation} onClick={()=>searchGeoCode(address)}>
+								<Button variant='outlined' color='primary' disabled={loadingLocation} onClick={()=>searchGeoCode(address)}>
 									{loadingLocation
 										? <CircularProgress />
 										: 'Buscar localização no mapa'}
@@ -219,7 +219,7 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Button fullWidth disabled={isSubmitting} type="submit" variant="contained" color='secondary'>Salvar</Button>
+									<Button fullWidth disabled={isSubmitting} type="submit" variant="contained" color='primary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

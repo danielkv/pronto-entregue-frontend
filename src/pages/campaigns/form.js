@@ -87,7 +87,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='primary' checked={active} onChange={()=>{setFieldValue('active', !active)}} value="includeDisabled" />
+											<Switch size='small' checked={active} onChange={()=>{setFieldValue('active', !active)}} value="includeDisabled" />
 										}
 										label="Ativo"
 									/>
@@ -96,7 +96,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 							
 							<FormRow>
 								<FieldControl>
-									<Button fullWidth type='submit' variant="contained" color='secondary'>Salvar</Button>
+									<Button fullWidth type='submit' variant="contained" color='primary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
@@ -106,7 +106,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='secondary' checked={acceptOtherCampaign} onChange={()=>{setFieldValue('acceptOtherCampaign', !acceptOtherCampaign)}} value="includeDisabled" />
+											<Switch size='small' color='primary' checked={acceptOtherCampaign} onChange={()=>{setFieldValue('acceptOtherCampaign', !acceptOtherCampaign)}} value="includeDisabled" />
 										}
 										label="Aceita outra campanha"
 									/>
@@ -118,7 +118,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 										<FormControlLabel
 											labelPlacement='start'
 											control={
-												<Switch size='small' color='secondary' checked={chargeCompany} onChange={()=>{setFieldValue('chargeCompany', !chargeCompany)}} value="includeDisabled" />
+												<Switch size='small' color='primary' checked={chargeCompany} onChange={()=>{setFieldValue('chargeCompany', !chargeCompany)}} value="includeDisabled" />
 											}
 											label="Cobrar da(s) empresa(s)"
 										/>

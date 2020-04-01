@@ -78,7 +78,7 @@ function Page () {
 					<FormRow></FormRow>
 					<FormRow>
 						<FieldControl>
-							<Button color='secondary' disabled={loadingUpdateBusinessHours} type='submit' variant='contained'>Salvar</Button>
+							<Button color='primary' disabled={loadingUpdateBusinessHours} type='submit' variant='contained'>Salvar</Button>
 							{!!loadingUpdateBusinessHours && <CircularProgress />}
 						</FieldControl>
 					</FormRow>

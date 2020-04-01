@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { FormControl, Select, MenuItem, Fab, CircularProgress } from '@material-ui/core';
+import { FormControl, Select, MenuItem, CircularProgress, Button } from '@material-ui/core';
 import { mdiStore, mdiLogout, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 
@@ -39,7 +39,7 @@ export default function Header () {
 	return (
 		<HeaderContainer>
 			<LogoContainer>
-				<img src={mainLogo} alt='Flakery' />
+				<img src={mainLogo} alt='Flakery' style={{ height: 'auto', width: 40 }} />
 			</LogoContainer>
 			{loadingCompanies ? <CircularProgress /> :
 				<Fragment>
@@ -72,7 +72,7 @@ export default function Header () {
 						<Icon  path={mdiAccountCircle} color='#999'  size={1} />
 						<span>{user.full_name} <small>({user.email})</small></span>
 					</LoggedUser>
-					<Fab onClick={handleLogout} variant='extended' size='medium' color='secondary'><Icon  path={mdiLogout}  size={1} color='#fff' /> Logout</Fab>
+					<Button onClick={handleLogout} variant='contained' color='primary' startIcon={<Icon path={mdiLogout} size={1} color='#fff' />}>Logout</Button>
 				</RightSide>}
 		</HeaderContainer>
 	)

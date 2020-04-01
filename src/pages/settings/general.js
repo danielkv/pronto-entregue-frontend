@@ -58,7 +58,7 @@ function Page () {
 						<Field type='number' component={tField} action='deliveryTime.action' label='Prazo de entrega' name='deliveryTime.value' />
 						<FormHelperText>Tempo em minutos, incluindo a entrega.</FormHelperText>
 						<Divider style={{ margin: '20px 0' }} />
-						<Button variant='contained' color='secondary' type='submit' disabled={isSubmitting}>
+						<Button variant='contained' color='primary' type='submit' disabled={isSubmitting}>
 							{loadingUpdateSettings
 								? <CircularProgress />
 								: 'Salvar'}
