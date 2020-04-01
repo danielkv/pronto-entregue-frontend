@@ -66,7 +66,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 	}
 
 	const isRestrainingOptionSelected = (sourceGroup) => {
-		let restrainingGroup = product.optionsGroups.find(row=>row.group_related.id===sourceGroup.restrainedBy.id);
+		let restrainingGroup = product.optionsGroups.find(row=>row.groupRelated.id === sourceGroup.restrainedBy.id);
 		if (restrainingGroup) return restrainingGroup.options.find(row=>row.selected);
 
 		return false;
