@@ -29,7 +29,7 @@ const initialData = {
 	initialized: false,
 	isUserLoggedIn: false,
 	userToken: null,
-	selectedCompany: localStorage.getItem('@flakery/selectedCompany') || '',
+	selectedCompany: localStorage.getItem('@prontoentregue/selectedCompany') || '',
 }
 
 cache.writeData({ data: initialData });

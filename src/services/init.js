@@ -47,7 +47,7 @@ export function useInitialize() {
 
 async function init() {
 	try {
-		const token = localStorage.getItem('@flakery/userToken');
+		const token = localStorage.getItem('@prontoentregue/userToken');
 		
 		if (token) {
 			
@@ -70,14 +70,14 @@ async function init() {
 }
 
 export function logUserIn (user, token) {
-	localStorage.setItem('@flakery/userToken', token);
+	localStorage.setItem('@prontoentregue/userToken', token);
 	client.writeData({ data: { loadingInit: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });
 }
 
 export function logUserOut () {
-	localStorage.removeItem('@flakery/userToken');
-	localStorage.removeItem('@flakery/selectedCompany');
-	localStorage.removeItem('@flakery/selectedCompany');
+	localStorage.removeItem('@prontoentregue/userToken');
+	localStorage.removeItem('@prontoentregue/selectedCompany');
+	localStorage.removeItem('@prontoentregue/selectedCompany');
 	client.writeData({ data: { userToken: null, loadingInit: true, isUserLoggedIn: false } });
 	client.resetStore();
 }

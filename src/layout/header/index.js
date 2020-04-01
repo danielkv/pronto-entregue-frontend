@@ -39,7 +39,7 @@ export default function Header () {
 	return (
 		<HeaderContainer>
 			<LogoContainer>
-				<img src={mainLogo} alt='Flakery' style={{ height: 'auto', width: 40 }} />
+				<img src={mainLogo} alt='Pronto, Entregue!' style={{ height: 'auto', width: 40 }} />
 			</LogoContainer>
 			{loadingCompanies ? <CircularProgress /> :
 				<Fragment>

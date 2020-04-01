@@ -3,9 +3,9 @@ import numeral from 'numeral';
 
 export const setPageTitle = (newTitle) => {
 	if (newTitle)
-		return document.title = `Flakery - ${newTitle}`;
+		return document.title = `Pronto, Entregue! - ${newTitle}`;
 	
-	return document.title = `Flakery`;
+	return document.title = `Pronto, Entregue!`;
 }
 
 numeral.register('locale', 'br', {

@@ -31,7 +31,7 @@ export default {
 					}
 				});
 
-				localStorage.setItem('@flakery/selectedCompany', data.company.id);
+				localStorage.setItem('@prontoentregue/selectedCompany', data.company.id);
 			} catch (e) {
 				console.error(e);
 			}
