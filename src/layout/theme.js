@@ -3,7 +3,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 export default createMuiTheme({
 	spacing: 6,
 	shape: {
-		borderRadius: 20
+		borderRadius: 15
 	},
 	overrides: {
 		MuiTable: {
@@ -124,6 +124,7 @@ export default createMuiTheme({
 		},
 		MuiButton: {
 			root: {
+				borderRadius: 20,
 				'& .iconLeft': {
 					marginRight: 5,
 					marginTop: -3

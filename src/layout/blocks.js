@@ -16,7 +16,7 @@ import imagePlaceHolderPng from '../assets/images/select_image.png';
 
 export const LoadingBlock = () => (
 	<BlockContainer>
-		<CircularProgress />
+		<CircularProgress color='primary' />
 		<LoadingText>Carregando...</LoadingText>
 	</BlockContainer>
 )

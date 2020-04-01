@@ -112,7 +112,7 @@ export const Block = styled.div`
 `
 export const BlockHeader = styled.div`
 	display:flex;
-	justify-content:flex-start;
+	justify-content: center;
 	align-items:center;
 	margin-bottom:10px;
 `
@@ -123,12 +123,13 @@ export const BlockFooter = styled.div`
 `
 
 export const BlockTitle = styled.h2`
-	display:flex;
-	align-items:center;
-	font-size:18px;
-	font-weight:normal;
-	color:#707070;
-	margin: 0 0 15px 0;
+	display: flex;
+	align-items: center;
+	font-size: 18px;
+	font-weight: normal;
+	color: #707070;
+	margin: 0;
+	margin-right: 10px;
 `
 
 export const NumberOfRows = styled.div`

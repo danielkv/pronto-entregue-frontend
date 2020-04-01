@@ -16,7 +16,7 @@ import { sanitizeAddress } from '../../../utils/address';
 import { LOAD_COMPANY } from '../../../graphql/companies';
 import { CALCULATE_DELIVERY_PRICE } from '../../../graphql/orders';
 
-
+let timeOutDeliveryPrice = null;
 
 export default function Delivery() {
 	const [loadingLocation, setLoadingLocation] = useState(false);
@@ -63,19 +63,23 @@ export default function Delivery() {
 	const [calculateDeliveryPrice, { loading: loadingdeliveryPrice }] = useMutation(CALCULATE_DELIVERY_PRICE, { variables: { companyId: selectedCompany } });
 
 	useEffect(()=>{
-		if (type === 'delivery') {
-			if (address.location[0] !== '' && address.location[1] !== '') {
-				calculateDeliveryPrice({ variables: { address: sanitizeAddress(address) } })
-					.then(({ data: { calculateDeliveryPrice: area } }) => {
-						setFieldValue('deliveryPrice', area.price);
-						setFieldValue('deliveryOk', true);
-					})
-					.catch(()=> {
-						setFieldValue('deliveryPrice', 0);
-						setFieldValue('deliveryOk', false);
-					})
+		if (timeOutDeliveryPrice) clearTimeout(timeOutDeliveryPrice);
+
+		timeOutDeliveryPrice = setTimeout(()=>{
+			if (type === 'delivery') {
+				if (address.location[0] !== '' && address.location[1] !== '') {
+					calculateDeliveryPrice({ variables: { address: sanitizeAddress(address) } })
+						.then(({ data: { calculateDeliveryPrice: area } }) => {
+							setFieldValue('deliveryPrice', area.price);
+							setFieldValue('deliveryOk', true);
+						})
+						.catch(()=> {
+							setFieldValue('deliveryPrice', 0);
+							setFieldValue('deliveryOk', false);
+						})
+				}
 			}
-		}
+		}, 2000)
 	}, [type, address, calculateDeliveryPrice, setFieldValue]);
 
 	if (loadingCompany) return <LoadingBlock />
