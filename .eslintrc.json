@@ -43,6 +43,7 @@
 		"arrow-parens": 0,
 		"eol-last": 0,
 		"arrow-spacing": 0,
+		"react/display-name": 0,
 		"camelcase": "error",
 		"max-len": 0,
 		"react/prop-types": 0,

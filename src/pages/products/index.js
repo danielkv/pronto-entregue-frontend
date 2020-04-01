@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar, Typography } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar, Typography } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiBrightnessPercent } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
@@ -197,50 +197,6 @@ function Page ({ match: { url } }) {
 											label='Buscar'
 											inputRef={searchRef}
 										/>
-									</FieldControl>
-								</FormRow>
-								<FormRow>
-									<FieldControl>
-										{/* <TextField
-											select
-											label='Categoria'
-											onChange={(event)=>{}}
-											>
-											<MenuItem value='1'>Hamburguer</MenuItem>
-											<MenuItem value='2'>Lanches</MenuItem>
-											<MenuItem value='3'>Porções</MenuItem>
-										</TextField> */}
-									</FieldControl>
-								</FormRow>
-							</BlockSeparator>
-							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<FormControl component="fieldset">
-											<FormLabel component="legend">Contendo opções</FormLabel>
-											<FormGroup>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="waiting" />}
-													label="Aguardando"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="preparing" />}
-													label="Preparando"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="delivering" />}
-													label="Na entrega"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="delivered" />}
-													label="Entregue"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="canceled" />}
-													label="Cancelado"
-												/>
-											</FormGroup>
-										</FormControl>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

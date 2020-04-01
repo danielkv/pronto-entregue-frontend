@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, FormControl, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, TablePagination, TextField, ButtonGroup, Button, FormLabel, FormGroup, Checkbox, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiDotsVertical } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
@@ -197,37 +197,6 @@ function Page ({ match: { url } }) {
 											label='Buscar'
 											inputRef={searchRef}
 										/>
-									</FieldControl>
-								</FormRow>
-							</BlockSeparator>
-							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<FormControl component="fieldset">
-											<FormLabel component="legend">Status</FormLabel>
-											<FormGroup>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="waiting" />}
-													label="Aguardando"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="preparing" />}
-													label="Preparando"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="delivering" />}
-													label="Na entrega"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="delivered" />}
-													label="Entregue"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="canceled" />}
-													label="Cancelado"
-												/>
-											</FormGroup>
-										</FormControl>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

@@ -18,7 +18,7 @@ import RestrictCompaniesBlock from './restrictCompaniesBlock';
 import RestrictProductsBlock from './restrictProductsBlock';
 import RestrictUsersBlock from './restrictUsersBlock';
 
-export default function PageForm ({ values, setFieldValue, errors, isValidating }) {
+export default function PageForm ({ values, setFieldValue, errors, isValidating, isSubmitting }) {
 	const loggedUserRole = useLoggedUserRole();
 	const [errorDialog, setErrorDialog] = useState(false);
 
@@ -96,7 +96,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating 
 							
 							<FormRow>
 								<FieldControl>
-									<Button fullWidth type='submit' variant="contained" color='primary'>Salvar</Button>
+									<Button fullWidth type='submit' variant="contained" disabled={isSubmitting} color='primary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

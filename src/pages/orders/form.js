@@ -142,7 +142,7 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Button fullWidth type='submit' variant="contained" color='primary'>Salvar</Button>
+									<Button fullWidth type='submit' variant="contained" disabled={isSubmitting} color='primary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

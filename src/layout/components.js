@@ -112,8 +112,8 @@ export const Block = styled.div`
 `
 export const BlockHeader = styled.div`
 	display:flex;
-	justify-content: center;
-	align-items:center;
+	justify-content: space-between;
+	align-items: center;
 	margin-bottom:10px;
 `
 export const BlockFooter = styled.div`

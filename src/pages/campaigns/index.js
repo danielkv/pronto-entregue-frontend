@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Chip, Avatar } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
 import { mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import numeral from 'numeral';
@@ -164,37 +164,6 @@ function Page () {
 											label='Buscar'
 											inputRef={searchRef}
 										/>
-									</FieldControl>
-								</FormRow>
-							</BlockSeparator>
-							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<FormControl component="fieldset">
-											<FormLabel component="legend">Contendo opções</FormLabel>
-											<FormGroup>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="waiting" />}
-													label="Aguardando"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="preparing" />}
-													label="Preparando"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="delivering" />}
-													label="Na entrega"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="delivered" />}
-													label="Entregue"
-												/>
-												<FormControlLabel
-													control={<Checkbox checked={false} onChange={()=>{}} value="canceled" />}
-													label="Cancelado"
-												/>
-											</FormGroup>
-										</FormControl>
 									</FieldControl>
 								</FormRow>
 							</BlockSeparator>

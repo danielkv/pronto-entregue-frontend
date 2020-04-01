@@ -13,8 +13,10 @@ export const GET_COMPANY_LAST_ORDERS = gql`
 					id
 					fullName
 				}
-				street
-				number
+				address {
+					street
+					number
+				}
 				countProducts
 				type
 				createdAt
@@ -122,9 +124,9 @@ export const ORDER_FRAGMENT = gql`
 	${ORDER_PRODUCT_RELATED_FRAGMENT}
 `;
 
-export const CALCULATE_DELIVERY_PRICE = gql`
-	mutation CalculateDeliveryPrice ($companyId: ID!, $address: AddressInput!) {
-		calculateDeliveryPrice(companyId: $companyId, address: $address) {
+export const CHECK_DELIVERY_LOCATION = gql`
+	mutation CheckDeliveryLocation ($companyId: ID!, $address: AddressInput!) {
+		checkDeliveryLocation(companyId: $companyId, address: $address) {
 			id
 			distance
 			price
@@ -186,11 +188,12 @@ export const GET_COMPANY_ORDERS = gql`
 `;
 
 export const SUBSCRIBE_ORDER_CREATED = gql`
-	subscription ($company_id: ID!) {
-		orderCreated(company_id: $company_id) {
+	subscription ($companyId: ID!) {
+		orderCreated(companyId: $companyId) {
 			id
 			user {
 				id
+				fullName
 				firstName
 				lastName
 			}

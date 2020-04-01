@@ -14,14 +14,13 @@ function Navigation() {
 	const { path, url } = useRouteMatch();
 	
 	function isSelected(match) {
-		if (!location.pathname) return '';
 		return location.pathname === `${path}/${match}`
 	}
 
 	return (
 		<Container>
 			<NavigationContainer>
-				<NavItem to={`${url}`} selected={isSelected('dashboard')} alt='Dashboard'>
+				<NavItem to={`${url}`} selected={location.pathname === `${path}`} alt='Dashboard'>
 					<ListItemIcon>
 						<Icon className='teste' path={mdiViewDashboard} size={1} color='#707070' />
 					</ListItemIcon>

@@ -129,8 +129,9 @@ function Page () {
 														type='submit'
 														variant="contained"
 														color='primary'
+														disabled={inputsDisabled}
 													>
-											Salvar
+														Salvar
 													</Button>
 												</ButtonGroup>
 												{!!isSubmitting && <CircularProgress />}

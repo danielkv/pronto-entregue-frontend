@@ -14,7 +14,7 @@ import googleMapsClient from '../../../services/googleMapsClient';
 import { sanitizeAddress } from '../../../utils/address';
 
 import { LOAD_COMPANY } from '../../../graphql/companies';
-import { CALCULATE_DELIVERY_PRICE } from '../../../graphql/orders';
+import { CHECK_DELIVERY_LOCATION } from '../../../graphql/orders';
 
 let timeOutDeliveryPrice = null;
 
@@ -60,7 +60,7 @@ export default function Delivery() {
 		setFieldValue('address.location[1]', location.lng);
 	}
 
-	const [calculateDeliveryPrice, { loading: loadingdeliveryPrice }] = useMutation(CALCULATE_DELIVERY_PRICE, { variables: { companyId: selectedCompany } });
+	const [checkDeliveryLocation, { loading: loadingdeliveryPrice }] = useMutation(CHECK_DELIVERY_LOCATION, { variables: { companyId: selectedCompany } });
 
 	useEffect(()=>{
 		if (timeOutDeliveryPrice) clearTimeout(timeOutDeliveryPrice);
@@ -68,8 +68,8 @@ export default function Delivery() {
 		timeOutDeliveryPrice = setTimeout(()=>{
 			if (type === 'delivery') {
 				if (address.location[0] !== '' && address.location[1] !== '') {
-					calculateDeliveryPrice({ variables: { address: sanitizeAddress(address) } })
-						.then(({ data: { calculateDeliveryPrice: area } }) => {
+					checkDeliveryLocation({ variables: { address: sanitizeAddress(address) } })
+						.then(({ data: { checkDeliveryLocation: area } }) => {
 							setFieldValue('deliveryPrice', area.price);
 							setFieldValue('deliveryOk', true);
 						})
@@ -80,7 +80,7 @@ export default function Delivery() {
 				}
 			}
 		}, 2000)
-	}, [type, address, calculateDeliveryPrice, setFieldValue]);
+	}, [type, address, checkDeliveryLocation, setFieldValue]);
 
 	if (loadingCompany) return <LoadingBlock />
 
