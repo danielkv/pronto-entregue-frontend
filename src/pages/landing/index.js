@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 import { Typography, Container, Button } from '@material-ui/core';
 
@@ -41,7 +42,7 @@ export default function Landing() {
 					<Container style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 						<TopNav>
 							<LogoImg src={logoUrl} />
-							<Button variant='contained' color='primary'>Acessar Dashboard</Button>
+							<Button component={Link} to='/dashboard' variant='contained' color='primary'>Acessar Dashboard</Button>
 						</TopNav>
 						<TopContent>
 							<Typography variant='h1' style={{ fontSize: '3em', textTransform: 'uppercase' }}>Sistema para <b>entrega</b></Typography>
