@@ -29,7 +29,6 @@
     "downshift": "^3.3.4",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
-    "express-force-https": "^1.0.0",
     "formik": "^2.0.6",
     "graphql": "^14.5.4",
     "graphql-tag": "^2.10.1",
