@@ -156,7 +156,7 @@ export default createMuiTheme({
 	props: {
 		
 		MuiCircularProgress: {
-			color: 'secondary',
+			color: 'primary',
 			size: 25,
 			thickness: 4,
 		},
