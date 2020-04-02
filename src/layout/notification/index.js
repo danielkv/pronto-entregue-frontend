@@ -39,6 +39,7 @@ export default function Notification() {
 			setNewOrdersList([]);
 			subscription.unsubscribe();
 		}
+		// eslint-disable-next-line
 	}, [selectedCompany])
 	
 	function addNewOrder(order) {

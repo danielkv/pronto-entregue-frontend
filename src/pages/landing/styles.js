@@ -33,7 +33,9 @@ export const TopContent = styled.div`
 `;
 
 export const Header = styled.header`
-	background: url(${deliveryImg}) no-repeat right 100% top 0;
+	background: url(${deliveryImg}) no-repeat;
+	background-size: cover;
+	background-position: center;
 	height: 700px;
 	background-color: #f0f0f0;
 	text-align: center;
