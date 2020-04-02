@@ -1,16 +1,12 @@
 const express = require('express');
 const favicon = require('express-favicon');
+const forceSecure = require('express-force-https');
 const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use((req, res, next) => {
-	if (req.secure)
-		next();
-	else
-		res.redirect('https://' + req.headers.host + req.url);
-})
+app.use(forceSecure);
 
 app.use(favicon(__dirname + '/build/favicon.ico'));
 app.use(express.static(__dirname));
@@ -24,4 +20,6 @@ app.get('/*', function (req, res) {
 	res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-app.listen(port);
+app.listen(port, ()=>{
+	console.log(port)
+});
