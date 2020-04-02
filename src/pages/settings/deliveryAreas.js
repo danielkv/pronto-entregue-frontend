@@ -37,7 +37,7 @@ function Page () {
 	//form schema
 	const areasSchema = Yup.object().shape({
 		deliveryAreas: Yup.array().of(Yup.object().shape({
-			distance: Yup.number().typeError('A distancia dever ser em kilometros').required('Obrigatório'),
+			distance: Yup.number().typeError('A distância dever ser em kilometros').required('Obrigatório'),
 			price: Yup.number().required('Obrigatório'),
 		}))
 	});
@@ -68,7 +68,7 @@ function Page () {
 										<TableHead>
 											<TableRow>
 												<TableCell></TableCell>
-												<TableCell>Distancia (km)</TableCell>
+												<TableCell>Distância (km)</TableCell>
 												<TableCell>Valor da entrega</TableCell>
 												<TableCell></TableCell>
 											</TableRow>

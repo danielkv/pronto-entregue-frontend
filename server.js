@@ -6,8 +6,10 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 function forceSecure(req, res, next) {
+	console.log(req.header('x-forwarded-proto'));
+
 	//Heroku stores the origin protocol in a header variable. The app itself is isolated within the dyno and all request objects have an HTTP protocol.
-	if (req.header('x-forwarded-proto')!=='https' || req.hostname === 'localhost') {
+	if (req.header('x-forwarded-proto') === 'https' || req.hostname === 'localhost') {
 		//Serve Angular App by passing control to the next middleware
 		next();
 	} else {
