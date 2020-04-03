@@ -17,7 +17,7 @@ const cache = new InMemoryCache({});
 const uploadLink = createUploadLink({ uri: host });
 
 const wsLink = new WebSocketLink({
-	uri: process.env.NODE_ENV === 'production' ? 'ws://pronto-entregue-backend.herokuapp.com/graphql' : `ws://localhost:4000/graphql`,
+	uri: process.env.NODE_ENV === 'production' ? 'wss://pronto-entregue-backend.herokuapp.com/graphql' : `ws://localhost:4000/graphql`,
 	options: {
 		reconnect: true
 	}
