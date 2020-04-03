@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
+import { LoadScript } from '@react-google-maps/api';
 import { SnackbarProvider } from 'notistack';
 
 import { LoadingBlock, ErrorBlock } from '../layout/blocks';
@@ -16,16 +17,18 @@ export default function DashboardRoutes() {
 	if (error) return <ErrorBlock error={getErrors(error)} />;
 
 	return (
-		<SnackbarProvider>
-			<Switch>
-				<Route path='/dashboard/login'>
-					{isUserLoggedIn !== true ? <Login /> : <Redirect to='/dashboard' />}
-				</Route>
+		<LoadScript googleMapsApiKey={process.env.REACT_APP_GMAPS_KEY}>
+			<SnackbarProvider>
+				<Switch>
+					<Route path='/dashboard/login'>
+						{isUserLoggedIn !== true ? <Login /> : <Redirect to='/dashboard' />}
+					</Route>
 
-				<Route path='/dashboard' >
-					{isUserLoggedIn === true ? <DashboardPages /> : <Redirect to='/dashboard/login' />}
-				</Route>
-			</Switch>
-		</SnackbarProvider>
+					<Route path='/dashboard' >
+						{isUserLoggedIn === true ? <DashboardPages /> : <Redirect to='/dashboard/login' />}
+					</Route>
+				</Switch>
+			</SnackbarProvider>
+		</LoadScript>
 	);
 }
