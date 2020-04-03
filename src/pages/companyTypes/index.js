@@ -59,7 +59,7 @@ function Page ({ match: { url } }) {
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Ramos de ativodade</BlockTitle>
+						<BlockTitle>Ramos de atividade</BlockTitle>
 						<Button size='small' variant="contained" color='primary' to={`${url}/novo`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
 						<NumberOfRows>{countCompanyTypes} ramos de atividade</NumberOfRows>
 					</BlockHeader>
