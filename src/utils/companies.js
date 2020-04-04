@@ -9,6 +9,7 @@ export function createEmptyCompany(overwrite={}) {
 		displayName: '',
 		type: { name: '', id: null },
 		address: createEmptyAddress(),
+		backgroundColor: '#ffffff',
 		active: true,
 		...createEmptyMetas(metaTypes),
 		...overwrite,
@@ -21,6 +22,7 @@ export function extractCompany(company) {
 		displayName: company.displayName,
 		preview: company.image,
 		active: company.active,
+		backgroundColor: company.backgroundColor || '#ffffff',
 		type: company.type,
 		address: extractAddress(company.address),
 		...extractMetas(metaTypes, company.metas)
@@ -32,6 +34,7 @@ export function sanitizeCompany(result) {
 		name: result.name,
 		displayName: result.displayName,
 		file: result.file,
+		backgroundColor: result.backgroundColor,
 		active: result.active,
 		companyTypeId: result.type.id,
 		address: sanitizeAddress(result.address),

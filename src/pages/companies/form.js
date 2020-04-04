@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { TwitterPicker } from 'react-color';
 
 import { useMutation } from '@apollo/react-hooks';
 import { Paper, IconButton, FormControlLabel, Switch, Button, TextField, List, ListItem, CircularProgress, ListItemIcon, ListItemText, FormControl, FormHelperText, DialogTitle, Dialog, DialogContent, DialogActions, FormLabel } from '@material-ui/core';
@@ -19,7 +20,7 @@ import { metaModel } from '../../utils/metas';
 
 import { SEARCH_COMPANY_TYPES } from '../../graphql/companyTypes';
 
-export default function PageForm ({ values: { active, phones, emails, type, address, preview }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
+export default function PageForm ({ values: { active, phones, emails, type, address, preview, backgroundColor }, errors, setFieldValue, handleChange, isSubmitting, pageTitle, isValidating }) {
 	const [loadingLocation, setLoadingLocation] = useState(false);
 	const [errorDialog, setErrorDialog] = useState(false);
 	const [searchCompanyTypes, { data: { searchCompanyTypes: companyTypesFound = [] } = {}, loading: loadingCompanyTypes }] = useMutation(SEARCH_COMPANY_TYPES);
@@ -277,6 +278,22 @@ export default function PageForm ({ values: { active, phones, emails, type, addr
 									<FormControl>
 										<FormLabel>Imagem</FormLabel>
 										<DropzoneBlock preview={preview} onDrop={handleDropFile} />
+										<FormHelperText error>{errors.file}</FormHelperText>
+									</FormControl>
+								</FieldControl>
+							</FormRow>
+						</BlockSeparator>
+						<BlockSeparator>
+							<FormRow>
+								<FieldControl>
+									<FormControl>
+										<FormLabel>Cor principal</FormLabel>
+										<TwitterPicker
+											color={backgroundColor}
+											width='100%'
+											onChangeComplete={(color)=>{setFieldValue('backgroundColor', color.hex)}}
+											colors={['#f5f5f5', '#333', '#eedd00', '#37D67A', '#2CCCE4', '#dce775', '#ff8a65', '#ba68c8']}
+										/>
 										<FormHelperText error>{errors.file}</FormHelperText>
 									</FormControl>
 								</FieldControl>

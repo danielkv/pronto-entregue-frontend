@@ -63,6 +63,7 @@ export const LOAD_COMPANY = gql`
 			acceptTakeout
 			displayName
 			image
+			backgroundColor
 			createdAt
 			address {
 				name

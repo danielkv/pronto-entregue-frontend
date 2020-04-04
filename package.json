@@ -41,6 +41,7 @@
     "react-app-rewire-hot-loader": "^2.0.1",
     "react-app-rewired": "^2.1.5",
     "react-beautiful-dnd": "^11.0.5",
+    "react-color": "^2.18.0",
     "react-dom": "^16.9.0",
     "react-dropzone": "^10.1.9",
     "react-hot-loader": "^4.12.14",
