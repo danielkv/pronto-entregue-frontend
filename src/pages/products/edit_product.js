@@ -20,7 +20,7 @@ const FILE_SIZE = 500 * 1024;
 const productSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
 	price: Yup.number().required('O preço é obrigatório (pode ser 0)'),
-	fromPrice: Yup.number().notRequired(),
+	fromPrice: Yup.number().moreThan(0, 'O campo "A partir de" será mostrado no app. Deve ser maior que 0').required('O campo "A partir de" é obrigatório'),
 	description: Yup.string().required('A descrição é obrigatória'),
 	file: Yup.mixed().notRequired()
 		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),

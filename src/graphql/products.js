@@ -44,6 +44,7 @@ export const LOAD_PRODUCT = gql`
 			name
 			type
 			price
+			sku
 			fromPrice
 			description
 			sale {
@@ -78,6 +79,7 @@ export const CREATE_PRODUCT = gql`
 		createProduct (data:$data) {
 			id
 			name
+			sku
 			createdAt
 			active
 		}
@@ -99,6 +101,7 @@ export const SEARCH_PRODUCTS = gql`
 			name
 			image
 			price
+			sku
 			countCampaigns (notIn: $campaignsNotIn)
 			company {
 				id
@@ -123,6 +126,7 @@ export const GET_COMPANY_PRODUCTS = gql`
 				image
 				active
 				price
+				sku
 				countFavoritedBy
 				countOptions
 				createdAt
@@ -151,6 +155,7 @@ export const UPDATE_PRODUCT = gql`
 			type
 			price
 			description
+			sku
 			category {
 				id
 				name

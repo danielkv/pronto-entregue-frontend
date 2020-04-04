@@ -7,6 +7,7 @@ export function createEmptyProduct(overwrite={}) {
 		active: true,
 		type: 'inline',
 		price: '',
+		sku: '',
 		file: '',
 		preview: '',
 		fromPrice: '',
@@ -62,6 +63,7 @@ export function extractProduct(product) {
 		active: product.active,
 		category: product.category,
 		price: product.price,
+		sku: product.sku || '',
 		fromPrice: product.fromPrice,
 		type: product.type,
 		campaigns: product.campaigns,
@@ -84,6 +86,7 @@ export function sanitizeProduct(data) {
 	return {
 		name: data.name,
 		file: data.file,
+		sku: data.sku,
 		description: data.description,
 		type: data.type,
 		price: data.price,

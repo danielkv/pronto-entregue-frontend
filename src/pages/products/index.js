@@ -83,6 +83,7 @@ function Page ({ match: { url } }) {
 								<TableHead>
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
+										<TableCell></TableCell>
 										<TableCell>Produto</TableCell>
 										<TableCell>Favoritado por</TableCell>
 										<TableCell>Categoria</TableCell>
@@ -96,6 +97,7 @@ function Page ({ match: { url } }) {
 									{products.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
+											<TableCell>{Boolean(row.sku) && <Typography variant='caption'>{`#${row.sku}`}</Typography>}</TableCell>
 											<TableCell>
 												<div style={{ alignItems: "center", flexDirection: 'row', display: 'flex' }}>
 													<div style={{ marginRight: 5 }}>{row.name}</div>
