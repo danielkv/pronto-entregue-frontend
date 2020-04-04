@@ -18,7 +18,7 @@ export default function DashboardRoutes() {
 
 	return (
 		<LoadScript googleMapsApiKey={process.env.REACT_APP_GMAPS_KEY}>
-			<SnackbarProvider>
+			<SnackbarProvider maxSnack={6}>
 				<Switch>
 					<Route path='/dashboard/login'>
 						{isUserLoggedIn !== true ? <Login /> : <Redirect to='/dashboard' />}
