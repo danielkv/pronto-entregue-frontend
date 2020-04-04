@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
@@ -202,11 +202,9 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 			>
 				<DialogTitle id="alert-dialog-title">Hmm! Parece que seu formulário tem alguns erros</DialogTitle>
 				<DialogContent>
-					<DialogContentText id="alert-dialog-description">
-						<ul>
-							{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
-						</ul>
-					</DialogContentText>
+					<ul>
+						{errorObjectsToArray(errors).map((err, index) => (<li key={index}>{err}</li>))}
+					</ul>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>

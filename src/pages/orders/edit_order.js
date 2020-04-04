@@ -10,7 +10,7 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { sanitizeOrder, extractOrder, checkAddress, checkDelivery } from '../../utils/orders';
+import { sanitizeOrder, extractOrder, checkDelivery } from '../../utils/orders';
 import PageForm from './form';
 
 import { LOAD_ORDER, UPDATE_ORDER } from '../../graphql/orders';
@@ -33,7 +33,6 @@ function Page () {
 
 	function onSubmit(result) {
 		const data = sanitizeOrder(result);
-		console.log(JSON.stringify(data));
 
 		return updateOrder({ variables: {  data } })
 			.then(()=>{
@@ -51,21 +50,20 @@ function Page () {
 		type: Yup.string().required('Selecione como o pedido será retirado'),
 		paymentMethod: Yup.string().typeError('O Método de pagamento é obrigatório').required('O Método de pagamento é obrigatório'),
 
-		address: Yup.object().shape({
-			street: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha o nome da rua')),
-			number: Yup.mixed().when('type', checkAddress('number', 'Endereço - Preencha o número')),
-			city: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha a cidade')),
-			state: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha o estado')),
-			district: Yup.mixed().when('type', checkAddress('string', 'Endereço - Preencha o bairro')),
-			zipcode: Yup.mixed().when('type', checkAddress('number', 'Endereço - Preencha o CEP')),
-			location: Yup.mixed().when('type', (type) => {
-				if (type === 'takeout')
-					return Yup.mixed().notRequired();
-				else
-					return Yup.array().of(Yup.string().required('Endereço - Você não setou a localização.')).min(2).max(2);
-			}),
+		address: Yup.mixed().when('type', {
+			is: 'delivery',
+			otherwise: Yup.mixed().notRequired(),
+			then: Yup.object().shape({
+				street: Yup.string().required('Endereço - Preencha o nome da rua'),
+				number: Yup.string().required('Endereço - Preencha o número'),
+				city: Yup.string().required('Endereço - Preencha a cidade'),
+				state: Yup.string().required('Endereço - Preencha o estado'),
+				district: Yup.string().required('Endereço - Preencha o bairro'),
+				zipcode: Yup.string().required('Endereço - Preencha o CEP'),
+				location: Yup.array().of(Yup.string().required('Endereço - Você não setou a localização.')).min(2).max(2)
+			})
 		}),
-
+	
 		deliveryOk: Yup.mixed().test('location_not_found', 'Não há entregas para essa localização', checkDelivery),
 
 		products: Yup.array().min(1, 'O pedido não tem produtos'),

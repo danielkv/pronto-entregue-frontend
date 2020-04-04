@@ -1,10 +1,8 @@
 import React from 'react';
 
-
 import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import { uniqueId } from 'lodash';
-import * as Yup from 'yup'
 
 import { createEmptyAddress, sanitizeAddress, extractAddress } from './address';
 import { calculateProductPrice } from './products';
@@ -182,15 +180,9 @@ export const createEmptyOrderProduct = (overwrite={}) => {
 	}
 }
 
-export const checkAddress = (_type, message) => (type) => {
-	if (type === 'takeout')
-		return Yup.mixed().notRequired();
-	
-	return (_type === 'number') ? Yup.number().required(message) : Yup.string().required(message)
-}
-
 export function checkDelivery (value) {
 	const { type } = this.parent;
+	console.log(type);
 
 	if (type === 'takeout') return true;
 
