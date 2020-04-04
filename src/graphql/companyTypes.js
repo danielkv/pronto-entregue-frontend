@@ -19,7 +19,7 @@ export const GET_COMPANY_TYPES = gql`
 			id
 			name
 			image
-			countCompanies
+			countCompanies(onlyPublished: false)
 			active
 		}
 	}
@@ -31,7 +31,7 @@ export const CREATE_COMPANY_TYPE = gql`
 			id
 			name
 			image
-			countCompanies
+			countCompanies(onlyPublished: false)
 			active
 		}
 	}
@@ -43,7 +43,7 @@ export const UPDATE_COMPANY_TYPE = gql`
 			id
 			name
 			image
-			countCompanies
+			countCompanies(onlyPublished: false)
 			active
 		}
 	}

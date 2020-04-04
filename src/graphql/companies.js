@@ -46,6 +46,7 @@ export const GET_COMPANY_GENERAL_SETTINGS = gql`
 	query GetCompanyGeneralSettings ($id: ID!, $keys: [String]) {
 		company(id: $id) {
 			id
+			published
 			metas(keys: $keys) {
 				id
 				key
