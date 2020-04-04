@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar, Typography } from '@material-ui/core';
 import { mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
@@ -83,6 +83,7 @@ function Page () {
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
 										<TableCell>Nome</TableCell>
+										<TableCell>Email</TableCell>
 										<TableCell>Função</TableCell>
 										<TableCell>Criada em</TableCell>
 										<TableCell style={{ width: 100 }}>Ações</TableCell>
@@ -95,6 +96,7 @@ function Page () {
 												<Avatar src={row.image} />
 											</TableCell>
 											<TableCell>{row.fullName}</TableCell>
+											<TableCell><a className='link' href={`mailto: ${row.email}`}><Typography variant='caption'>{row.email}</Typography></a></TableCell>
 											<TableCell><Chip variant='outlined' label={getUserRoleLabel(row.role)} /></TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>

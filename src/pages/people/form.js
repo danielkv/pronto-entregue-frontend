@@ -189,7 +189,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='primary' checked={active} onChange={()=>{setFieldValue('active', !active)}} />
+											<Switch size='small' disabled={isSubmitting || loggedUserId === editId} color='primary' checked={active} onChange={()=>{setFieldValue('active', !active)}} />
 										}
 										label="Ativo"
 									/>

@@ -56,6 +56,7 @@ export const GET_COMPANY_USERS = gql`
 			users (filter: $filter, pagination: $pagination) {
 				id
 				fullName
+				email
 				role
 				createdAt
 				active
@@ -92,6 +93,7 @@ export const GET_USERS = gql`
 		users (filter: $filter, pagination: $pagination) {
 			id
 			fullName
+			email
 			role
 			createdAt
 			active

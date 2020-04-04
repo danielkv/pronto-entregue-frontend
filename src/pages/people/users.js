@@ -1,13 +1,15 @@
 import React, { useState, Fragment, useEffect, useRef } from 'react';
+import { useRouteMatch, Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Avatar } from '@material-ui/core';
-import { mdiFilter } from '@mdi/js';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, Checkbox, FormControl, FormLabel , FormGroup, CircularProgress, Avatar, Typography, IconButton } from '@material-ui/core';
+import { mdiFilter, mdiPencil } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
+import { useLoggedUserRole } from '../../controller/hooks';
 import { useSelectedCompany, useLoggedUserId } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
@@ -22,8 +24,11 @@ const initialFilter = {
 
 function Page () {
 	setPageTitle('Usuários');
+	const { url } = useRouteMatch();
+	const dashboardUrl = '/' + url.substr(1).split('/')[0];
 
-	const loggedUserId = useLoggedUserId()
+	const loggedUserId = useLoggedUserId();
+	const loggedUsersRole = useLoggedUserRole();
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -80,6 +85,7 @@ function Page () {
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
 										<TableCell>Nome</TableCell>
+										<TableCell>Email</TableCell>
 										<TableCell>Criada em</TableCell>
 										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
@@ -91,8 +97,14 @@ function Page () {
 												<Avatar src={row.image} />
 											</TableCell>
 											<TableCell>{row.fullName}</TableCell>
+											<TableCell><a className='link' href={`mailto: ${row.email}`}><Typography variant='caption'>{row.email}</Typography></a></TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
+												{loggedUsersRole === 'master' && (
+													<IconButton disabled={loading} component={Link} to={(`${dashboardUrl}/pessoas/alterar/${row.id}`)}>
+														<Icon path={mdiPencil} size={1} color='#363E5E' />
+													</IconButton>
+												)}
 												{row.id !== loggedUserId && (
 													<Switch
 														checked={row.active}
