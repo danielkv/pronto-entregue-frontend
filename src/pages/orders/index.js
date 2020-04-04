@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip, Typography } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiDotsVertical } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
@@ -133,6 +133,7 @@ function Page ({ match: { url } }) {
 								<TableHead>
 									<TableRow>
 										<TableCell style={{ width: 120, paddingRight: 10 }}></TableCell>
+										<TableCell>Pedido nº</TableCell>
 										<TableCell>Cliente</TableCell>
 										<TableCell>Endereço de entrega</TableCell>
 										<TableCell>Valor</TableCell>
@@ -148,6 +149,7 @@ function Page ({ match: { url } }) {
 										return (
 											<TableRow key={row.id}>
 												<TableCell>{displayDate}</TableCell>
+												<TableCell><Typography variant='caption'>{`#${row.id}`}</Typography></TableCell>
 												<TableCell>{row.user.fullName}</TableCell>
 												<TableCell>{row.type === 'delivery' ? `${row.address.street}, ${row.address.number}` : 'Retirada no local'}</TableCell>
 												<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>

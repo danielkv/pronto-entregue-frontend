@@ -78,8 +78,9 @@ function Page () {
 			onSubmit={onSubmit}
 			validateOnChange={false}
 			validateOnBlur={false}
-			component={PageForm}
-		/>
+		>
+			{(props)=><PageForm {...props} editId={editId} />}
+		</Formik>
 	)
 }
 

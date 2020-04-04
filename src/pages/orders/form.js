@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Chip } from '@material-ui/core';
 import { mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
@@ -19,7 +19,7 @@ import Products from './products';
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { SEARCH_USERS } from '../../graphql/users';
 
-export default function PageForm ({ values, setFieldValue, isSubmitting, errors, isValidating }) {
+export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating }) {
 	// carregamento inicial
 	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
 
@@ -40,7 +40,6 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 	//Query de busca de usuário
 	const [searchUsers, { data: { searchUsers: usersFound = [] } = {}, loading: loadingUsers }] = useMutation(SEARCH_USERS, { fetchPolicy: 'no-cache' })
 	
-
 	//Query formas de pagamento
 	const {
 		data: { company: { paymentMethods = [] } = {} } = {},
@@ -54,13 +53,12 @@ export default function PageForm ({ values, setFieldValue, isSubmitting, errors,
 		setFieldValue('price', calculateOrderPrice(products, deliveryPrice + paymentFee - discount))
 	}, [products, deliveryPrice, paymentFee, discount, setFieldValue]);
 
-
 	return (
 		<Form>
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Pedido</BlockTitle>
+						<BlockTitle>Pedido {Boolean(editId) && <Chip color='secondary' label={`Pedido nº: #${editId}`} />}</BlockTitle>
 					</BlockHeader>
 					<Paper>
 						<FormRow>
