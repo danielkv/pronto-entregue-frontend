@@ -54,7 +54,7 @@ export function calculateProductPrice(product) {
 			return (option.selected) ?  totalOption + option.price : totalOption;
 		}, 0);
 		return totalGroup + optionsPrice;
-	}, product.price);
+	}, product.price) * product.quantity;
 }
 
 export function extractProduct(product) {

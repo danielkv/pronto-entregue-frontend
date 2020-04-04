@@ -176,8 +176,6 @@ export default function Delivery() {
 								<FieldControl>
 									{(address && address.location && address.location[0] && address.location[1]) &&
 									<MapContainer
-										
-										
 										center={{ lat: address.location[0], lng: address.location[1] }}
 										onRepositionMarker={(result)=>{setFieldValue('address.location[0]', result.latLng.lat()); setFieldValue('address.location[1]', result.latLng.lng());}}
 										marker={loadingdeliveryPrice ? <CircularProgress /> : null}
