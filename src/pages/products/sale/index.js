@@ -14,13 +14,14 @@ import { Container } from './styles';
 const minPct = .1;
 
 export default function Sale ({ closeModal }) {
-	const { values: { price: productPrice, sale: { price, expiresAt, startsAt, action } }, errors, setFieldValue, handleChange, isSubmiting, setFieldError } = useFormikContext();
+	const { values: { price: productPrice, fromPrice, sale: { price, expiresAt, startsAt, action } }, errors, setFieldValue, handleChange, isSubmiting, setFieldError } = useFormikContext();
 
 	async function handleSave () {
 		setFieldError('sale', {});
+		const finalProductPrice = productPrice || fromPrice;
 		if (price) {
-			const valuePct = productPrice * minPct; // valor minimo para promoção
-			if (productPrice - price >= valuePct) {
+			const valuePct = finalProductPrice * minPct; // valor minimo para promoção
+			if (finalProductPrice - price >= valuePct) {
 				setFieldValue('sale.action', 'create');
 				closeModal();
 			} else {

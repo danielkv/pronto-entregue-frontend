@@ -11,7 +11,7 @@ export function createEmptySale(overwrite={}) {
 		expiresAt,
 
 		price: '',
-		active: true,
+		//active: true,
 
 		action: 'new_empty',
 
