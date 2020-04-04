@@ -6,9 +6,9 @@ import { Container, HeaderArea, NavigationArea, Main } from '../layout/component
 
 import Header from '../layout/header';
 import Navigation from '../layout/navigation';
-import Campaigns from '../pages/campaigns';
+/* import Campaigns from '../pages/campaigns';
 import EditCampaign from '../pages/campaigns/edit_campaign';
-import NewCampaign from '../pages/campaigns/new_campaign';
+import NewCampaign from '../pages/campaigns/new_campaign'; */
 import Categories from '../pages/categories';
 import EditCategory from '../pages/categories/edit_category';
 import NewCategory from '../pages/categories/new_category';
@@ -59,9 +59,9 @@ export default function DashboardPages() {
 					<Route path={`${path}/categorias/nova`} component={NewCategory} />
 					<Route path={`${path}/categorias/alterar/:id`} component={EditCategory} />
 						
-					<Route exact path={`${path}/campanhas`} component={Campaigns} />
+					{/* <Route exact path={`${path}/campanhas`} component={Campaigns} />
 					<Route path={`${path}/campanhas/nova`} component={NewCampaign} />
-					<Route path={`${path}/campanhas/alterar/:id`} component={EditCampaign} />
+					<Route path={`${path}/campanhas/alterar/:id`} component={EditCampaign} /> */}
 						
 					<Route exact path={`${path}/usuarios`} component={Users} />
 					<Route path={`${path}/pessoas/alterar/:id`} component={EditPeople} />

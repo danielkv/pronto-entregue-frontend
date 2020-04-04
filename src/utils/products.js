@@ -50,9 +50,20 @@ export function createEmptyOption(overwrite={}) {
 
 export function calculateProductPrice(product) {
 	return product.optionsGroups.reduce((totalGroup, group)=>{
-		let optionsPrice = group.options.reduce((totalOption, option)=> {
-			return (option.selected) ?  totalOption + option.price : totalOption;
-		}, 0);
+		let optionsPrice = 0;
+		if (group.priceType === 'sum') {
+			// case group should SUM all selected options' prices
+			optionsPrice = group.options.reduce((totalOption, option)=> {
+				return (option.selected) ?  totalOption + option.price : totalOption;
+			}, 0);
+		} else if (group.priceType === 'higher') {
+			// case group should consider only the highest selected options' prices
+			const options = group.options.filter(o => o.selected);
+			if (options.length) {
+				options.sort((a, b) => a.price > b.price ? -1 : 1);
+				optionsPrice = options[0].price;
+			}
+		}
 		return totalGroup + optionsPrice;
 	}, product.price) * product.quantity;
 }

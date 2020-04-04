@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography, IconButton, Avatar } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
@@ -21,6 +22,9 @@ const CustomTextInput = withStyles({
 export default function ProductModal ({ prod, open, onClose, onSave, onCancel }) {
 	const [product, setProduct] = useState(null);
 	const [errors, setErrors] = useState(null);
+
+	const { url } = useRouteMatch();
+	const dashboardUrl = '/' + url.substr(1).split('/')[0];
 
 	const handleCancel = ()=> {
 		if (onCancel && typeof onCancel === 'function') onCancel();
@@ -134,7 +138,9 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 					<Block style={{ margin: 0 }}>
 						<BlockSeparator>
 							<ModalHeader>
-								<Avatar style={{ width: 110, height: 110 }} alt={product.name} src={product.image} />
+								<Link to={`${dashboardUrl}/produtos/alterar/${product.id}`}>
+									<Avatar style={{ width: 110, height: 110 }} alt={product.name} src={product.image} />
+								</Link>
 								<ProductInfo>
 									<ProductTitle>
 										<div>{product.name}</div>

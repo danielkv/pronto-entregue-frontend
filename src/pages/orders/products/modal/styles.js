@@ -16,8 +16,10 @@ export const ModalHeader = styled.div`
 
 export const ProductInfo = styled.div`
 	display:flex;
+	margin-left: 20px;
 	flex-direction:column;
 	justify-content:center;
+
 `;
 
 export const ProductTitle = styled.div`

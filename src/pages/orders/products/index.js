@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { useApolloClient, useLazyQuery } from '@apollo/react-hooks';
-import { Paper, FormControl, TextField, List, CircularProgress, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, FormHelperText } from '@material-ui/core'
+import { Paper, FormControl, TextField, List, CircularProgress, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, FormHelperText, Typography } from '@material-ui/core'
 import { mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift'
@@ -121,7 +121,12 @@ export default function Products() {
 																	{...getItemProps({ key: item.id, index, item })}
 																>
 																	<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
-																	<ListItemText>{item.name}</ListItemText>
+																	<ListItemText>
+																		<div style={{ display: 'flex', alignItems: 'center' }}>
+																			{item.sku && <Typography style={{ marginRight: 8 }} variant='caption'>#{item.sku}</Typography> }
+																			<Typography>{item.name}</Typography>
+																		</div>
+																	</ListItemText>
 																	<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
 																</ListItem>)
 															})}
