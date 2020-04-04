@@ -87,6 +87,26 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 											<Icon path={mdiAlertCircle} color='#f44336' size={1} />
 										}
 									</TableCell>
+									<TableCell  style={{ width: 280 }}>
+										<FormControl>
+											<TextField label='Seleção de preço' select
+												onClick={(e)=>{e.stopPropagation();}}
+												disabled={isSubmitting}
+												onChange={(e)=>{
+													let newGroup = {
+														...group,
+														priceType: e.target.value,
+													}
+													if (group.action === 'editable') newGroup.action = 'update';
+													setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
+												}}
+												value={group.priceType}
+											>
+												<MenuItem value='sum'>Somar opções selecionadas</MenuItem>
+												<MenuItem value='higher'>Condiderar valor mais alto</MenuItem>
+											</TextField>
+										</FormControl>
+									</TableCell>
 									<TableCell  style={{ width: 70 }}>
 										<FormControl>
 											<FormLabel style={{ fontSize: 12, marginBottom: 10 }}>Tipo de seleção</FormLabel>
