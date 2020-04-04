@@ -1,12 +1,14 @@
 import React, { useState, useCallback } from 'react'
 import { DragDropContext } from 'react-beautiful-dnd';
 
+
 import { useLazyQuery, useApolloClient } from '@apollo/react-hooks';
 import { CircularProgress, Paper, FormControl, TextField, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, FormHelperText, Dialog, DialogTitle, DialogContent, DialogContentText, Button, DialogActions } from '@material-ui/core';
 import { mdiPlus, mdiBasket } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { FieldArray, useFormikContext } from 'formik';
+import { uniqueId } from 'lodash';
 
 import { Block, BlockHeader, BlockTitle, BlockSeparator, FormRow, FieldControl } from '../../../layout/components';
 
@@ -31,7 +33,6 @@ export default function OptionsBlock() {
 			return row;
 		})
 	}, [])
-
 
 	const onDragEnd = (groups, setFieldValue) => (result)=>{
 		if (!result.destination || result.destination.index === result.source.index) return;
@@ -80,6 +81,7 @@ export default function OptionsBlock() {
 				return optionsGroup;
 			})
 			.catch(e=>{
+				console.log('aquiiiiii')
 				console.error(getErrors(e));
 			})
 			.finally(()=>{
@@ -125,7 +127,7 @@ export default function OptionsBlock() {
 														selected = await getCopiedOptionGroup(selected);
 													}
 													const list = Array.from(optionsGroups);
-													list.unshift({ ...selected, id: Math.round(Math.random()*1000) });
+													list.unshift({ ...selected, id: uniqueId('temp_') });
 													setFieldValue('optionsGroups', sanitizeOptionsGroupsOrder(list));
 												}}
 												itemToString={(item => item ? item.name : '')}
@@ -140,7 +142,7 @@ export default function OptionsBlock() {
 													highlightedIndex,
 												})=>{
 													if (inputValue && (!groups.length || !groups[groups.length-1].action))
-														groups.push(createEmptyOptionsGroup({ id: Math.round(Math.random()*1000), name: inputValue, action: 'create' }));
+														groups.push(createEmptyOptionsGroup({ id: uniqueId('temp_'), name: inputValue, action: 'create' }));
 
 													return (
 														<div>

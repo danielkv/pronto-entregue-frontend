@@ -6,6 +6,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 		name
 		active
 		type
+		priceType
 		order
 		minSelect
 		maxSelect

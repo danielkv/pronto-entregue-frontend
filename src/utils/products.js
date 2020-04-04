@@ -16,7 +16,6 @@ export function createEmptyProduct(overwrite={}) {
 		campaigns: [],
 		sale: createEmptySale(),
 
-
 		...overwrite,
 	};
 }
@@ -25,12 +24,14 @@ export function createEmptyOptionsGroup(overwrite={}) {
 	return {
 		name: '',
 		type: 'single',
+		priceType: 'higher',
 		groupRestrained: '',
 		action: 'new_empty',
 		active: true,
 		minSelect: 0,
 		maxSelect: 0,
 		options: [],
+		
 		...overwrite
 	}
 }
@@ -100,6 +101,7 @@ export function sanitizeProduct(data) {
 				action: group.action,
 				name: group.name,
 				type: group.type,
+				priceType: group.priceType,
 				order: group.order,
 				minSelect: group.minSelect,
 				maxSelect: group.type === 'single' ? 1 : group.maxSelect,
@@ -118,7 +120,7 @@ export function sanitizeProduct(data) {
 					return o;
 				}),
 			}
-			if (group.id && group.action !== 'create') g.id = group.id;
+			if (group.id) g.id = group.id;
 			return g;
 		})
 	}

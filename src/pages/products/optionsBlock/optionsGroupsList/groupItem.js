@@ -214,8 +214,8 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 												value={groupRestrained}
 											>
 												<MenuItem value=''>-- Não restringir --</MenuItem>
-												{filteredGroups.map(g=>{
-													return (<MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>)
+												{filteredGroups.map(group=>{
+													return (<MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>)
 												})}
 											</TextField>
 										</TableCell>}

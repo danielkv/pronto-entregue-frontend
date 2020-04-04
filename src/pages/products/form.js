@@ -24,8 +24,7 @@ import Sale from './sale';
 import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
 import { REMOVE_SALE } from '../../graphql/products';
 
-export default function PageForm ({ values: { sale, active, campaigns, price, fromPrice, type, preview, category }, values, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
-	console.log(values)
+export default function PageForm ({ values: { sale, active, campaigns, price, fromPrice, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
 	const history = useHistory();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
