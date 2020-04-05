@@ -11,7 +11,6 @@ import { SET_SELECTED_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '
 
 
 export function useInitialize() {
-	//const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [called, setCalled] = useState(false);
 	
