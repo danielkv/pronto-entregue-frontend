@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { FormControl, Select, MenuItem, CircularProgress, Button } from '@material-ui/core';
+import { FormControl, Select, MenuItem, CircularProgress, Button, Typography, Chip } from '@material-ui/core';
 import { mdiStore, mdiLogout, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 
@@ -13,7 +13,7 @@ import Notification from '../notification';
 import { HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser } from './styles';
 
 import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
-import { GET_USER_COMPANIES, SET_SELECTED_COMPANY } from '../../graphql/companies';
+import { GET_USER_COMPANIES, SET_SELECTED_COMPANY, LOAD_COMPANY } from '../../graphql/companies';
 
 export default function Header () {
 	const history = useHistory();
@@ -31,6 +31,8 @@ export default function Header () {
 	const selectedCompany = useSelectedCompany();
 	const [setSelectCompany] = useMutation(SET_SELECTED_COMPANY);
 
+	const { data: { company = null } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
+
 	function handleLogout () {
 		logUserOut();
 		history.push(`${dashboardUrl}/login`);
@@ -45,24 +47,32 @@ export default function Header () {
 				<Fragment>
 					<SelectContainer>
 						<Icon path={mdiStore} size={1} color='#D41450' />
-						<FormControl fullWidth={false}>
-							{(!selectedCompany || !companies.length) ? 'Nenhuma empresa' :
-								<Select
-									disableUnderline={true}
-									value={selectedCompany || ''}
-									onChange={(e)=>setSelectCompany({ variables: { id: e.target.value } })}
-									inputProps={{
-										name: 'company',
-										id: 'company',
-									}}
-								>
-									{
-										companies.map(company=>{
-											return <MenuItem key={company.id} value={company.id}>{company.displayName}</MenuItem>;
-										})
-									}
-								</Select>}
-						</FormControl>
+						{companies.length > 1
+							? (<FormControl fullWidth={false}>
+								{(!selectedCompany || !companies.length) ? 'Nenhuma empresa' :
+									<Select
+										disableUnderline={true}
+										value={selectedCompany || ''}
+										onChange={(e)=>setSelectCompany({ variables: { id: e.target.value } })}
+										inputProps={{
+											name: 'company',
+											id: 'company',
+										}}
+									>
+										{
+											companies.map(company=>{
+												return <MenuItem key={company.id} value={company.id}>{company.displayName}</MenuItem>;
+											})
+										}
+									</Select>}
+							</FormControl>)
+							: (
+								<Typography>{companies[0].displayName}</Typography>
+							)}
+
+						<div style={{ marginLeft: 10 }}>
+							{loadingCompany ? <CircularProgress color='primary' /> : <Chip variant={company.isOpen ? 'default' : 'outlined'} label={company.isOpen ? 'Aberto' : 'Fechado'} color={company.isOpen ? 'secondary' : 'primary'} />}
+						</div>
 					</SelectContainer>
 				</Fragment>}
 			{loadingLoggedUser || !user ? <CircularProgress /> :

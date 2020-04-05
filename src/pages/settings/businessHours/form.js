@@ -13,7 +13,7 @@ export default function BusinessHoursForm({ isSubmiting, values: { businessHours
 	const handleCopyDay = (dayIndex) => () => {
 		const hoursToCopy = businessHours[dayIndex];
 	
-		const newBusinessHours = businessHours.map(()=>hoursToCopy);
+		const newBusinessHours = businessHours.map((h)=> ({ ...h, hours: hoursToCopy.hours }));
 
 		setFieldValue('businessHours', newBusinessHours);
 	}
