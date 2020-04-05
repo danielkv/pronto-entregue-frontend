@@ -10,6 +10,7 @@ import { mdiFormatListChecks, mdiCheckDecagram, mdiPencil } from '@mdi/js'
 import Icon from '@mdi/react';
 import { Form, Field, ErrorMessage } from 'formik';
 import { isEmpty } from 'lodash';
+import { useSnackbar } from 'notistack';
 import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
@@ -30,10 +31,16 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 	const loggedUserRole = useLoggedUserRole();
 	const { url } = useRouteMatch();
 	const dashboardUrl = '/' + url.substr(1).split('/')[0];
+	const { enqueueSnackbar } = useSnackbar();
 
 	// sale
 	const [openSale, setOpenSale] = useState(false);
 	const [removeSale, { loading: loadingRemoveSale }] = useMutation(REMOVE_SALE, { variables: { id: sale && sale.id ? sale.id : null } });
+
+	function handleOpenSale() {
+		if (!price) return enqueueSnackbar('Você não pode criar uma promoção para um produto com preço vazio ou zero', { variant: 'warning' });
+		setOpenSale(true)
+	}
 
 	function handleRemoveSale() {
 		removeSale()
@@ -195,7 +202,7 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 													fullWidth
 													variant={sale.action !== 'new_empty' ? "contained" : 'outlined'}
 													color='primary'
-													onClick={()=>setOpenSale(true)}
+													onClick={handleOpenSale}
 													disabled={sale.active}
 												>
 													{sale.action !== 'new_empty' ? 'Modificar promoção' : 'Criar Promoção'}
