@@ -14,6 +14,23 @@ import { ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductInfo, Quant
 const CustomTextInput = withStyles({
 	root: {
 		'& .MuiInputBase-root': {
+			backgroundColor: "transparent",
+			fontSize: 14,
+		},
+		'& .MuiInput-input': {
+			paddingLeft: 0,
+			backgroundColor: "transparent",
+			border: '1px solid transparent',
+			transition: 'padding .1s ease-in-out',
+			
+		},
+		'& .MuiInput-input:hover': {
+			paddingLeft: 18,
+			borderColor: '#ccc',
+		},
+		'& .MuiInput-input:focus, & .MuiInput-input[value=""]': {
+			paddingLeft: 18,
+			borderColor: 'transparent',
 			backgroundColor: "#fff",
 		}
 	}
@@ -47,20 +64,23 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 		let newProd = { ...product };
 		if (e.target.checked) {
 			const selectedOptions = countSelectedOptions(newProd.optionsGroups[groupIndex]);
-			if (selectedOptions >= maxSelect) return alert(`Você pode selecionar apenas ${maxSelect} ${maxSelect > 1 ? 'opções' : 'opção'}`)
+			if (maxSelect > 0 && selectedOptions >= maxSelect) return alert(`Você pode selecionar apenas ${maxSelect} ${maxSelect > 1 ? 'opções' : 'opção'}`)
 		}
 		newProd.optionsGroups[groupIndex].options[optionIndex].selected = e.target.checked;
 		if (newProd.action === 'editable') newProd.action = 'update';
 		setProduct(newProd);
 	}
 
-	const handleOptionRadioSelect = (groupIndex, optionIndex) => (e) =>{
-		let newProd = { ...product };
-		newProd.optionsGroups[groupIndex].options = newProd.optionsGroups[groupIndex].options.map(row=>{
-			row.selected = false;
+	const handleOptionRadioSelect = (groupIndex, optionIndex) => () => {
+		const newProd = { ...product };
+		const newStatus = !newProd.optionsGroups[groupIndex].options[optionIndex].selected;
+
+		newProd.optionsGroups[groupIndex].options = newProd.optionsGroups[groupIndex].options.map((row, index)=>{
+			if (index !== optionIndex) row.selected = false;
 			return row;
 		});
-		newProd.optionsGroups[groupIndex].options[optionIndex].selected = e.target.checked;
+
+		newProd.optionsGroups[groupIndex].options[optionIndex].selected = newStatus;
 		if (newProd.action === 'editable') newProd.action = 'update';
 		setProduct(newProd);
 	}
@@ -93,7 +113,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 		if (group.type === 'single') {
 			message = (minSelect >= 1) ? 'Selecione 1 opção' : '';
 		} else {
-			message = `Selecione até ${maxSelect} ${maxSelect > 1 ? 'opções' : 'opção'}`;
+			message = maxSelect > 0 ? `Selecione até ${maxSelect} ${maxSelect > 1 ? 'opções' : 'opção'}` : 'Selecione as opções';
 		}
 
 		return message;
@@ -106,7 +126,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 		if (selectedOptions < group.minSelect) {
 			return `Você deve selecionar no mínimo ${minSelect} ${minSelect > 1 ? 'opções' : 'opção'}`;
 		}
-		if (selectedOptions > maxSelect) {
+		if (maxSelect > 0 && selectedOptions > maxSelect) {
 			return `Você deve selecionar no máximo ${maxSelect} ${maxSelect > 1 ? 'opções' : 'opção'}`;
 		}
 
@@ -138,7 +158,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 					<Block style={{ margin: 0 }}>
 						<BlockSeparator>
 							<ModalHeader>
-								<Link to={`${dashboardUrl}/produtos/alterar/${product.id}`}>
+								<Link to={`${dashboardUrl}/produtos/alterar/${product.productRelated.id}`}>
 									<Avatar style={{ width: 110, height: 110 }} alt={product.name} src={product.image} />
 								</Link>
 								<ProductInfo>
@@ -215,7 +235,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 																		<Radio
 																			value={option.name}
 																			checked={option.selected}
-																			onChange={(e)=>{
+																			onClick={(e)=>{
 																				if (disabled) {
 																					alert(`Você deve primeiro selecionar ${group.restrainedBy.name}`);
 																					return;
@@ -238,6 +258,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 																}
 																label={option.name}
 															/>
+															<Typography variant='caption'>{option.description}</Typography>
 														</TableCell>
 														<TableCell style={{ width: 130 }}>
 															<CustomTextInput

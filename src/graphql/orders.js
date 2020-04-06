@@ -111,6 +111,7 @@ export const ORDER_FRAGMENT = gql`
 				options {
 					id
 					name
+					description
 					price
 					optionRelated {
 						id

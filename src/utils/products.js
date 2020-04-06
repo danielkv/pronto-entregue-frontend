@@ -39,6 +39,7 @@ export function createEmptyOptionsGroup(overwrite={}) {
 export function createEmptyOption(overwrite={}) {
 	return {
 		name: '',
+		description: '',
 		price: 0,
 		active: true,
 		maxSelectRestrainOther: 0,
@@ -88,7 +89,8 @@ export function extractProduct(product) {
 			...optionsGroup,
 			options: optionsGroup.options.map(option => ({
 				action: 'editable',
-				...option
+				...option,
+				description: option.description || ''
 			}))
 		}))
 	};
@@ -122,6 +124,7 @@ export function sanitizeProduct(data) {
 					let o = {
 						action: option.action,
 						name: option.name,
+						description: option.description,
 						order: option.order,
 						active: option.active,
 						price: option.price,

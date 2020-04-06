@@ -21,6 +21,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 		options {
 			id
 			name
+			description
 			price
 			active
 			maxSelectRestrainOther

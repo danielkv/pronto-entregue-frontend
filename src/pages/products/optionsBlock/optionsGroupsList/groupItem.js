@@ -283,7 +283,8 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 							{(optionsHelpers) => (
 								<OptionsContainer>
 									<OptionHead>
-										<OptionColumn className='spaceDraggable'>Nome</OptionColumn>
+										<OptionColumn  style={{ width: 183 }} className='spaceDraggable'>Nome</OptionColumn>
+										<OptionColumn>Descrição</OptionColumn>
 										<OptionsInfo>
 											<OptionColumn>Preço</OptionColumn>
 											{!!groupRestrained && <OptionColumn>Restrigir seleção</OptionColumn>}

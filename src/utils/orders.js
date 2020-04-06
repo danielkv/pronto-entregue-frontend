@@ -59,10 +59,12 @@ export function extractOrder(order, overwrite={}) {
 					let options = group.options.map(option=>{
 						let orderOption = orderGroup ? orderGroup.options.find(row=>row.optionRelated.id===option.id) : null;
 						let name = orderOption ? orderOption.name : option.name;
+						let description = orderOption ? orderOption.description : option.description;
 						let selected = orderOption ? true : false;
 						let price = orderOption ? orderOption.price : option.price;
 						let id = orderOption ? orderOption.id : option.id;
-						return { ...option, id, name, selected, price, action: 'editable', optionRelated: { id: option.id } };
+
+						return { ...option, id, name, description, selected, price, action: 'editable', optionRelated: { id: option.id } };
 					})
 
 					return { ...group, id, options, name, action: 'editable', groupRelated: { id: group.id } };
@@ -130,6 +132,7 @@ export const sanitizeOrder = (data) => {
 						options: group.options.filter(option=>option.selected).map(option => {
 							let newOption = {
 								name: option.name,
+								description: option.description,
 								price: option.price,
 								optionRelatedId: option.optionRelated.id,
 							};

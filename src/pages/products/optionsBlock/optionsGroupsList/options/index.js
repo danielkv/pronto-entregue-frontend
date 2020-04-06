@@ -1,9 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
 import { TextField, InputAdornment, IconButton, Switch } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { mdiDrag, mdiDelete, mdiPencil } from '@mdi/js'
+import { mdiDrag, mdiDelete } from '@mdi/js'
 import Icon from '@mdi/react';
 import { useFormikContext } from 'formik';
 import { isEqual } from 'lodash';
@@ -17,26 +17,39 @@ import {
 const CustomTextInput = withStyles({
 	root: {
 		'& .MuiInputBase-root': {
+			backgroundColor: "transparent",
+			fontSize: 14,
+		},
+		'& .MuiInput-input': {
+			paddingLeft: 0,
+			backgroundColor: "transparent",
+			border: '1px solid transparent',
+			transition: 'padding .1s ease-in-out',
+			
+		},
+		'& .MuiInput-input:hover': {
+			paddingLeft: 18,
+			borderColor: '#ccc',
+		},
+		'& .MuiInput-input:focus, & .MuiInput-input[value=""]': {
+			paddingLeft: 18,
+			borderColor: 'transparent',
 			backgroundColor: "#fff",
 		}
+		
+		
 	}
 })(TextField);
 
 function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
-	const { values: { optionsGroups }, errors, isSubmitting, setFieldValue } = useFormikContext();
 	const inputName = useRef(null);
-	const editing = !!option.editing;
+
+	const { values: { optionsGroups }, errors, isSubmitting, setFieldValue } = useFormikContext();
 	const group = optionsGroups[groupIndex];
 	const groupRestrained = group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : '';
-	
-	useEffect(()=>{
-		if (editing && inputName.current) {
-			inputName.current.focus();
-			inputName.current.select();
-		}
-	}, [editing]);
 
 	const nameError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].name ? errors.optionsGroups[groupIndex].options[optionIndex].name : '';
+	const descriptionError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].description ? errors.optionsGroups[groupIndex].options[optionIndex].description : '';
 	const priceError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].price ? errors.optionsGroups[groupIndex].options[optionIndex].price : '';
 	const maxSelectError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther ? errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther : '';
 
@@ -46,30 +59,41 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 				<OptionRow {...provided.draggableProps} ref={provided.innerRef}>
 					<OptionColumn><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></OptionColumn>
 					<OptionColumn>
-						{(option.editing || !option.name) ?
-							<CustomTextInput
-								disabled={isSubmitting}
-								inputRef={inputName}
-								value={option.name}
-								error={!!nameError}
-								helperText={nameError}
-								onBlur={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, false)}}
-								onChange={(e)=>{
-									let newOption = {
-										...option,
-										name: e.target.value,
-									}
-									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
-									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
-								}} />
-							: <div>
-								{option.name}
-								<IconButton disabled={isSubmitting} onClick={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, true);}}>
-									<Icon path={mdiPencil} size={1} color='#707070' />
-								</IconButton>
-							</div>
-						}
+						
+						<CustomTextInput
+							disabled={isSubmitting}
+							inputRef={inputName}
+							value={option.name}
+							error={!!nameError}
+							helperText={nameError}
+							onBlur={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, false)}}
+							onChange={(e)=>{
+								let newOption = {
+									...option,
+									name: e.target.value,
+								}
+								if (option.action === 'editable') newOption.action = 'update';
+								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
+							}} />
+							
+					</OptionColumn>
+					<OptionColumn style={{ flex: 1 }}>
+						<CustomTextInput
+							disabled={isSubmitting}
+							value={option.description}
+							error={!!descriptionError}
+							helperText={descriptionError}
+							onBlur={()=>{setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.editing`, false)}}
+							onChange={(e) => {
+								let newOption = {
+									...option,
+									description: e.target.value,
+								}
+								if (option.action === 'editable') newOption.action = 'update';
+								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
+							}} />
 					</OptionColumn>
 					<OptionsInfo>
 						<OptionColumn>

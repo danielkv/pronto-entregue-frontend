@@ -92,20 +92,29 @@ export default createMuiTheme({
 		},
 		MuiTextField: {
 			root: {
+				'& .MuiInputAdornment-root': {
+					marginLeft: 8,
+				},
 				'& .MuiInputBase-root': {
+					backgroundColor: '#ddd',
+					borderRadius: 4,
+					overflow: 'hidden',
+
+					'&::before, &::after ': {
+						borderBottom: 'none !important'
+					},
+				},
+				'& .MuiInput-input': {
+					borderRadius: 4,
 					backgroundColor: "#F0F0F0",
-					borderRadius: 3,
+					
 					padding: '9px 18px',
 					'& input': {
 						padding: 0,
 					},
-					'&::before, &::after ': {
-						borderBottom: 'none !important'
-					}
-				},
-				'& .MuiInput-input': {
-					background: "none !important",
-					padding: 0
+					
+					//background: "none !important",
+					//padding: 0
 				},
 			},
 		},
