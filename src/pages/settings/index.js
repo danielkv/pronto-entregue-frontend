@@ -22,7 +22,7 @@ export default function Settings(props) {
 	
 	return (
 		<Content>
-			<Grid container spacing={5}>
+			<Grid container spacing={1}>
 				<Grid item xs={3}>
 					<List component={Paper}>
 						<ListItem button component={Link} selected={isSelected('geral')} to={`${url}/geral`}>
