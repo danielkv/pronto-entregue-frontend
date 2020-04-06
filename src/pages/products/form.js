@@ -222,7 +222,7 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 											exclusive
 											name='type'
 											onChange={(e, value)=>{
-												setFieldValue('type', value);
+												if (value) setFieldValue('type', value);
 											}}
 											aria-label="text alignment"
 										>

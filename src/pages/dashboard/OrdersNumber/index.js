@@ -44,6 +44,7 @@ export default function OrdersNumber() {
 		return ()=>{
 			stopPolling();
 		}
+	// eslint-disable-next-line
 	}, [loadingOrdersQty])
 
 	return (

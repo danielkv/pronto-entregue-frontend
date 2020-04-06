@@ -102,14 +102,14 @@ export function sanitizeProduct(data) {
 		file: data.file,
 		sku: data.sku,
 		description: data.description,
-		type: data.type,
+		type: data.type || 'inline',
 		price: data.price,
 		fromPrice: data.fromPrice,
 		active: data.active,
 		categoryId: data.category.id,
 		sale: sanitizeSale(data.sale),
 
-		optionsGroups: data.optionsGroups.map(group=>{
+		optionsGroups: data.optionsGroups.map(group => {
 			let g = {
 				action: group.action,
 				name: group.name,
