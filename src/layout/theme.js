@@ -1,7 +1,26 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 
-export default createMuiTheme({
-	spacing: 6,
+const theme = responsiveFontSizes(createMuiTheme({
+	typography: {
+		body1: {
+			color: '#333',
+			'@media (max-width:1400px)': {
+				fontSize: '.9rem',
+			},
+		},
+		body2: {
+			color: '#333',
+			'@media (max-width:1400px)': {
+				fontSize: '.8rem',
+			},
+		},
+		h4: {
+			'@media (max-width:1400px)': {
+				fontSize: '.9rem',
+			},
+		}
+	},
+	spacing: [6, 35],
 	shape: {
 		borderRadius: 15
 	},
@@ -10,14 +29,20 @@ export default createMuiTheme({
 			root: {
 				'& .MuiTableCell-root': {
 					padding: '14px 20px 14px 16px',
+					'@media (max-width: 1400px)': {
+						padding: '10px 13px 10px 10px',
+					}
 				},
 				'& .MuiTableRow-root .MuiTableCell-root:first-child': {
 					paddingLeft: 30,
 					paddingRight: 5,
 				},
 				'& .MuiTableRow-root .MuiTableCell-root:last-child': {
-					paddingRight: 30
+					'@media (min-width: 1401px)': {
+						paddingRight: 30
+					}
 				}
+				
 			}
 		},
 		MuiListItemIcon: {
@@ -195,4 +220,8 @@ export default createMuiTheme({
 			main: '#A4D82B'
 		},
 	}
-});
+}));
+
+console.log(theme.typography)
+
+export default theme;

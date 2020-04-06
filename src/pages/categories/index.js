@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Link } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Avatar, Chip } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Avatar, Chip, Typography } from '@material-ui/core';
 import { mdiDrag , mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
 
@@ -99,14 +99,14 @@ function Page ({ match: { url } }) {
 						<NumberOfRows>{countCategories} categorias</NumberOfRows>
 					</BlockHeader>
 					<Paper>
-						<Table style={{ tableLayout: 'auto', width: '100%' }}>
+						<Table>
 							<TableHead>
 								<TableRow>
 									<TableCell style={{ width: 30 }}></TableCell>
 									<TableCell style={{ width: 50 }}></TableCell>
 									<TableCell>Nome</TableCell>
-									<TableCell style={{ width: 350 }}>Produtos vinculados</TableCell>
-									<TableCell style={{ width: 100 }}>Ações</TableCell>
+									<TableCell style={{ width: 350 }}><Typography variant='caption'>Produtos vinculados</Typography></TableCell>
+									<TableCell style={{ width: 100 }}><Typography variant='caption'>Ações</Typography></TableCell>
 								</TableRow>
 							</TableHead>
 							<DragDropContext
@@ -133,7 +133,7 @@ function Page ({ match: { url } }) {
 															>
 																<DraggableCell selected={selected}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></DraggableCell>
 																<DraggableCell selected={selected}><Avatar alt={row.name} src={row.image} /></DraggableCell>
-																<DraggableCell selected={selected}>{row.name}</DraggableCell>
+																<DraggableCell selected={selected}><Typography variant='body2'>{row.name}</Typography></DraggableCell>
 																<DraggableCell selected={selected}><Chip variant='outlined' label={row.countProducts} /></DraggableCell>
 																<DraggableCell selected={selected}>
 																	<IconButton disabled={loading} component={Link} to={`${url}/alterar/${row.id}`}>

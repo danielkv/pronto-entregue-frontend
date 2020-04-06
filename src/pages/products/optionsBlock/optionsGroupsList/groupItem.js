@@ -286,7 +286,7 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 										<OptionColumn  style={{ width: 183 }} className='spaceDraggable'>Nome</OptionColumn>
 										<OptionColumn>Descrição</OptionColumn>
 										<OptionsInfo>
-											<OptionColumn>Preço</OptionColumn>
+											<OptionColumn style={{ width: 150 }}>Preço</OptionColumn>
 											{!!groupRestrained && <OptionColumn>Restrigir seleção</OptionColumn>}
 											<OptionColumn style={{ width: 100 }}>Ações</OptionColumn>
 										</OptionsInfo>

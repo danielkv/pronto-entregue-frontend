@@ -8,6 +8,12 @@ export const DashContainer = styled.div`
 	grid-template-areas: "orders orders"
 						"topsales lastorders";
 
+	@media (max-width: 1400px) {
+		grid-template-areas: "orders orders"
+						"lastorders lastorders"
+						"topsales topsales";
+	}
+
 	grid-gap:35px;
 `;
 
@@ -24,24 +30,31 @@ export const LastSalesContainer = styled.div`
 `;
 
 export const OrdersToday = styled(Paper)`
-	padding:30px 0;
+	padding:30px 20px;
 	display:flex;
 	justify-content:space-evenly;
 `;
 
 export const OrderStatus = styled.div`
-	width:225px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	& > div {
+		display: flex;
+		flex-direction: column;
+	}
 	img {
 		float:left;
 		margin-right:10px;
 	}
 	h4 {
-		font-size:18px;
-		font-weight:bold;
+		font-size: 1.3rem;
 		color:#D41450;
 		margin:12px 0 4px;
 	}
-	div {
+	span {
 		font-size:14px;
 		font-weight:lighter;
 		color:#707070;

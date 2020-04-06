@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiStar, mdiGroup } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -63,13 +63,13 @@ function Navigation() {
 						Campanhas
 					</ListItemText>
 				</NavItem> */}
-				<NavItem to={`${url}/pontuacao`} selected={isSelected('pontuacao')} alt='pontuacao'>
+				{/* <NavItem to={`${url}/pontuacao`} selected={isSelected('pontuacao')} alt='pontuacao'>
 					<ListItemIcon>
 						<Icon path={mdiStar} size={1} color='#707070' /></ListItemIcon>
 					<ListItemText>
 						Pontuação
 					</ListItemText>
-				</NavItem>
+				</NavItem> */}
 
 				
 

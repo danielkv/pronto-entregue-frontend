@@ -82,23 +82,23 @@ function Page () {
 								<TableHead>
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
-										<TableCell>Nome</TableCell>
-										<TableCell>Email</TableCell>
-										<TableCell>Função</TableCell>
-										<TableCell>Criada em</TableCell>
-										<TableCell style={{ width: 100 }}>Ações</TableCell>
+										<TableCell><Typography variant='caption'>Nome</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Email</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Função</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Criada em</Typography></TableCell>
+										<TableCell style={{ width: 100 }}><Typography variant='caption'>Ações</Typography></TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
 									{users.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}>
-												<Avatar src={row.image} />
+												<Avatar src={row.image} alt={row.fullName} />
 											</TableCell>
-											<TableCell>{row.fullName}</TableCell>
+											<TableCell><Typography variant='body2'>{row.fullName}</Typography></TableCell>
 											<TableCell><a className='link' href={`mailto: ${row.email}`}><Typography variant='caption'>{row.email}</Typography></a></TableCell>
 											<TableCell><Chip variant='outlined' label={getUserRoleLabel(row.role)} /></TableCell>
-											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
+											<TableCell><Typography variant='body2'>{moment(row.createdAt).format('DD/MM/YY')}</Typography></TableCell>
 											<TableCell>
 												<IconButton disabled={loading} component={Link} to={(`${url}/alterar/${row.id}`)}>
 													<Icon path={mdiPencil} size={1} color='#363E5E' />

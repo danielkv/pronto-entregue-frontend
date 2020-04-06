@@ -57,28 +57,38 @@ export default function OrdersNumber() {
 						<OrdersToday>
 							<OrderStatus>
 								<img src={OrdersAwaiting} alt='Pedidos aguardando' />
-								{loadingOrdersQty && waitingOrders  === null ? <CircularProgress color='primary' /> : <h4>{waitingOrders}</h4>}
-								<div>Pedidos aguardando</div>
+								<div>
+									{loadingOrdersQty && waitingOrders  === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{waitingOrders}</Typography>}
+									<Typography>Pedidos aguardando</Typography>
+								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersPreparing} alt='Pedidos em preparo' />
-								{loadingOrdersQty && preparingOrders === null ? <CircularProgress color='primary' /> : <h4>{preparingOrders}</h4>}
-								<div>Pedidos em preparo</div>
+								<div>
+									{loadingOrdersQty && preparingOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{preparingOrders}</Typography>}
+									<Typography>Pedidos em preparo</Typography>
+								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersDelivering} alt='Pedidos na entrega' />
-								{loadingOrdersQty && deliveryOrders === null ? <CircularProgress color='primary' /> : <h4>{deliveryOrders}</h4>}
-								<div>Pedidos na entrega</div>
+								<div>
+									{loadingOrdersQty && deliveryOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{deliveryOrders}</Typography>}
+									<Typography>Pedidos na entrega</Typography>
+								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersDelivered} alt='Pedidos entregues' />
-								{loadingOrdersQty && deliveredOrders === null ? <CircularProgress color='primary' /> : <h4>{deliveredOrders}</h4>}
-								<div>Pedidos entregues</div>
+								<div>
+									{loadingOrdersQty && deliveredOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{deliveredOrders}</Typography>}
+									<Typography>Pedidos entregues</Typography>
+								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersCanceled} alt='Pedidos cancelados' />
-								{loadingOrdersQty && canceledOrders === null ? <CircularProgress color='primary' /> : <h4>{canceledOrders}</h4>}
-								<div>Pedidos cancelados</div>
+								<div>
+									{loadingOrdersQty && canceledOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{canceledOrders}</Typography>}
+									<Typography>Pedidos cancelados</Typography>
+								</div>
 							</OrderStatus>
 						</OrdersToday>
 					</>

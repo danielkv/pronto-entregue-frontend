@@ -10,7 +10,6 @@ import { isEqual } from 'lodash';
 
 import {
 	OptionColumn,
-	OptionsInfo,
 	OptionRow,
 } from './styles';
 
@@ -95,60 +94,59 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 							}} />
 					</OptionColumn>
-					<OptionsInfo>
-						<OptionColumn>
-							<CustomTextInput
-								value={option.price}
-								type='number'
-								onChange={(e)=>{
-									let newOption = {
-										...option,
-										price: parseFloat(e.target.value.replace(',', '.')),
-									}
-									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
-									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
-								}}
-								error={!!priceError}
-								disabled={isSubmitting}
-								helperText={priceError}
-								InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
-								inputProps={{ step: 0.01 }} />
-						</OptionColumn>
-						{!!groupRestrained && <OptionColumn>
-							<CustomTextInput
-								value={option.maxSelectRestrainOther}
-								type='number'
-								onChange={(e)=>{
-									let newOption = {
-										...option,
-										maxSelectRestrainOther: e.target.value,
-									}
-									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
-									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
-								}}
-								disabled={isSubmitting}
-								error={!!maxSelectError}
-								helperText={maxSelectError}
-							/>
-						</OptionColumn>}
-						<OptionColumn style={{ width: 100 }}>
-							<Switch
-								checked={option.active}
-								onChange={()=>{
-									let newOption = {
-										...option,
-										active: !option.active,
-									}
-									if (option.action === 'editable') newOption.action = 'update';
-									setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption)
-									if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
-								}}
-								value="checkedB"
-								size='small'
-							/>
-							{(option.action === 'create' || option.action === 'new_empty') &&
+					<OptionColumn style={{ width: 150 }}>
+						<CustomTextInput
+							value={option.price}
+							type='number'
+							onChange={(e)=>{
+								let newOption = {
+									...option,
+									price: parseFloat(e.target.value.replace(',', '.')),
+								}
+								if (option.action === 'editable') newOption.action = 'update';
+								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
+							}}
+							error={!!priceError}
+							disabled={isSubmitting}
+							helperText={priceError}
+							InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
+							inputProps={{ step: 0.01 }} />
+					</OptionColumn>
+					{!!groupRestrained && <OptionColumn>
+						<CustomTextInput
+							value={option.maxSelectRestrainOther}
+							type='number'
+							onChange={(e)=>{
+								let newOption = {
+									...option,
+									maxSelectRestrainOther: e.target.value,
+								}
+								if (option.action === 'editable') newOption.action = 'update';
+								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
+								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
+							}}
+							disabled={isSubmitting}
+							error={!!maxSelectError}
+							helperText={maxSelectError}
+						/>
+					</OptionColumn>}
+					<OptionColumn style={{ width: 100 }}>
+						<Switch
+							checked={option.active}
+							onChange={()=>{
+								let newOption = {
+									...option,
+									active: !option.active,
+								}
+								if (option.action === 'editable') newOption.action = 'update';
+								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption)
+								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
+							}}
+							value="checkedB"
+							size='small'
+						/>
+						{(option.action === 'create' || option.action === 'new_empty') &&
 							<IconButton onClick={()=>{
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 								if (option.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.action`, 'remove');
@@ -156,8 +154,7 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 							}>
 								<Icon path={mdiDelete } size={.7} color='#707070' />
 							</IconButton>}
-						</OptionColumn>
-					</OptionsInfo>
+					</OptionColumn>
 				</OptionRow>
 			)}
 		</Draggable>

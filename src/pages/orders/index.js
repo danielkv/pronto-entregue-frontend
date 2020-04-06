@@ -132,14 +132,14 @@ function Page ({ match: { url } }) {
 							<Table>
 								<TableHead>
 									<TableRow>
-										<TableCell style={{ width: 120, paddingRight: 10 }}></TableCell>
-										<TableCell>Pedido nº</TableCell>
-										<TableCell>Cliente</TableCell>
-										<TableCell>Endereço de entrega</TableCell>
-										<TableCell>Valor</TableCell>
-										<TableCell>Nº de produtos</TableCell>
-										<TableCell>Status</TableCell>
-										<TableCell>Ações</TableCell>
+										<TableCell style={{ width: 100 }}></TableCell>
+										<TableCell><Typography variant='caption'>Nº</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Cliente</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Entrega</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Valor</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Produtos</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Status</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Ações</Typography></TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -148,11 +148,11 @@ function Page ({ match: { url } }) {
 										const displayDate = moment().diff(createdAt, 'day') >= 1 ? createdAt.format('DD/MM/YY HH:mm') : createdAt.fromNow();
 										return (
 											<TableRow key={row.id}>
-												<TableCell>{displayDate}</TableCell>
+												<TableCell><Typography variant='body2'>{displayDate}</Typography></TableCell>
 												<TableCell><Typography variant='caption'>{`#${row.id}`}</Typography></TableCell>
-												<TableCell>{row.user.fullName}</TableCell>
-												<TableCell>{row.type === 'delivery' ? `${row.address.street}, ${row.address.number}` : 'Retirada no local'}</TableCell>
-												<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
+												<TableCell><Typography variant='body2'>{row.user.fullName}</Typography></TableCell>
+												<TableCell><Typography variant='body2'>{row.type === 'delivery' ? `${row.address.street}, ${row.address.number}` : 'Retirada no local'}</Typography></TableCell>
+												<TableCell><Typography variant='body2'>{numeral(row.price).format('$0,0.00')}</Typography></TableCell>
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
 												<TableCell style={{ width: 100 }}>

@@ -5,7 +5,10 @@ import { List, ListItem } from '@material-ui/core';
 import styled from 'styled-components';
 
 export const Container = styled.div`
-	margin-left: 35px;
+	margin-left: ${({ theme }) => theme.spacing(1)}px;
+	@media (max-width: 1400px) {
+		margin-left: ${({ theme }) => theme.spacing(1)*.6}px;
+	}
 `;
 
 export const NavigationContainer = styled(List).attrs(() => ({ component: 'nav' }))`

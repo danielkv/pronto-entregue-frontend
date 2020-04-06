@@ -84,13 +84,11 @@ function Page ({ match: { url } }) {
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
 										<TableCell></TableCell>
-										<TableCell>Produto</TableCell>
-										<TableCell>Favoritado por</TableCell>
-										<TableCell>Categoria</TableCell>
-										<TableCell>Nº de opções</TableCell>
-										<TableCell>Preço</TableCell>
-										<TableCell>Criado em</TableCell>
-										<TableCell style={{ width: 100 }}>Ações</TableCell>
+										<TableCell><Typography variant='caption'>Produto</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Favoritado</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Categoria</Typography></TableCell>
+										<TableCell><Typography variant='caption'>Preço</Typography></TableCell>
+										<TableCell style={{ width: 100 }}><Typography variant='caption'>Ações</Typography></TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -100,7 +98,7 @@ function Page ({ match: { url } }) {
 											<TableCell>{Boolean(row.sku) && <Typography variant='caption'>{`#${row.sku}`}</Typography>}</TableCell>
 											<TableCell>
 												<div style={{ alignItems: "center", flexDirection: 'row', display: 'flex' }}>
-													<div style={{ marginRight: 5 }}>{row.name}</div>
+													<Typography variant='body2' style={{ marginRight: 5 }}>{row.name}</Typography>
 													{row.sale
 														&& <Icon
 															path={mdiBrightnessPercent}
@@ -123,11 +121,10 @@ function Page ({ match: { url } }) {
 											</TableCell>
 											<TableCell><Chip color={row.countFavoritedBy ? 'secondary' : 'default'} label={row.countFavoritedBy} /></TableCell>
 											<TableCell><Chip variant='outlined' label={row.category.name} /></TableCell>
-											<TableCell><Chip variant='outlined' label={row.countOptions} /></TableCell>
 											<TableCell>
 												<div style={{ display: 'flex', flexDirection: 'column' }}>
 													{row.sale && <Typography variant='caption' style={{ textDecoration: 'line-through', marginRight: 5 }}>{numeral(row.price).format('$0,0.00')}</Typography>}
-													<Typography>
+													<Typography variant='body2'>
 														{row.sale
 															? numeral(row.sale.price).format('$0,0.00')
 															: numeral(row.price).format('$0,0.00')}
@@ -135,7 +132,6 @@ function Page ({ match: { url } }) {
 													
 												</div>
 											</TableCell>
-											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
 												<IconButton disabled={loading} component={Link} to={`${url}/alterar/${row.id}`}>
 													<Icon path={mdiPencil} size={1} color='#363E5E' />

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-import { Paper, TextField, TableCell } from '@material-ui/core';
+import { Paper, TextField, TableCell, Typography } from '@material-ui/core';
 
 import styled from 'styled-components';
 
@@ -58,13 +58,13 @@ export const Container = styled.div`
 	grid-template-areas:"header header"
 						"navigation main";
 
-						grid-gap:20px;
-	@media (min-width:769px) {
-		grid-gap:27px;
+	grid-gap: ${({ theme })=>theme.spacing(1)}px;
+
+	@media (max-width:1400px) {
+		grid-template-columns: 200px auto;
+		grid-gap: ${({ theme })=>theme.spacing(1)*.8}px;
 	}
-	@media (min-width:1439px) {
-		grid-gap:35px;
-	}
+	
 `;
 
 export const HeaderArea = styled.div`
@@ -83,6 +83,9 @@ export const Main = styled.main`
 
 export const SidebarContainer = styled.aside`
 	width:300px;
+	@media (max-width: 1400px) {
+		width: 250px;
+	}
 `;
 
 export const Sidebar = styled(Paper)`
@@ -96,7 +99,10 @@ export const Sidebar = styled(Paper)`
 
 export const Content = styled.div`
 	flex:1;
-	margin-right:65px;
+	margin-right:${({ theme })=>theme.spacing(1)}px;
+	@media (max-width: 1400px) {
+		margin-right:${({ theme })=>theme.spacing(1)*.8}px;
+	}
 `;
 
 export const BlockSeparator = styled.div`
@@ -122,14 +128,14 @@ export const BlockFooter = styled.div`
 	align-items:flex-start;
 `
 
-export const BlockTitle = styled.h2`
+export const BlockTitle = styled(Typography).attrs({ variant: 'h2' })`
 	display: flex;
 	align-items: center;
-	font-size: 18px;
+	font-size: 1.1em !important;
 	font-weight: normal;
 	color: #707070;
 	margin: 0;
-	margin-right: 10px;
+	margin-right: 10px !important;
 `
 
 export const NumberOfRows = styled.div`
@@ -142,15 +148,21 @@ export const NumberOfRows = styled.div`
 `
 
 export const FormRow = styled.div`
-	display:flex;
+	display: flex;
 	justify-items:stretch;
 	padding:0 15px 10px 15px;
 
 	${Block} &:first-child {
-		padding-top:20px;
+		padding-top: ${({ theme }) => (theme.spacing(1)-10)}px;
+		@media (max-width: 1400px) {
+			padding-top: ${({ theme }) => (theme.spacing(1)-10)*.7}px;
+		}
 	}
 	${Block} &:last-child {
-		padding-bottom:30px;
+		padding-bottom: ${({ theme }) => (theme.spacing(1)-5)}px;
+		@media (max-width: 1400px) {
+			padding-bottom: ${({ theme }) => (theme.spacing(1)-5)*.7}px;
+		}
 	}
 `;
 
@@ -158,7 +170,10 @@ export const FieldControl = styled.div`
 	flex:1;
 	display:flex;
 	align-items:center;
-	margin: 0 15px;
+	margin: 0 ${({ theme }) => (theme.spacing(1)/2)}px;
+	@media (max-width: 1400px) {
+		margin: 0 ${({ theme }) => (theme.spacing(1)/2)*.7}px;
+	}
 `;
 
 //export function tField({field, label, action=false, type='text', inputProps, InputProps, form:{isSubmitting, errors, setFieldValue, values}, form}) {

@@ -84,11 +84,11 @@ function Page () {
 												const displayDate = moment().diff(createdAt, 'day') >= 1 ? createdAt.format('DD/MM/YY HH:mm') : createdAt.fromNow();
 												return (
 													<TableRow key={index}>
-														<TableCell>{displayDate}</TableCell>
-														<TableCell>{row.user.fullName}</TableCell>
-														<TableCell>{row.type === 'takeout' ? 'Retirada no local' : `${row.address.street}, ${row.address.number}`}</TableCell>
+														<TableCell><Typography>{displayDate}</Typography></TableCell>
+														<TableCell><Typography>{row.user.fullName}</Typography></TableCell>
+														<TableCell><Typography>{row.type === 'takeout' ? 'Retirada no local' : `${row.address.street}, ${row.address.number}`}</Typography></TableCell>
 														<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
-														<TableCell>{getOrderStatusIcon(row.status)}</TableCell>
+														<TableCell><Typography>{getOrderStatusIcon(row.status)}</Typography></TableCell>
 													</TableRow>
 												)
 											})}
