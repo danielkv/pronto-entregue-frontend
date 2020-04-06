@@ -56,6 +56,14 @@ export const GET_COMPANY_GENERAL_SETTINGS = gql`
 	}
 `;
 
+export const COMPANY_IS_OPEN = gql`
+	query CompanyIsOpen ($id: ID!) {
+		company (id: $id) {
+			id
+			isOpen
+		}
+	}
+`
 export const LOAD_COMPANY = gql`
 	query LoadCompany ($id: ID!) {
 		company (id: $id) {

@@ -13,7 +13,7 @@ import Notification from '../notification';
 import { HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser } from './styles';
 
 import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';
-import { GET_USER_COMPANIES, SET_SELECTED_COMPANY, LOAD_COMPANY } from '../../graphql/companies';
+import { GET_USER_COMPANIES, SET_SELECTED_COMPANY, COMPANY_IS_OPEN } from '../../graphql/companies';
 
 export default function Header () {
 	const history = useHistory();
@@ -31,7 +31,7 @@ export default function Header () {
 	const selectedCompany = useSelectedCompany();
 	const [setSelectCompany] = useMutation(SET_SELECTED_COMPANY);
 
-	const { data: { company = null } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
+	const { data: { company = null } = {}, loading: loadingCompany } = useQuery(COMPANY_IS_OPEN, { variables: { id: selectedCompany }, pollInterval: 45000 });
 
 	function handleLogout () {
 		logUserOut();
@@ -71,7 +71,7 @@ export default function Header () {
 							)}
 
 						<div style={{ marginLeft: 10 }}>
-							{loadingCompany ? <CircularProgress color='primary' /> : <Chip variant={company.isOpen ? 'default' : 'outlined'} label={company.isOpen ? 'Aberto' : 'Fechado'} color={company.isOpen ? 'secondary' : 'primary'} />}
+							{loadingCompany && company === null ? <CircularProgress color='primary' /> : <Chip variant={company.isOpen ? 'default' : 'outlined'} label={company.isOpen ? 'Aberto' : 'Fechado'} color={company.isOpen ? 'secondary' : 'primary'} />}
 						</div>
 					</SelectContainer>
 				</Fragment>}
