@@ -107,7 +107,6 @@ export const ORDER_FRAGMENT = gql`
 				optionsGroupRelated {
 					id
 				}
-				#message
 				options {
 					id
 					name
@@ -115,6 +114,7 @@ export const ORDER_FRAGMENT = gql`
 					price
 					optionRelated {
 						id
+						description
 					}
 				}
 			}

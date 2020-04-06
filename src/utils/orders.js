@@ -52,17 +52,17 @@ export function extractOrder(order, overwrite={}) {
 				productRelated: { id: product.productRelated.id },
 
 				optionsGroups: product.productRelated.optionsGroups.map(group=>{
-					let orderGroup = product.optionsGroups.find(row=>row.optionsGroupRelated.id===group.id);
-					let name = orderGroup ? orderGroup.name : group.name;
-					let id = orderGroup ? orderGroup.id : group.id;
+					const orderGroup = product.optionsGroups.find(row=>row.optionsGroupRelated.id===group.id);
+					const name = orderGroup ? orderGroup.name : group.name;
+					const id = orderGroup ? orderGroup.id : group.id;
 
-					let options = group.options.map(option=>{
-						let orderOption = orderGroup ? orderGroup.options.find(row=>row.optionRelated.id===option.id) : null;
-						let name = orderOption ? orderOption.name : option.name;
-						let description = orderOption ? orderOption.description : option.description;
-						let selected = orderOption ? true : false;
-						let price = orderOption ? orderOption.price : option.price;
-						let id = orderOption ? orderOption.id : option.id;
+					const options = group.options.map(option=>{
+						const orderOption = orderGroup ? orderGroup.options.find(row=>row.optionRelated.id===option.id) : null;
+						const name = orderOption ? orderOption.name : option.name;
+						const description = orderOption ? orderOption.description : option.description;
+						const selected = orderOption ? true : false;
+						const price = orderOption ? orderOption.price : option.price;
+						const id = orderOption ? orderOption.id : option.id;
 
 						return { ...option, id, name, description, selected, price, action: 'editable', optionRelated: { id: option.id } };
 					})
