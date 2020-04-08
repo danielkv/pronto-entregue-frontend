@@ -4,11 +4,13 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/styles';
 
+
 import { ThemeProvider as StyledThemProvider } from 'styled-components'
 
 
 import theme from '../layout/theme';
 import Landing from '../pages/landing';
+import PrivacyPolicy from '../static/politica-privacidade';
 import DashboardRoutes from './dashboard';
 
 import 'moment/locale/pt-br';
@@ -21,6 +23,7 @@ const Router = ()  => {
 					<Switch>
 						<Route exact path='/' component={Landing} />
 						<Route path='/dashboard' component={DashboardRoutes} />
+						<Route path='/politica-privacidade' component={PrivacyPolicy} />
 					</Switch>
 				</BrowserRouter>
 			</StyledThemProvider>
