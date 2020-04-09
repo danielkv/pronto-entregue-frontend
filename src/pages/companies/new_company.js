@@ -12,14 +12,14 @@ import PageForm from './form';
 
 import { GET_COMPANIES, CREATE_COMPANY } from '../../graphql/companies';
 
-const FILE_SIZE = 500 * 1024;
+const FILE_SIZE = 3000 * 1024;
 
 const companySchema = Yup.object().shape({
 	name: Yup.string().required('Nome é obrigatório'),
 	displayName: Yup.string().required('Razão social é obrigatório'),
 	backgroundColor: Yup.string().required('Cor principal é obrigatória'),
 	file: Yup.mixed().required('Selecione uma imagem')
-		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => value && value.size <= FILE_SIZE),
 	document: Yup.object().shape({
 		value: Yup.string().required('Documento é brigatório')
 	}),

@@ -15,13 +15,13 @@ import PageForm from './form';
 import { GET_COMPANY_CATEGORIES, CREATE_CATEGORY } from '../../graphql/categories';
 import { useRouteMatch } from 'react-router-dom';
 
-const FILE_SIZE = 500 * 1024;
+const FILE_SIZE = 3000 * 1024;
 
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
 	description: Yup.string().required('A descrição é obrigatória'),
 	file: Yup.mixed().required('Selecione uma imagem')
-		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= FILE_SIZE),
 });
 
 function Page ({ history }) {

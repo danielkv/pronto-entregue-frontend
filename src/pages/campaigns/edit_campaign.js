@@ -14,12 +14,12 @@ import PageForm from './form';
 
 import { LOAD_CAMPAIGN, UPDATE_CAMPAIGN } from '../../graphql/campaigns';
 
-const FILE_SIZE = 500 * 1024;
+const FILE_SIZE = 3000 * 1024;
 
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
 	file: Yup.mixed().notRequired()
-		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => !value || value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= FILE_SIZE),
 	description: Yup.string().required('A descrição é obrigatória'),
 	value: Yup.number().required('O valor é obrigatório'),
 });

@@ -13,7 +13,7 @@ import PageForm from './form';
 
 import { CREATE_PRODUCT, GET_COMPANY_PRODUCTS } from '../../graphql/products';
 
-const FILE_SIZE = 500 * 1024;
+const FILE_SIZE = 3000 * 1024;
 
 const productSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
@@ -21,7 +21,7 @@ const productSchema = Yup.object().shape({
 	fromPrice: Yup.number().moreThan(0, 'O campo "A partir de" será mostrado no app. Deve ser maior que 0').required('O campo "A partir de" é obrigatório'),
 	description: Yup.string().required('A descrição é obrigatória'),
 	file: Yup.mixed().required('Selecione uma imagem')
-		.test('fileSize', 'A imagem é muito grande. Máximo 500kb', value => value && value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => value && value.size <= FILE_SIZE),
 	optionsGroups: Yup.array().of(Yup.object().shape({
 		name: Yup.string().required('O nome do grupo é obrigatório'),
 		options: Yup.array().of(Yup.object().shape({
