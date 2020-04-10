@@ -40,14 +40,11 @@ export function extractPeople(user) {
 }
 
 export function sanitizePeople(result) {
-
 	const data = {
 		firstName: result.firstName,
 		lastName: result.lastName,
 		email: result.email,
 		active: result.active,
-
-		addresses: result.addresses.map(address => sanitizeAddress(address)),
 
 		assignCompany: result.assignCompany,
 		role: result.role,
@@ -55,6 +52,7 @@ export function sanitizePeople(result) {
 		metas: sanitizeMetas(metaTypes, result),
 	}
 
+	if (result.addresses) data.addresses = result.addresses.map(address => sanitizeAddress(address));
 	if (result.password) data.password = result.password;
 
 	return data;

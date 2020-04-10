@@ -6,7 +6,6 @@ import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
-import { ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { sanitizePeople, createEmptyPeople } from '../../utils/peoples';
@@ -38,9 +37,11 @@ function Page ({ history, match: { url } }) {
 	const prefixUrl = `/${splitedUrl[0]}/${splitedUrl[1]}`;
 	
 	const selectedCompany = useSelectedCompany();
-	const [createUser, { error: errorSaving }] = useMutation(CREATE_USER, { refetchQueries: [{ query: GET_COMPANY_USERS, variables: { id: selectedCompany } }] })
+	const [createUser] = useMutation(CREATE_USER, { refetchQueries: [{ query: GET_COMPANY_USERS, variables: { id: selectedCompany } }] })
 
 	const user = createEmptyPeople();
+	delete user.addresses;
+
 	const { enqueueSnackbar } = useSnackbar();
 
 	function onSubmit(result) {
@@ -55,8 +56,6 @@ function Page ({ history, match: { url } }) {
 				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}
-
-	if (errorSaving) return <ErrorBlock error={getErrors(errorSaving)} />
 	
 	return (
 		<Formik
