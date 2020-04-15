@@ -6,7 +6,7 @@ import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 import { useSelectedCompany } from '../../controller/hooks';
-import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
+import { LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { sanitizeOrder, createEmptyOrder, checkDelivery } from '../../utils/orders';
@@ -52,7 +52,7 @@ function Page ({ history, match: { url } }) {
 
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { acceptTakeout = false } = {} } = {}, loading: loadingCompany } = useQuery(LOAD_COMPANY, { variables: { id: selectedCompany } });
-	const [createOrder, { error: errorSaving }] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
+	const [createOrder] = useMutation(CREATE_ORDER, { refetchQueries: [{ query: GET_COMPANY_ORDERS, variables: { id: selectedCompany } }] })
 
 	const order = createEmptyOrder({ type: acceptTakeout === false ? 'delivery' : '', companyId: selectedCompany });
 
@@ -72,7 +72,6 @@ function Page ({ history, match: { url } }) {
 	
 
 	if (loadingCompany) return <LoadingBlock />
-	if (errorSaving) return <ErrorBlock error={getErrors(errorSaving)} />
 
 	return (
 		<Formik

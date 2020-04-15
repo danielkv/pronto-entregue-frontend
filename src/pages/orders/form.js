@@ -108,7 +108,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 						</FormRow>
 						<FormRow>
 							<FieldControl>
-								<Field name='message' component={tField} label='Observações' />
+								<Field name='message' multiline component={tField} label='Observações' />
 							</FieldControl>
 						</FormRow>
 					</Paper>
