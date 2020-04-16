@@ -31,8 +31,6 @@ function Page () {
 	// extract order data from DB
 	const order = extractOrder(data.order, { companyId: selectedCompany });
 
-	//console.log(data.order);
-
 	function onSubmit(result) {
 		const data = sanitizeOrder(result);
 

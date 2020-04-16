@@ -100,7 +100,7 @@ export const calculateOrderPrice = (products, initialValue=0) => {
 }
 
 export const sanitizeOrder = (data) => {
-	return {
+	const order = {
 		userId: data.user.id || null,
 		type: data.type,
 		status: data.status,
@@ -112,8 +112,6 @@ export const sanitizeOrder = (data) => {
 		discount: data.discount,
 		price: calculateOrderPrice(data.products, data.paymentFee + data.deliveryPrice - data.discount),
 		message: data.message,
-		
-		address: sanitizeAddress(data.address),
 		
 		products: data.products.map(product => {
 			let newProduct = {
@@ -148,6 +146,10 @@ export const sanitizeOrder = (data) => {
 			return newProduct;
 		})
 	}
+
+	if (data.type === 'delivery') order.address = sanitizeAddress(data.address);
+
+	return order;
 }
 
 export const createEmptyOrderProduct = (overwrite={}) => {
@@ -185,7 +187,6 @@ export const createEmptyOrderProduct = (overwrite={}) => {
 
 export function checkDelivery (value) {
 	const { type } = this.parent;
-	console.log(type);
 
 	if (type === 'takeout') return true;
 

@@ -81,7 +81,6 @@ export default function OptionsBlock() {
 				return optionsGroup;
 			})
 			.catch(e=>{
-				console.log('aquiiiiii')
 				console.error(getErrors(e));
 			})
 			.finally(()=>{

@@ -58,11 +58,11 @@ export const Container = styled.div`
 	grid-template-areas:"header header"
 						"navigation main";
 
-	grid-gap: ${({ theme })=>theme.spacing(1)}px;
+	grid-gap: ${({ theme })=>theme.spacing(6)}px;
 
 	@media (max-width:1400px) {
 		grid-template-columns: 200px auto;
-		grid-gap: ${({ theme })=>theme.spacing(1)*.8}px;
+		grid-gap: ${({ theme })=>theme.spacing(6)*.8}px;
 	}
 	
 `;
@@ -99,9 +99,9 @@ export const Sidebar = styled(Paper)`
 
 export const Content = styled.div`
 	flex:1;
-	margin-right:${({ theme })=>theme.spacing(1)}px;
+	margin-right:${({ theme })=>theme.spacing(6)}px;
 	@media (max-width: 1400px) {
-		margin-right:${({ theme })=>theme.spacing(1)*.8}px;
+		margin-right:${({ theme })=>theme.spacing(6)*.8}px;
 	}
 `;
 
@@ -153,15 +153,15 @@ export const FormRow = styled.div`
 	padding:0 15px 10px 15px;
 
 	${Block} &:first-child {
-		padding-top: ${({ theme }) => (theme.spacing(1)-10)}px;
+		padding-top: ${({ theme }) => (theme.spacing(6)-10)}px;
 		@media (max-width: 1400px) {
-			padding-top: ${({ theme }) => (theme.spacing(1)-10)*.7}px;
+			padding-top: ${({ theme }) => (theme.spacing(6)-10)*.7}px;
 		}
 	}
 	${Block} &:last-child {
-		padding-bottom: ${({ theme }) => (theme.spacing(1)-5)}px;
+		padding-bottom: ${({ theme }) => (theme.spacing(6)-5)}px;
 		@media (max-width: 1400px) {
-			padding-bottom: ${({ theme }) => (theme.spacing(1)-5)*.7}px;
+			padding-bottom: ${({ theme }) => (theme.spacing(6)-5)*.7}px;
 		}
 	}
 `;
@@ -170,9 +170,9 @@ export const FieldControl = styled.div`
 	flex:1;
 	display:flex;
 	align-items:center;
-	margin: 0 ${({ theme }) => (theme.spacing(1)/2)}px;
+	margin: 0 ${({ theme }) => (theme.spacing(6)/2)}px;
 	@media (max-width: 1400px) {
-		margin: 0 ${({ theme }) => (theme.spacing(1)/2)*.7}px;
+		margin: 0 ${({ theme }) => (theme.spacing(6)/2)*.7}px;
 	}
 `;
 

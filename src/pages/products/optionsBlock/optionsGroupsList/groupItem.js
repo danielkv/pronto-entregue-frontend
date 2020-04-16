@@ -114,7 +114,6 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 												value={group.type}
 												exclusive
 												onChange={(e, value)=>{
-													console.log(value);
 													e.stopPropagation();
 													if (!value) return;
 													let newGroup = {

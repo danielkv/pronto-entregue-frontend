@@ -151,7 +151,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 	}, [prod]);
 
 	return (
-		<Modal style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} onBackdropClick={handleCancel} open={open} onClose={close}>
+		<Modal style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} scroll='body' onBackdropClick={handleCancel} open={open} onClose={close}>
 			<Fade in={open}>
 				<ModalPaper>
 					{!!product &&
@@ -195,6 +195,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 									<TextField
 										label='Observações'
 										value={product.message}
+										multiline
 										onChange={(e)=>{
 											setProduct({ ...product, message: e.target.value });
 										}}

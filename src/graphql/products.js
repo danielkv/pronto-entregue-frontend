@@ -57,11 +57,11 @@ export const LOAD_PRODUCT = gql`
 				expiresAt
 				startsAt
 			}
-			campaigns {
-				id
-				name
-				masterOnly
-			}
+			#campaigns {
+			#	id
+			#	name
+			#	masterOnly
+			#}
 			category {
 				id
 				name

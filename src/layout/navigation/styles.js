@@ -5,9 +5,9 @@ import { List, ListItem } from '@material-ui/core';
 import styled from 'styled-components';
 
 export const Container = styled.div`
-	margin-left: ${({ theme }) => theme.spacing(1)}px;
+	margin-left: ${({ theme }) => theme.spacing(6)}px;
 	@media (max-width: 1400px) {
-		margin-left: ${({ theme }) => theme.spacing(1)*.6}px;
+		margin-left: ${({ theme }) => theme.spacing(6)*.6}px;
 	}
 `;
 

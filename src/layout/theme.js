@@ -20,7 +20,7 @@ const theme = responsiveFontSizes(createMuiTheme({
 			},
 		}
 	},
-	spacing: [6, 35],
+	spacing: 6,
 	shape: {
 		borderRadius: 15
 	},
@@ -221,7 +221,5 @@ const theme = responsiveFontSizes(createMuiTheme({
 		},
 	}
 }));
-
-console.log(theme.typography)
 
 export default theme;

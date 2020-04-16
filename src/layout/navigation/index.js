@@ -86,7 +86,7 @@ function Navigation() {
 				<>
 					<Divider />
 
-					<NavigationContainer dense={true}>
+					<NavigationContainer dense>
 						<NavItem to={`${url}/empresas`} selected={isSelected('empresas')} alt='Empresas'>
 							<ListItemIcon>
 								<Icon path={mdiStore} size={1} color='#707070' /></ListItemIcon>
