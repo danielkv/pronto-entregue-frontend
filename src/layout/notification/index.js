@@ -10,7 +10,7 @@ import { useSnackbar } from 'notistack';
 import { useSelectedCompany } from '../../controller/hooks';
 import { Container } from './styles';
 
-import { SUBSCRIBE_ORDER_CREATED } from '../../graphql/orders';
+import { SUBSCRIBE_ORDER_CREATED } from '../../graphql/ordersRoll';
 
 export default function Notification() {
 	const { url } = useRouteMatch();

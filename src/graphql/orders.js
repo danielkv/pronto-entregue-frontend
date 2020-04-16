@@ -187,17 +187,3 @@ export const GET_COMPANY_ORDERS = gql`
 		}
 	}
 `;
-
-export const SUBSCRIBE_ORDER_CREATED = gql`
-	subscription ($companyId: ID!) {
-		orderCreated(companyId: $companyId) {
-			id
-			user {
-				id
-				fullName
-				firstName
-				lastName
-			}
-		}
-	}
-`;

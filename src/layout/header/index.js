@@ -6,6 +6,8 @@ import { FormControl, Select, MenuItem, CircularProgress, Button, Typography, Ch
 import { mdiStore, mdiLogout, mdiAccountCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 
+import AutoOrders from '../../components/AutoOrders';
+
 import mainLogo from '../../assets/images/logo.png';
 import { useSelectedCompany } from '../../controller/hooks';
 import { logUserOut } from '../../services/init';
@@ -73,11 +75,14 @@ export default function Header () {
 						<div style={{ marginLeft: 10 }}>
 							{loadingCompany && company === null ? <CircularProgress color='primary' /> : <Chip variant={company.isOpen ? 'default' : 'outlined'} label={company.isOpen ? 'Aberto' : 'Fechado'} color={company.isOpen ? 'secondary' : 'primary'} />}
 						</div>
+						<div style={{ marginLeft: 10 }}>
+							<AutoOrders />
+						</div>
 					</SelectContainer>
 				</Fragment>}
 			{loadingLoggedUser || !user ? <CircularProgress /> :
 				<RightSide>
-					<Notification />
+					{/* <Notification /> */}
 					<LoggedUser>
 						<Icon  path={mdiAccountCircle} color='#999'  size={1} />
 						<span>{user.full_name} <small>({user.email})</small></span>

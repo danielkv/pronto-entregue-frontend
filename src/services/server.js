@@ -29,6 +29,7 @@ const initialData = {
 	initialized: false,
 	isUserLoggedIn: false,
 	userToken: null,
+	ordersRoll: [],
 	selectedCompany: localStorage.getItem('@prontoentregue/selectedCompany') || '',
 }
 
