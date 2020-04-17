@@ -9,8 +9,7 @@ import { ReactComponent as SmartphoneIcon } from '../../assets/icons/smartphone.
 import { ReactComponent as TruckIcon } from '../../assets/icons/truck.svg';
 import appImage from '../../assets/images/app-android-iosios.png';
 import desktopImage from '../../assets/images/app-desktop.png';
-import appStoreImage from '../../assets/images/app-store.png';
-import googlePlayImage from '../../assets/images/google-play.png';
+import { ReactComponent as AppStoreImage } from '../../assets/images/app-store.svg';
 import logoUrl from '../../assets/images/logo.png';
 import statusImage from '../../assets/images/status-control.png';
 import {
@@ -62,8 +61,12 @@ export default function Landing() {
 								</Feature>
 							</FeaturesContainer>
 							<AppsDownloadContainer style={{ marginTop: 30 }}>
-								<img src={appStoreImage} alt='App Store' />
-								<img src={googlePlayImage} alt='Google Play' />
+								<a target='_new' href='https://play.google.com/store/apps/details?id=com.flaker.prontoentregue&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+									<img title='Disponível no Google Play' alt='Disponível no Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png'/>
+								</a>
+								<a alt='Baixar na App Store' href='https://apps.apple.com/us/app/pronto-entregue/id1507295672?l=pt&ls=1' target='_new'>
+									<AppStoreImage style={{ width: 153, marginTop: -2 }} title='Baixar na App Store' />
+								</a>
 							</AppsDownloadContainer>
 						</TopContent>
 					</Container>
@@ -117,9 +120,13 @@ export default function Landing() {
 			</FeatureDetailsContainer>
 			<Footer>
 				<Typography variant='h4' color='primary' style={{ fontWeight: 'bold', marginBottom: 20 }}>Baixe nosso APP</Typography>
-				<AppsDownloadContainer>
-					<img src={appStoreImage} alt='App Store' />
-					<img src={googlePlayImage} alt='Google Play' />
+				<AppsDownloadContainer style={{ marginTop: 30 }}>
+					<a target='_new' href='https://play.google.com/store/apps/details?id=com.flaker.prontoentregue&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+						<img title='Disponível no Google Play' alt='Disponível no Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png'/>
+					</a>
+					<a alt='Baixar na App Store' href='https://apps.apple.com/us/app/pronto-entregue/id1507295672?l=pt&ls=1' target='_new'>
+						<AppStoreImage style={{ width: 153, marginTop: -2 }} title='Baixar na App Store' />
+					</a>
 				</AppsDownloadContainer>
 				<Typography variant='h5' color='primary' >Quer saber mais? Entre em contato</Typography>
 				<PhoneNumber>

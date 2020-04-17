@@ -264,9 +264,14 @@ export const AppsDownloadContainer = styled.div`
 	text-align:center;
 	margin-bottom: 30px;
 
-	img {
+	a {
+		display: block;
 		width: 48%;
 		height: auto;
+		img {
+			max-width: 100%;
+			height: auto;
+		}
 	}
 `;
 export const PhoneNumber = styled.div`
