@@ -9,7 +9,7 @@ import OrderRollItem from './OrderRollItem';
 import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
-	const [open, setOpen] = useState(true);
+	const [open, setOpen] = useState(false);
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'preparing', 'delivering'] } } });
 
