@@ -1,5 +1,3 @@
-import { sanitizeOrder } from "../utils/orders";
-
 import { GET_ORDERS_ROLL } from "../graphql/ordersRoll"
 
 export default {
@@ -7,9 +5,9 @@ export default {
 		addOrderRoll(_, { order }, { cache }) {
 			const { ordersRoll } = cache.readQuery({ query: GET_ORDERS_ROLL });
 
-			ordersRoll.unshift(sanitizeOrder(order));
+			const newOrdersRoll = [order, ...ordersRoll];
 
-			cache.writeQuery({ query: GET_ORDERS_ROLL, data: { ordersRoll } })
+			cache.writeQuery({ query: GET_ORDERS_ROLL, data: { ordersRoll: newOrdersRoll } })
 		},
 		resetOrdersRoll(_, __, { cache }) {
 			cache.writeData({ ordersRoll: [] });

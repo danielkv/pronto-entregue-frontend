@@ -163,7 +163,7 @@ export const LOAD_ORDER = gql`
 `;
 
 export const GET_COMPANY_ORDERS = gql`
-	query GetOrders ($id:ID!, $filter: Filter, $pagination: Pagination) {
+	query GetOrders ($id:ID!, $filter: JSON, $pagination: Pagination) {
 		company(id: $id) {
 			id
 			countOrders(filter: $filter)

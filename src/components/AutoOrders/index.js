@@ -1,45 +1,42 @@
-import React, { Fragment, useState, useEffect, useContext } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 
-import { useApolloClient } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
 
 import { useSelectedCompany } from '../../controller/hooks';
-import { OrderRollContext } from '../../services/ordersRollContext';
+import OrderRollItem from './OrderRollItem';
 
-import { SUBSCRIBE_ORDER_CREATED } from '../../graphql/ordersRoll';
+import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
 	const [open, setOpen] = useState(true);
-	const client = useApolloClient()
 	const selectedCompany = useSelectedCompany();
+	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'preparing', 'delivering'] } } });
 
-	console.log(OrderRollContext);
-
-	const { ordersRoll, dispatch } = useContext(OrderRollContext);
-	
 	function handleClose() {
 		setOpen(false);
 	}
 
+	function subscribe() {
+		subscribeToMore({
+			document: SUBSCRIBE_ORDER_CREATED,
+			variables: { companyId: selectedCompany },
+			updateQuery(prev, { subscriptionData: { data: { orderCreated = null } } }) {
+				if (!orderCreated) return prev;
+
+				return Object.assign({}, prev, {
+					company: {
+						...prev.company,
+						orders: [orderCreated, ...prev.company.orders],
+					}
+				})
+			}
+		})
+	}
+
 	useEffect(()=>{
-		if (!selectedCompany) return;
-
-		const observer = client.subscribe({
-			query: SUBSCRIBE_ORDER_CREATED,
-			variables: {
-				companyId: selectedCompany,
-			},
-		})
-
-		const subscription = observer.subscribe(({ data: { orderCreated } = {} }) => {
-			console.log(orderCreated)
-			dispatch({ type: 'ADD_ORDER_ROLL', order: orderCreated })
-		})
-	
-		return () => {
-			subscription.unsubscribe();
-		}
-	}, [client, selectedCompany])
+		subscribe();
+	}, [])
 
 	return (
 		<Fragment>
@@ -51,11 +48,13 @@ export default function AutoOrders() {
 				open={open}
 				onClose={handleClose}
 				aria-labelledby="max-width-dialog-title"
+				scroll='body'
+				PaperProps={{ style: { backgroundColor: '#EFE8DA' } } }
 			>
 				<DialogTitle id="max-width-dialog-title">Pedidos em tempo real</DialogTitle>
 				<DialogContent>
-					{ordersRoll.map(order => (
-						<div key={order.id}>{order.user.firstName}</div>
+					{orders.map((order) => (
+						<OrderRollItem key={order.id} item={order} />
 					))}
 				</DialogContent>
 				<DialogActions>

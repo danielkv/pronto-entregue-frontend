@@ -130,7 +130,7 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 									inputProps={{ step: 0.01 }} />
 							</FieldControl>
 						</FormRow>
-						{!!campaigns.length && <FormRow>
+						{!!campaigns && campaigns.length && <FormRow>
 							<FieldControl style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
 								<FormLabel>Campanhas vinculadas</FormLabel>
 								<div style={{ display: 'block' }}>

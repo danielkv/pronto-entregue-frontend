@@ -68,6 +68,7 @@ const client = new ApolloClient({
 		from([authLink, uploadLink])
 	),
 	resolvers,
+	//typeDefs: types,
 	defaultOptions: {
 		watchQuery: {
 			fetchPolicy: 'cache-and-network'
