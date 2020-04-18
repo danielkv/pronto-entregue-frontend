@@ -1,5 +1,17 @@
 import gql from "graphql-tag";
 
+export const UPDATE_USER_PASSWORD = gql`
+	mutation UpdateUserPassword ($token: String!, $newPassword: String!) {
+		updateUserPassword (token: $token, newPassword: $newPassword)
+	}
+`;
+
+export const SEND_NEW_PASSWORD_EMAIL = gql`
+	mutation sendNewPasswordEmail ($userId: ID!) {
+		sendNewPasswordEmail (userId: $userId)
+	}
+`;
+
 export const LOAD_USER = gql`
 	query LoadUser($id: ID!, $companyId:ID!) {
 		user (id: $id) {
