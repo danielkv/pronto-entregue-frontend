@@ -11,7 +11,6 @@ import AutoOrders from '../../components/AutoOrders';
 import mainLogo from '../../assets/images/logo.png';
 import { useSelectedCompany } from '../../controller/hooks';
 import { logUserOut } from '../../services/init';
-import Notification from '../notification';
 import { HeaderContainer, LogoContainer, SelectContainer, RightSide, LoggedUser } from './styles';
 
 import { LOGGED_USER_ID, GET_USER } from '../../graphql/authentication';

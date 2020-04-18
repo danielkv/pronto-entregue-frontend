@@ -75,19 +75,36 @@ export function extractOrder(order, overwrite={}) {
 	};
 }
 
-export const getOrderStatusIcon = (status) => {
+export const getOrderStatusIcon = (status, size=1) => {
 	// isIn: [['waiting', 'preparing', 'delivery', 'delivered', 'canceled']],
 	switch(status) {
 		case 'waiting':
-			return <Icon path={mdiClock} size={1} color='#363E5E' alt='Aguardando' title='Aguardando' />
+			return <Icon path={mdiClock} size={size} color='#363E5E' alt='Aguardando' title='Aguardando' />
 		case 'preparing':
-			return <Icon path={mdiSilverwareSpoon} size={1} color='#363E5E' alt='Preparando' title='Preparando' />
+			return <Icon path={mdiSilverwareSpoon} size={size} color='#363E5E' alt='Preparando' title='Preparando' />
 		case 'delivering':
-			return <Icon path={mdiMoped} size={1} color='#363E5E' alt='Na entrega' title='Na entrega' />
+			return <Icon path={mdiMoped} size={size} color='#363E5E' alt='Na entrega' title='Na entrega' />
 		case 'delivered':
-			return <Icon path={mdiCheckCircle} size={1} color='#058F0A' alt='Entregues' title='Entregues' />
+			return <Icon path={mdiCheckCircle} size={size} color='#058F0A' alt='Entregue' title='Entregue' />
 		case 'canceled':
-			return <Icon path={mdiCloseCircle} size={1} color='#E63A3A' alt='Cancelado' title='Cancelado' />
+			return <Icon path={mdiCloseCircle} size={size} color='#E63A3A' alt='Cancelado' title='Cancelado' />
+		default: return '';
+	}
+}
+
+export function getOrderStatusName(status) {
+	// isIn: [['waiting', 'preparing', 'delivery', 'delivered', 'canceled']],
+	switch(status) {
+		case 'waiting':
+			return 'Aguardando';
+		case 'preparing':
+			return 'Preparando';
+		case 'delivering':
+			return 'Na entrega';
+		case 'delivered':
+			return 'Entregue';
+		case 'canceled':
+			return 'Cancelado';
 		default: return '';
 	}
 }

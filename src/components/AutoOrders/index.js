@@ -36,6 +36,7 @@ export default function AutoOrders() {
 
 	useEffect(()=>{
 		subscribe();
+	// eslint-disable-next-line
 	}, [])
 
 	return (
