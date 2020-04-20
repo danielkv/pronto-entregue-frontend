@@ -104,8 +104,10 @@ export const ORDER_FRAGMENT = gql`
 			optionsGroups {
 				id
 				name
+				priceType
 				optionsGroupRelated {
 					id
+					priceType
 				}
 				options {
 					id

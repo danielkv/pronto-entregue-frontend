@@ -54,7 +54,9 @@ export function extractOrder(order, overwrite={}) {
 				optionsGroups: product.productRelated.optionsGroups.map(group=>{
 					const orderGroup = product.optionsGroups.find(row=>row.optionsGroupRelated.id===group.id);
 					const name = orderGroup ? orderGroup.name : group.name;
+					const priceType = orderGroup ? orderGroup.priceType : group.priceType;
 					const id = orderGroup ? orderGroup.id : group.id;
+					console.log(orderGroup)
 
 					const options = group.options.map(option=>{
 						const orderOption = orderGroup ? orderGroup.options.find(row=>row.optionRelated.id===option.id) : null;
@@ -67,7 +69,7 @@ export function extractOrder(order, overwrite={}) {
 						return { ...option, id, name, description, selected, price, action: 'editable', optionRelated: { id: option.id } };
 					})
 
-					return { ...group, id, options, name, action: 'editable', groupRelated: { id: group.id } };
+					return { ...group, id, options, name, priceType, action: 'editable', groupRelated: { id: group.id } };
 				}),
 			}
 		}),

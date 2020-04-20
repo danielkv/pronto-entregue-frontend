@@ -181,7 +181,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									{!!paymentMethods.length &&
-									<TextField disabled={paymentMethod && paymentMethod.id && editId} helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
+									<TextField disabled={Boolean(paymentMethod && paymentMethod.id && editId)} helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
 										{paymentMethods.map(row=>(
 											<MenuItem key={row.id} value={row.id}>{row.displayName}</MenuItem>
 										))}

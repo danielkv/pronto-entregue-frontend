@@ -181,7 +181,7 @@ export function tField(props) {
 	let { field, form: { isSubmitting, errors, setFieldValue, values } } = props;
 	let error = '';
 	const nesting = field.name.split('.');
-	let controldisabled = typeof props.controldisabled !== "undefined" ? props.controldisabled : isSubmitting;
+	const controldisabled= typeof props.controldisabled !== "undefined" ? props.controldisabled : isSubmitting;
 	
 	if (errors[nesting[0]]) error = nesting.reduce((acumulator, i) => {if (acumulator[i]) return acumulator[i]; return ''}, errors);
 
