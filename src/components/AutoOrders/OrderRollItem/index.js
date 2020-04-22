@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, Fragment } from 'react'
 
 import { useMutation } from '@apollo/react-hooks'
-import { Chip, Typography, Paper, IconButton, useTheme, Menu, MenuItem, ListItemIcon, ListItemText, CircularProgress } from '@material-ui/core'
+import { Chip, Typography, Paper, IconButton, useTheme, Menu, MenuItem, ListItemIcon, ListItemText, CircularProgress, Divider } from '@material-ui/core'
 import { mdiDotsVertical } from '@mdi/js'
 import Icon from '@mdi/react'
 import moment from 'moment'
@@ -72,7 +72,12 @@ export default function OrderRollItem({ item: order }) {
 			
 			<div style={{ marginLeft: 20, display: 'flex', flexDirection: 'row' }}>
 				<div style={{ width: '55%', marginRight: 30 }}>
-					{order.products.map(product => <OrderRollProduct key={product.id} product={product} />)}
+					{order.products.map((product, index) => (
+						<Fragment key={product.id}>
+							{index > 0 && <Divider style={{ marginTop: 8, marginBottom: 8 }} />}
+							<OrderRollProduct product={product} />
+						</Fragment>
+					))}
 				</div>
 				<div>
 					<Typography>{order.user.fullName}</Typography>

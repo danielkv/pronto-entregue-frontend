@@ -12,6 +12,7 @@ export const ORDER_CREATED_PRODUCT = gql`
 		name
 		image
 		price
+		message
 		
 		productRelated {
 			id

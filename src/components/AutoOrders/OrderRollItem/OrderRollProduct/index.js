@@ -19,7 +19,12 @@ export default function OrderRollProduct({ product }) {
 						</div>
 					))}
 				</div>
-				{Boolean(product.message) && <Typography variant='caption'>{product.message}</Typography>}
+				{Boolean(product.message) && (
+					<div style={{ marginTop: 5 }}>
+						<Typography style={{ fontSize: 13, fontWeight: 'bold', display: 'inline-block' }}>Observações: </Typography>
+						<Typography style={{ fontSize: 13, display: 'inline-block' }}>{product.message}</Typography>
+					</div>
+				)}
 			</div>
 		</div>
 	)

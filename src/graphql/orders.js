@@ -4,7 +4,7 @@ import { OPTIONS_GROUP_FRAGMENT } from "./products";
 
 
 export const GET_COMPANY_LAST_ORDERS = gql`
-	query GetLastOrders ($id:ID!, $filter:Filter, $pagination: Pagination) {
+	query GetLastOrders ($id:ID!, $filter: JSON, $pagination: Pagination) {
 		company(id: $id) {
 			id
 			orders (filter: $filter, pagination: $pagination) {
@@ -31,11 +31,11 @@ export const GET_COMPANY_ORDERS_QTY = gql`
 	query OrdersQty($id: ID!) {
 		company(id: $id) {
 			id
-			waitingOrders: countOrders(filter: { status: "waiting", createdAt: "CURDATE"})
-			preparingOrders: countOrders(filter: { status: "preparing", createdAt: "CURDATE"})
-			deliveryOrders: countOrders(filter: { status: "delivery", createdAt: "CURDATE"})
-			deliveredOrders: countOrders(filter: { status: "delivered", createdAt: "CURDATE"})
-			canceledOrders: countOrders(filter: { status: "canceled", createdAt: "CURDATE"})
+			waitingOrders: countOrders(filter: { status: "waiting"})
+			preparingOrders: countOrders(filter: { status: "preparing" })
+			deliveryOrders: countOrders(filter: { status: "delivering" })
+			deliveredOrders: countOrders(filter: { status: "delivered" })
+			canceledOrders: countOrders(filter: { status: "canceled" })
 		}
 	}
 `;
