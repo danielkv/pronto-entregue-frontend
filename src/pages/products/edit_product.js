@@ -28,7 +28,7 @@ const productSchema = Yup.object().shape({
 		name: Yup.string().required('O nome do grupo é obrigatório'),
 		options: Yup.array().of(Yup.object().shape({
 			name: Yup.string().required('O nome da opção é obrigatório'),
-			price: Yup.number().required('O valor da opção obrigatório (pode ser 0)'),
+			price: Yup.number().typeError('Você deve inseir um valor na opção (pode ser 0)').required('O valor da opção obrigatório (pode ser 0)'),
 		})),
 	}))
 });
@@ -42,7 +42,7 @@ function Page () {
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_PRODUCT, { variables: { id: editId, filter: { showInactive: true } } });
 	const [updateProduct] = useMutation(UPDATE_PRODUCT, {
 		variables: { id: editId },
-		refetchQueries: [{ query: LOAD_PRODUCT, variables: { id: editId, filter: { showInactive: true } } }]
+		//refetchQueries: [{ query: LOAD_PRODUCT, variables: { id: editId, filter: { showInactive: true } } }]
 	});
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
