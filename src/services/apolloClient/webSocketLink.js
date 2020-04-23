@@ -5,8 +5,8 @@ const GRAPHQL_ENDPOINT = process.env.NODE_ENV === 'production' ? 'wss://pronto-e
 
 const client = new SubscriptionClient(GRAPHQL_ENDPOINT, {
 	reconnect: true,
-	reconnectionAttempts: 5,
-	timeout: 40000
+	//reconnectionAttempts: 5,
+	timeout: 20000,
 });
 
 export default new WebSocketLink(client);

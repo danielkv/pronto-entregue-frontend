@@ -17,8 +17,8 @@ export default function AutoOrders() {
 		setOpen(false);
 	}
 
-	function subscribe() {
-		subscribeToMore({
+	useEffect(()=>{
+		const unsubscribe = subscribeToMore({
 			document: SUBSCRIBE_ORDER_CREATED,
 			variables: { companyId: selectedCompany },
 			updateQuery(prev, { subscriptionData: { data: { orderCreated = null } } }) {
@@ -32,10 +32,8 @@ export default function AutoOrders() {
 				})
 			}
 		})
-	}
 
-	useEffect(()=>{
-		subscribe();
+		return unsubscribe;
 	// eslint-disable-next-line
 	}, [])
 
