@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from "graphql-tag";
 
-
-import client from './server';
+import client from './apolloClient';
 
 import { IS_USER_LOGGED_IN, AUTHENTICATE, LOGGED_USER_ID } from '../graphql/authentication';
 import { SET_SELECTED_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../graphql/companies';
