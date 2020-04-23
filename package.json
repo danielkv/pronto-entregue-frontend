@@ -1,6 +1,6 @@
 {
   "name": "pronto-entregue-frontend",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "engines": {
     "yarn": "1.22.0",
@@ -23,7 +23,7 @@
     "apollo-client": "^2.6.4",
     "apollo-link-context": "^1.0.19",
     "apollo-link-http": "^1.5.16",
-    "apollo-link-ws": "^1.0.19",
+    "apollo-link-ws": "^1.0.20",
     "apollo-upload-client": "^11.0.0",
     "date-fns": "^2.9.0",
     "downshift": "^3.3.4",
