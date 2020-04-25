@@ -130,7 +130,6 @@ export const GET_COMPANY_PRODUCTS = gql`
 				price
 				sku
 				countFavoritedBy
-				countOptions
 				createdAt
 				category {
 					id
