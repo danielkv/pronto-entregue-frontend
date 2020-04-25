@@ -13,7 +13,7 @@ import { getErrors } from '../../../utils/error';
 import OrdersCanceled from '../.././../assets/images/orders-canceled.png';
 import { OrdersTodayContainer, OrdersToday, OrderStatus } from '../styles';
 
-import { GET_COMPANY_ORDERS_QTY } from '../../../graphql/orders';
+import { GET_ORDERS_STATUS_QTY, SUBSCRIBE_ORDER_STATUS_QTY } from '../../../graphql/orders';
 
 
 // import { Container } from './styles';
@@ -23,29 +23,38 @@ export default function OrdersNumber() {
 
 	const {
 		data: {
-			company: {
-				waitingOrders = 0,
-				preparingOrders = 0,
-				deliveryOrders = 0,
-				deliveredOrders = 0,
-				canceledOrders = 0,
+			ordersStatusQty: {
+				waiting = 0,
+				preparing = 0,
+				delivery = 0,
+				delivered = 0,
+				canceled = 0,
 			} = {}
 		} = {},
 		loading: loadingOrdersQty,
 		error: ordersQtyError,
-		startPolling,
-		stopPolling
-	} = useQuery(GET_COMPANY_ORDERS_QTY, { variables: { id: selectedCompany } });
+		subscribeToMore
+	} = useQuery(GET_ORDERS_STATUS_QTY, { variables: { companyId: selectedCompany } });
 
 	useEffect(()=>{
-		if (loadingOrdersQty || !startPolling) return;
-		
-		startPolling(30000);
-		return ()=>{
-			stopPolling();
-		}
+		if (!selectedCompany) return;
+
+		const unsubscribe = subscribeToMore({
+			document: SUBSCRIBE_ORDER_STATUS_QTY,
+			variables: { companyId: selectedCompany },
+			updateQuery(prev, { subscriptionData: { data: { updateOrderStatus = null } } }) {
+				console.log(updateOrderStatus);
+				if (!updateOrderStatus) return prev;
+
+				const result = Object.assign({}, prev, { ordersStatusQty: updateOrderStatus })
+
+				return result
+			}
+		})
+
+		return unsubscribe;
 	// eslint-disable-next-line
-	}, [loadingOrdersQty])
+	}, [selectedCompany])
 
 	return (
 		<OrdersTodayContainer>
@@ -58,35 +67,35 @@ export default function OrdersNumber() {
 							<OrderStatus>
 								<img src={OrdersAwaiting} alt='Pedidos aguardando' />
 								<div>
-									{loadingOrdersQty && waitingOrders  === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{waitingOrders}</Typography>}
+									{loadingOrdersQty && waiting  === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{waiting}</Typography>}
 									<Typography>Pedidos aguardando</Typography>
 								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersPreparing} alt='Pedidos em preparo' />
 								<div>
-									{loadingOrdersQty && preparingOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{preparingOrders}</Typography>}
+									{loadingOrdersQty && preparing === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{preparing}</Typography>}
 									<Typography>Pedidos em preparo</Typography>
 								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersDelivering} alt='Pedidos na entrega' />
 								<div>
-									{loadingOrdersQty && deliveryOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{deliveryOrders}</Typography>}
+									{loadingOrdersQty && delivery === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{delivery}</Typography>}
 									<Typography>Pedidos na entrega</Typography>
 								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersDelivered} alt='Pedidos entregues' />
 								<div>
-									{loadingOrdersQty && deliveredOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{deliveredOrders}</Typography>}
+									{loadingOrdersQty && delivered === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{delivered}</Typography>}
 									<Typography>Pedidos entregues</Typography>
 								</div>
 							</OrderStatus>
 							<OrderStatus>
 								<img src={OrdersCanceled} alt='Pedidos cancelados' />
 								<div>
-									{loadingOrdersQty && canceledOrders === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{canceledOrders}</Typography>}
+									{loadingOrdersQty && canceled === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{canceled}</Typography>}
 									<Typography>Pedidos cancelados</Typography>
 								</div>
 							</OrderStatus>

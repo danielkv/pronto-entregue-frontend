@@ -10,6 +10,10 @@ export default function OrderRollProduct({ product }) {
 				{Boolean(product.productRelated.sku) && <Typography style={{ marginLeft: 10 }} variant='caption'>{`#${product.productRelated.sku}`}</Typography>}
 			</div>
 			<div style={{ marginLeft: 15 }}>
+				<div>
+					<Typography style={{ fontSize: 13, fontWeight: 'bold', display: 'inline-block' }}>Quantidade: </Typography>
+					<Typography style={{ fontSize: 13, display: 'inline-block' }}>{product.quantity}</Typography>
+				</div>
 				<Typography variant='caption'>{product.productRelated.description}</Typography>
 				<div>
 					{product.optionsGroups.map(group => (

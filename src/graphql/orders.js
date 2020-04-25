@@ -2,6 +2,17 @@ import gql from "graphql-tag";
 
 import { OPTIONS_GROUP_FRAGMENT } from "./products";
 
+export const GET_ORDERS_STATUS_QTY = gql`
+	query GetOrderStatusQty($companyId: ID!) {
+		ordersStatusQty(companyId: $companyId)
+	}
+`;
+
+export const SUBSCRIBE_ORDER_STATUS_QTY = gql`
+	subscription UpdateOrderStatus($companyId: ID!) {
+		updateOrderStatus(companyId: $companyId)
+	}
+`;
 
 export const GET_COMPANY_LAST_ORDERS = gql`
 	query GetLastOrders ($id:ID!, $filter: JSON, $pagination: Pagination) {
