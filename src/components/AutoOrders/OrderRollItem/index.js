@@ -89,8 +89,18 @@ export default function OrderRollItem({ item: order }) {
 								<Typography variant='subtitle2'>{order.address.district}</Typography>
 								<Typography variant='subtitle2'>{`${order.address.city} - ${order.address.state}`}</Typography>
 								<Typography variant='subtitle2'>{order.address.zipcode}</Typography>
+								<div style={{ marginTop: 10 }}>
+									<Typography style={{ fontWeight: 'bold' }}>Valor: </Typography>
+									<div style={{ marginLeft: 20 }}>
+										<Typography variant='caption'>{`R$ ${order.price.toFixed(2).replace('.', ",")}`}</Typography>
+										<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+											<img height={20} style={{ marginRight: 5 }} src={order.paymentMethod.image} />
+											<Typography variant='caption'>{`${order.paymentMethod.displayName}`}</Typography>
+										</div>
+									</div>
+								</div>
 								{Boolean(order.message) && (
-									<div style={{ marginTop: 15 }}>
+									<div style={{ marginTop: 10 }}>
 										<Typography style={{ fontWeight: 'bold' }}>Observações: </Typography>
 										<Typography variant='caption'>{order.message}</Typography>
 									</div>

@@ -50,6 +50,8 @@ export const ORDER_CRATED_FRAGMENT = gql`
 		}
 		paymentMethod {
 			id
+			type
+			image
 			displayName
 		}
 		deliveryPrice
