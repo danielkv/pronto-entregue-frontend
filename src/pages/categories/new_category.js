@@ -19,7 +19,7 @@ const FILE_SIZE = 3000 * 1024;
 
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
-	description: Yup.string().required('A descrição é obrigatória'),
+	description: Yup.string().notRequired(),
 	file: Yup.mixed().required('Selecione uma imagem')
 		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= FILE_SIZE),
 });
