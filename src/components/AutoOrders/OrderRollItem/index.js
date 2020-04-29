@@ -94,7 +94,7 @@ export default function OrderRollItem({ item: order }) {
 									<div style={{ marginLeft: 20 }}>
 										<Typography variant='caption'>{`R$ ${order.price.toFixed(2).replace('.', ",")}`}</Typography>
 										<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-											<img height={20} style={{ marginRight: 5 }} src={order.paymentMethod.image} />
+											<img alt='Forma de pagamento' height={20} style={{ marginRight: 5 }} src={order.paymentMethod.image} />
 											<Typography variant='caption'>{`${order.paymentMethod.displayName}`}</Typography>
 										</div>
 									</div>

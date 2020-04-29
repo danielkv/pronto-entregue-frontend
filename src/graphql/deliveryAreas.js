@@ -7,7 +7,13 @@ export const GET_COMPANY_DELIVERY_AREAS = gql`
 			deliveryAreas {
 				id
 				distance
+				name
+				radius
+				center
 				price
+			}
+			address {
+				location
 			}
 		}
 	}

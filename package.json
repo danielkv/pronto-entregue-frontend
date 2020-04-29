@@ -17,7 +17,7 @@
     "@material-ui/pickers": "^3.2.9",
     "@mdi/js": "^4.2.95",
     "@mdi/react": "^1.2.1",
-    "@react-google-maps/api": "^1.8.2",
+    "@react-google-maps/api": "^1.9.0",
     "apollo-boost": "^0.4.4",
     "apollo-cache-inmemory": "^1.6.3",
     "apollo-client": "^2.6.4",
