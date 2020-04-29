@@ -75,15 +75,15 @@ export default function AreaMap({ center, handleCloseMap, handleApply, mapOpen, 
 					ref={mapRef}
 					mapContainerStyle={{ width: "100%", height: '100%', minHeight: 600 }}
 					zoom={14}
-					center={{ lat: mapCenter[0], lng: mapCenter[1] }}
+					center={mapCenter ? { lat: mapCenter[0], lng: mapCenter[1] } : null}
 				>
 					{deliveryAreas
 						.filter((r, index) => index !== selectedAreaIndex && r.radius && r.center)
 						.map((circle, index)=>
 							<Circle key={index} center={{ lat: circle.center[0], lng: circle.center[1] }} radius={circle.radius} options={{ strokeColor: '#ccc', fillColor: '#ccc' }} />
 						)}
-					<Circle ref={circleRef} onCenterChanged={handleDragEnd} onRadiusChanged={handleRadiusChange} center={{ lat: area.center[0], lng: area.center[1] }} radius={area.radius} editable options={{ strokeColor: '#ac0', fillColor: '#ac0' }} />
-					<Marker draggable={false} position={{ lat: center[0], lng: center[1] }} />
+					<Circle ref={circleRef} onCenterChanged={handleDragEnd} onRadiusChanged={handleRadiusChange} center={area.center ? { lat: area.center[0], lng: area.center[1] } : null} radius={area.radius} editable options={{ strokeColor: '#ac0', fillColor: '#ac0' }} />
+					<Marker draggable={false} position={center ? { lat: center[0], lng: center[1] } : null} />
 				</GoogleMap>
 			</DialogContent>
 			<DialogActions>

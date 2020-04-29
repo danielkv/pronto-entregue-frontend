@@ -18,13 +18,12 @@ function Page () {
 	// query load delivery_areas
 	const selectedCompany = useSelectedCompany();
 	const {
-		data: { company: { address: { location = null }  = {}, deliveryAreas: deliveryAreasInitial = [] } = {} } = {},
+		data: { company: { address = {}, deliveryAreas: deliveryAreasInitial = [] } = {} } = {},
 		loading: loadingDeliveryAreas
 	} = useQuery(GET_COMPANY_DELIVERY_AREAS, { variables: { id: selectedCompany } });
 
 	// mutations
 	const [modifyDeliveryAreas] = useMutation(MODIFY_DELIVERY_AREA, { refetchQueries: [{ query: GET_COMPANY_DELIVERY_AREAS, variables: { id: selectedCompany } }] })
-	
 	
 	// still loading displays loading
 	if (loadingDeliveryAreas) return <LoadingBlock />;
@@ -51,7 +50,7 @@ function Page () {
 			validateOnChange={false}
 			validateOnBlur={true}
 			initialValues={{ deliveryAreas: deliveryAreasInitial }}
-			component={(props) => <Form center={location} {...props} />}
+			component={(props) => <Form center={address.location} {...props} />}
 		/>
 	)
 }

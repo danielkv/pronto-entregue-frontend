@@ -11,7 +11,6 @@ import { BlockHeader, BlockTitle, FormRow, FieldControl, tField, Block } from '.
 import { useSelectedCompany } from '../../../controller/hooks';
 import { LoadingBlock } from '../../../layout/blocks';
 import googleMapsClient from '../../../services/googleMapsClient';
-import { sanitizeAddress } from '../../../utils/address';
 
 import { LOAD_COMPANY } from '../../../graphql/companies';
 import { CHECK_DELIVERY_LOCATION } from '../../../graphql/orders';
@@ -68,7 +67,7 @@ export default function Delivery() {
 		timeOutDeliveryPrice = setTimeout(()=>{
 			if (type === 'delivery') {
 				if (address.location[0] !== '' && address.location[1] !== '') {
-					checkDeliveryLocation({ variables: { address: sanitizeAddress(address) } })
+					checkDeliveryLocation({ variables: { location: address.location } })
 						.then(({ data: { checkDeliveryLocation: area } }) => {
 							setFieldValue('deliveryPrice', area.price);
 							setFieldValue('deliveryOk', true);
