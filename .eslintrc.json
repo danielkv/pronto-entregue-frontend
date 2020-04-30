@@ -17,7 +17,8 @@
         "SharedArrayBuffer": "readonly",
         "process": "readonly",
 		"require": "readonly",
-		"__dirname": "readonly"
+		"__dirname": "readonly",
+		"importScripts": "readonly"
     },
     "parserOptions": {
         "ecmaFeatures": {
