@@ -9,8 +9,8 @@ export const GET_ORDERS_STATUS_QTY = gql`
 `;
 
 export const SUBSCRIBE_ORDER_STATUS_QTY = gql`
-	subscription UpdateOrderStatus($companyId: ID!) {
-		updateOrderStatus(companyId: $companyId)
+	subscription UpdateOrderStatusQty($companyId: ID!) {
+		updateOrderStatusQty(companyId: $companyId)
 	}
 `;
 
