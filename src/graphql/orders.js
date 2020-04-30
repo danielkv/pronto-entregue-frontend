@@ -91,7 +91,14 @@ export const ORDER_FRAGMENT = gql`
 
 		user {
 			id
+			image
 			fullName
+			firstName
+			lastName
+			email
+			phones: metas(type:"phone") {
+				value
+			}
 			addresses {
 				id
 				name

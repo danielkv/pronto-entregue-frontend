@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Chip } from '@material-ui/core';
-import { mdiAccountCircle } from '@mdi/js';
+import { Paper, InputAdornment, TextField, FormControl, Button, MenuItem, FormHelperText, List, ListItemIcon, ListItemText, ListItemSecondaryAction, ListItem, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Chip, IconButton, Grid, Typography, Avatar } from '@material-ui/core';
+import { mdiAccountCircle, mdiInformation } from '@mdi/js';
 import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { Form, Field } from 'formik';
@@ -23,10 +23,14 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 	// carregamento inicial
 	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
 
-	// hooks
-	const [errorDialog, setErrorDialog] = useState(false);
-
+	// user
+	const [userDialog, setUserDialog] = useState(false);
+	function handleCloseUserDialog() {
+		setUserDialog(false)
+	}
+	
 	// errors
+	const [errorDialog, setErrorDialog] = useState(false);
 	function handleCloseDialog() {
 		setErrorDialog(false)
 	}
@@ -55,6 +59,38 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 
 	return (
 		<Form>
+			<Dialog
+				open={userDialog}
+				onClose={handleCloseUserDialog}
+				fullWidth
+				maxWidth='xs'
+			>
+				<DialogTitle>Informações do cliente</DialogTitle>
+				<DialogContent>
+					{Boolean(user) && <Grid container spacing={2}>
+						<Grid item xs={3}>
+							<Avatar alt={user.fullName} style={{ width: 90, height: 90 }} src={user.image} />
+						</Grid>
+						<Grid item xs={9}>
+							<Typography style={{ color: '#bbb' }} variant='caption'>Nome</Typography>
+							<Typography>{user.firstName}</Typography>
+							<Typography style={{ color: '#bbb' }} variant='caption'>Sobrenome</Typography>
+							<Typography>{user.lastName}</Typography>
+						</Grid>
+						<Grid item xs={12}>
+							<Typography style={{ color: '#bbb' }} variant='caption'>Email</Typography>
+							<Typography>{user.email}</Typography>
+						</Grid>
+						{Boolean(user.phones.length) && <Grid item xs={12}>
+							<Typography style={{ color: '#bbb' }} variant='caption'>Telefones</Typography>
+							{user.phones.map((phone, index)=><Typography key={index}>{phone.value}</Typography>)}
+						</Grid>}
+					</Grid>}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCloseUserDialog}>Fechar</Button>
+				</DialogActions>
+			</Dialog>
 			<Content>
 				<Block>
 					<BlockHeader>
@@ -104,6 +140,11 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 									</Downshift>
 									<FormHelperText error={!!errors.user}>{errors.user || 'Digite para buscar um cliente'}</FormHelperText>
 								</FormControl>
+							</FieldControl>
+							<FieldControl style={{ flex: .05 }}>
+								<IconButton disabled={!user} onClick={()=>setUserDialog(true)}>
+									<Icon path={mdiInformation} color='#333' size={.9} />
+								</IconButton>
 							</FieldControl>
 						</FormRow>
 						<FormRow>

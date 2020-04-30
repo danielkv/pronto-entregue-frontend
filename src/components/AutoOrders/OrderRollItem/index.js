@@ -80,33 +80,38 @@ export default function OrderRollItem({ item: order }) {
 					))}
 				</div>
 				<div>
-					<Typography>{order.user.fullName}</Typography>
-					{order.type === 'takeout'
-						? <Typography>Retirada no Balcão</Typography>
-						: (
-							<div>
-								<Typography style={{ fontWeight: 'bold' }}>{`${order.address.street}, n ${order.address.number}`}</Typography>
-								<Typography variant='subtitle2'>{order.address.district}</Typography>
-								<Typography variant='subtitle2'>{`${order.address.city} - ${order.address.state}`}</Typography>
-								<Typography variant='subtitle2'>{order.address.zipcode}</Typography>
-								<div style={{ marginTop: 10 }}>
-									<Typography style={{ fontWeight: 'bold' }}>Valor: </Typography>
-									<div style={{ marginLeft: 20 }}>
-										<Typography variant='caption'>{`R$ ${order.price.toFixed(2).replace('.', ",")}`}</Typography>
-										<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
-											<img alt='Forma de pagamento' height={20} style={{ marginRight: 5 }} src={order.paymentMethod.image} />
-											<Typography variant='caption'>{`${order.paymentMethod.displayName}`}</Typography>
+					<Typography style={{ fontWeight: 'bold' }}>{order.user.fullName}</Typography>
+					{Boolean(order.user.phones && order.user.phones.length) && <div><Typography variant='caption'>{order.user.phones[0].value}</Typography></div>}
+					<Typography variant='caption'>{order.user.email}</Typography>
+
+					<div style={{ marginTop: 10 }}>
+						{order.type === 'takeout'
+							? <Typography>Retirada no Balcão</Typography>
+							: (
+								<div>
+									<Typography style={{ fontWeight: 'bold' }}>{`${order.address.street}, n ${order.address.number}`}</Typography>
+									<Typography variant='subtitle2'>{order.address.district}</Typography>
+									<Typography variant='subtitle2'>{`${order.address.city} - ${order.address.state}`}</Typography>
+									<Typography variant='subtitle2'>{order.address.zipcode}</Typography>
+									<div style={{ marginTop: 10 }}>
+										<Typography style={{ fontWeight: 'bold' }}>Valor: </Typography>
+										<div style={{ marginLeft: 20 }}>
+											<Typography variant='caption'>{`R$ ${order.price.toFixed(2).replace('.', ",")}`}</Typography>
+											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+												<img alt='Forma de pagamento' height={20} style={{ marginRight: 5 }} src={order.paymentMethod.image} />
+												<Typography variant='caption'>{`${order.paymentMethod.displayName}`}</Typography>
+											</div>
 										</div>
 									</div>
+									{Boolean(order.message) && (
+										<div style={{ marginTop: 10 }}>
+											<Typography style={{ fontWeight: 'bold' }}>Observações: </Typography>
+											<Typography variant='caption'>{order.message}</Typography>
+										</div>
+									)}
 								</div>
-								{Boolean(order.message) && (
-									<div style={{ marginTop: 10 }}>
-										<Typography style={{ fontWeight: 'bold' }}>Observações: </Typography>
-										<Typography variant='caption'>{order.message}</Typography>
-									</div>
-								)}
-							</div>
-						)}
+							)}
+					</div>
 				</div>
 			</div>
 			<div style={{ position: 'absolute', right: 10, top: 10 }}>

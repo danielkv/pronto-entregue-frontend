@@ -44,6 +44,11 @@ export const ORDER_CRATED_FRAGMENT = gql`
 			fullName
 			firstName
 			lastName
+			image
+			email
+			phones: metas(type: "phone") {
+				value
+			}
 		}
 		products {
 			...OrderCreatedProduct

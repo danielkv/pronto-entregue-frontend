@@ -81,8 +81,14 @@ export const SEARCH_USERS = gql`
 	mutation SearchtUsers ($search: String!, $exclude: [ID], $companies: [ID]) {
 		searchUsers (search: $search, exclude: $exclude, companies: $companies) {
 			id
+			image
 			fullName
+			firstName
+			lastName
 			email
+			phones: metas(type:"phone") {
+				value
+			}
 			addresses {
 				id
 				name
