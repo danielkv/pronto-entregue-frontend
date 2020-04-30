@@ -6,7 +6,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mate
 import { useSelectedCompany } from '../../controller/hooks';
 import OrderRollItem from './OrderRollItem';
 
-import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL } from '../../graphql/ordersRoll';
+import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_STATUS_UPDATED } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
 	const [open, setOpen] = useState(false);
@@ -18,7 +18,9 @@ export default function AutoOrders() {
 	}
 
 	useEffect(()=>{
-		const unsubscribe = subscribeToMore({
+		if (!selectedCompany) return ;
+
+		const unsubscribeNewOrder = subscribeToMore({
 			document: SUBSCRIBE_ORDER_CREATED,
 			variables: { companyId: selectedCompany },
 			updateQuery(prev, { subscriptionData: { data: { orderCreated = null } } }) {
@@ -33,9 +35,17 @@ export default function AutoOrders() {
 			}
 		})
 
-		return unsubscribe;
+		const unsubscribeUpdatedOrder = subscribeToMore({
+			document: ORDER_STATUS_UPDATED,
+			variables: { companyId: selectedCompany }
+		})
+
+		return ()=>{
+			unsubscribeNewOrder()
+			unsubscribeUpdatedOrder()
+		};
 	// eslint-disable-next-line
-	}, [])
+	}, [selectedCompany])
 
 	return (
 		<Fragment>

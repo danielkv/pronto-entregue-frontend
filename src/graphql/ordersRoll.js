@@ -99,6 +99,16 @@ export const SUBSCRIBE_ORDER_CREATED = gql`
 	${ORDER_CRATED_FRAGMENT}
 `;
 
+export const ORDER_STATUS_UPDATED = gql`
+	subscription ($companyId: ID!) {
+		updateOrderStatus(companyId: $companyId) {
+			...OrderCratedFragment
+		}
+	}
+
+	${ORDER_CRATED_FRAGMENT}
+`;
+
 export const GET_ORDERS_ROLL = gql`
 	query GetOrdersRoll {
 		ordersRoll @client {
