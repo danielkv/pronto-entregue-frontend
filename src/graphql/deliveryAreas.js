@@ -6,7 +6,6 @@ export const GET_COMPANY_DELIVERY_AREAS = gql`
 			id
 			deliveryAreas {
 				id
-				distance
 				name
 				radius
 				center
@@ -23,7 +22,7 @@ export const REMOVE_DELIVERY_AREA = gql`
 	mutation RemoveDeliveryArea ($id: ID!) {
 		removeDeliveryArea (id: $id) {
 			id
-			distance
+			name
 			price
 		}
 	}
@@ -33,7 +32,7 @@ export const MODIFY_DELIVERY_AREA = gql`
 	mutation ModifyDeliveryArea ($data:[DeliveryAreaInput]!) {
 		modifyDeliveryAreas (data:$data) {
 			id
-			distance
+			name
 			price
 		}
 	}

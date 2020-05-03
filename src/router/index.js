@@ -19,7 +19,7 @@ const Router = ()  => {
 	return (
 		<ThemeProvider theme={theme}>
 			<StyledThemProvider theme={theme}>
-				<SnackbarProvider maxSnack={6}>
+				<SnackbarProvider maxSnack={8}>
 					<BrowserRouter>
 						<Switch>
 							<Route exact path='/' component={Landing} />

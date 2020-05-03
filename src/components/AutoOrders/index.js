@@ -1,20 +1,40 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useRef } from 'react'
+import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
+import { mdiVolumeHigh } from '@mdi/js';
+import Icon from '@mdi/react';
+import { useSnackbar } from 'notistack';
 
+import notificationAudio from '../../assets/audio/notification.ogg';
 import { useSelectedCompany } from '../../controller/hooks';
+import { getOrderStatusName } from '../../utils/orders';
 import OrderRollItem from './OrderRollItem';
 
 import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_STATUS_UPDATED } from '../../graphql/ordersRoll';
 
+
 export default function AutoOrders() {
+	const { url } = useRouteMatch();
+	const history = useHistory();
 	const [open, setOpen] = useState(false);
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'preparing', 'delivering'] } } });
+	const notificationRef = useRef();
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-	function handleClose() {
+	function handleCloseOrdersRoll() {
 		setOpen(false);
+	}
+
+	const handleOpen = (key, orderId) => () => {
+		closeSnackbar(key);
+		history.push(`${url}/pedidos/alterar/${orderId}`)
+	}
+
+	const handleClose = (key) => () => {
+		closeSnackbar(key);
 	}
 
 	useEffect(()=>{
@@ -25,6 +45,20 @@ export default function AutoOrders() {
 			variables: { companyId: selectedCompany },
 			updateQuery(prev, { subscriptionData: { data: { orderCreated = null } } }) {
 				if (!orderCreated) return prev;
+
+				playNotification();
+				
+				enqueueSnackbar(`Novo pedido de ${orderCreated.user.fullName}`, {
+					persist: true,
+					variant: 'warning',
+					iconVariant: { warning: 'X' },
+					action: (key) => (
+						<div>
+							<Button onClick={handleOpen(key, orderCreated.id)}>Abrir</Button>
+							<Button onClick={handleClose(key)}>Ok</Button>
+						</div>
+					)
+				})
 
 				return Object.assign({}, prev, {
 					company: {
@@ -37,7 +71,24 @@ export default function AutoOrders() {
 
 		const unsubscribeUpdatedOrder = subscribeToMore({
 			document: ORDER_STATUS_UPDATED,
-			variables: { companyId: selectedCompany }
+			variables: { companyId: selectedCompany },
+			updateQuery(prev, { subscriptionData: { data: { updateOrderStatus = null } } }) {
+				if (!updateOrderStatus) return;
+				const options = {
+					persist: true,
+					variant: 'warning',
+					action: (key) => (
+						<div>
+							<Button onClick={handleOpen(key, updateOrderStatus.id)}>Abrir</Button>
+							<Button onClick={handleClose(key)}>Ok</Button>
+						</div>
+					)
+				}
+				if (updateOrderStatus.status === 'canceled') {
+					enqueueSnackbar(`Pedido #${updateOrderStatus.id} foi cancelado`, { ...options, variant: 'error' })
+				} else
+					enqueueSnackbar(`Pedido #${updateOrderStatus.id} alterado para ${getOrderStatusName(updateOrderStatus.status)}`, options)
+			}
 		})
 
 		return ()=>{
@@ -47,15 +98,28 @@ export default function AutoOrders() {
 	// eslint-disable-next-line
 	}, [selectedCompany])
 
+	function playNotification() {
+		if (!notificationRef.current) return;
+		notificationRef.current.play()
+	}
+
 	return (
 		<Fragment>
+			<audio ref={notificationRef}>
+				<source src={notificationAudio} type="audio/ogg" />
+			</audio>
+			
 			<Button variant='contained' onClick={()=>setOpen(!open)}>Mostrar pedidos</Button>
+			
+			<IconButton variant='contained' onClick={playNotification} title='Testar áudio'>
+				<Icon path={mdiVolumeHigh} size={.9} color='#ccc' />
+			</IconButton>
 
 			<Dialog
 				fullWidth
 				maxWidth='md'
 				open={open}
-				onClose={handleClose}
+				onClose={handleCloseOrdersRoll}
 				aria-labelledby="max-width-dialog-title"
 				scroll='body'
 				PaperProps={{ style: { backgroundColor: '#EFE8DA' } } }
@@ -67,7 +131,7 @@ export default function AutoOrders() {
 					))}
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color="primary">
+					<Button onClick={handleCloseOrdersRoll} color="primary">
 						Close
 					</Button>
 				</DialogActions>

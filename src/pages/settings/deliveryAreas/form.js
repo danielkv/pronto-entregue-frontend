@@ -114,7 +114,7 @@ export default function FormPage({ values: { deliveryAreas }, isSubmitting, setF
 												<Button
 													variant="contained"
 													color='primary'
-													onClick={()=>{insert(deliveryAreas.length, { distance: '', price: 0 })}}
+													onClick={()=>{insert(deliveryAreas.length, { name: '', price: 0 })}}
 												>
 													<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size={1} /> Adicionar
 												</Button>
