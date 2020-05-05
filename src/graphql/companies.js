@@ -128,7 +128,7 @@ export const SEARCH_COMPANIES = gql`
 `;
 
 export const GET_COMPANIES = gql`
-	query GetCompanies ($filter: Filter, $pagination: Pagination) {
+	query GetCompanies ($filter: JSON, $pagination: Pagination) {
 		countCompanies(filter: $filter)
 		companies (filter: $filter, pagination: $pagination) {
 			id
@@ -147,7 +147,7 @@ export const GET_COMPANIES = gql`
 `;
 
 export const GET_USER_COMPANIES = gql`
-	query GetUserCompanies ($id: ID!, $filter: Filter, $pagination: Pagination) {
+	query GetUserCompanies ($id: ID!, $filter: JSON, $pagination: Pagination) {
 		user (id: $id) {
 			id
 			countCompanies(filter: $filter)
