@@ -6,6 +6,7 @@ import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
+import { MAX_UPLOAD_SIZE } from '../../config';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { extractCompanyType, sanitizeCompanyType } from '../../utils/companyType';
@@ -14,12 +15,10 @@ import PageForm from './form';
 
 import { UPDATE_COMPANY_TYPE, LOAD_COMPANY_TYPE } from '../../graphql/companyTypes';
 
-const FILE_SIZE = 3000 * 1024;
-
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
 	description: Yup.string().notRequired(),
-	file: Yup.mixed().notRequired().test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= FILE_SIZE)
+	file: Yup.mixed().notRequired().test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= MAX_UPLOAD_SIZE)
 });
 
 function Page () {

@@ -6,6 +6,7 @@ import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
+import { MAX_UPLOAD_SIZE } from '../../config';
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
 import { createEmptyCampaign, sanitizeCampaign } from '../../utils/campaign';
@@ -15,12 +16,10 @@ import PageForm from './form';
 import { CREATE_CAMPAIGN, GET_CAMPAIGNS } from '../../graphql/campaigns';
 
 
-const FILE_SIZE = 3000 * 1024;
-
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),
 	file: Yup.mixed().required('Selecione uma imagem')
-		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= FILE_SIZE),
+		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => !value || value.size <= MAX_UPLOAD_SIZE),
 	description: Yup.string().required('A descrição é obrigatória'),
 	value: Yup.number().required('O valor é obrigatório'),
 });
