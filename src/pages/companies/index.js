@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
-import { mdiPencil, mdiFilter } from '@mdi/js';
+import { mdiPencil, mdiFilter, mdiBellRing } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
@@ -15,7 +16,7 @@ import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
 import { LOGGED_USER_ID } from '../../graphql/authentication';
-import { GET_COMPANIES, UPDATE_COMPANY } from '../../graphql/companies';
+import { GET_COMPANIES, UPDATE_COMPANY, SEND_NEW_COMPANY_NOTIFICATION } from '../../graphql/companies';
 
 const initialFilter = {
 	showInactive: false,
@@ -26,7 +27,9 @@ function Page ({ match: { url } }) {
 	setPageTitle('Empresas');
 
 	const searchRef = useRef(null);
+	const [loadingNewCompanyNotification, setLoadingNewCompanyNotification] = useState(false);
 	const [filter, setFilter] = useState(initialFilter);
+	const { enqueueSnackbar } = useSnackbar();
 	const [pagination, setPagination] = useState({
 		page: 0,
 		rowsPerPage: 10,
@@ -57,6 +60,19 @@ function Page ({ match: { url } }) {
 	} = useQuery(GET_COMPANIES, { variables: { id: loggedUserId, filter, pagination } });
 
 	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES, variables: { filter, pagination } }] });
+	const [sendNewCompanyNotification] = useMutation(SEND_NEW_COMPANY_NOTIFICATION);
+
+	const handleSendNewCompanyNotification = (companyId) => () => {
+		setLoadingNewCompanyNotification(companyId);
+		sendNewCompanyNotification({ variables: { companyId } })
+			.then(()=>{
+				enqueueSnackbar(`Notificação enviada para todos usuários`, { variant: 'success' })
+			})
+			.catch((err)=>{
+				enqueueSnackbar(getErrors(err), { variant: 'error' })
+			})
+			.finally(()=>setLoadingNewCompanyNotification(false))
+	}
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (loadingCompanies && !called) return (<LoadingBlock />);
@@ -80,7 +96,7 @@ function Page ({ match: { url } }) {
 										<TableCell>Ramo</TableCell>
 										<TableCell>Faturamento último mês</TableCell>
 										<TableCell>Criada em</TableCell>
-										<TableCell style={{ width: 100 }}>Ações</TableCell>
+										<TableCell style={{ width: 150 }}>Ações</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -92,6 +108,9 @@ function Page ({ match: { url } }) {
 											<TableCell>{numeral(row.lastMonthRevenue).format('$0,0.00')}</TableCell>
 											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
 											<TableCell>
+												<IconButton disabled={loadingNewCompanyNotification === row.id} component={Link} onClick={handleSendNewCompanyNotification(row.id)}>
+													<Icon path={mdiBellRing} size={1} color='#363E5E' />
+												</IconButton>
 												<IconButton disabled={loading} component={Link} to={`${url}/alterar/${row.id}`}>
 													<Icon path={mdiPencil} size={1} color='#363E5E' />
 												</IconButton>

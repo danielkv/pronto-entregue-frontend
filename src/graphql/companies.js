@@ -164,6 +164,12 @@ export const GET_USER_COMPANIES = gql`
 	}
 `;
 
+export const SEND_NEW_COMPANY_NOTIFICATION = gql`
+	mutation SendNewCompanyNoticiation ($companyId: ID!){
+		sendNewCompanyNoticiation(companyId: $companyId)
+	}
+`;
+
 export const GET_SELECTED_COMPANY = gql`
 	query GetSelectedCompany{
 		selectedCompany @client
