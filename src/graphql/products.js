@@ -18,7 +18,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 			id
 			name
 		}
-		options {
+		options(filter: $filter) {
 			id
 			name
 			description

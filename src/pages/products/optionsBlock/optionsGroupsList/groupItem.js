@@ -25,6 +25,10 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 	const editing = !!group.editing;
 	
 	useEffect(()=>{
+		console.log('update', group.name);
+	}, [group.options]);
+
+	useEffect(()=>{
 		if (editing && inputName.current) {
 			inputName.current.focus();
 			inputName.current.select();

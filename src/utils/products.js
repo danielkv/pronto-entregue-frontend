@@ -109,7 +109,7 @@ export function sanitizeProduct(data) {
 		categoryId: data.category.id,
 		sale: sanitizeSale(data.sale),
 
-		optionsGroups: data.optionsGroups.map(group => {
+		optionsGroups: data.optionsGroups.filter(g => g.action !== 'remove_new').map(group => {
 			let g = {
 				action: group.action,
 				name: group.name,
@@ -120,7 +120,7 @@ export function sanitizeProduct(data) {
 				maxSelect: group.type === 'single' ? 1 : group.maxSelect,
 				active: group.active,
 				maxSelectRestrain: group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : null,
-				options: group.options.map(option=>{
+				options: group.options.filter(o => o.action !== 'remove_new').map(option=>{
 					let o = {
 						action: option.action,
 						name: option.name,

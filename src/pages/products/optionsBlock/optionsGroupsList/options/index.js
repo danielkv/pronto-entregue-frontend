@@ -3,10 +3,10 @@ import { Draggable } from 'react-beautiful-dnd';
 
 import { TextField, InputAdornment, IconButton, Switch } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { mdiDrag, mdiDelete } from '@mdi/js'
+import { mdiDrag, mdiDelete, mdiDeleteRestore } from '@mdi/js'
 import Icon from '@mdi/react';
 import { useFormikContext } from 'formik';
-import { isEqual } from 'lodash';
+import { isEqual, cloneDeep } from 'lodash';
 
 import {
 	OptionColumn,
@@ -40,8 +40,9 @@ const CustomTextInput = withStyles({
 	}
 })(TextField);
 
-function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
+function Option ({ option, index: optionIndex, groupIndex }) {
 	const inputName = useRef(null);
+	const isRemoveAction = ['remove', 'remove_new'].includes(option.action);
 
 	const { values: { optionsGroups }, errors, isSubmitting, setFieldValue } = useFormikContext();
 	const group = optionsGroups[groupIndex];
@@ -52,15 +53,31 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 	const priceError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].price ? errors.optionsGroups[groupIndex].options[optionIndex].price : '';
 	const maxSelectError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther ? errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther : '';
 
+	function handleRemoveOption () {
+		const newGroup = cloneDeep(optionsGroups[groupIndex]);
+		const restoreAction = option.restoreAction || option.action;
+		newGroup.action = 'update';
+
+		if (isRemoveAction) {
+			newGroup.options[optionIndex].action = restoreAction;
+			delete newGroup.options[optionIndex].restoreAction;
+		} else {
+			newGroup.options[optionIndex].action = option.action === 'new_empty' ? 'remove_new' : 'remove';
+			newGroup.options[optionIndex].restoreAction = restoreAction;
+		}
+
+		setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
+	}
+
 	return (
 		<Draggable draggableId={`option.${optionIndex}.${groupIndex}.${option.id}`} index={optionIndex}>
 			{(provided)=>(
-				<OptionRow {...provided.draggableProps} ref={provided.innerRef}>
+				<OptionRow {...provided.draggableProps} style={{ backgroundColor: isRemoveAction ? '#ffdfdf' : 'transparent' }} ref={provided.innerRef}>
 					<OptionColumn><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></OptionColumn>
 					<OptionColumn>
 						
 						<CustomTextInput
-							disabled={isSubmitting}
+							disabled={isSubmitting || isRemoveAction}
 							inputRef={inputName}
 							value={option.name}
 							error={!!nameError}
@@ -79,7 +96,7 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 					</OptionColumn>
 					<OptionColumn style={{ flex: 1 }}>
 						<CustomTextInput
-							disabled={isSubmitting}
+							disabled={isSubmitting || isRemoveAction}
 							value={option.description}
 							error={!!descriptionError}
 							helperText={descriptionError}
@@ -108,7 +125,7 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 							}}
 							error={!!priceError}
-							disabled={isSubmitting}
+							disabled={isSubmitting || isRemoveAction}
 							helperText={priceError}
 							InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
 							inputProps={{ step: 0.01 }} />
@@ -126,7 +143,7 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 							}}
-							disabled={isSubmitting}
+							disabled={isSubmitting || isRemoveAction}
 							error={!!maxSelectError}
 							helperText={maxSelectError}
 						/>
@@ -134,6 +151,7 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 					<OptionColumn style={{ width: 100 }}>
 						<Switch
 							checked={option.active}
+							disabled={isSubmitting || isRemoveAction}
 							onChange={()=>{
 								let newOption = {
 									...option,
@@ -146,14 +164,9 @@ function Option ({ option, index: optionIndex, groupIndex, optionsHelpers }) {
 							value="checkedB"
 							size='small'
 						/>
-						{(option.action === 'create' || option.action === 'new_empty') &&
-							<IconButton onClick={()=>{
-								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
-								if (option.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}.action`, 'remove');
-								optionsHelpers.remove(optionIndex)}
-							}>
-								<Icon path={mdiDelete } size={.7} color='#707070' />
-							</IconButton>}
+						<IconButton onClick={handleRemoveOption}>
+							<Icon path={isRemoveAction ? mdiDeleteRestore : mdiDelete } size={.9} color={isRemoveAction ? '#dd3300' : '#707070'} />
+						</IconButton>
 					</OptionColumn>
 				</OptionRow>
 			)}
