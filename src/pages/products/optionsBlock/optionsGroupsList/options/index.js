@@ -73,10 +73,9 @@ function Option ({ option, index: optionIndex, groupIndex, isGroupRemoveAction }
 	return (
 		<Draggable draggableId={`option.${optionIndex}.${groupIndex}.${option.id}`} index={optionIndex}>
 			{(provided)=>(
-				<OptionRow {...provided.draggableProps} style={{ backgroundColor: isRemoveAction ? '#ffdfdf' : 'transparent' }} ref={provided.innerRef}>
+				<OptionRow {...provided.draggableProps} style={{ backgroundColor: isRemoveAction ? '#ffdfdf' : '#f5f5f5', ...provided.draggableProps.style }} ref={provided.innerRef}>
 					<OptionColumn><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></OptionColumn>
 					<OptionColumn>
-						
 						<CustomTextInput
 							disabled={inputDisabled}
 							inputRef={inputName}
