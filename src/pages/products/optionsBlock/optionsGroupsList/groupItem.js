@@ -23,10 +23,6 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 	const { values: { optionsGroups }, errors, setFieldValue, isSubmitting } = useFormikContext();
 	const inputName = useRef(null);
 	const editing = !!group.editing;
-	
-	useEffect(()=>{
-		console.log('update', group.name);
-	}, [group.options]);
 
 	useEffect(()=>{
 		if (editing && inputName.current) {
