@@ -4,10 +4,10 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { TextField, Switch, FormControl, FormLabel,  MenuItem, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, IconButton, Checkbox, FormControlLabel } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { mdiDrag, mdiDelete, mdiRadioboxMarked, mdiFormatListBulleted, mdiPlusCircle, mdiPencil, mdiAlertCircle } from '@mdi/js'
+import { mdiDrag, mdiDelete, mdiRadioboxMarked, mdiFormatListBulleted, mdiPlusCircle, mdiPencil, mdiAlertCircle, mdiDeleteRestore } from '@mdi/js'
 import Icon from '@mdi/react';
 import { FieldArray, useFormikContext } from 'formik';
-import { isEqual } from 'lodash';
+import { isEqual, cloneDeep } from 'lodash';
 
 import { sanitizeOptionsOrder } from '../../../../utils/productOptions';
 import { createEmptyOption } from '../../../../utils/products';
@@ -19,10 +19,11 @@ import {
 	OptionsInfo,
 } from './styles';
 
-function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
+function GroupItem ({ group, index: groupIndex }) {
 	const { values: { optionsGroups }, errors, setFieldValue, isSubmitting } = useFormikContext();
 	const inputName = useRef(null);
 	const editing = !!group.editing;
+	const isRemoveAction = ['remove_new', 'remove'].includes(group.action);
 
 	useEffect(()=>{
 		if (editing && inputName.current) {
@@ -48,6 +49,22 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 		return false;
 	});
 
+	function handleRemoveGroup (e) {
+		e.stopPropagation();
+		const newGroup = cloneDeep(optionsGroups[groupIndex]);
+		const restoreAction = group.restoreAction || group.action;
+
+		if (isRemoveAction) {
+			newGroup.action = restoreAction;
+			delete newGroup.restoreAction;
+		} else {
+			newGroup.action = group.action === 'new_empty' ? 'remove_new' : 'remove';
+			newGroup.restoreAction = restoreAction;
+		}
+
+		setFieldValue(`optionsGroups.${groupIndex}`, newGroup);
+	}
+
 	return (
 		<Draggable draggableId={`group.${groupIndex}.${group.id}`} index={groupIndex}>
 			{(provided) => (
@@ -55,7 +72,7 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 					<ExpansionPanelSummary style={{ minHeight: 0, padding: 0 }}>
 						<Table>
 							<TableBody>
-								<TableRow>
+								<TableRow style={{ backgroundColor: isRemoveAction ? '#ffdfdf' : 'transparent' }} >
 									<TableCell style={{ width: 15 }}><div {...provided.dragHandleProps}><Icon path={mdiDrag} size={1} color='#BCBCBC' /></div></TableCell>
 									<TableCell>
 										{(group.editing || !group.name) ?
@@ -270,10 +287,10 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 											}}>
 											<Icon path={mdiPlusCircle} size={.7} color='#363E5E' />
 										</IconButton>
-										{(group.action === 'new_empty' || group.action === 'create') &&
-											<IconButton disabled={isSubmitting} onClick={(e)=>{e.stopPropagation(); if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update'); groupsHelpers.remove(groupIndex)}}>
-												<Icon path={mdiDelete} size={.7} color='#363E5E' />
-											</IconButton>}
+										
+										<IconButton disabled={isSubmitting} onClick={handleRemoveGroup}  title={isRemoveAction ? 'Restaurar' : 'Marcar para excluir'}>
+											<Icon path={isRemoveAction ? mdiDeleteRestore : mdiDelete} size={.8} color='#363E5E' />
+										</IconButton>
 									</TableCell>
 								</TableRow>
 							</TableBody>
@@ -297,7 +314,7 @@ function GroupItem ({ group, index: groupIndex, groupsHelpers }) {
 											<div ref={provided.innerRef} {...provided.droppableProps}>
 												{group.options.map((option, index)=>{
 													
-													return <Options key={`${index}.${option.id}`} option={option} index={index} optionsHelpers={optionsHelpers} groupIndex={groupIndex} />
+													return <Options key={`${index}.${option.id}`} isGroupRemoveAction={isRemoveAction} option={option} index={index} optionsHelpers={optionsHelpers} groupIndex={groupIndex} />
 												})}
 												{provided.placeholder}
 											</div>

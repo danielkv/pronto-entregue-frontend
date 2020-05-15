@@ -40,7 +40,8 @@ function Page () {
 	
 	const { data, loading: loadingGetData, error } = useQuery(LOAD_PRODUCT, { variables: { id: editId, filter: { showInactive: true } } });
 	const [updateProduct] = useMutation(UPDATE_PRODUCT, {
-		variables: { id: editId }
+		variables: { id: editId },
+		refetchQueries: [{ query: LOAD_PRODUCT, variables: { id: editId, filter: { showInactive: true } } }]
 	});
 
 	if (error) return <ErrorBlock error={getErrors(error)} />

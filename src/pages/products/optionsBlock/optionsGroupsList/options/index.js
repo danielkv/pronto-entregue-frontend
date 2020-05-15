@@ -40,12 +40,13 @@ const CustomTextInput = withStyles({
 	}
 })(TextField);
 
-function Option ({ option, index: optionIndex, groupIndex }) {
+function Option ({ option, index: optionIndex, groupIndex, isGroupRemoveAction }) {
 	const inputName = useRef(null);
 	const isRemoveAction = ['remove', 'remove_new'].includes(option.action);
-
 	const { values: { optionsGroups }, errors, isSubmitting, setFieldValue } = useFormikContext();
+	
 	const group = optionsGroups[groupIndex];
+	const inputDisabled = isSubmitting || isRemoveAction || isGroupRemoveAction;
 	const groupRestrained = group.groupRestrained && group.groupRestrained.id ? group.groupRestrained.id : '';
 
 	const nameError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].name ? errors.optionsGroups[groupIndex].options[optionIndex].name : '';
@@ -54,9 +55,9 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 	const maxSelectError = !!errors.optionsGroups && !!errors.optionsGroups[groupIndex] && !!errors.optionsGroups[groupIndex].options && !!errors.optionsGroups[groupIndex].options[optionIndex] && !!errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther ? errors.optionsGroups[groupIndex].options[optionIndex].maxSelectRestrainOther : '';
 
 	function handleRemoveOption () {
-		const newGroup = cloneDeep(optionsGroups[groupIndex]);
+		const newGroup = cloneDeep(group);
 		const restoreAction = option.restoreAction || option.action;
-		newGroup.action = 'update';
+		if (newGroup.action === 'editable') newGroup.action = 'update';
 
 		if (isRemoveAction) {
 			newGroup.options[optionIndex].action = restoreAction;
@@ -77,7 +78,7 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 					<OptionColumn>
 						
 						<CustomTextInput
-							disabled={isSubmitting || isRemoveAction}
+							disabled={inputDisabled}
 							inputRef={inputName}
 							value={option.name}
 							error={!!nameError}
@@ -96,7 +97,7 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 					</OptionColumn>
 					<OptionColumn style={{ flex: 1 }}>
 						<CustomTextInput
-							disabled={isSubmitting || isRemoveAction}
+							disabled={inputDisabled}
 							value={option.description}
 							error={!!descriptionError}
 							helperText={descriptionError}
@@ -125,7 +126,7 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 							}}
 							error={!!priceError}
-							disabled={isSubmitting || isRemoveAction}
+							disabled={inputDisabled}
 							helperText={priceError}
 							InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
 							inputProps={{ step: 0.01 }} />
@@ -143,7 +144,7 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 								setFieldValue(`optionsGroups.${groupIndex}.options.${optionIndex}`, newOption);
 								if (group.action === 'editable') setFieldValue(`optionsGroups.${groupIndex}.action`, 'update');
 							}}
-							disabled={isSubmitting || isRemoveAction}
+							disabled={inputDisabled}
 							error={!!maxSelectError}
 							helperText={maxSelectError}
 						/>
@@ -151,7 +152,7 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 					<OptionColumn style={{ width: 100 }}>
 						<Switch
 							checked={option.active}
-							disabled={isSubmitting || isRemoveAction}
+							disabled={inputDisabled}
 							onChange={()=>{
 								let newOption = {
 									...option,
@@ -164,8 +165,8 @@ function Option ({ option, index: optionIndex, groupIndex }) {
 							value="checkedB"
 							size='small'
 						/>
-						<IconButton onClick={handleRemoveOption}>
-							<Icon path={isRemoveAction ? mdiDeleteRestore : mdiDelete } size={.9} color={isRemoveAction ? '#dd3300' : '#707070'} />
+						<IconButton disabled={isSubmitting || isGroupRemoveAction} onClick={handleRemoveOption} title={isRemoveAction ? 'Restaurar' : 'Marcar para excluir'}>
+							<Icon path={isRemoveAction ? mdiDeleteRestore : mdiDelete } size={.8} color={isRemoveAction ? '#dd3300' : '#707070'} />
 						</IconButton>
 					</OptionColumn>
 				</OptionRow>
