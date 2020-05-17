@@ -19,6 +19,15 @@ export function sanitizeDeliveryAreas(deliveryAreas) {
 	}))
 }
 
+export function sanitizeViewAreas(viewAreas) {
+	return viewAreas.map(area=>({
+		id: area.id || null,
+		name: area.name,
+		radius: parseFloat(area.radius),
+		center: area.center,
+	}))
+}
+
 export function extractPaymentMethods(companyPaymentMethods, allPaymentMethods) {
 	return allPaymentMethods.map(method => {
 		return {

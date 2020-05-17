@@ -10,6 +10,7 @@ import BusinessHours from './businessHours';
 import DeliveryAreas from './deliveryAreas';
 import General from './general';
 import PaymentMethods from './paymentMethods';
+import ViewAreas from './viewAreas';
 
 export default function Settings(props) {
 	setPageTitle('Configurações');
@@ -31,8 +32,11 @@ export default function Settings(props) {
 						<ListItem button component={Link} selected={isSelected('horarios')} to={`${url}/horarios`}>
 							<ListItemText primary="Horário de atendimeto" />
 						</ListItem>
-						<ListItem button component={Link} selected={isSelected('locais')} to={`${url}/locais`}>
-							<ListItemText primary="Locais de entrega" />
+						<ListItem button component={Link} selected={isSelected('locais-de-entrega')} to={`${url}/locais-de-entrega`}>
+							<ListItemText primary="Locais de entrega" secondary='Preços e áreas de entrega' />
+						</ListItem>
+						<ListItem button component={Link} selected={isSelected('locais-de-vizualizacao')} to={`${url}/locais-de-vizualizacao`}>
+							<ListItemText primary="Locais de vizualização" secondary='Retirada no balcão' />
 						</ListItem>
 						<ListItem button component={Link} selected={isSelected('pagamentos')} to={`${url}/pagamentos`}>
 							<ListItemText primary="Formas de pagamento" />
@@ -43,7 +47,8 @@ export default function Settings(props) {
 					<Redirect from="/" to={`${url}/geral`} />
 					<Route path={`${path}/geral`} component={General} />
 					<Route path={`${path}/horarios`} component={BusinessHours} />
-					<Route path={`${path}/locais`} component={DeliveryAreas} />
+					<Route path={`${path}/locais-de-entrega`} component={DeliveryAreas} />
+					<Route path={`${path}/locais-de-vizualizacao`} component={ViewAreas} />
 					<Route path={`${path}/pagamentos`} component={PaymentMethods} />
 				</Grid>
 			</Grid>
