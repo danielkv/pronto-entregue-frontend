@@ -17,7 +17,7 @@ export function useSelectedCompany() {
 
 export function useLoggedUserRole() {
 	const { data: { loggedUserId } } = useQuery(LOGGED_USER_ID);
-	const { data: { user: { role = null } = {} } = {} } = useQuery(GET_USER, { variables: { id: loggedUserId } });
+	const { data: { user: { role = null } = {} } = {} } = useQuery(GET_USER, { fetchPolicy: 'cache-first', variables: { id: loggedUserId } });
 
 	return role;
 }

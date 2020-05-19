@@ -10,7 +10,8 @@ import { isEmpty } from 'lodash';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
-import { useSelectedCompany } from '../../controller/hooks';
+import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
+import { availableStatus } from '../../controller/orderStatus'
 import { errorObjectsToArray } from '../../utils/error';
 import { calculateOrderPrice } from '../../utils/orders';
 import Delivery from './delivery';
@@ -19,9 +20,12 @@ import Products from './products';
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { SEARCH_USERS } from '../../graphql/users';
 
-export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating }) {
+export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
 	// carregamento inicial
 	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
+	const loggedUserRole = useLoggedUserRole();
+	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
+	const inputDisabled = !canChangeStatus || isSubmitting;
 
 	// user
 	const [userDialog, setUserDialog] = useState(false);
@@ -115,7 +119,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 										})=>{
 											return (
 												<div>
-													<TextField disabled={isSubmitting} {...getInputProps({ error: !!errors.user, label: 'Cliente' })} />
+													<TextField disabled={inputDisabled} {...getInputProps({ error: !!errors.user, label: 'Cliente' })} />
 													{isOpen && (
 														<List {...getMenuProps()} className="dropdown">
 															{loadingUsers ? <div style={{ padding: 20 }}><CircularProgress /></div>
@@ -149,7 +153,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 						</FormRow>
 						<FormRow>
 							<FieldControl>
-								<Field name='message' multiline component={tField} label='Observações' />
+								<Field name='message' controldisabled={inputDisabled} multiline component={tField} label='Observações' />
 							</FieldControl>
 						</FormRow>
 					</Paper>
@@ -170,18 +174,20 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 						<BlockSeparator>
 							<FormRow>
 								<FieldControl>
-									<TextField select label='Status' value={status} onChange={(e)=>{setFieldValue('status', e.target.value)}}>
-										<MenuItem value='waiting'>Aguardando</MenuItem>
-										<MenuItem value='preparing'>Preparando</MenuItem>
-										<MenuItem value='delivering'>Na entrega</MenuItem>
-										<MenuItem value='delivered'>Entregue</MenuItem>
-										<MenuItem value='canceled'>Cancelado</MenuItem>
+									<TextField
+										select
+										label='Status'
+										value={status}
+										onChange={(e)=>{setFieldValue('status', e.target.value)}}
+										disabled={loggedUserRole !== 'master' && ['delivered', 'canceled'].includes(status)}
+									>
+										{availableStatus(values).map(status => <MenuItem key={status.slug} value={status.slug}>{status.label}</MenuItem>)}
 									</TextField>
 								</FieldControl>
 							</FormRow>
 							<FormRow>
 								<FieldControl>
-									<Button fullWidth type='submit' variant="contained" disabled={isSubmitting} color='primary'>Salvar</Button>
+									<Button fullWidth type='submit' variant="contained" disabled={inputDisabled} color='primary'>Salvar</Button>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
@@ -189,6 +195,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									<Field
+										controldisabled={inputDisabled}
 										label='Valor da entrega'
 										type='number'
 										name='deliveryPrice'
@@ -200,6 +207,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									<Field
+										controldisabled={inputDisabled}
 										label='Desconto'
 										type='number'
 										name='discount'
@@ -211,6 +219,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									<TextField
+										disabled={inputDisabled}
 										label='Valor total'
 										type='number'
 										value={price}
@@ -222,7 +231,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									{!!paymentMethods.length &&
-									<TextField disabled={Boolean(paymentMethod && paymentMethod.id && editId)} helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
+									<TextField disabled={Boolean((paymentMethod && paymentMethod.id && editId) || inputDisabled)} helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
 										{paymentMethods.map(row=>(
 											<MenuItem key={row.id} value={row.id}>{row.displayName}</MenuItem>
 										))}

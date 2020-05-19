@@ -3,18 +3,18 @@ import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip, Typography } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiDotsVertical } from '@mdi/js';
+import { mdiPencil, mdiFilter, mdiDotsVertical, mdiEye } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral'
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
-import { useSelectedCompany } from '../../controller/hooks';
+import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
+import { getOrderStatusIcon, availableStatus } from '../../controller/orderStatus';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { getOrderStatusIcon } from '../../utils/orders';
 
 import { GET_COMPANY_ORDERS, UPDATE_ORDER } from '../../graphql/orders';
 
@@ -25,9 +25,10 @@ const initialFilter = {
 function Page ({ match: { url } }) {
 	setPageTitle('Pedidos');
 	
-	const [anchorEl, setAnchorEl] = useState(null)
-	const [menuOrderStatus, setMenuOrderStatus] = useState('');
+	const loggedUserRole = useLoggedUserRole();
 
+	const [anchorEl, setAnchorEl] = useState(null)
+	const [menuOrder, setMenuOrder] = useState([]);
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
 	const [pagination, setPagination] = useState({
@@ -66,14 +67,15 @@ function Page ({ match: { url } }) {
 
 	function handleCloseMenu() {
 		setAnchorEl(null);
-		setMenuOrderStatus('');
+		setMenuOrder([]);
 	}
 	function handleOpenMenu(e) {
 		setAnchorEl(e.currentTarget);
-		setMenuOrderStatus(e.currentTarget.getAttribute('data-order-status'));
+		const orderId = e.currentTarget.getAttribute('data-order-id')
+		setMenuOrder(orders.find(row => row.id === orderId));
 	}
 	const handleUpdateStatus = (newStatus) => () => {
-		updateOrder({ variables: { id: anchorEl.getAttribute('data-order-id'), data: { status: newStatus } } });
+		updateOrder({ variables: { id: menuOrder.id, data: { status: newStatus.slug } } });
 		handleCloseMenu();
 	}
 
@@ -89,26 +91,14 @@ function Page ({ match: { url } }) {
 				open={Boolean(anchorEl)}
 				onClose={handleCloseMenu}
 			>
-				<MenuItem onClick={handleUpdateStatus('waiting')} selected={menuOrderStatus==='waiting'} dense>
-					<ListItemIcon>{getOrderStatusIcon('waiting')}</ListItemIcon>
-					<ListItemText>Aguardando</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('preparing')} selected={menuOrderStatus==='preparing'} dense>
-					<ListItemIcon>{getOrderStatusIcon('preparing')}</ListItemIcon>
-					<ListItemText>Em preparo</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('delivering')} selected={menuOrderStatus==='delivering'} dense>
-					<ListItemIcon>{getOrderStatusIcon('delivering')}</ListItemIcon>
-					<ListItemText>Na entrega</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('delivered')} selected={menuOrderStatus==='delivered'} dense>
-					<ListItemIcon>{getOrderStatusIcon('delivered')}</ListItemIcon>
-					<ListItemText>Entregue</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('canceled')} selected={menuOrderStatus==='canceled'} dense>
-					<ListItemIcon>{getOrderStatusIcon('canceled')}</ListItemIcon>
-					<ListItemText>Cancelado</ListItemText>
-				</MenuItem>
+				{availableStatus(menuOrder).map(status => {
+					return (
+						<MenuItem key={status.slug} onClick={handleUpdateStatus(status)} selected={menuOrder.status===status.slug} dense>
+							<ListItemIcon>{status.Icon}</ListItemIcon>
+							<ListItemText>{status.label}</ListItemText>
+						</MenuItem>
+					)
+				})}
 			</Menu>
 			<Content>
 				{loadingOrders ? <LoadingBlock /> :
@@ -146,6 +136,8 @@ function Page ({ match: { url } }) {
 									{orders.map(row => {
 										const createdAt = moment(row.createdAt);
 										const displayDate = moment().diff(createdAt, 'day') >= 1 ? createdAt.format('DD/MM/YY HH:mm') : createdAt.fromNow();
+										const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(row.status);
+
 										return (
 											<TableRow key={row.id}>
 												<TableCell><Typography variant='body2'>{displayDate}</Typography></TableCell>
@@ -154,14 +146,14 @@ function Page ({ match: { url } }) {
 												<TableCell><Typography variant='body2'>{row.type === 'delivery' ? `${row.address.street}, ${row.address.number}` : 'Retirada no local'}</Typography></TableCell>
 												<TableCell><Typography variant='body2'>{numeral(row.price).format('$0,0.00')}</Typography></TableCell>
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
-												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row.status)}</TableCell>
+												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row)}</TableCell>
 												<TableCell style={{ width: 100 }}>
 													<IconButton disabled={loadingUpdateOrder} component={Link} to={`${url}/alterar/${row.id}`}>
-														<Icon path={mdiPencil} size={1} color='#363E5E' />
+														<Icon path={canChangeStatus ? mdiPencil : mdiEye} size={1} color='#363E5E' />
 													</IconButton>
-													<IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id} data-order-status={row.status}>
+													{canChangeStatus && <IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id}>
 														<Icon path={mdiDotsVertical} size={1} color='#363E5E' />
-													</IconButton>
+													</IconButton>}
 												</TableCell>
 											</TableRow>
 										)})}

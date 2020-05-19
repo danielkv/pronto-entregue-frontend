@@ -1,17 +1,22 @@
 import React from 'react'
 
 import { Table, TableHead, TableRow, TableCell, TableBody, FormHelperText, IconButton, Avatar } from '@material-ui/core';
-import { mdiContentDuplicate, mdiDelete, mdiPencil } from '@mdi/js';
+import { mdiContentDuplicate, mdiDelete, mdiPencil, mdiEye } from '@mdi/js';
 import Icon from '@mdi/react';
 import { FieldArray, useFormikContext } from 'formik';
 import numeral from 'numeral';
 
 import { BlockSeparator } from '../../../../layout/components';
 
+import { useLoggedUserRole } from '../../../../controller/hooks';
 import { calculateProductPrice } from '../../../../utils/products';
 
 export default function ProductList({ setEditingProductIndex }) {
-	const { values: { products }, isSubmitting, setFieldValue } = useFormikContext();
+	const { values: { products }, isSubmitting, setFieldValue, initialValues } = useFormikContext();
+	console.log(initialValues)
+	
+	const loggedUserRole = useLoggedUserRole();
+	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
 
 	return (
 		<BlockSeparator>
@@ -58,27 +63,30 @@ export default function ProductList({ setEditingProductIndex }) {
 											</TableCell>
 											<TableCell>
 												<IconButton disabled={isSubmitting} onClick={()=>setEditingProductIndex(productIndex)}>
-													<Icon path={mdiPencil} size={.7} color='#363E5E' />
+													<Icon path={canChangeStatus ? mdiPencil : mdiEye} size={.7} color='#363E5E' />
 												</IconButton>
-												<IconButton
-													onClick={()=>{
-														insert(productIndex+1, row);
-														setEditingProductIndex(productIndex+1);
-													}}
-												>
-													<Icon path={mdiContentDuplicate} size={.7} color='#363E5E' />
-												</IconButton>
-												<IconButton
-													disabled={isSubmitting}
-													onClick={()=>{
-														if (row.action === 'create') remove(productIndex);
-														else {
-															setFieldValue(`products.${productIndex}.action`, 'remove');
-														}
-													}}
-												>
-													<Icon path={mdiDelete} size={.7} color='#707070' />
-												</IconButton>
+												{canChangeStatus &&
+													(<><IconButton
+														onClick={()=>{
+															insert(productIndex+1, row);
+															setEditingProductIndex(productIndex+1);
+														}}
+													>
+														<Icon path={mdiContentDuplicate} size={.7} color='#363E5E' />
+													</IconButton>
+													<IconButton
+														disabled={isSubmitting}
+														onClick={()=>{
+															if (row.action === 'create') remove(productIndex);
+															else {
+																setFieldValue(`products.${productIndex}.action`, 'remove');
+															}
+														}}
+													>
+														<Icon path={mdiDelete} size={.7} color='#707070' />
+													</IconButton>
+													</>
+													)}
 											</TableCell>
 										</TableRow>
 									)})}

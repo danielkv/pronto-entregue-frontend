@@ -9,7 +9,7 @@ import { useSnackbar } from 'notistack';
 
 import notificationAudio from '../../assets/audio/notification.ogg';
 import { useSelectedCompany } from '../../controller/hooks';
-import { getOrderStatusName } from '../../utils/orders';
+import { getOrderStatusLabel } from '../../controller/orderStatus';
 import OrderRollItem from './OrderRollItem';
 
 import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_STATUS_UPDATED } from '../../graphql/ordersRoll';
@@ -87,7 +87,7 @@ export default function AutoOrders() {
 				if (updateOrderStatus.status === 'canceled') {
 					enqueueSnackbar(`Pedido #${updateOrderStatus.id} foi cancelado`, { ...options, variant: 'error' })
 				} else
-					enqueueSnackbar(`Pedido #${updateOrderStatus.id} alterado para ${getOrderStatusName(updateOrderStatus.status)}`, options)
+					enqueueSnackbar(`Pedido #${updateOrderStatus.id} alterado para ${getOrderStatusLabel(updateOrderStatus)}`, options)
 			}
 		})
 

@@ -43,7 +43,6 @@ export default function OrdersNumber() {
 			document: SUBSCRIBE_ORDER_STATUS_QTY,
 			variables: { companyId: selectedCompany },
 			updateQuery(prev, { subscriptionData: { data: { updateOrderStatus = null } } }) {
-				console.log(updateOrderStatus);
 				if (!updateOrderStatus) return prev;
 
 				const result = Object.assign({}, prev, { ordersStatusQty: updateOrderStatus })

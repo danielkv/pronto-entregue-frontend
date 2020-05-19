@@ -78,6 +78,7 @@ function Page () {
 			onSubmit={onSubmit}
 			validateOnChange={false}
 			validateOnBlur={false}
+			enableReinitialize
 		>
 			{(props)=><PageForm {...props} editId={editId} />}
 		</Formik>

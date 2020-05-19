@@ -31,7 +31,6 @@ function Page () {
 	const areasSchema = Yup.object().shape({
 		viewAreas: Yup.array().of(Yup.object().shape({
 			name: Yup.string().required('Obrigatório'),
-			price: Yup.number().required('Obrigatório'),
 			radius: Yup.number().required('Selecione a área no mapa'),
 		}))
 	});

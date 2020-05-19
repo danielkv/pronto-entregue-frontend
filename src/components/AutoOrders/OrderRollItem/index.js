@@ -7,8 +7,8 @@ import Icon from '@mdi/react'
 import moment from 'moment'
 import { useSnackbar } from 'notistack'
 
+import { getOrderStatusIcon, getOrderStatusLabel, availableStatus } from '../../../controller/orderStatus'
 import { getErrors } from '../../../utils/error'
-import { getOrderStatusIcon, getOrderStatusName } from '../../../utils/orders'
 import OrderRollProduct from './OrderRollProduct'
 
 import { UPDATE_ORDER } from '../../../graphql/orders'
@@ -24,9 +24,9 @@ export default function OrderRollItem({ item: order }) {
 		setMenuOpen(false);
 	}
 	const handleUpdateStatus = (newStatus) => () => {
-		updateOrderStatus({ variables: { data: { status: newStatus } } })
+		updateOrderStatus({ variables: { data: { status: newStatus.slug } } })
 			.then(()=>{
-				enqueueSnackbar(`Status do pedido #${order.id} alterado para ${getOrderStatusName(newStatus)}`, { variant: 'success' });
+				enqueueSnackbar(`Status do pedido #${order.id} alterado para ${newStatus.label}`, { variant: 'success' });
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });
@@ -43,30 +43,18 @@ export default function OrderRollItem({ item: order }) {
 				open={menuOpen}
 				onClose={handleCloseMenu}
 			>
-				<MenuItem onClick={handleUpdateStatus('waiting')} selected={order.status==='waiting'} dense>
-					<ListItemIcon>{getOrderStatusIcon('waiting')}</ListItemIcon>
-					<ListItemText>Aguardando</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('preparing')} selected={order.status==='preparing'} dense>
-					<ListItemIcon>{getOrderStatusIcon('preparing')}</ListItemIcon>
-					<ListItemText>Em preparo</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('delivering')} selected={order.status==='delivering'} dense>
-					<ListItemIcon>{getOrderStatusIcon('delivering')}</ListItemIcon>
-					<ListItemText>Na entrega</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('delivered')} selected={order.status==='delivered'} dense>
-					<ListItemIcon>{getOrderStatusIcon('delivered')}</ListItemIcon>
-					<ListItemText>Entregue</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={handleUpdateStatus('canceled')} selected={order.status==='canceled'} dense>
-					<ListItemIcon>{getOrderStatusIcon('canceled')}</ListItemIcon>
-					<ListItemText>Cancelado</ListItemText>
-				</MenuItem>
+				{availableStatus(order).map(status => {
+					return (
+						<MenuItem key={status.slug} onClick={handleUpdateStatus(status)} selected={order.status===status.slug} dense>
+							<ListItemIcon>{status.Icon}</ListItemIcon>
+							<ListItemText>{status.label}</ListItemText>
+						</MenuItem>
+					)
+				})}
 			</Menu>
 			<div style={{ marginBottom: 10 }}>
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
-				<Chip avatar={getOrderStatusIcon(order.status, .8)} size='small' label={getOrderStatusName(order.status)} style={{ marginLeft: 6 }} variant='outlined' />
+				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order)} style={{ marginLeft: 6 }} variant='outlined' />
 				<Typography style={{ marginLeft: 6 }} variant='caption'>{moment(order.createdAt).format('DD/MM HH:mm')}</Typography>
 			</div>
 			

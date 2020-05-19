@@ -10,7 +10,7 @@ import {  useFormikContext } from 'formik'
 
 import { Block, BlockHeader, BlockTitle, BlockSeparator, FormRow, FieldControl } from '../../../layout/components'
 
-import { useSelectedCompany } from '../../../controller/hooks';
+import { useSelectedCompany, useLoggedUserRole } from '../../../controller/hooks';
 import { getErrors } from '../../../utils/error';
 import { createEmptyOrderProduct } from '../../../utils/orders';
 import ProductModal from './modal';
@@ -19,14 +19,18 @@ import ProductList from './productList';
 import { GET_COMPANY_PRODUCTS, LOAD_PRODUCT } from '../../../graphql/products';
 
 export default function Products() {
-	// Formik context
-	const { values: { products }, isSubmitting, setFieldValue, errors } = useFormikContext();
+	const loggedUserRole = useLoggedUserRole();
 
+	// Formik context
+	const { values: { products }, isSubmitting, setFieldValue, errors, initialValues } = useFormikContext();
+	
 	const [loadingProduct, setLoadingProduct] = useState(false);
 	const [editingProductIndex, setEditingProductIndex] = useState(null);
 	const [productModalCancel, setProductModalCancel] = useState(false);
 	const client = useApolloClient();
 	const selectedCompany = useSelectedCompany();
+
+	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
 
 	const [searchProducts, {
 		data: { company: { products: productsFound = [] } = {} } = {}, loading: loadingProducts
@@ -87,56 +91,62 @@ export default function Products() {
 					<FormRow>
 						<FieldControl>
 							<FormControl>
-								<Downshift
-									onChange={handleAddProduct}
-									itemToString={(item => item ? item.name : '')}
-									onInputValueChange={(value)=>{handleSearchProducts(value)}}
-								>
-									{({
-										getInputProps,
-										getItemProps,
-										getMenuProps,
-										isOpen,
-										highlightedIndex,
-										clearSelection
-									})=>{
-										return (
-											<div>
-												<TextField
-													{...getInputProps({
-														disabled: isSubmitting || loadingProduct,
-														onBlur: clearSelection,
-													})
-													}
-												/>
-												{isOpen && (
-													<List {...getMenuProps()} className="dropdown">
-														{loadingProducts ? <div style={{ padding: 20 }}><CircularProgress /></div>
-															:
-															productsFound.map((item, index) => {
-																return (<ListItem
-																	className="dropdown-item"
-																	selected={highlightedIndex === index}
-																	key={item.id}
-																	{...getItemProps({ key: item.id, index, item })}
-																>
-																	<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
-																	<ListItemText>
-																		<div style={{ display: 'flex', alignItems: 'center' }}>
-																			{item.sku && <Typography style={{ marginRight: 8 }} variant='caption'>#{item.sku}</Typography> }
-																			<Typography>{item.name}</Typography>
-																		</div>
-																	</ListItemText>
-																	<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
-																</ListItem>)
-															})}
-													</List>
-												)}
-											</div>
-										)
-									}}
-								</Downshift>
-								<FormHelperText error={!!errors.products}>{errors.products || 'Digite para buscar produtos'}</FormHelperText>
+								{!canChangeStatus
+									? <Typography>Não é possível modificar esse pedido</Typography>
+									: (
+										<>
+											<Downshift
+												onChange={handleAddProduct}
+												itemToString={(item => item ? item.name : '')}
+												onInputValueChange={(value)=>{handleSearchProducts(value)}}
+											>
+												{({
+													getInputProps,
+													getItemProps,
+													getMenuProps,
+													isOpen,
+													highlightedIndex,
+													clearSelection
+												})=>{
+													return (
+														<div>
+															<TextField
+																{...getInputProps({
+																	disabled: isSubmitting || loadingProduct,
+																	onBlur: clearSelection,
+																})
+																}
+															/>
+															{isOpen && (
+																<List {...getMenuProps()} className="dropdown">
+																	{loadingProducts ? <div style={{ padding: 20 }}><CircularProgress /></div>
+																		:
+																		productsFound.map((item, index) => {
+																			return (<ListItem
+																				className="dropdown-item"
+																				selected={highlightedIndex === index}
+																				key={item.id}
+																				{...getItemProps({ key: item.id, index, item })}
+																			>
+																				<ListItemIcon><Icon path={mdiBasket} color='#707070' size={1} /></ListItemIcon>
+																				<ListItemText>
+																					<div style={{ display: 'flex', alignItems: 'center' }}>
+																						{item.sku && <Typography style={{ marginRight: 8 }} variant='caption'>#{item.sku}</Typography> }
+																						<Typography>{item.name}</Typography>
+																					</div>
+																				</ListItemText>
+																				<ListItemSecondaryAction><small>{item.category.name}</small></ListItemSecondaryAction>
+																			</ListItem>)
+																		})}
+																</List>
+															)}
+														</div>
+													)
+												}}
+											</Downshift>
+											<FormHelperText error={!!errors.products}>{errors.products || 'Digite para buscar produtos'}</FormHelperText>
+										</>
+									)}
 							</FormControl>
 						</FieldControl>
 					</FormRow>

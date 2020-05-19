@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Modal, Fade, InputAdornment, TextField, Button, ButtonGroup, Checkbox, FormHelperText, FormControlLabel, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Table, TableBody, TableRow, TableCell, Radio, Typography, IconButton, Avatar } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, useTheme } from '@material-ui/core/styles';
 import { mdiPlusCircleOutline, mdiMinusCircleOutline } from '@mdi/js';
 import Icon from '@mdi/react';
+import { useFormikContext } from 'formik';
 import { cloneDeep } from 'lodash';
 
 import { FormRow, FieldControl, Block, BlockSeparator } from '../../../../layout/components';
 
+
+import { useLoggedUserRole } from '../../../../controller/hooks';
 import { ModalPaper, ModalHeader, ProductTitle, ProductPrice, ProductInfo, QuantityContainer } from './styles';
 
 const CustomTextInput = withStyles({
@@ -39,9 +42,15 @@ const CustomTextInput = withStyles({
 export default function ProductModal ({ prod, open, onClose, onSave, onCancel }) {
 	const [product, setProduct] = useState(null);
 	const [errors, setErrors] = useState(null);
+	const { palette } = useTheme();
 
 	const { url } = useRouteMatch();
 	const dashboardUrl = '/' + url.substr(1).split('/')[0];
+
+	const { initialValues } = useFormikContext();
+
+	const loggedUserRole = useLoggedUserRole();
+	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
 
 	const handleCancel = ()=> {
 		if (onCancel && typeof onCancel === 'function') onCancel();
@@ -165,17 +174,18 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 									<ProductTitle>
 										<div>{product.name}</div>
 										<QuantityContainer>
-											<IconButton onClick={()=>{if (product.quantity > 1) setProduct({ ...product, quantity: product.quantity-1, action: product.action === 'editable' ? 'update' : product.action })}}>
-												<Icon path={mdiMinusCircleOutline} size={1} />
+											<IconButton disabled={!canChangeStatus} onClick={()=>{if (product.quantity > 1) setProduct({ ...product, quantity: product.quantity-1, action: product.action === 'editable' ? 'update' : product.action })}}>
+												<Icon path={mdiMinusCircleOutline} size={1} color={canChangeStatus ? palette.primary.main : '#f0f0f0'} />
 											</IconButton>
 											<div>{product.quantity}</div>
-											<IconButton onClick={()=>{setProduct({ ...product, quantity: product.quantity+1, action: product.action === 'editable' ? 'update' : product.action })}}>
-												<Icon path={mdiPlusCircleOutline} size={1} />
+											<IconButton disabled={!canChangeStatus} onClick={()=>{setProduct({ ...product, quantity: product.quantity+1, action: product.action === 'editable' ? 'update' : product.action })}}>
+												<Icon path={mdiPlusCircleOutline} size={1} color={canChangeStatus ? palette.primary.main : '#f0f0f0'}  />
 											</IconButton>
 										</QuantityContainer>
 									</ProductTitle>
 									<ProductPrice>
 										<TextField
+											disabled={!canChangeStatus}
 											type='number'
 											InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
 											inputProps={{ step: '0.01' }}
@@ -193,6 +203,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 							<FormRow>
 								<FieldControl>
 									<TextField
+										disabled={!canChangeStatus}
 										label='Observações'
 										value={product.message}
 										multiline
@@ -234,6 +245,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 																control={
 																	group.type === 'single' ?
 																		<Radio
+																			disabled={!canChangeStatus}
 																			value={option.name}
 																			checked={option.selected}
 																			onClick={(e)=>{
@@ -246,6 +258,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 																		/>
 																		:
 																		<Checkbox
+																			disabled={!canChangeStatus}
 																			value={option.name}
 																			checked={option.selected}
 																			onChange={(e)=>{
@@ -263,6 +276,7 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 														</TableCell>
 														<TableCell style={{ width: 130 }}>
 															<CustomTextInput
+																disabled={!canChangeStatus}
 																type='number'
 																InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
 																inputProps={{ step: '0.01' }}
@@ -284,15 +298,17 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 						<BlockSeparator>
 							<FormRow>
 								<FieldControl style={{ flex: .7 }}>
-									<FormHelperText>
+									{canChangeStatus &&<FormHelperText>
 										Salvar irá recalcular todos os valores definidos nessa janela
-									</FormHelperText>
+									</FormHelperText> }
 								</FieldControl>
-								<FieldControl style={{ flex: .3 }}>
-									<ButtonGroup style={{ marginLeft: 'auto' }}>
-										<Button onClick={handleCancel} color='primary'>Cancelar</Button>
-										<Button onClick={handleSave} variant="contained" color='primary'>Salvar</Button>
-									</ButtonGroup>
+								<FieldControl style={{ flex: .3, justifyContent: 'flex-end' }}>
+									{canChangeStatus
+										?(<ButtonGroup  style={{ marginLeft: 'auto' }}>
+											<Button onClick={handleCancel} color='primary'>Cancelar</Button>
+											<Button onClick={handleSave} variant="contained" color='primary'>Salvar</Button>
+										</ButtonGroup>)
+										:<Button onClick={handleCancel} variant="contained" color='primary'>Fechar</Button>}
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
