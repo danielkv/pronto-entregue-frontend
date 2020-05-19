@@ -31,7 +31,7 @@ export const OPTIONS_GROUP_FRAGMENT = gql`
 `;
 
 export const LOAD_OPTION_GROUP = gql`
-	query ($id: ID!) {
+	query ($id: ID!, $filter: Filter) {
 		optionsGroup (id:$id) {
 			...OptionsGroupFields
 		}
