@@ -6,6 +6,7 @@ import { mdiDotsVertical } from '@mdi/js'
 import Icon from '@mdi/react'
 import moment from 'moment'
 import { useSnackbar } from 'notistack'
+import numeral from 'numeral'
 
 import { getOrderStatusIcon, getOrderStatusLabel, availableStatus } from '../../../controller/orderStatus'
 import { getErrors } from '../../../utils/error'
@@ -33,6 +34,8 @@ export default function OrderRollItem({ item: order }) {
 			})
 		handleCloseMenu()
 	}
+
+	const orderTotal = order.price + order.discount;
 	
 	return (
 		<Paper style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative' }} elevation={0}>
@@ -82,13 +85,32 @@ export default function OrderRollItem({ item: order }) {
 									<Typography variant='subtitle2'>{`${order.address.city} - ${order.address.state}`}</Typography>
 									<Typography variant='subtitle2'>{order.address.zipcode}</Typography>
 									<div style={{ marginTop: 10 }}>
-										<Typography style={{ fontWeight: 'bold' }}>Valor: </Typography>
-										<div style={{ marginLeft: 20 }}>
-											<Typography variant='caption'>{`R$ ${order.price.toFixed(2).replace('.', ",")}`}</Typography>
-											<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+										<div style={{ fontWeight: 'bold', display: 'flex', flexDirection: 'row' }}>
+											<Typography style={{ fontWeight: 'bold', marginRight: 5 }}>Pagamento:</Typography>
+											{order.paymentMethod && <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
 												<img alt='Forma de pagamento' height={20} style={{ marginRight: 5 }} src={order.paymentMethod.image} />
 												<Typography variant='caption'>{`${order.paymentMethod.displayName}`}</Typography>
-											</div>
+											</div>}
+										</div>
+										<div style={{ marginLeft: 20 }}>
+											<table style={{ width: '100%' }}>
+												{!!order.discount &&
+													<>
+														<tr>
+															<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Subtotal</Typography></td>
+															<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(orderTotal).format('$0,0.00')}</Typography></td>
+														</tr>
+														<tr>
+															<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'}</Typography></td>
+															<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(order.discount).format('$0,0.00')}</Typography></td>
+														</tr>
+													</>
+												}
+												{!!order.price && <tr>
+													<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Total</Typography></td>
+													<td style={{ textAlign: 'right' }}><Typography style={{ fontWeight: 'bold' }}>{numeral(order.price).format('$0,0.00')}</Typography></td>
+												</tr>}
+											</table>
 										</div>
 									</div>
 									{Boolean(order.message) && (

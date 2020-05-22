@@ -7,6 +7,7 @@ export const GET_COMPANY_VIEW_AREAS = gql`
 			viewAreas {
 				id
 				name
+				active
 				radius
 				center
 			}
@@ -22,6 +23,7 @@ export const REMOVE_VIEW_AREA = gql`
 		removeViewArea (id: $id) {
 			id
 			name
+			active
 		}
 	}
 `;
@@ -31,6 +33,7 @@ export const MODIFY_VIEW_AREA = gql`
 		modifyViewAreas (data:$data) {
 			id
 			name
+			active
 		}
 	}
 `;

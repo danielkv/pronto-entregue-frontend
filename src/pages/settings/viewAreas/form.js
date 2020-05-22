@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 
 import { useMutation } from '@apollo/react-hooks';
-import { FormHelperText, CircularProgress, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, FormControl, ButtonGroup, Button } from '@material-ui/core';
+import { FormHelperText, CircularProgress, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, FormControl, ButtonGroup, Button, FormControlLabel, Switch } from '@material-ui/core';
 import { mdiCashMarker, mdiMap, mdiDelete, mdiPlusCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Form, FieldArray, Field } from 'formik';
@@ -67,6 +67,12 @@ export default function FormPage({ values: { viewAreas }, isSubmitting, setField
 															<CircularProgress />
 															:
 															(<>
+																<FormControlLabel
+																	labelPlacement='start'
+																	control={
+																		<Switch size='small' color='primary' checked={area.active} onChange={()=>{setFieldValue(`viewAreas.${index}.active`, !area.active)}} value="includeDisabled" />
+																	}
+																/>
 																<IconButton
 																	disabled={isSubmitting}
 																	onClick={handleOpenMap(index)}
@@ -103,7 +109,7 @@ export default function FormPage({ values: { viewAreas }, isSubmitting, setField
 												<Button
 													variant="contained"
 													color='primary'
-													onClick={()=>{insert(viewAreas.length, { name: '', price: 0 })}}
+													onClick={()=>{insert(viewAreas.length, { name: '', active: true })}}
 												>
 													<Icon className='iconLeft' path={mdiPlusCircle} color='#fff' size={1} /> Adicionar
 												</Button>

@@ -8,6 +8,7 @@ export const GET_COMPANY_DELIVERY_AREAS = gql`
 				id
 				name
 				radius
+				active
 				center
 				price
 			}
@@ -24,6 +25,7 @@ export const REMOVE_DELIVERY_AREA = gql`
 			id
 			name
 			price
+			active
 		}
 	}
 `;
@@ -34,6 +36,7 @@ export const MODIFY_DELIVERY_AREA = gql`
 			id
 			name
 			price
+			active
 		}
 	}
 `;

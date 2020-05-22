@@ -7,6 +7,7 @@ import Icon from '@mdi/react';
 import Downshift from 'downshift';
 import { Form, Field } from 'formik';
 import { isEmpty } from 'lodash';
+import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
@@ -22,7 +23,7 @@ import { SEARCH_USERS } from '../../graphql/users';
 
 export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
 	// carregamento inicial
-	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice } = values;
+	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory } = values;
 	const loggedUserRole = useLoggedUserRole();
 	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
 	const inputDisabled = !canChangeStatus || isSubmitting;
@@ -160,8 +161,8 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 				</Block>
 				{(user && user.id) && (
 					<>
-						<Delivery />
 						<Products />
+						<Delivery />
 					</>
 				)}
 			</Content>
@@ -204,10 +205,15 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 									/>
 								</FieldControl>
 							</FormRow>
+							{creditHistory && <FormRow>
+								<FieldControl>
+									<Chip color='secondary' label={`Créditos: ${numeral(Math.abs(creditHistory.value)).format('$0,0.00')}`} />
+								</FieldControl>
+							</FormRow>}
 							<FormRow>
 								<FieldControl>
 									<Field
-										controldisabled={inputDisabled}
+										controldisabled={inputDisabled || initialValues.discount}
 										label='Desconto'
 										type='number'
 										name='discount'

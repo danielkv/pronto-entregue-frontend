@@ -13,6 +13,7 @@ export function sanitizeDeliveryAreas(deliveryAreas) {
 	return deliveryAreas.map(area=>({
 		id: area.id || null,
 		name: area.name,
+		active: area.active,
 		radius: parseFloat(area.radius),
 		center: area.center,
 		price: area.price,
@@ -22,6 +23,7 @@ export function sanitizeDeliveryAreas(deliveryAreas) {
 export function sanitizeViewAreas(viewAreas) {
 	return viewAreas.map(area=>({
 		id: area.id || null,
+		active: area.active,
 		name: area.name,
 		radius: parseFloat(area.radius),
 		center: area.center,

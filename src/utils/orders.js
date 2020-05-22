@@ -1,7 +1,3 @@
-import React from 'react';
-
-import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle } from '@mdi/js';
-import Icon from '@mdi/react';
 import { uniqueId } from 'lodash';
 
 import { createEmptyAddress, sanitizeAddress, extractAddress } from './address';
@@ -40,6 +36,7 @@ export function extractOrder(order, overwrite={}) {
 		message: order.message,
 		address: extractAddress(order.address),
 		paymentMethod: order.paymentMethod,
+		creditHistory: order.creditHistory,
 		products: order.products.map(product=>{
 			return {
 				...product.productRelated,

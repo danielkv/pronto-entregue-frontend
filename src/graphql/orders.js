@@ -77,6 +77,11 @@ export const ORDER_FRAGMENT = gql`
 		paymentMethod {
 			id
 		}
+		creditHistory {
+			id
+			history
+			value
+		}
 
 		address {
 			id
