@@ -189,7 +189,7 @@ export const LOAD_ORDER = gql`
 `;
 
 export const GET_COMPANY_ORDERS = gql`
-	query GetOrders ($id:ID!, $filter: JSON, $pagination: Pagination) {
+	query GetCompanyOrders ($id:ID!, $filter: JSON, $pagination: Pagination) {
 		company(id: $id) {
 			id
 			countOrders(filter: $filter)
@@ -210,6 +210,32 @@ export const GET_COMPANY_ORDERS = gql`
 				status
 				createdAt
 			}
+		}
+	}
+`;
+
+export const GET_ORDERS = gql`
+	query GetOrders ($filter: JSON, $pagination: Pagination) {
+		countOrders(filter: $filter)
+		orders(filter: $filter, pagination: $pagination) {
+			id
+			type
+			user {
+				id
+				fullName
+			}
+			address {
+				id
+				street
+				number
+			}
+			company {
+				id
+				displayName
+			}
+			price
+			status
+			createdAt
 		}
 	}
 `;
