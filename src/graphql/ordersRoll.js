@@ -77,6 +77,7 @@ export const ORDER_CRATED_FRAGMENT = gql`
 			street
 			number
 			complement
+			reference
 			zipcode
 			district
 			city

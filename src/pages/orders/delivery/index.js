@@ -141,13 +141,13 @@ export default function Delivery() {
 						<>
 							<FormRow>
 								<FieldControl style={{ flex: .3 }}>
-									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.name' component={tField} label='Identificação' />
-								</FieldControl>
-								<FieldControl style={{ flex: .3 }}>
 									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.street' component={tField} label='Rua' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
 									<Field controldisabled={loadingdeliveryPrice || inputDisabled} type='number' name='address.number' component={tField} label='Número' />
+								</FieldControl>
+								<FieldControl style={{ flex: .3 }}>
+									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.complement' component={tField} label='Complemento' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
 									<FormControl>
@@ -165,6 +165,9 @@ export default function Delivery() {
 								</FieldControl>
 								<FieldControl>
 									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.state' component={tField} label='Estado' />
+								</FieldControl>
+								<FieldControl>
+									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.reference' component={tField} label='Ponto de referência' />
 								</FieldControl>
 							</FormRow>
 							<FormRow>

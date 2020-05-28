@@ -90,6 +90,8 @@ export const ORDER_FRAGMENT = gql`
 			city
 			state
 			district
+			complement
+			reference
 			zipcode
 			location
 		}
@@ -111,6 +113,7 @@ export const ORDER_FRAGMENT = gql`
 				number
 				zipcode
 				district
+				reference
 				city
 				state
 				location
