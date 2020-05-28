@@ -67,22 +67,23 @@ export default function Delivery() {
 
 	useEffect(()=>{
 		if (timeOutDeliveryPrice) clearTimeout(timeOutDeliveryPrice);
+		if (!address) return;
 
-		timeOutDeliveryPrice = setTimeout(()=>{
-			if (type === 'delivery') {
-				if (address.location[0] !== '' && address.location[1] !== '') {
-					checkDeliveryLocation({ variables: { location: address.location } })
-						.then(({ data: { checkDeliveryLocation: area } }) => {
-							setFieldValue('deliveryPrice', area.price);
-							setFieldValue('deliveryOk', true);
-						})
-						.catch(()=> {
-							setFieldValue('deliveryPrice', 0);
-							setFieldValue('deliveryOk', false);
-						})
-				}
-			}
-		}, 2000)
+		const { location = null } = address;
+
+		if (type === 'delivery' && location && location[0] !== '' && location[1] !== '') {
+			timeOutDeliveryPrice = setTimeout(()=>{
+				checkDeliveryLocation({ variables: { location: address.location } })
+					.then(({ data: { checkDeliveryLocation: area } }) => {
+						setFieldValue('deliveryPrice', area.price);
+						setFieldValue('deliveryOk', true);
+					})
+					.catch(()=> {
+						setFieldValue('deliveryPrice', 0);
+						setFieldValue('deliveryOk', false);
+					})
+			}, 2000)
+		}
 	}, [type, address, checkDeliveryLocation, setFieldValue]);
 
 	if (loadingCompany) return <LoadingBlock />
