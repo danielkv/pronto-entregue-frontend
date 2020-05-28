@@ -19,12 +19,23 @@ import OptionsGroupsList from './optionsGroupsList';
 
 import { SEARCH_OPTIONS_GROUPS, LOAD_OPTION_GROUP } from '../../../graphql/products';
 
+let searchOptionsGroupsTimeout= null;
+
 export default function OptionsBlock() {
 	const { values: { optionsGroups }, setFieldValue } = useFormikContext();
 	const [loadingCopy, setLoadingCopy] = useState(false);
 	const client = useApolloClient();
 	const [dragAlertOpen, setDragAlertOpen] = useState(false);
 	const [searchOptionsGroups, { data: { searchOptionsGroups: groups = [] } = {}, loading: loadingGroups }] = useLazyQuery(SEARCH_OPTIONS_GROUPS, { fetchPolicy: 'no-cache' });
+
+	function handleSearchOptionsGroups(value) {
+		if (searchOptionsGroupsTimeout) clearTimeout(searchOptionsGroupsTimeout);
+		
+		if (!value) return;
+		searchOptionsGroupsTimeout = setTimeout(()=>{
+			searchOptionsGroups({ variables: { search: value } })
+		}, 1000)
+	}
 
 	const sanitizeOptionsGroupsOrder = useCallback((groups) => {
 		return groups.map((row, index) => {
@@ -130,7 +141,7 @@ export default function OptionsBlock() {
 													setFieldValue('optionsGroups', sanitizeOptionsGroupsOrder(list));
 												}}
 												itemToString={(item => item ? item.name : '')}
-												onInputValueChange={(value)=>{searchOptionsGroups({ variables: { search: value } })}}
+												onInputValueChange={handleSearchOptionsGroups}
 											>
 												{({
 													getInputProps,
