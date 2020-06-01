@@ -31,6 +31,7 @@ import Products from '../pages/products';
 import EditProduct from '../pages/products/edit_product';
 import NewProduct from '../pages/products/new_product';
 import Ratings from '../pages/ratings';
+import Reports from '../pages/reports';
 import Settings from '../pages/settings';
 
 export default function DashboardPages() {
@@ -75,6 +76,7 @@ export default function DashboardPages() {
 
 					<ProtectedRoute exact role='master' path={`${path}/todos-pedidos`} component={AllOrders} />
 					<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
+					<ProtectedRoute exact role='master' path={`${path}/relatorios`} component={Reports} />
 					<ProtectedRoute role='master' path={`${path}/empresas/novo`} component={NewCompany} />
 					<ProtectedRoute role='master' path={`${path}/empresas/alterar/:id`} component={EditCompany} />
 
