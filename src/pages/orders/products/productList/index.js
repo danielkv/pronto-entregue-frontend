@@ -13,7 +13,6 @@ import { calculateProductPrice } from '../../../../utils/products';
 
 export default function ProductList({ setEditingProductIndex }) {
 	const { values: { products }, isSubmitting, setFieldValue, initialValues } = useFormikContext();
-	console.log(initialValues)
 	
 	const loggedUserRole = useLoggedUserRole();
 	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)

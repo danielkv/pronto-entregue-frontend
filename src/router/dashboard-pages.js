@@ -9,6 +9,7 @@ import Navigation from '../layout/navigation';
 /* import Campaigns from '../pages/campaigns';
 import EditCampaign from '../pages/campaigns/edit_campaign';
 import NewCampaign from '../pages/campaigns/new_campaign'; */
+import AllOrders from '../pages/allOrders';
 import Categories from '../pages/categories';
 import EditCategory from '../pages/categories/edit_category';
 import NewCategory from '../pages/categories/new_category';
@@ -72,6 +73,7 @@ export default function DashboardPages() {
 						
 					<Route path={`${path}/configuracoes`} component={Settings} />
 
+					<ProtectedRoute exact role='master' path={`${path}/todos-pedidos`} component={AllOrders} />
 					<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
 					<ProtectedRoute role='master' path={`${path}/empresas/novo`} component={NewCompany} />
 					<ProtectedRoute role='master' path={`${path}/empresas/alterar/:id`} component={EditCompany} />

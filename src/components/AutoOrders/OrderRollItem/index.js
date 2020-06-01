@@ -11,6 +11,7 @@ import numeral from 'numeral'
 import { getOrderStatusIcon, getOrderStatusLabel, availableStatus } from '../../../controller/orderStatus'
 import { getErrors } from '../../../utils/error'
 import OrderRollProduct from './OrderRollProduct'
+import OrderType from './OrderType'
 
 import { UPDATE_ORDER } from '../../../graphql/orders'
 
@@ -76,18 +77,7 @@ export default function OrderRollItem({ item: order }) {
 					<Typography variant='caption'>{order.user.email}</Typography>
 
 					<div style={{ marginTop: 10 }}>
-						{order.type === 'takeout'
-							? <Typography>Retirada no Balcão</Typography>
-							: (
-								<div>
-									<Typography style={{ fontWeight: 'bold' }}>{`${order.address.street}, n ${order.address.number}`}</Typography>
-									<Typography variant='subtitle2'>{order.address.district}</Typography>
-									<Typography variant='subtitle2'>{`${order.address.city} - ${order.address.state}`}</Typography>
-									<Typography variant='subtitle2'>{order.address.zipcode}</Typography>
-									
-									
-								</div>
-							)}
+						<OrderType order={order} />
 
 						<div>
 							<div style={{ marginTop: 10 }}>
@@ -103,16 +93,16 @@ export default function OrderRollItem({ item: order }) {
 							<div style={{ marginLeft: 20 }}>
 								<table style={{ width: '100%' }}>
 									{!!order.discount &&
-													<>
-														<tr>
-															<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Subtotal</Typography></td>
-															<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(orderTotal).format('$0,0.00')}</Typography></td>
-														</tr>
-														<tr>
-															<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'}</Typography></td>
-															<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(order.discount).format('$0,0.00')}</Typography></td>
-														</tr>
-													</>
+										<>
+											<tr>
+												<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Subtotal</Typography></td>
+												<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(orderTotal).format('$0,0.00')}</Typography></td>
+											</tr>
+											<tr>
+												<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'}</Typography></td>
+												<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(order.discount).format('$0,0.00')}</Typography></td>
+											</tr>
+										</>
 									}
 									<tr>
 										<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Total (cobrado do cliente)</Typography></td>

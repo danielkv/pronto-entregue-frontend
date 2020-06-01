@@ -67,22 +67,23 @@ export default function Delivery() {
 
 	useEffect(()=>{
 		if (timeOutDeliveryPrice) clearTimeout(timeOutDeliveryPrice);
+		if (!address) return;
 
-		timeOutDeliveryPrice = setTimeout(()=>{
-			if (type === 'delivery') {
-				if (address.location[0] !== '' && address.location[1] !== '') {
-					checkDeliveryLocation({ variables: { location: address.location } })
-						.then(({ data: { checkDeliveryLocation: area } }) => {
-							setFieldValue('deliveryPrice', area.price);
-							setFieldValue('deliveryOk', true);
-						})
-						.catch(()=> {
-							setFieldValue('deliveryPrice', 0);
-							setFieldValue('deliveryOk', false);
-						})
-				}
-			}
-		}, 2000)
+		const { location = null } = address;
+
+		if (type === 'delivery' && location && location[0] !== '' && location[1] !== '') {
+			timeOutDeliveryPrice = setTimeout(()=>{
+				checkDeliveryLocation({ variables: { location: address.location } })
+					.then(({ data: { checkDeliveryLocation: area } }) => {
+						setFieldValue('deliveryPrice', area.price);
+						setFieldValue('deliveryOk', true);
+					})
+					.catch(()=> {
+						setFieldValue('deliveryPrice', 0);
+						setFieldValue('deliveryOk', false);
+					})
+			}, 2000)
+		}
 	}, [type, address, checkDeliveryLocation, setFieldValue]);
 
 	if (loadingCompany) return <LoadingBlock />
@@ -140,13 +141,13 @@ export default function Delivery() {
 						<>
 							<FormRow>
 								<FieldControl style={{ flex: .3 }}>
-									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.name' component={tField} label='Identificação' />
-								</FieldControl>
-								<FieldControl style={{ flex: .3 }}>
 									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.street' component={tField} label='Rua' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
 									<Field controldisabled={loadingdeliveryPrice || inputDisabled} type='number' name='address.number' component={tField} label='Número' />
+								</FieldControl>
+								<FieldControl style={{ flex: .3 }}>
+									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.complement' component={tField} label='Complemento' />
 								</FieldControl>
 								<FieldControl style={{ flex: .3 }}>
 									<FormControl>
@@ -164,6 +165,9 @@ export default function Delivery() {
 								</FieldControl>
 								<FieldControl>
 									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.state' component={tField} label='Estado' />
+								</FieldControl>
+								<FieldControl>
+									<Field controldisabled={loadingdeliveryPrice || inputDisabled} name='address.reference' component={tField} label='Ponto de referência' />
 								</FieldControl>
 							</FormRow>
 							<FormRow>
