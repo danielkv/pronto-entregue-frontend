@@ -1,196 +1,136 @@
-import React, { useState, Fragment, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiBellRing } from '@mdi/js';
-import Icon from '@mdi/react';
+import { useQuery } from '@apollo/react-hooks';
+import DateFnsUtils from '@date-io/date-fns';
+import { Grid, Button, Typography, Card, CardContent, CircularProgress, Container } from '@material-ui/core';
+import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
+import brLocale from 'date-fns/locale/pt-BR';
 import moment from 'moment';
-import { useSnackbar } from 'notistack';
 import numeral from 'numeral';
 
-import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
-
-import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
-import { getErrors } from '../../utils/error';
 
-import { LOGGED_USER_ID } from '../../graphql/authentication';
-import { GET_COMPANIES, UPDATE_COMPANY, SEND_NEW_COMPANY_NOTIFICATION } from '../../graphql/companies';
+import { GET_COMPANIES_REPORT } from '../../graphql/report';
 
 const initialFilter = {
-	showInactive: false,
-	search: '',
+	period: {
+		start: moment().subtract(1, 'month').startOf('month'),
+		end: moment().subtract(1, 'month').endOf('month'),
+	}
 }
 
-function Reports ({ match: { url } }) {
-	setPageTitle('Empresas');
+export default function Reports ({ match: { url } }) {
+	setPageTitle('Relatórios');
+	const [filter, setFilter] = useState(()=>initialFilter);
 
-	const searchRef = useRef(null);
-	const [loadingNewCompanyNotification, setLoadingNewCompanyNotification] = useState(false);
-	const [filter, setFilter] = useState(initialFilter);
-	const { enqueueSnackbar } = useSnackbar();
-	const [pagination, setPagination] = useState({
-		page: 0,
-		rowsPerPage: 10,
-	});
+	const [period, setPeriod] = useState(()=>initialFilter.period);
 
-	useEffect(()=>{
-		setPagination((pagination) => ({ ...pagination, page: 0 }));
-	}, [filter]);
-
-	const submitFilterForm = (e) => {
-		e.preventDefault();
-
-		setFilter({
-			...filter,
-			search: searchRef.current.value
-		})
-	}
-	const clearFilterForm = () => {
-		setFilter(initialFilter);
-	}
-
-	const { data: { loggedUserId } } = useQuery(LOGGED_USER_ID);
 	const {
-		data: { countCompanies = 0, companies = [] } = {},
-		loading: loadingCompanies,
-		error,
-		called,
-	} = useQuery(GET_COMPANIES, { variables: { id: loggedUserId, filter, pagination } });
+		data: { companiesReport = null } = {},
+		loading: loadingReport,
+	} = useQuery(GET_COMPANIES_REPORT, { variables: { filter } });
 
-	const [setCompanyEnabled, { loading }] = useMutation(UPDATE_COMPANY, { refetchQueries: [{ query: GET_COMPANIES, variables: { filter, pagination } }] });
-	const [sendNewCompanyNotification] = useMutation(SEND_NEW_COMPANY_NOTIFICATION);
-
-	const handleSendNewCompanyNotification = (companyId) => () => {
-		setLoadingNewCompanyNotification(companyId);
-		sendNewCompanyNotification({ variables: { companyId } })
-			.then(()=>{
-				enqueueSnackbar(`Notificação enviada para todos usuários`, { variant: 'success' })
-			})
-			.catch((err)=>{
-				enqueueSnackbar(getErrors(err), { variant: 'error' })
-			})
-			.finally(()=>setLoadingNewCompanyNotification(false))
+	function sanitizePeriod(period) {
+		return {
+			start: period.start.valueOf(),
+			end: period.end.valueOf()
+		}
 	}
-
-	if (error) return <ErrorBlock error={getErrors(error)} />
-	if (loadingCompanies && !called) return (<LoadingBlock />);
 
 	return (
-		<Fragment>
-			<Content>
-				{loadingCompanies ? <LoadingBlock /> :
-					<Block>
-						<BlockHeader>
-							<BlockTitle>Empresas</BlockTitle>
-							<Button size='small' variant="contained" color='primary' to={`${url}/novo`} component={Link}>Adicionar</Button>{loading && <CircularProgress />}
-							<NumberOfRows>{countCompanies} empresas</NumberOfRows>
-						</BlockHeader>
-						<Paper>
-							<Table>
-								<TableHead>
-									<TableRow>
-										<TableCell style={{ width: 30, paddingRight: 10 }}></TableCell>
-										<TableCell>Empresa</TableCell>
-										<TableCell>Ramo</TableCell>
-										<TableCell>Faturamento último mês</TableCell>
-										<TableCell>Criada em</TableCell>
-										<TableCell style={{ width: 150 }}>Ações</TableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									{companies.map(row => (
-										<TableRow key={row.id}>
-											<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Avatar alt={row.displayName} src={row.image} /></TableCell>
-											<TableCell>{row.displayName}</TableCell>
-											<TableCell><Chip variant='outlined' label={row.type.name} /></TableCell>
-											<TableCell>{numeral(row.lastMonthRevenue).format('$0,0.00')}</TableCell>
-											<TableCell>{moment(row.createdAt).format('DD/MM/YY')}</TableCell>
-											<TableCell>
-												<IconButton disabled={loadingNewCompanyNotification === row.id} component={Link} onClick={handleSendNewCompanyNotification(row.id)}>
-													<Icon path={mdiBellRing} size={1} color='#363E5E' />
-												</IconButton>
-												<IconButton disabled={loading} component={Link} to={`${url}/alterar/${row.id}`}>
-													<Icon path={mdiPencil} size={1} color='#363E5E' />
-												</IconButton>
-												<Switch
-													disabled={loading}
-													checked={row.active}
-													onChange={()=>setCompanyEnabled({ variables: { id: row.id, data: { active: !row.active } } })}
-													value="checkedB"
-													size='small'
-													color='primary'
-													inputProps={{ 'aria-label': 'primary checkbox' }}
-												/>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
-							<TablePagination
-								component="div"
-								backIconButtonProps={{
-									'aria-label': 'previous page',
-								}}
-								nextIconButtonProps={{
-									'aria-label': 'next page',
-								}}
-								count={countCompanies}
-								rowsPerPage={pagination.rowsPerPage}
-								page={pagination.page}
-								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
-							/>
-						</Paper>
-						<NumberOfRows>{companies.length} empresas</NumberOfRows>
-					</Block>}
-			</Content>
-			<SidebarContainer>
-				<Block>
-					<BlockHeader>
-						<BlockTitle><Icon path={mdiFilter} size={1} color='#D41450' /> Filtros</BlockTitle>
-						<FormControlLabel
-							control={
-								<Switch
-									size='small'
-									color='primary'
-									checked={filter.showInactive}
-									onChange={()=>setFilter({ ...filter, showInactive: !filter.showInactive })}
-									value={filter.showInactive}
-								/>
-							}
-							label="Incluir inativos"
+		<Container maxWidth={false}>
+			<MuiPickersUtilsProvider utils={DateFnsUtils} locale={brLocale}>
+				<Grid container spacing={6}>
+					<Grid item>
+						<DatePicker
+							ampm={false}
+							variant='inline'
+							format='dd/MM/yyyy'
+							label="Início do periodo"
+							value={period.start}
+							onChange={(value)=>setPeriod({ ...period, start: value })}
 						/>
-					</BlockHeader>
-					<Sidebar>
-						<form noValidate onSubmit={submitFilterForm}>
-							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<TextField
-											label='Buscar'
-											inputRef={searchRef}
-										/>
-									</FieldControl>
-								</FormRow>
-							</BlockSeparator>
-							<BlockSeparator>
-								<FormRow>
-									<FieldControl>
-										<ButtonGroup fullWidth>
-											<Button type='reset' onClick={clearFilterForm} color='primary'>Limpar</Button>
-											<Button type='submit' variant="contained" color='primary'>Aplicar</Button>
-										</ButtonGroup>
-									</FieldControl>
-								</FormRow>
-							</BlockSeparator>
-						</form>
-					</Sidebar>
-				</Block>
-			</SidebarContainer>
-		</Fragment>
+					</Grid>
+					<Grid item>
+						<DatePicker
+							ampm={false}
+							variant='inline'
+							format='dd/MM/yyyy'
+							label="Fim do período"
+							value={period.end}
+							onChange={(value)=>setPeriod({ ...period, end: value })}
+						/>
+					</Grid>
+					<Grid item>
+						<Button
+							variant='contained'
+							onClick={()=>setFilter({ ...filter, period: sanitizePeriod(period) })}
+						>
+							Filtrar
+						</Button>
+						{loadingReport && <CircularProgress />}
+					</Grid>
+				</Grid>
+			</MuiPickersUtilsProvider>
+
+			{!loadingReport &&
+				<>
+					<Grid spacing={5} container>
+						<Grid item sm={4} lg={2}>
+							<Card style={{ height: 110 }} variant='outlined'>
+								<CardContent>
+									<Typography style={{ fontSize: 13 }} color="textSecondary">Estabelecimentos</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 16 }} color='Primary'>{companiesReport.companies.length}</Typography>
+									<Typography style={{ fontSize: 13 }} color="textSecondary">Pedidos</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 16 }} color='Primary'>{companiesReport.countOrders}</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item sm={4} lg={2}>
+							<Card style={{ height: 110 }} variant='outlined'>
+								<CardContent>
+									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Ticket médio</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }} gutterBottom>{numeral(companiesReport.revenue/companiesReport.countOrders).format('$0,00.00')}</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item sm={4} lg={2}>
+							<Card style={{ height: 110 }} variant='outlined'>
+								<CardContent>
+									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Faturamento do período</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{numeral(companiesReport.revenue).format('$0,00.00')}</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item sm={4} lg={2}>
+							<Card style={{ height: 110 }} variant='outlined'>
+								<CardContent>
+									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Créditos utilizados</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }} >{numeral(companiesReport.credits).format('$0,00.00')}</Typography>
+									<Typography style={{ fontSize: 13 }} color="textSecondary">Valor em créditos (não taxado)</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item sm={4} lg={2}>
+							<Card style={{ height: 110 }} variant='outlined'>
+								<CardContent>
+									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Valor taxável</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{numeral(companiesReport.taxable).format('$0,00.00')}</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+						<Grid item sm={4} lg={2}>
+							<Card style={{ height: 110 }} variant='outlined'>
+								<CardContent>
+									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Taxa</Typography>
+									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{numeral(companiesReport.tax).format('$0,00.00')}</Typography>
+									<Typography style={{ fontSize: 13 }} color="textSecondary">Mensalidades inclusas*</Typography>
+								</CardContent>
+							</Card>
+						</Grid>
+					</Grid>
+				</>
+			}
+		</Container>
 	)
 }
-
-export default Reports;
