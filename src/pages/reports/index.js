@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
+import { Link, Redirect, Route, useRouteMatch } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
 import DateFnsUtils from '@date-io/date-fns';
-import { Grid, Button, Typography, Card, CardContent, CircularProgress, Container } from '@material-ui/core';
+import { Grid, Button, CircularProgress, Container, List, ListItem, ListItemText, Paper } from '@material-ui/core';
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import brLocale from 'date-fns/locale/pt-BR';
 import moment from 'moment';
-import numeral from 'numeral';
+
 
 import { setPageTitle } from '../../utils';
+import ListCompanies from './ListCompanies';
+import ListOrders from './listOrders';
+import Summary from './Summary';
 
 import { GET_COMPANIES_REPORT } from '../../graphql/report';
 
@@ -19,8 +23,14 @@ const initialFilter = {
 	}
 }
 
-export default function Reports ({ match: { url } }) {
+export default function Reports (props) {
 	setPageTitle('Relatórios');
+	const { path, url } = useRouteMatch();
+
+	function isSelected(location) {
+		const currentLocation = props.location.pathname.substr(1).split('/')[2];
+		return currentLocation === location ? true : false;
+	}
 	const [filter, setFilter] = useState(()=>initialFilter);
 
 	const [period, setPeriod] = useState(()=>initialFilter.period);
@@ -73,63 +83,28 @@ export default function Reports ({ match: { url } }) {
 				</Grid>
 			</MuiPickersUtilsProvider>
 
-			{!loadingReport &&
-				<>
-					<Grid spacing={5} container>
-						<Grid item sm={4} lg={2}>
-							<Card style={{ height: 110 }} variant='outlined'>
-								<CardContent>
-									<Typography style={{ fontSize: 13 }} color="textSecondary">Estabelecimentos</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 16 }} color='Primary'>{companiesReport.companies.length}</Typography>
-									<Typography style={{ fontSize: 13 }} color="textSecondary">Pedidos</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 16 }} color='Primary'>{companiesReport.countOrders}</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item sm={4} lg={2}>
-							<Card style={{ height: 110 }} variant='outlined'>
-								<CardContent>
-									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Ticket médio</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }} gutterBottom>{numeral(companiesReport.revenue/companiesReport.countOrders).format('$0,00.00')}</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item sm={4} lg={2}>
-							<Card style={{ height: 110 }} variant='outlined'>
-								<CardContent>
-									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Faturamento do período</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{numeral(companiesReport.revenue).format('$0,00.00')}</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item sm={4} lg={2}>
-							<Card style={{ height: 110 }} variant='outlined'>
-								<CardContent>
-									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Créditos utilizados</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }} >{numeral(companiesReport.credits).format('$0,00.00')}</Typography>
-									<Typography style={{ fontSize: 13 }} color="textSecondary">Valor em créditos (não taxado)</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item sm={4} lg={2}>
-							<Card style={{ height: 110 }} variant='outlined'>
-								<CardContent>
-									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Valor taxável</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{numeral(companiesReport.taxable).format('$0,00.00')}</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item sm={4} lg={2}>
-							<Card style={{ height: 110 }} variant='outlined'>
-								<CardContent>
-									<Typography style={{ fontSize: 14 }} color="textSecondary" gutterBottom>Taxa</Typography>
-									<Typography style={{ fontWeight: 'bold', fontSize: 18, color: '#333' }}>{numeral(companiesReport.tax).format('$0,00.00')}</Typography>
-									<Typography style={{ fontSize: 13 }} color="textSecondary">Mensalidades inclusas*</Typography>
-								</CardContent>
-							</Card>
-						</Grid>
+			{!(loadingReport && !companiesReport) &&
+				<Grid container spacing={6}>
+					<Grid item sm={2}>
+						<List component={Paper}>
+							<ListItem button component={Link} selected={isSelected('resumo')} to={`${url}/resumo`}>
+								<ListItemText primary="Resumo" />
+							</ListItem>
+							<ListItem button component={Link} selected={isSelected('empresas')} to={`${url}/empresas`}>
+								<ListItemText primary="Lista de empresas" />
+							</ListItem>
+							<ListItem button component={Link} selected={isSelected('pedidos')} to={`${url}/pedidos`}>
+								<ListItemText primary="Lista de pedidos" />
+							</ListItem>
+						</List>
 					</Grid>
-				</>
+					<Grid item sm={10}>
+						<Redirect from="/" to={`${url}/resumo`} />
+						<Route path={`${path}/resumo`} component={(props)=><Summary {...props} report={companiesReport} period={filter.period} />} />
+						<Route path={`${path}/empresas`} component={(props)=><ListCompanies {...props} report={companiesReport} period={filter.period} />} />
+						<Route path={`${path}/pedidos`} component={(props)=><ListOrders {...props} report={companiesReport} period={filter.period} />} />
+					</Grid>
+				</Grid>
 			}
 		</Container>
 	)
