@@ -8,6 +8,7 @@ import { SnackbarProvider } from 'notistack';
 import { ThemeProvider as StyledThemProvider } from 'styled-components'
 
 import theme from '../layout/theme';
+import Apps from '../pages/apps';
 import Landing from '../pages/landing';
 import RecoverPassword from '../pages/recoverPassword';
 import PrivacyPolicy from '../static/politica-privacidade';
@@ -24,6 +25,7 @@ const Router = ()  => {
 						<Switch>
 							<Route exact path='/' component={Landing} />
 							<Route exact path='/nova-senha/:token' component={RecoverPassword} />
+							<Route exact path='/apps' component={Apps} />
 							<Route path='/dashboard' component={DashboardRoutes} />
 							<Route path='/politica-privacidade' component={PrivacyPolicy} />
 						</Switch>
