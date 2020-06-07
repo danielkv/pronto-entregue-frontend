@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, TablePagination, Typography } from '@material-ui/core';
 import moment from 'moment';
 import numeral from 'numeral';
 
@@ -35,12 +35,13 @@ export default function ListOrders({ report }) {
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell>Data / Hora</TableCell>
-							<TableCell>Faturamento último mês</TableCell>
-							<TableCell>Descontos</TableCell>
-							<TableCell>Créditos</TableCell>
-							<TableCell>Valor taxável</TableCell>
-							<TableCell>Taxa cobrada</TableCell>
+							<TableCell><Typography variant='caption'>Data / Hora</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Faturamento</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Descontos</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Créditos</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Cupons</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Valor taxável</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Taxa cobrada</Typography></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -52,6 +53,7 @@ export default function ListOrders({ report }) {
 									<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
 									<TableCell>{numeral(row.discount).format('$0,0.00')}</TableCell>
 									<TableCell>{row.creditHistory ? numeral(Math.abs(row.creditHistory.value)).format('$0,0.00') : '--'}</TableCell>
+									<TableCell>{row.coupon ? `${numeral(row.couponValue).format('$0,0.00')} (${numeral(row.taxableCoupon).format('$0,0.00')})` : '--'}</TableCell>
 									<TableCell>{numeral(row.taxable).format('$0,0.00')}</TableCell>
 									<TableCell>{numeral(row.tax).format('$0,0.00')}</TableCell>
 								</TableRow>

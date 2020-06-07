@@ -2,9 +2,10 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Avatar } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Avatar } from '@material-ui/core';
 import { mdiPencil, mdiFilter } from '@mdi/js';
 import Icon from '@mdi/react';
+import moment from 'moment';
 import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
@@ -13,8 +14,7 @@ import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { GET_CAMPAIGNS, UPDATE_CAMPAIGN } from '../../graphql/campaigns';
-
+import { GET_COUPONS, UPDATE_COUPON } from '../../graphql/coupons';
 
 const initialFilter = {
 	showInactive: false,
@@ -49,55 +49,57 @@ function Page () {
 	}
 
 	const {
-		data: { countCampaigns = 0, campaigns = [] } = {},
-		loading: loadingCampaigns,
-		error: campaignsError,
+		data: { countCoupons = 0, coupons = [] } = {},
+		loading: loadingCoupons,
+		error: couponsError,
 		called,
-	} = useQuery(GET_CAMPAIGNS, {
+	} = useQuery(GET_COUPONS, {
 		variables: {
 			filter,
 			pagination
 		}
 	});
 
-	const [updateCompany, { loading: loadingUpdating }] = useMutation(UPDATE_CAMPAIGN);
+	const [updateCompany, { loading: loadingUpdating }] = useMutation(UPDATE_COUPON);
 
-	if (campaignsError) return <ErrorBlock error={getErrors(campaignsError)} />
-	if (loadingCampaigns && !called) return (<LoadingBlock />);
+	if (couponsError) return <ErrorBlock error={getErrors(couponsError)} />
+	if (loadingCoupons && !called) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
 			<Content>
-				{loadingCampaigns ? <LoadingBlock /> :
+				{loadingCoupons ? <LoadingBlock /> :
 					<Block>
 						<BlockHeader>
-							<BlockTitle>Campanhas</BlockTitle>
+							<BlockTitle>Cupons</BlockTitle>
 							<Button size='small' variant="contained" color='primary' to={`${url}/nova`} component={Link}>Adicionar</Button> {loadingUpdating && <CircularProgress />}
-							<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
+							<NumberOfRows>{countCoupons} cupons</NumberOfRows>
 						</BlockHeader>
 						<Paper>
 							<Table>
 								<TableHead>
 									<TableRow>
 										<TableCell style={{ width: 30, paddingLeft: 30 }}></TableCell>
-										<TableCell>Produto</TableCell>
-										<TableCell>Tipo</TableCell>
+										<TableCell>Nome</TableCell>
 										<TableCell>Valor</TableCell>
+										<TableCell>Inicia em</TableCell>
+										<TableCell>Expira em</TableCell>
 										<TableCell>Criada em</TableCell>
 										<TableCell style={{ width: 100 }}>Ações</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
-									{campaigns.map(row => (
+									{coupons.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
 											<TableCell>{row.name}</TableCell>
-											<TableCell><Chip color='primary' label='Cashback' /></TableCell>
 											<TableCell>{row.valueType === 'percentage'
 												? numeral(row.value/100).format('0,0.00%')
 												: numeral(row.value).format('$0,0.00')
 											}</TableCell>
-											<TableCell>{row.createdAt}</TableCell>
+											<TableCell>{moment(row.startsAt).format('DD/MM/YYYY HH:mm')}</TableCell>
+											<TableCell>{moment(row.expiresAt).format('DD/MM/YYYY HH:mm')}</TableCell>
+											<TableCell>{moment(row.createdAt).format('DD/MM/YYYY')}</TableCell>
 											<TableCell>
 												{Boolean(row.masterOnly) && (
 													<>
@@ -128,14 +130,14 @@ function Page () {
 								nextIconButtonProps={{
 									'aria-label': 'next page',
 								}}
-								count={countCampaigns}
+								count={countCoupons}
 								rowsPerPage={pagination.rowsPerPage}
 								page={pagination.page}
 								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
 								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 						</Paper>
-						<NumberOfRows>{countCampaigns} campanhas</NumberOfRows>
+						<NumberOfRows>{countCoupons} cupons</NumberOfRows>
 					</Block>}
 			</Content>
 			<SidebarContainer>

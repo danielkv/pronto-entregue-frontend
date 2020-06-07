@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart, mdiTicketPercent } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -56,13 +56,14 @@ function Navigation() {
 						Usuários
 					</ListItemText>
 				</NavItem>
-				{/* <NavItem to={`${url}/campanhas`} selected={isSelected('campanhas')} alt='Campanhas'>
+				<NavItem to={`${url}/cupons`} selected={isSelected('cupons')} alt='Cupons'>
 					<ListItemIcon>
-						<Icon path={mdiSale} size={1} color='#707070' /></ListItemIcon>
+						<Icon path={mdiTicketPercent} size={1} color='#707070' />
+					</ListItemIcon>
 					<ListItemText>
-						Campanhas
+						Cupons
 					</ListItemText>
-				</NavItem> */}
+				</NavItem>
 				{/* <NavItem to={`${url}/pontuacao`} selected={isSelected('pontuacao')} alt='pontuacao'>
 					<ListItemIcon>
 						<Icon path={mdiStar} size={1} color='#707070' /></ListItemIcon>
@@ -70,8 +71,6 @@ function Navigation() {
 						Pontuação
 					</ListItemText>
 				</NavItem> */}
-
-				
 
 				<NavItem selected={isSelected('configuracoes')} className={`settings`} to={`${url}/configuracoes`} alt='Configurações'>
 					<ListItemIcon>

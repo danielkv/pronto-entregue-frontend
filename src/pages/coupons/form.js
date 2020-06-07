@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import DateFnsUtils from '@date-io/date-fns';
-import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Button, FormLabel, FormControl, FormHelperText, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Grid } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
@@ -25,9 +25,11 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 	const {
 		preview,
 		active,
-		acceptOtherCampaign,
-		chargeCompany,
 		valueType,
+		featured,
+		freeDelivery,
+		
+		onlyFirstPurchases,
 
 		startsAt,
 		expiresAt,
@@ -54,12 +56,15 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 			<Content>
 				<Block>
 					<BlockHeader>
-						<BlockTitle>Campanha</BlockTitle>
+						<BlockTitle>Cupom</BlockTitle>
 					</BlockHeader>
 					<Paper>
 						<FormRow>
 							<FieldControl>
-								<Field component={tField} name='name' label='Nome da campanha' />
+								<FormControl>
+									<Field component={tField} name='name' label='Nome da cupom' />
+									<FormHelperText>Texto que usuário insere durante finalização do pedido</FormHelperText>
+								</FormControl>
 							</FieldControl>
 						</FormRow>
 						<FormRow>
@@ -69,11 +74,56 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 						</FormRow>
 					</Paper>
 				</Block>
+
+				<Block>
+					<BlockHeader>
+						<BlockTitle>Regras</BlockTitle>
+					</BlockHeader>
+					<Paper style={{ padding: 35 }}>
+						<Grid container spacing={6}>
+							<Grid item sm={12}>
+								<FieldControl style={{ justifyContent: 'flex-start', marginBottom: 15 }}>
+									<FormControlLabel
+										labelPlacement='end'
+										control={
+											<Switch size='small' color='primary' checked={onlyFirstPurchases} onChange={()=>{setFieldValue('onlyFirstPurchases', !onlyFirstPurchases)}} value="includeDisabled" />
+										}
+										label="Apenas primeira compra"
+									/>
+								</FieldControl>
+							</Grid>
+							<Grid item sm={6} xl={3}>
+								<FormControl>
+									<Field component={tField} name='maxPurchases' label='Limite geral de uso' />
+									<FormHelperText>Limite geral que esse cupom pode ser utilizado (0 = sem limites)</FormHelperText>
+								</FormControl>
+							</Grid>
+							<Grid item sm={6} xl={3}>
+							
+								<FormControl>
+									<Field type='number' component={tField} name='maxPerUser' label='Máximo por usuário' />
+									<FormHelperText>Limite de vezes que cada usuário pode aplicar esse cupom</FormHelperText>
+								</FormControl>
+							</Grid>
+							<Grid item sm={6} xl={3}>
+								<FormControl>
+									<Field type='number' component={tField} name='minValue' label='Valor mínimo do pedido' />
+									<FormHelperText>0 para não limitar</FormHelperText>
+								</FormControl>
+							</Grid>
+							<Grid item sm={6} xl={3}>
+								<FormControl>
+									<Field type='number' component={tField} name='maxValue' label='Valor máximo do pedido' />
+									<FormHelperText>0 para não limitar</FormHelperText>
+								</FormControl>
+							</Grid>
+						</Grid>
+					</Paper>
+				</Block>
 				
 				{loggedUserRole === 'master' && <RestrictCompaniesBlock />}
 				<RestrictProductsBlock />
 				{loggedUserRole === 'master' && <RestrictUsersBlock />}
-
 			</Content>
 			<SidebarContainer>
 				<Block>
@@ -101,29 +151,28 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 							</FormRow>
 						</BlockSeparator>
 						<BlockSeparator>
-							<FormRow>
-								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
-									<FormControlLabel
-										labelPlacement='start'
-										control={
-											<Switch size='small' color='primary' checked={acceptOtherCampaign} onChange={()=>{setFieldValue('acceptOtherCampaign', !acceptOtherCampaign)}} value="includeDisabled" />
-										}
-										label="Aceita outra campanha"
-									/>
-								</FieldControl>
-							</FormRow>
 							{loggedUserRole === 'master' && (
-								<FormRow>
-									<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
-										<FormControlLabel
-											labelPlacement='start'
-											control={
-												<Switch size='small' color='primary' checked={chargeCompany} onChange={()=>{setFieldValue('chargeCompany', !chargeCompany)}} value="includeDisabled" />
-											}
-											label="Cobrar da(s) empresa(s)"
-										/>
-									</FieldControl>
-								</FormRow>
+								<>
+									<FormRow>
+										<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
+											<FormControlLabel
+												labelPlacement='start'
+												control={
+													<Switch size='small' color='primary' checked={featured} onChange={()=>{setFieldValue('featured', !featured)}} value="includeDisabled" />
+												}
+												label="Cupom em destaque"
+											/>
+										</FieldControl>
+									</FormRow>
+									<FormRow>
+										<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
+											<FormControl>
+												<Field type='number' component={tField} name='taxable' label='Taxável' />
+												<FormHelperText>Porcentagem do valor desse cupom que será taxáda do estabelecimento</FormHelperText>
+											</FormControl>
+										</FieldControl>
+									</FormRow>
+								</>
 							)}
 							<MuiPickersUtilsProvider utils={DateFnsUtils} locale={brLocale}>
 								<FormRow>
@@ -177,6 +226,17 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 							<FormRow>
 								<FieldControl>
 									<Field component={tField} name='value' type='number' label='Valor' />
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
+									<FormControlLabel
+										labelPlacement='start'
+										control={
+											<Switch size='small' color='primary' checked={freeDelivery} onChange={()=>{setFieldValue('freeDelivery', !freeDelivery)}} value="includeDisabled" />
+										}
+										label="Entrega grátis"
+									/>
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

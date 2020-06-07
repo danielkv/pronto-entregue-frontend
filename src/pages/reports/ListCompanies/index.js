@@ -14,6 +14,7 @@ export default function ListCompanies({ report }) {
 						<TableCell>Faturamento último mês</TableCell>
 						<TableCell>Descontos</TableCell>
 						<TableCell>Créditos</TableCell>
+						<TableCell>Cupons</TableCell>
 						<TableCell>Valor taxável</TableCell>
 						<TableCell>Taxa cobrada</TableCell>
 					</TableRow>
@@ -25,7 +26,8 @@ export default function ListCompanies({ report }) {
 							<TableCell>{row.displayName}</TableCell>
 							<TableCell>{numeral(row.revenue).format('$0,0.00')}</TableCell>
 							<TableCell>{numeral(row.companyDiscount).format('$0,0.00')}</TableCell>
-							<TableCell>{numeral(row.credits).format('$0,0.00')}</TableCell>
+							<TableCell>{row.credits ? numeral(row.credits).format('$0,0.00')  : '--'}</TableCell>
+							<TableCell>{row.coupons ? `${numeral(row.coupons).format('$0,0.00')} (${numeral(row.taxableCoupon).format('$0,0.00')})` : '--'}</TableCell>
 							<TableCell>{numeral(row.taxable).format('$0,0.00')}</TableCell>
 							<TableCell>{numeral(row.tax).format('$0,0.00')}</TableCell>
 						</TableRow>

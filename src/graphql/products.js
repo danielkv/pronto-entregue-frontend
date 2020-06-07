@@ -104,7 +104,7 @@ export const SEARCH_PRODUCTS = gql`
 			image
 			price
 			sku
-			countCampaigns (notIn: $campaignsNotIn)
+			countCoupons (notIn: $campaignsNotIn)
 			company {
 				id
 				name

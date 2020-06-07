@@ -4,6 +4,8 @@ export const GET_COMPANIES_REPORT = gql`
 query GetCompaniesReport ($companiesIds: [ID], $filter: JSON) {
 	companiesReport(companiesIds: $companiesIds, filter: $filter) {
 		credits
+		coupons
+		taxableCoupon
 		companyDiscount
 		totalDiscount
 		tax
@@ -15,6 +17,8 @@ query GetCompaniesReport ($companiesIds: [ID], $filter: JSON) {
 			
 			displayName
 			credits
+			coupons
+			taxableCoupon
 			companyDiscount
 			totalDiscount
 			tax
@@ -39,6 +43,14 @@ query GetCompaniesReport ($companiesIds: [ID], $filter: JSON) {
 					id
 					value
 				}
+				coupon {
+					id
+					value
+					valueType
+					freeDelivery
+				}
+				couponValue
+				taxableCoupon
 			}
 		}
 	}

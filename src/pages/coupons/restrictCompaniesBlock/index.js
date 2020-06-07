@@ -12,6 +12,8 @@ import { Block, BlockHeader, BlockTitle, FormRow, FieldControl } from '../../../
 
 import { SEARCH_COMPANIES } from '../../../graphql/companies';
 
+let searchTimeout = null;
+
 export default function RestrictProductsBlock() {
 	const { values: { companies }, setFieldValue, isSubmitting } = useFormikContext();
 	const [companiesFound, setCompaniesFound] = useState([]);
@@ -31,9 +33,16 @@ export default function RestrictProductsBlock() {
 	}
 
 	async function handleSearch (search) {
-		const { data: { searchCompanies: searchResult } } = await searchCompanies({ variables: { search } });
-
-		setCompaniesFound(searchResult);
+		if (searchTimeout) clearTimeout(searchTimeout);
+		if (!search) return setCompaniesFound([]);
+		
+		searchTimeout = setTimeout(()=>{
+			searchCompanies({ variables: { search } })
+				.then(({ data: { searchCompanies: searchResult } })=>{
+					setCompaniesFound(searchResult);
+					searchTimeout = null;
+				})
+		}, 1000)
 	}
 
 	return (
@@ -61,7 +70,7 @@ export default function RestrictProductsBlock() {
 										<TextField label='Buscar empresa'  {...getInputProps()} disabled={isSubmitting} />
 										{isOpen && (
 											<List {...getMenuProps()} className="dropdown">
-												{loadingCompanies && <div style={{ padding: 20 }}><CircularProgress /></div>}
+												{Boolean(loadingCompanies) && <div style={{ padding: 20 }}><CircularProgress /></div>}
 												{!companiesFound.length
 													? <ListItem>Nenhuma empresa encontrada</ListItem>
 													: companiesFound.map((company, index) => (
@@ -72,7 +81,7 @@ export default function RestrictProductsBlock() {
 															{...getItemProps({ key: company.id, index, item: company })}
 														>
 															<ListItemIcon><Icon path={mdiStore} color='#707070' size={1} /></ListItemIcon>
-															<ListItemText>{company.name}</ListItemText>
+															<ListItemText>{company.displayName}</ListItemText>
 														</ListItem>
 													))}
 											</List>
@@ -96,7 +105,7 @@ export default function RestrictProductsBlock() {
 					</FieldControl>
 				</FormRow>
 			</Paper>
-			<FormHelperText>A campanha ficará ativa para as empresas selecionadas. Caso nenhuma for selecionada, ficará ativa para todas.</FormHelperText>
+			<FormHelperText>O cupom ficará ativo para as empresas selecionadas. Caso nenhuma for selecionada, ficará ativo para todas.</FormHelperText>
 		</Block>
 	)
 }
