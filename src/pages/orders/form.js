@@ -23,7 +23,7 @@ import { SEARCH_USERS } from '../../graphql/users';
 
 export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
 	// carregamento inicial
-	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory } = values;
+	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory, coupon } = values;
 	const loggedUserRole = useLoggedUserRole();
 	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
 	const inputDisabled = !canChangeStatus || isSubmitting;
@@ -208,6 +208,11 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							{creditHistory && <FormRow>
 								<FieldControl>
 									<Chip color='secondary' label={`Créditos: ${numeral(Math.abs(creditHistory.value)).format('$0,0.00')}`} />
+								</FieldControl>
+							</FormRow>}
+							{coupon && <FormRow>
+								<FieldControl>
+									<Chip color='secondary' label={`Cupom: ${coupon.name}`} />
 								</FieldControl>
 							</FormRow>}
 							<FormRow>

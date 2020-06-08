@@ -37,6 +37,7 @@ export function extractOrder(order, overwrite={}) {
 		address: extractAddress(order.address),
 		paymentMethod: order.paymentMethod,
 		creditHistory: order.creditHistory,
+		coupon: order.coupon,
 		products: order.products.map(product=>{
 			return {
 				...product.productRelated,

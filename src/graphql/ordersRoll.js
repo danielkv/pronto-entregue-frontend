@@ -64,6 +64,10 @@ export const ORDER_CRATED_FRAGMENT = gql`
 			history
 			value
 		}
+		coupon {
+			id
+			value
+		}
 		deliveryPrice
 		deliveryTime
 		price
