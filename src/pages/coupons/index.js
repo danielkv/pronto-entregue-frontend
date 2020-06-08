@@ -10,6 +10,7 @@ import numeral from 'numeral';
 
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
+import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
@@ -24,6 +25,7 @@ const initialFilter = {
 function Page () {
 	setPageTitle('Produtos');
 	const { url } = useRouteMatch();
+	const selectedCompany = useSelectedCompany();
 
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
@@ -55,7 +57,7 @@ function Page () {
 		called,
 	} = useQuery(GET_COUPONS, {
 		variables: {
-			filter,
+			filter: { ...filter, companyId: selectedCompany },
 			pagination
 		}
 	});
