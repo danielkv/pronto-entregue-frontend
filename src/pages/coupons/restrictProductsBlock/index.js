@@ -15,6 +15,8 @@ import { useLoggedUserRole } from '../../../controller/hooks';
 
 import { SEARCH_PRODUCTS } from '../../../graphql/products';
 
+let searchTimeout = null;
+
 export default function RestrictProductsBlock() {
 	const { values: { products, companies }, setFieldValue, isSubmitting } = useFormikContext();
 	const [productsFound, setProductsFound] = useState([]);
@@ -40,16 +42,22 @@ export default function RestrictProductsBlock() {
 	}
 
 	async function handleSearch (search) {
-		const { data: { searchProducts: searchResult } } = await searchProducts({ variables: { search } });
+		if (searchTimeout) clearTimeout(searchTimeout);
+		if (!search) return setProductsFound([]);
 
-		setProductsFound(searchResult);
+		searchTimeout = setTimeout(()=>{
+			searchProducts({ variables: { search } })
+				.then(({ data: { searchProducts: searchResult } })=> {
+					setProductsFound(searchResult);
+				})
+		}, 1000)
 	}
 
 	return (
 		<Block>
 			<BlockHeader>
 				<BlockTitle>Restringir Produtos {!!products.length && `(${products.length})`}</BlockTitle>
-				{loggedUserRole === 'master' && !!companies.length && <FormHelperText>Apenas serão listados produtos das emrpesas selecionadas produto</FormHelperText>}
+				{loggedUserRole === 'master' && !!companies.length && <FormHelperText>A busca será limitada aos produtos das empresas selecionadas</FormHelperText>}
 			</BlockHeader>
 			<Paper>
 				<FormRow>
@@ -114,7 +122,7 @@ export default function RestrictProductsBlock() {
 					</FieldControl>
 				</FormRow>
 			</Paper>
-			<FormHelperText>A campanha ficará ativa para os produtos selecionados. Caso nenhum for selecionado, ficará ativa para todos.</FormHelperText>
+			<FormHelperText>O cupom ficará ativo para os produtos selecionados. Caso nenhum for selecionado, ficará ativo para todos.</FormHelperText>
 		</Block>
 	)
 }

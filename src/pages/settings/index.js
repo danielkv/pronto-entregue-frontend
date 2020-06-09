@@ -17,7 +17,7 @@ export default function Settings(props) {
 	const { path, url } = useRouteMatch();
 
 	function isSelected(location) {
-		const currentLocation = props.location.pathname.substr(1).split('/')[1];
+		const currentLocation = props.location.pathname.substr(1).split('/')[2];
 		return currentLocation === location ? true : false;
 	}
 	

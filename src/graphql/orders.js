@@ -82,6 +82,11 @@ export const ORDER_FRAGMENT = gql`
 			history
 			value
 		}
+		coupon {
+			id
+			name
+			value
+		}
 
 		address {
 			id

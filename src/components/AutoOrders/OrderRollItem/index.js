@@ -99,7 +99,7 @@ export default function OrderRollItem({ item: order }) {
 												<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(orderTotal).format('$0,0.00')}</Typography></td>
 											</tr>
 											<tr>
-												<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'}</Typography></td>
+												<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'} {order.coupon && '(Cupom)'}</Typography></td>
 												<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(order.discount).format('$0,0.00')}</Typography></td>
 											</tr>
 										</>

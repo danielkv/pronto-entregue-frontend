@@ -6,9 +6,6 @@ import { Container, HeaderArea, NavigationArea, Main } from '../layout/component
 
 import Header from '../layout/header';
 import Navigation from '../layout/navigation';
-/* import Campaigns from '../pages/campaigns';
-import EditCampaign from '../pages/campaigns/edit_campaign';
-import NewCampaign from '../pages/campaigns/new_campaign'; */
 import AllOrders from '../pages/allOrders';
 import Categories from '../pages/categories';
 import EditCategory from '../pages/categories/edit_category';
@@ -19,6 +16,9 @@ import NewCompany from '../pages/companies/new_company';
 import CompanyTypes from '../pages/companyTypes';
 import EditType from '../pages/companyTypes/edit_type';
 import NewType from '../pages/companyTypes/new_type';
+import Coupons from '../pages/coupons';
+import EditCoupon from '../pages/coupons/edit_coupon';
+import NewCoupon from '../pages/coupons/new_coupon';
 import Dashboard from '../pages/dashboard';
 import Orders from '../pages/orders';
 import EditOrder from '../pages/orders/edit_order';
@@ -31,6 +31,7 @@ import Products from '../pages/products';
 import EditProduct from '../pages/products/edit_product';
 import NewProduct from '../pages/products/new_product';
 import Ratings from '../pages/ratings';
+import Reports from '../pages/reports';
 import Settings from '../pages/settings';
 
 export default function DashboardPages() {
@@ -60,9 +61,9 @@ export default function DashboardPages() {
 					<Route path={`${path}/categorias/nova`} component={NewCategory} />
 					<Route path={`${path}/categorias/alterar/:id`} component={EditCategory} />
 						
-					{/* <Route exact path={`${path}/campanhas`} component={Campaigns} />
-					<Route path={`${path}/campanhas/nova`} component={NewCampaign} />
-					<Route path={`${path}/campanhas/alterar/:id`} component={EditCampaign} /> */}
+					<Route exact path={`${path}/cupons`} component={Coupons} />
+					<Route path={`${path}/cupons/nova`} component={NewCoupon} />
+					<Route path={`${path}/cupons/alterar/:id`} component={EditCoupon} />
 						
 					<Route exact path={`${path}/usuarios`} component={Users} />
 					<Route path={`${path}/pessoas/alterar/:id`} component={EditPeople} />
@@ -75,6 +76,7 @@ export default function DashboardPages() {
 
 					<ProtectedRoute exact role='master' path={`${path}/todos-pedidos`} component={AllOrders} />
 					<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
+					<ProtectedRoute role='master' path={`${path}/relatorios`} component={Reports} />
 					<ProtectedRoute role='master' path={`${path}/empresas/novo`} component={NewCompany} />
 					<ProtectedRoute role='master' path={`${path}/empresas/alterar/:id`} component={EditCompany} />
 

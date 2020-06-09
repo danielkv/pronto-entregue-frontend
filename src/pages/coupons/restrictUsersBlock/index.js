@@ -12,6 +12,8 @@ import { Block, BlockHeader, BlockTitle, FormRow, FieldControl } from '../../../
 
 import { SEARCH_USERS } from '../../../graphql/users';
 
+let searchTimeout = null;
+
 export default function RestrictProductsBlock() {
 	const { values: { users }, setFieldValue, isSubmitting } = useFormikContext();
 	const [usersFound, setUsersFound] = useState([]);
@@ -30,10 +32,16 @@ export default function RestrictProductsBlock() {
 		setFieldValue('users', newUsers);
 	}
 
-	async function handleSearch (search) {
-		const { data: { searchUsers: searchResult } } = await searchUsers({ variables: { search } });
+	function handleSearch (search) {
+		if (searchTimeout) clearTimeout(searchTimeout);
+		if (!search) return setUsersFound([]);
 
-		setUsersFound(searchResult);
+		searchTimeout = setTimeout(()=> {
+			searchUsers({ variables: { search } })
+				.then(({ data: { searchUsers: searchResult } }) => {
+					setUsersFound(searchResult);
+				})
+		}, 1000)
 	}
 
 	return (
@@ -97,7 +105,7 @@ export default function RestrictProductsBlock() {
 					</FieldControl>
 				</FormRow>
 			</Paper>
-			<FormHelperText>A campanha ficará ativa para os usuários selecionados. Caso nenhum for selecionado, ficará ativa para todos.</FormHelperText>
+			<FormHelperText>O cupom ficará ativo para os usuários selecionados. Caso nenhum for selecionado, ficará ativa para todos.</FormHelperText>
 		</Block>
 	)
 }
