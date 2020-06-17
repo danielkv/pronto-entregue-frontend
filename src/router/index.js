@@ -5,7 +5,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
 
-import { ThemeProvider as StyledThemProvider } from 'styled-components'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
 import theme from '../layout/theme';
 import App from '../pages/app';
@@ -19,7 +19,7 @@ import 'moment/locale/pt-br';
 const Router = ()  => {
 	return (
 		<ThemeProvider theme={theme}>
-			<StyledThemProvider theme={theme}>
+			<StyledThemeProvider theme={theme}>
 				<SnackbarProvider maxSnack={8}>
 					<BrowserRouter>
 						<Switch>
@@ -31,7 +31,7 @@ const Router = ()  => {
 						</Switch>
 					</BrowserRouter>
 				</SnackbarProvider>
-			</StyledThemProvider>
+			</StyledThemeProvider>
 		</ThemeProvider>
 	);
 }

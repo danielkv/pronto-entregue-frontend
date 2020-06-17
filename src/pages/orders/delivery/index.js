@@ -111,6 +111,7 @@ export default function Delivery() {
 								}}
 							>
 								<MenuItem value='delivery'>Entrega</MenuItem>
+								<MenuItem value='peDelivery'>Entrega (Pronto, entregue!)</MenuItem>
 								<MenuItem value='takeout'>Retirada no local</MenuItem>
 							</Select>
 							{!!errors.type && <FormHelperText error>{errors.type}</FormHelperText>}
