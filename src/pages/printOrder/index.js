@@ -17,8 +17,8 @@ export default function PrintOrder() {
 
 	useEffect(()=>{
 		if (!order) return;
-		//window.print();
-		//window.close();
+		window.print();
+		window.close();
 	}, [order])
 
 	if (loadingGetData) return <LoadingBlock />
