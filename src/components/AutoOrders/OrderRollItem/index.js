@@ -2,7 +2,7 @@ import React, { useState, useRef, Fragment } from 'react'
 
 import { useMutation } from '@apollo/react-hooks'
 import { Chip, Typography, Paper, IconButton, useTheme, Menu, MenuItem, ListItemIcon, ListItemText, CircularProgress, Divider } from '@material-ui/core'
-import { mdiDotsVertical } from '@mdi/js'
+import { mdiDotsVertical, mdiPrinter } from '@mdi/js'
 import Icon from '@mdi/react'
 import moment from 'moment'
 import { useSnackbar } from 'notistack'
@@ -122,6 +122,9 @@ export default function OrderRollItem({ item: order }) {
 				</div>
 			</div>
 			<div style={{ position: 'absolute', right: 10, top: 10 }}>
+				<IconButton onClick={()=>window.open(`/imprimir/${order.id}`)}>
+					<Icon path={mdiPrinter} size={.8} color='#999' />
+				</IconButton>
 				{loadingUpdate
 					? <CircularProgress color='primary' />
 					: (

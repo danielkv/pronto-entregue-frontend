@@ -16,7 +16,9 @@ export default function PrintOrder() {
 	const { data: { order = null } = {}, loading: loadingGetData, error } = useQuery(LOAD_PRINT_ORDER, { variables: { id: orderId } });
 
 	useEffect(()=>{
-		if (order) window.print();
+		if (!order) return;
+		//window.print();
+		//window.close();
 	}, [order])
 
 	if (loadingGetData) return <LoadingBlock />
@@ -25,7 +27,7 @@ export default function PrintOrder() {
 	const orderTotal = order.price + order.discount;
 
 	return (
-		<div style={{ width: '8cm', boxSizing: 'border-box', backgroundColor: 'white', fontSize: '10pt', padding: '1.5cm .5cm 1.5cm .5cm' }}>
+		<div style={{ width: '8cm', boxSizing: 'border-box', backgroundColor: 'white', fontSize: '10pt', padding: '1.5cm .5cm 1.5cm .5cm', color: '#000' }}>
 			<div style={{ textAlign: 'center' }}>
 				<div style={{ fontSize: '1.1em', fontWeight: 'bold' }}>{order.company.displayName}</div>
 				<div><b>Pedido #{order.id}</b> - {moment(order.createdAt).format('DD/MM HH:mm')}</div>
@@ -36,11 +38,19 @@ export default function PrintOrder() {
 				<div>{order.user.fullName}</div>
 				{Boolean(order.user.phones && order.user.phones.length) && <div>{order.user.phones[0].value}</div>}
 				<div>{order.user.email}</div>
-				<div>{`${order.address.street}, ${order.address.number}`}</div>
-				{Boolean(order.address.complement) && <div>{order.address.complement}</div>}
-				{Boolean(order.address.reference) && <div>{order.address.reference}</div>}
-				<div>{order.address.district}</div>
-				<div>{`${order.address.city}, ${order.address.state}`}</div>
+			</div>
+			<div style={{ marginTop: '.2cm' }}>
+				{order.type === 'takeout'
+					? <div>Retirada no balcão</div>
+					: (
+						<>
+							<div>{`${order.address.street}, ${order.address.number}`}</div>
+							{Boolean(order.address.complement) && <div>{order.address.complement}</div>}
+							{Boolean(order.address.reference) && <div>{order.address.reference}</div>}
+							<div>{order.address.district}</div>
+							{Boolean(order.address.city && order.address.state) && <div>{`${order.address.city}, ${order.address.state}`}</div>}
+						</>
+					)}
 			</div>
 			<div style={{ marginTop: '.3cm' }}>
 				<div style={{ fontSize: '1.1em', fontWeight: 'bold', marginBottom: '.2cm' }}>Produtos:</div>
