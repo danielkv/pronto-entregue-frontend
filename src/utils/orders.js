@@ -129,7 +129,7 @@ export const sanitizeOrder = (data) => {
 		})
 	}
 
-	if (data.type === 'delivery') order.address = sanitizeAddress(data.address);
+	if (data.type !== 'takeout') order.address = sanitizeAddress(data.address);
 
 	return order;
 }
@@ -180,5 +180,4 @@ export function checkZipcode (value) {
 		return true;
 
 	return  /^([\d]{5})-?([\d]{3})$/.test(value);
-		
 }

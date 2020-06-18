@@ -159,8 +159,8 @@ export const ORDER_FRAGMENT = gql`
 `;
 
 export const CHECK_DELIVERY_LOCATION = gql`
-	mutation CheckDeliveryLocation ($companyId: ID!, $location: GeoPoint!) {
-		checkDeliveryLocation(companyId: $companyId, location: $location) {
+	mutation CheckDeliveryLocation ($companyId: ID!, $location: GeoPoint!, $type: String!) {
+		checkDeliveryLocation(companyId: $companyId, location: $location, type: $type) {
 			id
 			name
 			center

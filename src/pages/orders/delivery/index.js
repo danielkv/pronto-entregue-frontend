@@ -71,9 +71,9 @@ export default function Delivery() {
 
 		const { location = null } = address;
 
-		if (type === 'delivery' && location && location[0] !== '' && location[1] !== '') {
+		if (type !== 'takeout' && location && location[0] !== '' && location[1] !== '') {
 			timeOutDeliveryPrice = setTimeout(()=>{
-				checkDeliveryLocation({ variables: { location: address.location } })
+				checkDeliveryLocation({ variables: { location, type } })
 					.then(({ data: { checkDeliveryLocation: area } }) => {
 						setFieldValue('deliveryPrice', area.price);
 						setFieldValue('deliveryOk', true);
@@ -117,7 +117,7 @@ export default function Delivery() {
 							{!!errors.type && <FormHelperText error>{errors.type}</FormHelperText>}
 						</FormControl>
 					</FieldControl>
-					{type === 'delivery' &&
+					{type !== 'takeout' &&
 						<FieldControl>
 							<FormControl>
 								<InputLabel htmlFor="user_addresses">Endereços cadastrados</InputLabel>
@@ -138,7 +138,7 @@ export default function Delivery() {
 							</FormControl>
 						</FieldControl>}
 				</FormRow>
-				{type === 'delivery' &&
+				{type !== 'takeout' &&
 						<>
 							<FormRow>
 								<FieldControl style={{ flex: .3 }}>
