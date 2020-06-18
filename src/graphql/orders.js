@@ -196,6 +196,23 @@ export const LOAD_ORDER = gql`
 	${ORDER_FRAGMENT}
 `;
 
+export const LOAD_PRINT_ORDER = gql`
+	query LoadPrintOrder ($id:ID!, $filter:Filter) {
+		order (id:$id) {
+			...OrderFields
+			company {
+				id
+				displayName
+			}
+			paymentMethod {
+				id
+				displayName
+			}
+		}
+	}
+	${ORDER_FRAGMENT}
+`;
+
 export const GET_COMPANY_ORDERS = gql`
 	query GetCompanyOrders ($id:ID!, $filter: JSON, $pagination: Pagination) {
 		company(id: $id) {
