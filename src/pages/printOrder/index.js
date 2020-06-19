@@ -62,7 +62,7 @@ export default function PrintOrder() {
 									{product.quantity}x {product.name}
 									{Boolean(product.optionsGroups.length) && <div>
 										{product.optionsGroups.map(group => (
-											<div style={{ fontSize: '.9em' }} key={group.id}><b>{group.name}:</b> {group.options.map(option => option.name).join(', ')}</div>
+											<div style={{ marginLeft: '.1cm', fontSize: '.9em' }} key={group.id}><b>{group.name}:</b> {group.options.map(option => option.name).join(', ')}</div>
 										))}
 									</div>}
 									{Boolean(product.message) && <div>Obs: {product.message}</div>}
