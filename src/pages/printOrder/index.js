@@ -59,15 +59,15 @@ export default function PrintOrder() {
 						{order.products.map((product, index) => (
 							<tr key={index}>
 								<td>
-									{product.name}
+									{product.quantity}x {product.name}
 									{Boolean(product.optionsGroups.length) && <div>
 										{product.optionsGroups.map(group => (
-											<div style={{ marginLeft: '.1cm', fontSize: '.9em' }} key={group.id}><b>{group.name}:</b> {group.options.map(option => option.name).join(', ')}</div>
+											<div style={{ fontSize: '.9em' }} key={group.id}><b>{group.name}:</b> {group.options.map(option => option.name).join(', ')}</div>
 										))}
 									</div>}
 									{Boolean(product.message) && <div>Obs: {product.message}</div>}
 								</td>
-								<td style={{ verticalAlign: 'top', fontSize: '.9em', textAlign: 'right' }}>{numeral(product.price).format('$0,0.00')}</td>
+								<td style={{ verticalAlign: 'top', fontSize: '.9em', textAlign: 'right' }}>{numeral(product.price).format('0,0.00')}</td>
 							</tr>
 						))}
 					</table>
