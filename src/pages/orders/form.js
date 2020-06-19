@@ -20,6 +20,8 @@ import Products from './products';
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { SEARCH_USERS } from '../../graphql/users';
 
+let timeoutSearh = null;
+
 export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
 	// carregamento inicial
 	const { user, price, products, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory, coupon } = values;
@@ -54,7 +56,12 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 	} = useQuery(GET_COMPANY_PAYMENT_METHODS, { variables: { id: selectedCompany } });
 
 	const handleSearchCustomer = (value) => {
-		searchUsers({ variables: { search: value } });
+		if (timeoutSearh) clearTimeout(timeoutSearh);
+		if (!value) return;
+		
+		setTimeout(()=>{
+			searchUsers({ variables: { search: value } });
+		}, 1000)
 	}
 
 	useEffect(()=>{

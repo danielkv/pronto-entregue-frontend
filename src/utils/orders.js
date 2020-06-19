@@ -1,7 +1,26 @@
+import React from 'react';
+
+import { mdiRacingHelmet } from '@mdi/js';
+import Icon from '@mdi/react';
 import { uniqueId } from 'lodash';
 
 import { createEmptyAddress, sanitizeAddress, extractAddress } from './address';
 import { calculateProductPrice } from './products';
+
+export function getDeliveryTypeText(order) {
+	switch (order.type) {
+		case 'takeout':
+			return 'Retirada no balcão';
+		case 'peDelivery':
+			return <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+				<div>{`${order.address.street}, ${order.address.number}`}</div>
+				<div style={{ marginLeft: 5 }}><Icon title='Entrega pronto, entregue!' path={mdiRacingHelmet} size={.8} color='#999' /></div>
+			</div>;
+		case 'delivery':
+		default:
+			return `${order.address.street}, ${order.address.number}`
+	}
+}
 
 export function createEmptyOrder(overwrite={}) {
 	return {
@@ -46,6 +65,7 @@ export function extractOrder(order, overwrite={}) {
 				price: product.price,
 				name: product.name,
 				quantity: product.quantity,
+				message: product.message,
 				action: 'editable',
 				productRelated: { id: product.productRelated.id },
 

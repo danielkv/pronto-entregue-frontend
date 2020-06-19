@@ -29,7 +29,7 @@ export default function OrderRollItem({ item: order }) {
 
 	const [changeOrderStatus, { loading: loadingUpdate }] = useMutation(CHANGE_ORDER_STATUS, { variables: { id: order.id } })
 
-	const handleUpdateStatus = (newStatus) => () => {
+	function handleUpdateStatus (newStatus) {
 		changeOrderStatus({ variables: { newStatus: newStatus.slug } })
 			.then(()=>{
 				enqueueSnackbar(`Status do pedido #${order.id} alterado para ${newStatus.label}`, { variant: 'success' });
@@ -50,7 +50,7 @@ export default function OrderRollItem({ item: order }) {
 				open={menuOpen}
 				onClose={handleCloseMenu}
 				availableStatus={OrderAvailableStatus}
-				anchorEl={anchorEl}
+				anchorEl={anchorEl.current}
 				onClick={handleUpdateStatus}
 				selected={order.status}
 			/>

@@ -8,6 +8,7 @@ import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral'
 
+import OrderStatusMenu from '../../components/OrderStatusMenu';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
@@ -15,8 +16,9 @@ import { getOrderStatusIcon, availableStatus } from '../../controller/orderStatu
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
+import { getDeliveryTypeText } from '../../utils/orders';
 
-import { GET_COMPANY_ORDERS, UPDATE_ORDER } from '../../graphql/orders';
+import { GET_COMPANY_ORDERS, UPDATE_ORDER, CHANGE_ORDER_STATUS } from '../../graphql/orders';
 
 const initialFilter = {
 	search: '',
@@ -63,7 +65,7 @@ function Page ({ match: { url } }) {
 			pagination,
 		}
 	});
-	const [updateOrder, { loading: loadingUpdateOrder, error: updateOrderError }] = useMutation(UPDATE_ORDER)
+	const [changeOrderStatus, { loading: loadingUpdateOrder, error: updateOrderError }] = useMutation(CHANGE_ORDER_STATUS)
 
 	function handleCloseMenu() {
 		setAnchorEl(null);
@@ -74,8 +76,8 @@ function Page ({ match: { url } }) {
 		const orderId = e.currentTarget.getAttribute('data-order-id')
 		setMenuOrder(orders.find(row => row.id === orderId));
 	}
-	const handleUpdateStatus = (newStatus) => () => {
-		updateOrder({ variables: { id: menuOrder.id, data: { status: newStatus.slug } } });
+	const handleUpdateStatus = (newStatus) => {
+		changeOrderStatus({ variables: { id: menuOrder.id, newStatus: newStatus.slug } });
 		handleCloseMenu();
 	}
 
@@ -84,7 +86,15 @@ function Page ({ match: { url } }) {
 
 	return (
 		<Fragment>
-			<Menu
+			<OrderStatusMenu
+				open={Boolean(anchorEl)}
+				onClose={handleCloseMenu}
+				availableStatus={availableStatus(menuOrder)}
+				anchorEl={anchorEl}
+				onClick={handleUpdateStatus}
+				selected={menuOrder.status}
+			/>
+			{/* <Menu
 				id="simple-menu"
 				anchorEl={anchorEl}
 				keepMounted
@@ -99,7 +109,7 @@ function Page ({ match: { url } }) {
 						</MenuItem>
 					)
 				})}
-			</Menu>
+			</Menu> */}
 			<Content>
 				{loadingOrders ? <LoadingBlock /> :
 					<Block>
@@ -143,7 +153,7 @@ function Page ({ match: { url } }) {
 												<TableCell><Typography variant='body2'>{displayDate}</Typography></TableCell>
 												<TableCell><Typography variant='caption'>{`#${row.id}`}</Typography></TableCell>
 												<TableCell><Typography variant='body2'>{row.user.fullName}</Typography></TableCell>
-												<TableCell><Typography variant='body2'>{row.type === 'delivery' ? `${row.address.street}, ${row.address.number}` : 'Retirada no local'}</Typography></TableCell>
+												<TableCell>{getDeliveryTypeText(row)}</TableCell>
 												<TableCell><Typography variant='body2'>{numeral(row.price).format('$0,0.00')}</Typography></TableCell>
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row)}</TableCell>

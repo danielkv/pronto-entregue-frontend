@@ -208,7 +208,10 @@ export default function ProductModal ({ prod, open, onClose, onSave, onCancel })
 										value={product.message}
 										multiline
 										onChange={(e)=>{
-											setProduct({ ...product, message: e.target.value });
+											let newProd = { ...product };
+											newProd.message = e.target.value;
+											if (newProd.action === 'editable') newProd.action = 'update';
+											setProduct(newProd);
 										}}
 									/>
 								</FieldControl>

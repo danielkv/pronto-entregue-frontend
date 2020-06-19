@@ -8,19 +8,22 @@ import { canChangeStatus } from '../../controller/orderStatus';
 export default function OrderStatusMenu({ availableStatus, anchorEl, open, onClose, onClick, selected }) {
 	const loggedUserRole = useLoggedUserRole();
 	
+	const handleOnClick = (status) => () => {
+		onClick(status)
+	}
 
 	return (
 		<Menu
-			id="simple-menu"
-			anchorEl={anchorEl.current}
+			id="statusMenu"
+			anchorEl={anchorEl}
 			keepMounted
 			open={open}
 			onClose={onClose}
 		>
 			{availableStatus.map(status => {
-				const canChangeOrderStatus = loggedUserRole === 'master' || canChangeStatus(availableStatus, selected, status.slug);
+				const canChangeOrderStatus = loggedUserRole === 'master' ||  canChangeStatus(availableStatus, selected, status.slug);
 				return (
-					<MenuItem disabled={!canChangeOrderStatus} key={status.slug} onClick={onClick(status)} selected={selected===status.slug} dense>
+					<MenuItem disabled={!canChangeOrderStatus} key={status.slug} onClick={handleOnClick(status)} selected={selected===status.slug} dense>
 						<ListItemIcon>{status.Icon}</ListItemIcon>
 						<ListItemText>{status.label}</ListItemText>
 					</MenuItem>
