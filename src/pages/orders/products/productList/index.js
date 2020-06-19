@@ -9,7 +9,7 @@ import numeral from 'numeral';
 import { BlockSeparator } from '../../../../layout/components';
 
 import { useLoggedUserRole } from '../../../../controller/hooks';
-import { calculateProductPrice } from '../../../../utils/products';
+import { calculateProductPrice, filterProductSelectedOptions } from '../../../../utils/products';
 
 export default function ProductList({ setEditingProductIndex }) {
 	const { values: { products }, isSubmitting, setFieldValue, initialValues } = useFormikContext();
@@ -35,7 +35,7 @@ export default function ProductList({ setEditingProductIndex }) {
 							<TableBody>
 								{products.filter(row=>row.action !== 'remove').map((row, index) => {
 									const productIndex = products.findIndex(r=>r.id===row.id);
-									const productPrice = calculateProductPrice(row);
+									const productPrice = calculateProductPrice(filterProductSelectedOptions(row));
 									const selectedOptions = (row.optionsGroups.filter(group=>{
 										return group.options.some(option=>option.selected);
 									})

@@ -7,6 +7,8 @@ import numeral from 'numeral';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { getErrors } from '../../utils/error';
+import { extractOrder } from '../../utils/orders';
+import { calculateProductPrice } from '../../utils/products';
 
 import { LOAD_PRINT_ORDER } from '../../graphql/orders';
 
@@ -25,6 +27,8 @@ export default function PrintOrder() {
 	if (error) return <ErrorBlock error={getErrors(error)} />
 
 	const orderTotal = order.price + order.discount;
+
+	//const extractedOrder = extractOrder(order);
 
 	return (
 		<div style={{ width: '8cm', boxSizing: 'border-box', backgroundColor: 'white', fontSize: '12pt', padding: '1.5cm 0', color: '#000' }}>
@@ -67,7 +71,7 @@ export default function PrintOrder() {
 									</div>}
 									{Boolean(product.message) && <div>Obs: {product.message}</div>}
 								</td>
-								<td style={{ verticalAlign: 'top', fontSize: '.9em', textAlign: 'right' }}>{numeral(product.price).format('0,0.00')}</td>
+								<td style={{ verticalAlign: 'top', fontSize: '.9em', textAlign: 'right' }}>{numeral(calculateProductPrice(product)).format('0,0.00')}</td>
 							</tr>
 						))}
 					</table>

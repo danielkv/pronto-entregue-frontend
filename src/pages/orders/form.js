@@ -15,6 +15,7 @@ import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
 import { availableStatus } from '../../controller/orderStatus'
 import { errorObjectsToArray } from '../../utils/error';
 import { calculateOrderPrice } from '../../utils/orders';
+import { filterProductSelectedOptions } from '../../utils/products';
 import Delivery from './delivery';
 import Products from './products';
 
@@ -59,7 +60,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 	}
 
 	useEffect(()=>{
-		setFieldValue('price', calculateOrderPrice(products, deliveryPrice + paymentFee - discount))
+		setFieldValue('price', calculateOrderPrice(products.map(prod=>filterProductSelectedOptions(prod)), deliveryPrice + paymentFee - discount))
 	}, [products, deliveryPrice, paymentFee, discount, setFieldValue]);
 
 	return (

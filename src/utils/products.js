@@ -49,24 +49,38 @@ export function createEmptyOption(overwrite={}) {
 	}
 }
 
+export function calculateOptionsGroupPrice(group) {
+	let optionsPrice = 0;
+	if (group.priceType === 'sum') {
+		// case group should SUM all selected options' prices
+		optionsPrice = group.options.reduce((totalOption, option)=> {
+			return totalOption + option.price;
+		}, 0);
+	} else if (group.priceType === 'higher') {
+		// case group should consider only the highest selected options' prices
+		if (group.options.length) {
+			group.options.sort((a, b) => a.price > b.price ? -1 : 1);
+			optionsPrice = group.options[0].price;
+		}
+	}
+	return optionsPrice;
+}
+
 export function calculateProductPrice(product) {
 	return product.optionsGroups.reduce((totalGroup, group)=>{
-		let optionsPrice = 0;
-		if (group.priceType === 'sum') {
-			// case group should SUM all selected options' prices
-			optionsPrice = group.options.reduce((totalOption, option)=> {
-				return (option.selected) ?  totalOption + option.price : totalOption;
-			}, 0);
-		} else if (group.priceType === 'higher') {
-			// case group should consider only the highest selected options' prices
-			const options = group.options.filter(o => o.selected);
-			if (options.length) {
-				options.sort((a, b) => a.price > b.price ? -1 : 1);
-				optionsPrice = options[0].price;
-			}
-		}
-		return totalGroup + optionsPrice;
+		const groupPrice = calculateOptionsGroupPrice(group)
+		return totalGroup + groupPrice;
 	}, product.price) * product.quantity;
+}
+
+export function filterProductSelectedOptions(product) {
+	return {
+		...product,
+		optionsGroups: product.optionsGroups.filter(group=>group.options.some(option=>option.selected)).map(group =>({
+			...group,
+			options: group.options.filter(option=>option.selected)
+		}))
+	}
 }
 
 export function extractProduct(product) {
