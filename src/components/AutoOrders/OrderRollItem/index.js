@@ -1,7 +1,7 @@
 import React, { useState, useRef, Fragment } from 'react'
 
 import { useMutation } from '@apollo/react-hooks'
-import { Chip, Typography, Paper, IconButton, useTheme, Menu, MenuItem, ListItemIcon, ListItemText, CircularProgress, Divider } from '@material-ui/core'
+import { Chip, Typography, Paper, IconButton, useTheme, CircularProgress, Divider } from '@material-ui/core'
 import { mdiDotsVertical } from '@mdi/js'
 import Icon from '@mdi/react'
 import moment from 'moment'
@@ -10,52 +10,51 @@ import numeral from 'numeral'
 
 import { getOrderStatusIcon, getOrderStatusLabel, availableStatus } from '../../../controller/orderStatus'
 import { getErrors } from '../../../utils/error'
+import OrderStatusMenu from '../../OrderStatusMenu'
 import OrderRollProduct from './OrderRollProduct'
 import OrderType from './OrderType'
 
-import { UPDATE_ORDER } from '../../../graphql/orders'
+import { CHANGE_ORDER_STATUS } from '../../../graphql/orders'
 
 export default function OrderRollItem({ item: order }) {
 	const { palette } = useTheme();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const anchorEl = useRef(null);
 	const { enqueueSnackbar } = useSnackbar();
-	const [updateOrderStatus, { loading: loadingUpdate }] = useMutation(UPDATE_ORDER, { variables: { id: order.id } })
+	const OrderAvailableStatus = availableStatus(order)
 
 	function handleCloseMenu() {
 		setMenuOpen(false);
 	}
+
+	const [changeOrderStatus, { loading: loadingUpdate }] = useMutation(CHANGE_ORDER_STATUS, { variables: { id: order.id } })
+
 	const handleUpdateStatus = (newStatus) => () => {
-		updateOrderStatus({ variables: { data: { status: newStatus.slug } } })
+		changeOrderStatus({ variables: { newStatus: newStatus.slug } })
 			.then(()=>{
 				enqueueSnackbar(`Status do pedido #${order.id} alterado para ${newStatus.label}`, { variant: 'success' });
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
+
 		handleCloseMenu()
 	}
+	
 
 	const orderTotal = order.price + order.discount;
 	
 	return (
 		<Paper style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative' }} elevation={0}>
-			<Menu
-				id="simple-menu"
-				anchorEl={anchorEl.current}
-				keepMounted
+			<OrderStatusMenu
 				open={menuOpen}
 				onClose={handleCloseMenu}
-			>
-				{availableStatus(order).map(status => {
-					return (
-						<MenuItem key={status.slug} onClick={handleUpdateStatus(status)} selected={order.status===status.slug} dense>
-							<ListItemIcon>{status.Icon}</ListItemIcon>
-							<ListItemText>{status.label}</ListItemText>
-						</MenuItem>
-					)
-				})}
-			</Menu>
+				availableStatus={OrderAvailableStatus}
+				anchorEl={anchorEl}
+				onClick={handleUpdateStatus}
+				selected={order.status}
+			/>
+
 			<div style={{ marginBottom: 10 }}>
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
 				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order)} style={{ marginLeft: 6 }} variant='outlined' />

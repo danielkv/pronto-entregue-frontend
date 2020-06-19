@@ -23,6 +23,15 @@ export const getOrderStatusIcon = (order, size=1) => {
 	}
 }
 
+export function canChangeStatus(availableStatus, oldStatus, newStatus) {
+	const oldStatusIndex = availableStatus.findIndex(stat => stat.slug === oldStatus);
+	const newStatusIndex = availableStatus.findIndex(stat => stat.slug === newStatus);
+	console.log(oldStatus, oldStatusIndex, newStatus, newStatusIndex)
+
+	if (oldStatusIndex <= newStatusIndex) return true;
+	return false;
+}
+
 export function availableStatus(order) {
 	const status = ['waiting', 'preparing', 'delivering', 'delivered', 'canceled'];
 

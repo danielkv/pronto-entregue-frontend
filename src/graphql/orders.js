@@ -187,6 +187,15 @@ export const UPDATE_ORDER = gql`
 	${ORDER_FRAGMENT}
 `;
 
+export const CHANGE_ORDER_STATUS = gql`
+	mutation ChangeOrderStatus ($id:ID!, $newStatus: String!) {
+		changeOrderStatus(id: $id, newStatus: $newStatus) {
+			id
+			status
+		}
+	}
+`;
+
 export const LOAD_ORDER = gql`
 	query LoadOrder ($id:ID!, $filter:Filter) {
 		order (id:$id) {
