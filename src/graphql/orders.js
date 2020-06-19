@@ -128,6 +128,7 @@ export const ORDER_FRAGMENT = gql`
 			id
 			name
 			price
+			message
 			quantity
 			productRelated {
 				...ProductRelatedFields

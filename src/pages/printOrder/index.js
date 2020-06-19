@@ -16,7 +16,7 @@ export default function PrintOrder() {
 	const { data: { order = null } = {}, loading: loadingGetData, error } = useQuery(LOAD_PRINT_ORDER, { variables: { id: orderId } });
 
 	useEffect(()=>{
-		if (!order) return;
+		if (!order || process.env.NODE_ENV === 'development') return;
 		window.print();
 		window.close();
 	}, [order])
@@ -27,7 +27,7 @@ export default function PrintOrder() {
 	const orderTotal = order.price + order.discount;
 
 	return (
-		<div style={{ width: '8cm', boxSizing: 'border-box', backgroundColor: 'white', fontSize: '10pt', padding: '1.5cm .5cm 1.5cm .5cm', color: '#000' }}>
+		<div style={{ width: '8cm', boxSizing: 'border-box', backgroundColor: 'white', fontSize: '12pt', padding: '1.5cm 0', color: '#000' }}>
 			<div style={{ textAlign: 'center' }}>
 				<div style={{ fontSize: '1.1em', fontWeight: 'bold' }}>{order.company.displayName}</div>
 				<div><b>Pedido #{order.id}</b> - {moment(order.createdAt).format('DD/MM HH:mm')}</div>
@@ -65,7 +65,7 @@ export default function PrintOrder() {
 											<div style={{ marginLeft: '.1cm', fontSize: '.9em' }} key={group.id}><b>{group.name}:</b> {group.options.map(option => option.name).join(', ')}</div>
 										))}
 									</div>}
-									{Boolean(product.message) && <div>Observações: {product.message}</div>}
+									{Boolean(product.message) && <div>Obs: {product.message}</div>}
 								</td>
 								<td style={{ verticalAlign: 'top', fontSize: '.9em', textAlign: 'right' }}>{numeral(product.price).format('$0,0.00')}</td>
 							</tr>
@@ -85,7 +85,7 @@ export default function PrintOrder() {
 					<div><b>Total Pedido:</b> {numeral(order.price).format('$0,0.00')}</div>
 				</div>
 				{order.paymentMethod && <div><b>Pagamento:</b> {order.paymentMethod.displayName}</div>}
-				{Boolean(order.message) && <div><b>Observações:</b> {order.message}</div>}
+				{Boolean(order.message) && <div><b>Obs:</b> {order.message}</div>}
 			</div>
 		</div>
 	)

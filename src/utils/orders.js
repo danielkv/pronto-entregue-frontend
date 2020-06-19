@@ -46,6 +46,7 @@ export function extractOrder(order, overwrite={}) {
 				price: product.price,
 				name: product.name,
 				quantity: product.quantity,
+				message: product.message,
 				action: 'editable',
 				productRelated: { id: product.productRelated.id },
 
