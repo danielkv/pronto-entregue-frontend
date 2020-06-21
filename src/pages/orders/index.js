@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Chip, Typography } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Typography } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiDotsVertical, mdiEye } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
@@ -18,7 +18,7 @@ import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 import { getDeliveryTypeText } from '../../utils/orders';
 
-import { GET_COMPANY_ORDERS, UPDATE_ORDER, CHANGE_ORDER_STATUS } from '../../graphql/orders';
+import { GET_COMPANY_ORDERS, CHANGE_ORDER_STATUS } from '../../graphql/orders';
 
 const initialFilter = {
 	search: '',
