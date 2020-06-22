@@ -5,6 +5,7 @@ import { mdiRacingHelmet } from '@mdi/js'
 import Icon from '@mdi/react'
 
 export default function OrderType({ order }) {
+	console.log(order);
 	return (
 		<div>
 			{order.type === 'takeout'
@@ -20,10 +21,20 @@ export default function OrderType({ order }) {
 							<Typography variant='caption' style={{ fontWeight: 'bold' }}>Ponto de referência</Typography>: {order.address.reference}
 						</Typography>}
 
-						{order.type === 'peDelivery' && <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row', marginTop: 5 }}>
-							<div style={{ marginRight: 5 }}><Icon title='Entrega pronto, entregue!' path={mdiRacingHelmet} size={.8} color='#666' /></div>
-							<Typography variant='caption'>Entrega de responsabilidade Pronto, entregue!</Typography>
-						</div>}
+						{order.type === 'peDelivery' && (
+							<div style={{ marginTop: 5 }}>
+								{Boolean(order.delivery && order.delivery.deliveryMan) && (
+									<div>
+										<Typography variant='subtitle2'><b>Entregador:</b> {order.delivery.deliveryMan.fullName}</Typography>
+										{Boolean(order.delivery.deliveryMan.phones.length) && <Typography variant='caption'>{order.delivery.deliveryMan.phones[0].value}</Typography>}
+									</div>
+								)}
+								<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
+									<div style={{ marginRight: 5 }}><Icon title='Entrega pronto, entregue!' path={mdiRacingHelmet} size={.8} color='#666' /></div>
+									<Typography variant='caption'>Entrega de responsabilidade Pronto, entregue!</Typography>
+								</div>
+							</div>
+						)}
 					</div>
 				)}
 		</div>

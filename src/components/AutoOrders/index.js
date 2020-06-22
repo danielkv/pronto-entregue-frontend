@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
-import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
@@ -12,15 +11,12 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { getOrderStatusLabel } from '../../controller/orderStatus';
 import OrderRollItem from './OrderRollItem';
 
-import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_STATUS_UPDATED } from '../../graphql/ordersRoll';
-
+import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_UPDATED } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
-	const { url } = useRouteMatch();
-	const history = useHistory();
 	const [open, setOpen] = useState(false);
 	const selectedCompany = useSelectedCompany();
-	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'preparing', 'delivering'] } } });
+	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'waitingDelivery', 'preparing', 'delivering'] } } });
 	const notificationRef = useRef();
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -30,7 +26,7 @@ export default function AutoOrders() {
 
 	const handleOpen = (key, orderId) => () => {
 		closeSnackbar(key);
-		history.push(`${url}/pedidos/alterar/${orderId}`)
+		setOpen(true);
 	}
 
 	const handleClose = (key) => () => {
@@ -70,24 +66,37 @@ export default function AutoOrders() {
 		})
 
 		const unsubscribeUpdatedOrder = subscribeToMore({
-			document: ORDER_STATUS_UPDATED,
+			document: ORDER_UPDATED,
 			variables: { companyId: selectedCompany },
-			updateQuery(prev, { subscriptionData: { data: { updateOrderStatus = null } } }) {
-				if (!updateOrderStatus) return;
+			updateQuery(prev, { subscriptionData: { data: { orderUpdated = null } } }) {
+				const prevOrder = prev.company.orders.find(order => order.id === orderUpdated.id);
+				console.log(prevOrder, orderUpdated);
+
+				if (!orderUpdated) return;
 				const options = {
-					persist: true,
 					variant: 'warning',
 					action: (key) => (
 						<div>
-							<Button onClick={handleOpen(key, updateOrderStatus.id)}>Abrir</Button>
+							<Button onClick={handleOpen(key, orderUpdated.id)}>Abrir</Button>
 							<Button onClick={handleClose(key)}>Ok</Button>
 						</div>
 					)
 				}
-				if (updateOrderStatus.status === 'canceled') {
-					enqueueSnackbar(`Pedido #${updateOrderStatus.id} foi cancelado`, { ...options, variant: 'error' })
-				} else
-					enqueueSnackbar(`Pedido #${updateOrderStatus.id} alterado para ${getOrderStatusLabel(updateOrderStatus)}`, options)
+
+				
+				if (prevOrder) {
+					console.log(prevOrder, orderUpdated);
+					if (prevOrder.delivery && prevOrder.delivery.deliveryMan !== orderUpdated.delivery.deliveryMan) {
+						enqueueSnackbar(`Entregador ${orderUpdated.delivery.deliveryMan.firstName} aceitou o pedido #${orderUpdated.id}`, { ...options, variant: 'error' })
+					}
+
+					if (prevOrder.status !== orderUpdated.status) {
+						if (orderUpdated.status === 'canceled') {
+							enqueueSnackbar(`Pedido #${orderUpdated.id} foi cancelado`, { ...options, variant: 'error' })
+						} else
+							enqueueSnackbar(`Pedido #${orderUpdated.id} alterado para ${getOrderStatusLabel(orderUpdated)}`, options)
+					}
+				}
 			}
 		})
 
