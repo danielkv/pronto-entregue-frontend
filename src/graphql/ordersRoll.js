@@ -71,9 +71,11 @@ export const ORDER_CRATED_FRAGMENT = gql`
 		delivery {
 			id
 			deliveryMan {
-				fullName
-				phones: metas(type: "phone") {
-					value
+				user {
+					fullName
+					phones: metas(type: "phone") {
+						value
+					}
 				}
 			}
 		}

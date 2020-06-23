@@ -25,8 +25,8 @@ export default function OrderType({ order }) {
 							<div style={{ marginTop: 5 }}>
 								{Boolean(order.delivery && order.delivery.deliveryMan) && (
 									<div>
-										<Typography variant='subtitle2'><b>Entregador:</b> {order.delivery.deliveryMan.fullName}</Typography>
-										{Boolean(order.delivery.deliveryMan.phones.length) && <Typography variant='caption'>{order.delivery.deliveryMan.phones[0].value}</Typography>}
+										<Typography variant='subtitle2'><b>Entregador:</b> {order.delivery.deliveryMan.user.fullName}</Typography>
+										{Boolean(order.delivery.deliveryMan.user.phones.length) && <Typography variant='caption'>{order.delivery.deliveryMan.user.phones[0].value}</Typography>}
 									</div>
 								)}
 								<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>

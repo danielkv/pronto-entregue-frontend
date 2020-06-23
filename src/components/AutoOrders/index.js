@@ -83,11 +83,9 @@ export default function AutoOrders() {
 					)
 				}
 
-				
 				if (prevOrder) {
-					console.log(prevOrder, orderUpdated);
-					if (prevOrder.delivery && prevOrder.delivery.deliveryMan !== orderUpdated.delivery.deliveryMan) {
-						enqueueSnackbar(`Entregador ${orderUpdated.delivery.deliveryMan.firstName} aceitou o pedido #${orderUpdated.id}`, { ...options, variant: 'error' })
+					if (prevOrder.delivery && prevOrder.delivery.deliveryMan.user !== orderUpdated.delivery.deliveryMan.user) {
+						enqueueSnackbar(`Entregador ${orderUpdated.delivery.deliveryMan.user.fullName} aceitou o pedido #${orderUpdated.id}`, { ...options, variant: 'success' })
 					}
 
 					if (prevOrder.status !== orderUpdated.status) {

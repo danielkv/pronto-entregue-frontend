@@ -16,8 +16,7 @@ export const getOrderStatusIcon = (order, size=1) => {
 		case 'waitingPickUp':
 			return <Icon path={mdiBagChecked} size={size} color='#363E5E' alt={label} title={label} />
 		case 'delivering':
-			if (order.type === 'takeout')
-				return <Icon path={mdiBagChecked} size={size} color='#363E5E' alt={label} title={label} />
+			if (order.type === 'takeout') return <Icon path={mdiBagChecked} size={size} color='#363E5E' alt={label} title={label} />
 			return <Icon path={mdiMoped} size={size} color='#363E5E' alt={label} title={label} />
 		case 'delivered':
 			return <Icon path={mdiCheckCircle} size={size} color='#058F0A' alt={label} title={label} />
@@ -39,7 +38,7 @@ export function availableStatus(order) {
 	let status = ['waiting', 'preparing', 'delivering', 'delivered', 'canceled'];
 
 	if (order.type === 'peDelivery') {
-		if (['waiting', 'preparing'].includes(order.status))
+		if (['waiting', 'preparing', 'waitingDelivery'].includes(order.status))
 			status = ['waiting', 'preparing', 'waitingDelivery', 'canceled'];
 	}
 

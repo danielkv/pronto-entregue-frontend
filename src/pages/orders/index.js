@@ -6,6 +6,7 @@ import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, Ta
 import { mdiPencil, mdiFilter, mdiDotsVertical, mdiEye } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 import numeral from 'numeral'
 
 import OrderStatusMenu from '../../components/OrderStatusMenu';
@@ -33,6 +34,7 @@ function Page ({ match: { url } }) {
 	const [menuOrder, setMenuOrder] = useState([]);
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
+	const { enqueueSnackbar } = useSnackbar();
 	const [pagination, setPagination] = useState({
 		page: 0,
 		rowsPerPage: 10,
@@ -65,7 +67,8 @@ function Page ({ match: { url } }) {
 			pagination,
 		}
 	});
-	const [changeOrderStatus, { loading: loadingUpdateOrder, error: updateOrderError }] = useMutation(CHANGE_ORDER_STATUS)
+	const [loadingUpdateOrder, setLoadingUpdateOrder] = useState(null);
+	const [changeOrderStatus] = useMutation(CHANGE_ORDER_STATUS)
 
 	function handleCloseMenu() {
 		setAnchorEl(null);
@@ -77,11 +80,15 @@ function Page ({ match: { url } }) {
 		setMenuOrder(orders.find(row => row.id === orderId));
 	}
 	const handleUpdateStatus = (newStatus) => {
-		changeOrderStatus({ variables: { id: menuOrder.id, newStatus: newStatus.slug } });
+		setLoadingUpdateOrder(menuOrder.id)
+		changeOrderStatus({ variables: { id: menuOrder.id, newStatus: newStatus.slug } })
+			.then(()=>enqueueSnackbar(`Status do pedido #${menuOrder.id} foi alterado para ${newStatus.label}`, { variant: 'success' }))
+			.catch((err)=>enqueueSnackbar(getErrors(err), { variant: 'error' }))
+			.finally(()=>setLoadingUpdateOrder(null))
 		handleCloseMenu();
 	}
 
-	if (error || updateOrderError) return <ErrorBlock error={getErrors(error || updateOrderError)} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!called && loadingOrders) return (<LoadingBlock />);
 
 	return (
@@ -125,7 +132,6 @@ function Page ({ match: { url } }) {
 							>
 								Adicionar
 							</Button>
-							{loadingUpdateOrder && <CircularProgress />}
 							<NumberOfRows>{countOrders} pedidos</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -158,12 +164,16 @@ function Page ({ match: { url } }) {
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row)}</TableCell>
 												<TableCell style={{ width: 100 }}>
-													<IconButton disabled={loadingUpdateOrder} component={Link} to={`${url}/alterar/${row.id}`}>
+													<IconButton disabled={loadingUpdateOrder === row.id} component={Link} to={`${url}/alterar/${row.id}`}>
 														<Icon path={canChangeStatus ? mdiPencil : mdiEye} size={1} color='#363E5E' />
 													</IconButton>
-													{canChangeStatus && <IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id}>
-														<Icon path={mdiDotsVertical} size={1} color='#363E5E' />
-													</IconButton>}
+													{canChangeStatus &&
+														loadingUpdateOrder === row.id
+														? <CircularProgress />
+														: <IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id}>
+															<Icon path={mdiDotsVertical} size={1} color='#363E5E' />
+														</IconButton>
+													}
 												</TableCell>
 											</TableRow>
 										)})}
