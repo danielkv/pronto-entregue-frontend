@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
 
 import { createEmptyAddress, sanitizeAddress, extractAddress } from './address';
-import { calculateProductPrice } from './products';
+import { calculateProductPrice, filterProductSelectedOptions } from './products';
 
 export function createEmptyOrder(overwrite={}) {
 	return {
@@ -77,9 +77,9 @@ export function extractOrder(order, overwrite={}) {
 
 export const calculateOrderPrice = (products, initialValue=0) => {
 	if (!products || !products.length) return initialValue;
-	return parseFloat(products.filter(row=>row.action !== 'remove').reduce((totalProduct, product) => {
-		return totalProduct + calculateProductPrice(product);
-	}, initialValue).toFixed(2).replace(',', '.'));
+	return products.filter(row=>row.action !== 'remove').reduce((totalProduct, product) => {
+		return totalProduct + calculateProductPrice(filterProductSelectedOptions(product));
+	}, initialValue);
 }
 
 export const sanitizeOrder = (data) => {

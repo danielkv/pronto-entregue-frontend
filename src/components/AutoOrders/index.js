@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
-import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import { useQuery } from '@apollo/react-hooks';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
@@ -16,8 +15,6 @@ import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_STATUS_UPDATED } from '.
 
 
 export default function AutoOrders() {
-	const { url } = useRouteMatch();
-	const history = useHistory();
 	const [open, setOpen] = useState(false);
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'preparing', 'delivering'] } } });
@@ -28,9 +25,9 @@ export default function AutoOrders() {
 		setOpen(false);
 	}
 
-	const handleOpen = (key, orderId) => () => {
+	const handleOpen = (key) => () => {
 		closeSnackbar(key);
-		history.push(`${url}/pedidos/alterar/${orderId}`)
+		setOpen(true);
 	}
 
 	const handleClose = (key) => () => {
