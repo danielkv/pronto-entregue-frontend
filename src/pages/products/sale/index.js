@@ -11,7 +11,7 @@ import { FormRow, FieldControl } from '../../../layout/components';
 import { createEmptySale } from '../../../utils/sale';
 import { Container } from './styles';
 
-const minPct = .1;
+const minPct = .05;
 
 export default function Sale ({ closeModal }) {
 	const { values: { price: productPrice, fromPrice, sale: { price, expiresAt, startsAt, action } }, errors, setFieldValue, handleChange, isSubmiting, setFieldError } = useFormikContext();
