@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
+
+import { useSnackbar } from 'notistack';
 
 import ProtectedRoute from '../components/ProtectedRoute';
 import { Container, HeaderArea, NavigationArea, Main } from '../layout/components';
 
+import NotificationsController from '../controller/notifications';
 import Header from '../layout/header';
 import Navigation from '../layout/navigation';
 import AllOrders from '../pages/allOrders';
@@ -36,6 +39,18 @@ import Settings from '../pages/settings';
 
 export default function DashboardPages() {
 	const { path } = useRouteMatch();
+	const { enqueueSnackbar } = useSnackbar();
+
+	useEffect(()=>{
+		NotificationsController.addHandler('enqueueSnack', (payload)=>{
+			console.log(payload);
+			enqueueSnackbar(payload.notification.body);
+		})
+
+		return ()=>{
+			NotificationsController.removeHandler('enqueueSnack')
+		}
+	})
 	
 	return (
 		<Container>

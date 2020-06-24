@@ -1,5 +1,4 @@
 self.addEventListener('notificationclick', function(event) {
-	console.log('On notification click: ', event.notification);
 	event.notification.close();
 	
 	// This looks to see if the current is already open and

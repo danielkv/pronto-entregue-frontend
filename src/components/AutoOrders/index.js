@@ -84,7 +84,7 @@ export default function AutoOrders() {
 				}
 
 				if (prevOrder) {
-					if (prevOrder.delivery && prevOrder.delivery.deliveryMan.user !== orderUpdated.delivery.deliveryMan.user) {
+					if (prevOrder.delivery && prevOrder.delivery.deliveryMan !== orderUpdated.delivery.deliveryMan) {
 						enqueueSnackbar(`Entregador ${orderUpdated.delivery.deliveryMan.user.fullName} aceitou o pedido #${orderUpdated.id}`, { ...options, variant: 'success' })
 					}
 

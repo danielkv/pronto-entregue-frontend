@@ -5,7 +5,6 @@ import { mdiRacingHelmet } from '@mdi/js'
 import Icon from '@mdi/react'
 
 export default function OrderType({ order }) {
-	console.log(order);
 	return (
 		<div>
 			{order.type === 'takeout'

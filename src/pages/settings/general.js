@@ -78,7 +78,6 @@ function Page () {
 									select
 									value={values.deliveryType.value}
 									onChange={(e)=>{
-										console.log(values.deliveryType);
 										setFieldValue('deliveryType.value', e.target.value)
 										if (values.deliveryType.action === 'editable') setFieldValue('deliveryType.action', 'update')
 									}}>

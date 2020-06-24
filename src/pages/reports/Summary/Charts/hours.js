@@ -22,8 +22,6 @@ function arrangeData(report) {
 				data.push({ x: dateString, y: countOrders, label: countOrders });
 			}
 
-			console.log(data);
-
 			return resolve(data);
 		} catch (err) {
 			return reject(err)
