@@ -47,6 +47,8 @@ export default function DashboardPages() {
 			let options = { variant: 'default' };
 			if (payload.data && payload.data.action && payload.data.action === 'statusChange' && payload.data.newStatus) {
 				options.variant = statusVariant(payload.data.newStatus);
+			} else {
+				if (payload.data && payload.data.options) options = payload.data.options;
 			}
 			enqueueSnackbar(payload.notification.body, options);
 		})
