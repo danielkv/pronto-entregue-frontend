@@ -3,6 +3,27 @@ import React from 'react';
 import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle, mdiBagChecked, mdiAccountClock } from '@mdi/js';
 import Icon from '@mdi/react';
 
+export function statusVariant(status) {
+	// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
+		
+	switch(status) {
+		case 'waiting':
+		case 'preparing':
+		case 'waitingDelivery':
+			return 'default';
+		case 'delivering':
+		case 'waitingPickUp':
+			return 'warning';
+		case 'delivered':
+			return 'success';
+		case 'canceled':
+			return 'error';
+		default:
+			return 'default';
+	}
+	
+}
+
 export const getOrderStatusIcon = (order, size=1) => {
 	const label = getOrderStatusLabel(order);
 
@@ -38,8 +59,7 @@ export function availableStatus(order) {
 	let status = ['waiting', 'preparing', 'delivering', 'delivered', 'canceled'];
 
 	if (order.type === 'peDelivery') {
-		if (['waiting', 'preparing', 'waitingDelivery'].includes(order.status))
-			status = ['waiting', 'preparing', 'waitingDelivery', 'canceled'];
+		status = ['waiting', 'preparing', 'waitingDelivery', 'delivering', 'delivered', 'canceled'];
 	}
 
 	return status.map(stat => ({ slug: stat, label: getOrderStatusLabel(order, stat), Icon: getOrderStatusIcon({ ...order, status: stat }) }))

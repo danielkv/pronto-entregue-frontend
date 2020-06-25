@@ -7,6 +7,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import { Container, HeaderArea, NavigationArea, Main } from '../layout/components';
 
 import NotificationsController from '../controller/notifications';
+import { statusVariant } from '../controller/orderStatus';
 import Header from '../layout/header';
 import Navigation from '../layout/navigation';
 import AllOrders from '../pages/allOrders';
@@ -43,8 +44,11 @@ export default function DashboardPages() {
 
 	useEffect(()=>{
 		NotificationsController.addHandler('enqueueSnack', (payload)=>{
-			console.log(payload);
-			enqueueSnackbar(payload.notification.body);
+			let options = { variant: 'default' };
+			if (payload.data && payload.data.action && payload.data.action === 'statusChange' && payload.data.newStatus) {
+				options.variant = statusVariant(payload.data.newStatus);
+			}
+			enqueueSnackbar(payload.notification.body, options);
 		})
 
 		return ()=>{

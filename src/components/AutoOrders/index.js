@@ -8,7 +8,6 @@ import { useSnackbar } from 'notistack';
 
 import notificationAudio from '../../assets/audio/notification.ogg';
 import { useSelectedCompany } from '../../controller/hooks';
-import { getOrderStatusLabel } from '../../controller/orderStatus';
 import OrderRollItem from './OrderRollItem';
 
 import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_UPDATED } from '../../graphql/ordersRoll';
@@ -68,7 +67,7 @@ export default function AutoOrders() {
 		const unsubscribeUpdatedOrder = subscribeToMore({
 			document: ORDER_UPDATED,
 			variables: { companyId: selectedCompany },
-			updateQuery(prev, { subscriptionData: { data: { orderUpdated = null } } }) {
+			/* updateQuery(prev, { subscriptionData: { data: { orderUpdated = null } } }) {
 				const prevOrder = prev.company.orders.find(order => order.id === orderUpdated.id);
 				console.log(prevOrder, orderUpdated);
 
@@ -84,9 +83,6 @@ export default function AutoOrders() {
 				}
 
 				if (prevOrder) {
-					if (prevOrder.delivery && prevOrder.delivery.deliveryMan !== orderUpdated.delivery.deliveryMan) {
-						enqueueSnackbar(`Entregador ${orderUpdated.delivery.deliveryMan.user.fullName} aceitou o pedido #${orderUpdated.id}`, { ...options, variant: 'success' })
-					}
 
 					if (prevOrder.status !== orderUpdated.status) {
 						if (orderUpdated.status === 'canceled') {
@@ -95,7 +91,7 @@ export default function AutoOrders() {
 							enqueueSnackbar(`Pedido #${orderUpdated.id} alterado para ${getOrderStatusLabel(orderUpdated)}`, options)
 					}
 				}
-			}
+			} */
 		})
 
 		return ()=>{
