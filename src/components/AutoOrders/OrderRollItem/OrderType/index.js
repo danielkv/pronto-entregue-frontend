@@ -4,6 +4,8 @@ import { Typography } from '@material-ui/core'
 import { mdiRacingHelmet } from '@mdi/js'
 import Icon from '@mdi/react'
 
+import { getOrderStatusLabel } from '../../../../controller/orderStatus'
+
 export default function OrderType({ order }) {
 	return (
 		<div>
@@ -21,17 +23,18 @@ export default function OrderType({ order }) {
 						</Typography>}
 
 						{order.type === 'peDelivery' && (
-							<div style={{ marginTop: 5 }}>
-								{Boolean(order.delivery && order.delivery.deliveryMan) && (
-									<div>
-										<Typography variant='subtitle2'><b>Entregador:</b> {order.delivery.deliveryMan.user.fullName}</Typography>
-										{Boolean(order.delivery.deliveryMan.user.phones.length) && <Typography variant='caption'>{order.delivery.deliveryMan.user.phones[0].value}</Typography>}
-									</div>
-								)}
+							<div style={{ marginTop: 5, borderRadius: 10, backgroundColor: '#eaeaea', padding: 10, paddingLeft: 20  }}>
 								<div style={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}>
 									<div style={{ marginRight: 5 }}><Icon title='Entrega pronto, entregue!' path={mdiRacingHelmet} size={.8} color='#666' /></div>
 									<Typography variant='caption'>Entrega de responsabilidade Pronto, entregue!</Typography>
 								</div>
+								{Boolean(order.delivery && order.delivery.deliveryMan) && (
+									<div>
+										<Typography variant='subtitle2'><b>Entregador:</b> {order.delivery.deliveryMan.user.fullName}</Typography>
+										<Typography variant='subtitle2' style={{ fontSize: 12 }}><b>Status da entrega:</b> {getOrderStatusLabel(order, order.delivery.status)}</Typography>
+										{Boolean(order.delivery.deliveryMan.user.phones.length) && <Typography variant='caption'>{order.delivery.deliveryMan.user.phones[0].value}</Typography>}
+									</div>
+								)}
 							</div>
 						)}
 					</div>

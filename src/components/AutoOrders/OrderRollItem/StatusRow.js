@@ -49,8 +49,8 @@ export default function StatusRow({ order }) {
 							color={selected === status.slug ? 'secondary': 'default'}
 							variant='contained'
 						>
-							{loadingStatus
-								? <CircularProgress />
+							{loadingStatus === status.slug
+								? <CircularProgress size={15} />
 								: status.label}
 						</Button>
 					)

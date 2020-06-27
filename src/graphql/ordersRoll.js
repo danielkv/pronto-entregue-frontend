@@ -70,6 +70,7 @@ export const ORDER_CRATED_FRAGMENT = gql`
 		}
 		delivery {
 			id
+			status
 			deliveryMan {
 				user {
 					fullName

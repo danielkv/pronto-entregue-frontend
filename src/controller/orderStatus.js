@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle, mdiBagChecked, mdiAccountClock } from '@mdi/js';
+import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle, mdiBagChecked, mdiAccountClock, mdiPlaylistCheck } from '@mdi/js';
 import Icon from '@mdi/react';
 
 export function statusVariant(status) {
@@ -28,6 +28,8 @@ export const getOrderStatusIcon = (order, size=.8) => {
 	const label = getOrderStatusLabel(order);
 
 	switch(order.status) {
+		case 'accepted':
+			return <Icon path={mdiPlaylistCheck} size={size} color='#363E5E' alt={label} title={label} />
 		case 'waiting':
 			return <Icon path={mdiClock} size={size} color='#363E5E' alt={label} title={label} />
 		case 'preparing':
@@ -56,19 +58,28 @@ export function canChangeStatus(availableStatus, oldStatus, newStatus) {
 }
 
 export function availableStatus(order) {
+	
 	let status = ['waiting', 'preparing', 'delivering', 'delivered', 'canceled'];
 
-	if (order.type === 'peDelivery') {
-		status = ['waiting', 'preparing', 'waitingDelivery', 'delivering', 'delivered', 'canceled'];
+	if (order.status !== 'waiting') {
+		if (order.type === 'peDelivery') {
+			status = ['waiting', 'preparing', 'waitingDelivery', 'delivering', 'delivered', 'canceled'];
+		} else if (order.type === 'takeout') {
+			status = ['waiting', 'preparing', 'waitingPickUp', 'delivered', 'canceled'];
+		}
+	} else {
+		status = ['accepted', 'canceled'];
 	}
 
-	return status.map(stat => ({ slug: stat, label: getOrderStatusLabel(order, stat), Icon: getOrderStatusIcon({ ...order, status: stat }) }))
+	return status.map(stat => ({ slug: stat === 'accepted' ? 'preparing' : stat, label: getOrderStatusLabel(order, stat), Icon: getOrderStatusIcon({ ...order, status: stat }) }))
 }
 
 export function getOrderStatusLabel(order, status) {
 	// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
 		
 	switch(status || order.status) {
+		case 'accepted':
+			return 'Abrir';
 		case 'waiting':
 			return 'Aguardando';
 		case 'preparing':
@@ -82,7 +93,7 @@ export function getOrderStatusLabel(order, status) {
 		case 'delivered':
 			return 'Entregue';
 		case 'canceled':
-			return 'Cancelado';
+			return 'Cancelar';
 		default: return '';
 	}
 	
