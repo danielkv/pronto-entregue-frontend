@@ -43,7 +43,7 @@ export default function AutoOrders() {
 
 				playNotification();
 				
-				enqueueSnackbar(`Novo pedido de ${orderCreated.user.fullName}`, {
+				/* 	enqueueSnackbar(`Novo pedido de ${orderCreated.user.fullName}`, {
 					persist: true,
 					variant: 'warning',
 					iconVariant: { warning: 'X' },
@@ -53,7 +53,7 @@ export default function AutoOrders() {
 							<Button onClick={handleClose(key)}>Ok</Button>
 						</div>
 					)
-				})
+				}) */
 
 				return Object.assign({}, prev, {
 					company: {
@@ -67,31 +67,6 @@ export default function AutoOrders() {
 		const unsubscribeUpdatedOrder = subscribeToMore({
 			document: ORDER_UPDATED,
 			variables: { companyId: selectedCompany },
-			/* updateQuery(prev, { subscriptionData: { data: { orderUpdated = null } } }) {
-				const prevOrder = prev.company.orders.find(order => order.id === orderUpdated.id);
-				console.log(prevOrder, orderUpdated);
-
-				if (!orderUpdated) return;
-				const options = {
-					variant: 'warning',
-					action: (key) => (
-						<div>
-							<Button onClick={handleOpen(key, orderUpdated.id)}>Abrir</Button>
-							<Button onClick={handleClose(key)}>Ok</Button>
-						</div>
-					)
-				}
-
-				if (prevOrder) {
-
-					if (prevOrder.status !== orderUpdated.status) {
-						if (orderUpdated.status === 'canceled') {
-							enqueueSnackbar(`Pedido #${orderUpdated.id} foi cancelado`, { ...options, variant: 'error' })
-						} else
-							enqueueSnackbar(`Pedido #${orderUpdated.id} alterado para ${getOrderStatusLabel(orderUpdated)}`, options)
-					}
-				}
-			} */
 		})
 
 		return ()=>{

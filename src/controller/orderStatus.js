@@ -24,7 +24,7 @@ export function statusVariant(status) {
 	
 }
 
-export const getOrderStatusIcon = (order, size=1) => {
+export const getOrderStatusIcon = (order, size=.8) => {
 	const label = getOrderStatusLabel(order);
 
 	switch(order.status) {

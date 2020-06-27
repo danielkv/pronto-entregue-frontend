@@ -1,60 +1,19 @@
-import React, { useState, useRef, Fragment } from 'react'
+import React, { Fragment } from 'react'
 
-import { useMutation } from '@apollo/react-hooks'
-import { Chip, Typography, Paper, IconButton, useTheme, CircularProgress, Divider } from '@material-ui/core'
-import { mdiDotsVertical } from '@mdi/js'
-import Icon from '@mdi/react'
+import { Chip, Typography, Paper, Divider } from '@material-ui/core'
 import moment from 'moment'
-import { useSnackbar } from 'notistack'
 import numeral from 'numeral'
 
-import { getOrderStatusIcon, getOrderStatusLabel, availableStatus } from '../../../controller/orderStatus'
-import { getErrors } from '../../../utils/error'
-import OrderStatusMenu from '../../OrderStatusMenu'
+import { getOrderStatusIcon, getOrderStatusLabel } from '../../../controller/orderStatus'
 import OrderRollProduct from './OrderRollProduct'
 import OrderType from './OrderType'
-
-import { CHANGE_ORDER_STATUS } from '../../../graphql/orders'
+import StatusRow from './StatusRow'
 
 export default function OrderRollItem({ item: order }) {
-	const { palette } = useTheme();
-	const [menuOpen, setMenuOpen] = useState(false);
-	const anchorEl = useRef(null);
-	const { enqueueSnackbar } = useSnackbar();
-	const OrderAvailableStatus = availableStatus(order)
-
-	function handleCloseMenu() {
-		setMenuOpen(false);
-	}
-
-	const [changeOrderStatus, { loading: loadingUpdate }] = useMutation(CHANGE_ORDER_STATUS, { variables: { id: order.id } })
-
-	function handleUpdateStatus (newStatus) {
-		changeOrderStatus({ variables: { newStatus: newStatus.slug } })
-			.then(()=>{
-				enqueueSnackbar(`Status do pedido #${order.id} alterado para ${newStatus.label}`, { variant: 'success' });
-			})
-			.catch((err)=>{
-				enqueueSnackbar(getErrors(err), { variant: 'error' });
-			})
-
-		handleCloseMenu()
-	}
-	
-
 	const orderTotal = order.price + order.discount;
 	
 	return (
 		<Paper style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative' }} elevation={0}>
-			<OrderStatusMenu
-				open={menuOpen}
-				onClose={handleCloseMenu}
-				availableStatus={OrderAvailableStatus}
-				anchorEl={anchorEl.current}
-				onClick={handleUpdateStatus}
-				selected={order.status}
-			/>
-
 			<div style={{ marginBottom: 10 }}>
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
 				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order)} style={{ marginLeft: 6 }} variant='outlined' />
@@ -120,14 +79,8 @@ export default function OrderRollItem({ item: order }) {
 					</div>
 				</div>
 			</div>
-			<div style={{ position: 'absolute', right: 10, top: 10 }}>
-				{loadingUpdate
-					? <CircularProgress color='primary' />
-					: (
-						<IconButton innerRef={anchorEl} onClick={()=>setMenuOpen(true)}>
-							<Icon path={mdiDotsVertical} size={.8} color={palette.primary.main} />
-						</IconButton>
-					)}
+			<div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
+				<StatusRow order={order} />
 			</div>
 		</Paper>
 	)
