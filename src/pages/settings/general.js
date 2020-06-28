@@ -2,6 +2,8 @@ import React from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Typography, Divider, Button, FormHelperText, CircularProgress, Grid, TextField, MenuItem } from '@material-ui/core';
+import { mdiAlert, mdiAlertCircle } from '@mdi/js';
+import Icon from '@mdi/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 
@@ -14,6 +16,7 @@ import { getErrors } from '../../utils/error';
 import { extractMetas, sanitizeMetas } from '../../utils/metas';
 
 import { GET_COMPANY_GENERAL_SETTINGS, UPDATE_COMPANY } from '../../graphql/companies';
+import { DELIVERY_GLOBAL_ACTIVE } from '../../graphql/config';
 
 const validationSchema = Yup.object().shape({
 	//metas: Yup.array().of()
@@ -33,6 +36,8 @@ function Page () {
 		data: { company = {} } = {},
 		loading: loadingCompanySettings
 	} = useQuery(GET_COMPANY_GENERAL_SETTINGS, { variables: { id: selectedCompany, keys: metaTypes } });
+
+	const { data: { deliveryGlobalActive = false } = {} } = useQuery(DELIVERY_GLOBAL_ACTIVE, { variables: { id: selectedCompany, keys: metaTypes } });
 
 	const [updateSettings, { loading: loadingUpdateSettings, error: updatingError }] = useMutation(UPDATE_COMPANY, { variables: { id: selectedCompany }, refetchQueries: [{ query: GET_COMPANY_GENERAL_SETTINGS, variables: { id: selectedCompany, keys: metaTypes } }] } );
 
@@ -76,7 +81,8 @@ function Page () {
 
 								<TextField
 									select
-									value={values.deliveryType.value}
+									disabled={!deliveryGlobalActive}
+									value={deliveryGlobalActive ? values.deliveryType.value : 'delivery'}
 									onChange={(e)=>{
 										setFieldValue('deliveryType.value', e.target.value)
 										if (values.deliveryType.action === 'editable') setFieldValue('deliveryType.action', 'update')
@@ -85,7 +91,12 @@ function Page () {
 									<MenuItem value='peDelivery'>Sim</MenuItem>
 								</TextField>
 
-								<FormHelperText>Você será notificado caso não haja nenhum entregador disponível</FormHelperText>
+								{!deliveryGlobalActive &&
+									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 7 }}>
+										<Icon path={mdiAlertCircle} size={.8} color='#fb0' style={{ marginRight: 5 }} />
+										<FormHelperText>Essa função está desabilitada</FormHelperText>
+									</div>
+								}
 							</Grid>
 						
 							<Grid item sm={12}>

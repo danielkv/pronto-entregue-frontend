@@ -1,24 +1,20 @@
 import React from 'react';
 import { Route, Redirect, Link, useRouteMatch } from 'react-router-dom';
 
-import { Grid, Paper, List, ListItem, ListItemText, Divider } from '@material-ui/core';
+import { Grid, Paper, List, ListItem, ListItemText } from '@material-ui/core';
 
-import ProtectedRoute from '../../components/ProtectedRoute';
 import { Content } from '../../layout/components';
 
-import { useLoggedUserRole } from '../../controller/hooks';
 import { setPageTitle } from '../../utils';
 import BusinessHours from './businessHours';
 import DeliveryAreas from './deliveryAreas';
 import General from './general';
 import PaymentMethods from './paymentMethods';
-import PeDeliveryAreas from './peDeliveryAreas';
 import ViewAreas from './viewAreas';
 
 export default function Settings(props) {
 	setPageTitle('Configurações');
 	const { path, url } = useRouteMatch();
-	const loggedUserRole = useLoggedUserRole();
 
 	function isSelected(location) {
 		const currentLocation = props.location.pathname.substr(1).split('/')[2];
@@ -45,14 +41,6 @@ export default function Settings(props) {
 						<ListItem button component={Link} selected={isSelected('pagamentos')} to={`${url}/pagamentos`}>
 							<ListItemText primary="Formas de pagamento" />
 						</ListItem>
-						{loggedUserRole === 'master' &&
-							<>
-								<Divider />
-								<ListItem button component={Link} selected={isSelected('locais-de-entrega-pe')} to={`${url}/locais-de-entrega-pe`}>
-									<ListItemText primary="Locais de entrega (PE)" />
-								</ListItem>
-							</>
-						}
 					</List>
 				</Grid>
 				<Grid item xs={7}>
@@ -62,7 +50,6 @@ export default function Settings(props) {
 					<Route path={`${path}/locais-de-entrega`} component={DeliveryAreas} />
 					<Route path={`${path}/locais-de-vizualizacao`} component={ViewAreas} />
 					<Route path={`${path}/pagamentos`} component={PaymentMethods} />
-					<ProtectedRoute role='master' path={`${path}/locais-de-entrega-pe`} component={PeDeliveryAreas} />
 				</Grid>
 			</Grid>
 		</Content>
