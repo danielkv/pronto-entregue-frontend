@@ -29,7 +29,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 	const { data: { roles = [] } = {} } = useQuery(GET_ROLES);
 
 	useEffect(() => {
-		if (!assignCompany && (role !== 'master' && role !== 'customer')) setFieldValue('role', 'customer');
+		if (!assignCompany && (!['master', 'adm', 'deliveryMan'].includes(role))) setFieldValue('role', 'customer');
 	}, [setFieldValue, assignCompany, role])
 
 	function handleCloseDialog() {
