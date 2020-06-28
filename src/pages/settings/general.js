@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Typography, Divider, Button, FormHelperText, CircularProgress, Grid, TextField, MenuItem } from '@material-ui/core';
-import { mdiAlert, mdiAlertCircle } from '@mdi/js';
+import { mdiAlertCircle } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';

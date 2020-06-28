@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/react-hooks';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
 import { mdiVolumeHigh } from '@mdi/js';
 import Icon from '@mdi/react';
-import { useSnackbar } from 'notistack';
 
 import notificationAudio from '../../assets/audio/notification.ogg';
 import { useSelectedCompany } from '../../controller/hooks';
@@ -17,19 +16,9 @@ export default function AutoOrders() {
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'waitingDelivery', 'preparing', 'delivering'] } } });
 	const notificationRef = useRef();
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	function handleCloseOrdersRoll() {
 		setOpen(false);
-	}
-
-	const handleOpen = (key, orderId) => () => {
-		closeSnackbar(key);
-		setOpen(true);
-	}
-
-	const handleClose = (key) => () => {
-		closeSnackbar(key);
 	}
 
 	useEffect(()=>{

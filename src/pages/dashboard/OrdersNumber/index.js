@@ -26,7 +26,7 @@ export default function OrdersNumber() {
 			ordersStatusQty: {
 				waiting = 0,
 				preparing = 0,
-				delivery = 0,
+				delivering = 0,
 				delivered = 0,
 				canceled = 0,
 			} = {}
@@ -80,7 +80,7 @@ export default function OrdersNumber() {
 							<OrderStatus>
 								<img src={OrdersDelivering} alt='Pedidos na entrega' />
 								<div>
-									{loadingOrdersQty && delivery === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{delivery}</Typography>}
+									{loadingOrdersQty && delivering === null ? <CircularProgress color='primary' /> : <Typography variant='h4'>{delivering}</Typography>}
 									<Typography>Pedidos na entrega</Typography>
 								</div>
 							</OrderStatus>
