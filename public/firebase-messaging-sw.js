@@ -18,8 +18,8 @@ self.addEventListener('notificationclick', function(event) {
 	}));
 });
 
-importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/7.15.3/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/7.15.3/firebase-messaging.js');
 
 
 firebase.initializeApp({
