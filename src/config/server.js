@@ -10,3 +10,5 @@ if (process.env.NODE_ENV === 'production') {
 	serverConfig.host = 'http://localhost:4000/graphql';
 	serverConfig.webSocket = 'ws://localhost:4000/graphql';
 }
+
+export default serverConfig;
