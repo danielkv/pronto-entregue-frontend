@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { Chip, Typography, Card, CardContent } from '@material-ui/core';
+import { Chip, Typography, Card, CardContent, Button } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import { mdiChevronDown, mdiChevronUp } from '@mdi/js';
+import Icon from '@mdi/react';
+import { motion, AnimatePresence  } from 'framer-motion';
 import moment from 'moment';
 import numeral from 'numeral';
 
@@ -12,10 +15,7 @@ import StatusRow from './StatusRow';
 
 
 export default function DeliveryItem({ item: delivery }) {
-	//const colors = getStatusColors(delivery.status);
-
-
-	// if user is the delivery man of this delivery
+	const [displayAddresses, setDisplayAddresses] = useState(false)
 
 	return (
 		
@@ -56,14 +56,34 @@ export default function DeliveryItem({ item: delivery }) {
 					</>
 				</div>
 			
-				<div>
-					<div style={{ padding: '15px 20px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 15, marginBottom: 10 }}>
-						<DeliveryAddress address={delivery.from} title='Retirada' />
-					</div>
-					<div style={{ padding: '15px 20px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 15, marginBottom: 10 }}>
-						<DeliveryAddress address={delivery.to} title='Entrega' />
-					</div>
+
+				<div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>
+					<Button
+						startIcon={<Icon path={displayAddresses ? mdiChevronUp : mdiChevronDown} size={.8} />}
+						style={{ fontSize: 13, textTransform: 'none', alignSelf: 'center' }}
+						onClick={()=>setDisplayAddresses(!displayAddresses)}
+						dense
+					>
+						{displayAddresses? 'Esconder endereços' : 'Mostrar endereços'}
+					</Button>
 				</div>
+				<AnimatePresence>
+					{displayAddresses && (
+						<motion.div
+							initial={{ maxHeight: 0 }}
+							animate={{ maxHeight: 300 }}
+							exit={{ maxHeight: 0 }}
+							style={{ marginTop: 10, overflow: 'hidden' }}
+						>
+							<div style={{ padding: '15px 20px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 15, marginBottom: 10 }}>
+								<DeliveryAddress address={delivery.from} title='Retirada' />
+							</div>
+							<div style={{ padding: '15px 20px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 15, marginBottom: 10 }}>
+								<DeliveryAddress address={delivery.to} title='Entrega' />
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
 
 				<StatusRow delivery={delivery} />
 			</CardContent>

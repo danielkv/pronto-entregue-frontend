@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 
 import { useQuery } from '@apollo/react-hooks';
-import { Grid } from '@material-ui/core';
+import { Grid, Button } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
+import { motion } from 'framer-motion'
 
 import { Block, BlockHeader, BlockTitle } from '../../layout/components';
 
@@ -48,9 +49,20 @@ export default function Deliveries() {
 
 				<Grid container spacing={6}>
 					{deliveries.map((delivery, index) => (
-						<Grid item key={delivery.id} xl={3} lg={4} md={6} sm={12}>
+					
+						<Grid
+							key={delivery.id}
+							component={motion.div}
+							item
+							xl={3} lg={4} md={6} sm={12}
+
+							initial={{ maxWidth: 0, opacity: 0 }}
+							animate={{ maxWidth: 500, opacity: 1 }}
+							transition={{ duration: .8 }}
+						>
 							<DeliveryItem orderIndex={index} item={delivery} />
 						</Grid>
+						
 					))}
 				</Grid>
 				
