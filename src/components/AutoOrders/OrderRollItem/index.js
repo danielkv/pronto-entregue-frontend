@@ -16,7 +16,7 @@ export default function OrderRollItem({ item: order }) {
 	const orderTotal = order.price + order.discount;
 	
 	return (
-		<Paper style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative', border: order.status === 'waiting' ? '5px solid #0d0': 'none'}} elevation={0}>
+		<Paper style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative', border: order.status === 'waiting' ? '5px solid #0d0': 'none' }} elevation={0}>
 			<div style={{ marginBottom: 10 }}>
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
 				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order)} style={{ marginLeft: 6 }} variant='outlined' />
