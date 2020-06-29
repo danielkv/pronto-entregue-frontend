@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { useQuery } from '@apollo/react-hooks';
-import { Grid, Button } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import { motion } from 'framer-motion'
 
@@ -17,27 +17,38 @@ export default function Deliveries() {
 		page: 0,
 		rowsPerPage: 8
 	})
+	const [firstLoaded, setFisrtLoaded] = useState(false);
 	const { data: { deliveries = [], countDeliveries = 0 } = {}, loading: loadingDeliveries, subscribeToMore = null } = useQuery(GET_DELIVERIES, { notifyOnNetworkStatusChange: true, fetchPolicy: 'cache-and-network', variables: { pagination } });
 
 	useEffect(()=>{
+		if (!subscribeToMore) return;
+		
 		const unsubscribe = subscribeToMore({
 			document: UPDATE_DELIVERY_SUBSCRIPTION,
 			updateQuery(prev, data) {
 				const { subscriptionData: { data: { delivery = null } } } = data;
 				if (!delivery) return prev;
 
-				const deliveryFoundIndex = deliveries.findIndex(d => d.id === delivery.id)
+				console.log(delivery.id);
+
+				const deliveryFoundIndex = prev.deliveries.findIndex(d => d.id === delivery.id)
 
 				if (deliveryFoundIndex < 0) {
-					return { ...prev, deliveries: [delivery, ...prev.deliveries] }
+					const newDelivery = { ...delivery }
+					return { ...prev, deliveries: [newDelivery, ...prev.deliveries] }
 				}
 			}
 		})
 
 		return unsubscribe;
-	})
+	}, [subscribeToMore])
+
+	useEffect(()=>{
+		if (deliveries.length && !firstLoaded) setFisrtLoaded(true);
+	}, [deliveries, firstLoaded])
 
 	if (loadingDeliveries) return <LoadingBlock />
+
 	return (
 		<div style={{ flex: 1 }}>
 			<Block>
@@ -48,22 +59,22 @@ export default function Deliveries() {
 						
 
 				<Grid container spacing={6}>
-					{deliveries.map((delivery, index) => (
-					
-						<Grid
+					{deliveries.map((delivery, index) => {
+						console.log(delivery.id, delivery.new);
+						return (<Grid
 							key={delivery.id}
 							component={motion.div}
 							item
 							xl={3} lg={4} md={6} sm={12}
 
-							initial={{ maxWidth: 0, opacity: 0 }}
+							initial={firstLoaded ? { maxWidth: 0, opacity: 0 } : false}
 							animate={{ maxWidth: 500, opacity: 1 }}
 							transition={{ duration: .8 }}
 						>
 							<DeliveryItem orderIndex={index} item={delivery} />
-						</Grid>
+						</Grid>)
 						
-					))}
+					})}
 				</Grid>
 				
 				<div style={{ marginTop: 15 }}>
