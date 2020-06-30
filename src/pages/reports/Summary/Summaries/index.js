@@ -33,8 +33,8 @@ export default function Summary({ report }) {
 						<CardContent>
 							<Typography style={{ fontSize: 14 }} color="textSecondary" >Valor em Cupons</Typography>
 							<Typography style={{ fontWeight: 'bold', fontSize: 16, color: '#333' }} gutterBottom>{numeral(report.coupons).format('$0,00.00')}</Typography>
-							<Typography style={{ fontSize: 14 }} color="textSecondary" >Taxável</Typography>
-							<Typography style={{ fontWeight: 'bold', fontSize: 16, color: '#333' }} >{numeral(report.taxableCoupon).format('$0,00.00')}</Typography>
+							<Typography style={{ fontSize: 14 }} color="textSecondary" >Não taxável</Typography>
+							<Typography style={{ fontWeight: 'bold', fontSize: 16, color: '#333' }} >{numeral(report.coupons - report.taxableCoupon).format('$0,00.00')}</Typography>
 						</CardContent>
 					</Card>
 				</Grid>
@@ -43,7 +43,6 @@ export default function Summary({ report }) {
 						<CardContent>
 							<Typography style={{ fontSize: 14 }} color="textSecondary">Créditos utilizados</Typography>
 							<Typography style={{ fontWeight: 'bold', fontSize: 16, color: '#333' }}>{numeral(report.credits).format('$0,00.00')}</Typography>
-							<Typography style={{ fontSize: 13 }} color="textSecondary">não taxado</Typography>
 						</CardContent>
 					</Card>
 				</Grid>
