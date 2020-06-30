@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { useQuery } from '@apollo/react-hooks';
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Avatar, TableFooter, Container, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Avatar, Container, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import numeral from 'numeral';
 
 import { LoadingBlock } from '../../../layout/blocks';
@@ -23,7 +23,7 @@ function hidratateDeliveryMen(users) {
 	});
 }
 
-export default function ListCompanies({ report, period }) {
+export default function ListCompanies({ period }) {
 
 	const [filter, setFilter] = useState({ status: ['waiting', 'waitingDelivery', 'delivering', 'delivered'] });
 
