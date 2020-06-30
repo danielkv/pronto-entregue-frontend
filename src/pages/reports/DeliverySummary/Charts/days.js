@@ -6,12 +6,9 @@ import { VictoryChart, VictoryLine, VictoryScatter, VictoryAxis } from 'victory'
 
 import chartTheme from '../../../../layout/chartTheme';
 
-function arrangeData(report, period) {
+function arrangeData(deliveries, period) {
 	return new Promise((resolve, reject)=>{
 		try {
-			// get orders only
-			const orders = report.companies.reduce((allOrders, company)=>[...allOrders, ...company.orders], []);
-
 			// hidratate period
 			const start = moment(period.start);
 			const end = moment(period.end);
@@ -19,7 +16,7 @@ function arrangeData(report, period) {
 
 			for (let day=start.clone(); day.isSameOrBefore(end, 'date'); day.add(1, 'day')) {
 				const dateString = day.toDate();
-				const ordersInDate = orders.filter(order => moment(order.createdAt).isSame(day, 'date'));
+				const ordersInDate = deliveries.filter(delivery => moment(delivery.createdAt).isSame(day, 'date'));
 				const countOrders = ordersInDate.length;
 				data.push({ x: dateString, y: countOrders, label: countOrders });
 			}
@@ -31,22 +28,22 @@ function arrangeData(report, period) {
 	})
 }
 
-export default function ChartDays({ report, period }) {
+export default function ChartDays({ deliveries, period }) {
 	const [chartData, setChartData] = useState();
 
 	useEffect(()=>{
-		if (!report.companies.length || !period) return;
+		if (!deliveries || !period) return;
 		
-		arrangeData(report, period)
+		arrangeData(deliveries, period)
 			.then((data)=>{
 				setChartData(data);
 			});
-	}, [report, period])
+	}, [deliveries, period])
 
 	return (
 		<Card>
 			<CardContent>
-				<Typography style={{ fontSize: 20, fontWeight: 'bold' }} color="primary">Pedidos / dias</Typography>
+				<Typography style={{ fontSize: 20, fontWeight: 'bold' }} color="primary">Entregas / dias</Typography>
 				<VictoryChart
 					theme={chartTheme}
 				>

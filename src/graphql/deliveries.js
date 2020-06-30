@@ -53,6 +53,21 @@ export const UPDATE_DELIVERY_SUBSCRIPTION = gql`
 	${FRAGMENT_DELIVERY}
 `;
 
+export const GET_DELIVERY_MEN = gql`
+	query GetDeliveryMen ($userFilter: JSON, $deliveryFilter: JSON) {
+		users(filter: $userFilter) {
+			id
+			fullName
+			image
+			deliveries(filter: $deliveryFilter) {
+				id
+				value
+				status
+			}
+		}
+	}
+`;
+
 export const GET_DELIVERIES = gql`
 	query GetDeliveries ($filter: JSON, $pagination: Pagination) {
 		countDeliveries(filter: $filter)

@@ -106,7 +106,7 @@ export const SEARCH_USERS = gql`
 `;
 
 export const GET_USERS = gql`
-	query GetUsers ($filter: Filter, $pagination: Pagination) {
+	query GetUsers ($filter: JSON, $pagination: Pagination) {
 		countUsers (filter: $filter)
 		users (filter: $filter, pagination: $pagination) {
 			id
