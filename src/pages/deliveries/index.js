@@ -29,8 +29,6 @@ export default function Deliveries() {
 				const { subscriptionData: { data: { delivery = null } } } = data;
 				if (!delivery) return prev;
 
-				console.log(delivery.id);
-
 				const deliveryFoundIndex = prev.deliveries.findIndex(d => d.id === delivery.id)
 
 				if (deliveryFoundIndex < 0) {
@@ -44,8 +42,9 @@ export default function Deliveries() {
 	}, [subscribeToMore])
 
 	useEffect(()=>{
-		if (deliveries.length && !firstLoaded) setFisrtLoaded(true);
-	}, [deliveries, firstLoaded])
+		if (loadingDeliveries && firstLoaded) setFisrtLoaded(false);
+		if (!loadingDeliveries && deliveries.length && !firstLoaded) setFisrtLoaded(true);
+	}, [deliveries, firstLoaded, loadingDeliveries])
 
 	if (loadingDeliveries) return <LoadingBlock />
 

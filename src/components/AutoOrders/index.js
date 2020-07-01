@@ -31,18 +31,8 @@ export default function AutoOrders() {
 				if (!orderCreated) return prev;
 
 				playNotification();
-				
-				/* 	enqueueSnackbar(`Novo pedido de ${orderCreated.user.fullName}`, {
-					persist: true,
-					variant: 'warning',
-					iconVariant: { warning: 'X' },
-					action: (key) => (
-						<div>
-							<Button onClick={handleOpen(key, orderCreated.id)}>Abrir</Button>
-							<Button onClick={handleClose(key)}>Ok</Button>
-						</div>
-					)
-				}) */
+
+				setOpen(true)
 
 				return Object.assign({}, prev, {
 					company: {
