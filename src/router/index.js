@@ -10,6 +10,7 @@ import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import theme from '../layout/theme';
 import App from '../pages/app';
 import Landing from '../pages/landing';
+import PrintOrder from '../pages/printOrder';
 import RecoverPassword from '../pages/recoverPassword';
 import PrivacyPolicy from '../static/politica-privacidade';
 import DashboardRoutes from './dashboard';
@@ -28,6 +29,7 @@ const Router = ()  => {
 							<Route exact path='/app' component={App} />
 							<Route path='/dashboard' component={DashboardRoutes} />
 							<Route path='/politica-privacidade' component={PrivacyPolicy} />
+							<Route path='/imprimir/:orderId' component={PrintOrder} />
 						</Switch>
 					</BrowserRouter>
 				</SnackbarProvider>
