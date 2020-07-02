@@ -59,7 +59,6 @@ export default function Deliveries() {
 
 				<Grid container spacing={6}>
 					{deliveries.map((delivery, index) => {
-						console.log(delivery.id, delivery.new);
 						return (<Grid
 							key={delivery.id}
 							component={motion.div}

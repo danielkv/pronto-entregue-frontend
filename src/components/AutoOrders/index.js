@@ -61,8 +61,6 @@ export default function AutoOrders() {
 		notificationRef.current.play()
 	}
 
-	console.log(companySound);
-
 	return (
 		<Fragment>
 			{!loadingSound && <audio ref={notificationRef}>

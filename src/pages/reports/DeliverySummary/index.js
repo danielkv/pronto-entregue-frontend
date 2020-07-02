@@ -19,8 +19,6 @@ export default function DeliverySummary ({ period }) {
 		setFilter(f => ({ ...f, createdAt: { '$between': [period.start, period.end] } }))
 	}, [period, setFilter])
 
-	console.log(filter);
-
 	const { data: { deliveries = [] }={}, loading: loadingDeliveries } = useQuery(GET_DELIVERIES, { variables: { filter }, fetchPolicy: 'cache-and-network' })
 
 	function handleChange (e, newValue) {
