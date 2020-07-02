@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
+import { useQuery } from '@apollo/react-hooks';
 import { useSnackbar } from 'notistack';
 
 import ProtectedRoute from '../components/ProtectedRoute';
 import { Container, HeaderArea, NavigationArea, Main } from '../layout/components';
 
+import { useSelectedCompany } from '../controller/hooks';
 import NotificationsController from '../controller/notifications';
 import { statusVariant } from '../controller/orderStatus';
 import Header from '../layout/header';
@@ -39,9 +41,21 @@ import Ratings from '../pages/ratings';
 import Reports from '../pages/reports';
 import Settings from '../pages/settings';
 
+import { GET_NOTIFICATION_SOUND } from '../graphql/companies';
+
 export default function DashboardPages() {
 	const { path } = useRouteMatch();
 	const { enqueueSnackbar } = useSnackbar();
+	const selectedCompany = useSelectedCompany();
+	const notificationRef = useRef();
+	
+	function playNotification() {
+		if (!notificationRef.current) return;
+		notificationRef.current.load()
+		notificationRef.current.play()
+	}
+
+	const { data: { company: { sound = null } = {} } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { id: selectedCompany } });
 
 	useEffect(()=>{
 		NotificationsController.addHandler('enqueueSnack', (payload)=>{
@@ -52,15 +66,24 @@ export default function DashboardPages() {
 				if (payload.data && payload.data.options) options = payload.data.options;
 			}
 			enqueueSnackbar(payload.notification.body, options);
+
+			playNotification();
 		})
 
 		return ()=>{
 			NotificationsController.removeHandler('enqueueSnack')
 		}
 	})
+
+	if (loadingSound) return false;
+
+	const notification = JSON.parse(sound[0].value);
 	
 	return (
 		<Container>
+			<audio ref={notificationRef}>
+				<source src={notification.url} />
+			</audio>
 			<HeaderArea>
 				<Header />
 			</HeaderArea>

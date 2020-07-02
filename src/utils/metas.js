@@ -15,6 +15,9 @@ export const sanitizeMetas = (metas, values={}) => {
 			if (isNumber(value.value)) value.value = value.value.toString();
 
 			switch (key) {
+				case 'notificationSound':
+					returnMetas.push({ ...value, value: JSON.stringify(value.value) });
+					break;
 				case 'phones':
 				case 'emails':
 					returnMetas = [...returnMetas, ...value];
@@ -91,6 +94,9 @@ export const extractMetas = (needed, metas=[]) => {
 		
 		if (found.length) {
 			switch(key) {
+				case 'notificationSound':
+					returnMetas[key] = { ...found[0], value: JSON.parse(found[0].value) };
+					break;
 				case 'phones':
 				case 'emails':
 					returnMetas[key] = found;

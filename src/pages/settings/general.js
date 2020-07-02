@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Typography, Divider, Button, FormHelperText, CircularProgress, Grid, TextField, MenuItem } from '@material-ui/core';
-import { mdiAlertCircle } from '@mdi/js';
+import { Paper, Typography, Divider, Button, FormHelperText, CircularProgress, Grid, TextField, MenuItem, IconButton } from '@material-ui/core';
+import { mdiAlertCircle, mdiVolumeHigh } from '@mdi/js';
 import Icon from '@mdi/react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -16,7 +16,7 @@ import { getErrors } from '../../utils/error';
 import { extractMetas, sanitizeMetas } from '../../utils/metas';
 
 import { GET_COMPANY_GENERAL_SETTINGS, UPDATE_COMPANY } from '../../graphql/companies';
-import { DELIVERY_GLOBAL_ACTIVE } from '../../graphql/config';
+import { DELIVERY_GLOBAL_ACTIVE, AVAILABLE_SOUNDS } from '../../graphql/config';
 
 const validationSchema = Yup.object().shape({
 	//metas: Yup.array().of()
@@ -28,7 +28,9 @@ const validationSchema = Yup.object().shape({
 function Page () {
 	setPageTitle('Configurações - Formas de pagamento');
 
-	const metaTypes = ['deliveryTime', 'deliveryType'];
+	const notificationRef = useRef(null);
+
+	const metaTypes = ['deliveryTime', 'deliveryType', 'notificationSound'];
 
 	//carrega métodos pagamento ativos na filial
 	const selectedCompany = useSelectedCompany();
@@ -36,6 +38,8 @@ function Page () {
 		data: { company = {} } = {},
 		loading: loadingCompanySettings
 	} = useQuery(GET_COMPANY_GENERAL_SETTINGS, { variables: { id: selectedCompany, keys: metaTypes } });
+	
+	const { data: { availableSounds = [] } ={}, loading: loadingSounds } = useQuery(AVAILABLE_SOUNDS);
 
 	const { data: { deliveryGlobalActive = false } = {} } = useQuery(DELIVERY_GLOBAL_ACTIVE, { variables: { id: selectedCompany, keys: metaTypes } });
 
@@ -59,6 +63,19 @@ function Page () {
 		initialValues.deliveryType.value = 'delivery'
 	}
 	
+	if (initialValues.notificationSound.action === 'new_empty') {
+		initialValues.notificationSound.action = 'create'
+		const sound = availableSounds.find(s=>s.slug === 'default')
+		initialValues.notificationSound.value = { ...sound, volume: 1 }
+	}
+
+	function playNotification () {
+		if (!notificationRef.current) return;
+
+		notificationRef.current.load();
+		notificationRef.current.play()
+	}
+	
 	return (
 		<Paper style={{ padding: 20 }}>
 			<Formik
@@ -69,7 +86,7 @@ function Page () {
 			>
 				{({ isSubmitting, values, setFieldValue }) => (
 					<Form>
-						<Grid container spacing={6}>
+						<Grid container spacing={4}>
 							<Grid item sm={7}>
 								<Typography>Configurações gerais</Typography>
 								<Field type='number' component={tField} action='deliveryTime.action' label='Prazo de entrega' name='deliveryTime.value' />
@@ -77,10 +94,41 @@ function Page () {
 							</Grid>
 
 							<Grid item sm={7}>
-								<Typography>Pronto, Entregue fica responsável para entregas?</Typography>
 
+								<div style={{ display: 'flex', flexDirection: 'row',  }}>
+									<TextField
+										select
+										label='Som de notificação'
+										disabled={loadingSounds}
+										value={values.notificationSound.value.slug}
+										onChange={(e)=>{
+											const value = e.target.value;
+											let sound = availableSounds.find(s=>s.slug === value)
+											if (!sound) sound = { slug: 'none', name: 'Nenhum', url: '', volume: 0 }
+
+											setFieldValue('notificationSound.value', { ...values.notificationSound.value,  ...sound })
+											if (values.notificationSound.action === 'editable') setFieldValue('notificationSound.action', 'update')
+										}}>
+										<MenuItem key='none' value='none'>Nenhum</MenuItem>
+										{availableSounds.map(sound=>(<MenuItem key={sound.slug} value={sound.slug}>{sound.name}</MenuItem>))}
+									</TextField>
+								
+
+									<IconButton variant='contained' onClick={playNotification} title='Testar áudio'>
+										<Icon path={mdiVolumeHigh} size={.9} color='#ccc' />
+									</IconButton>
+								</div>
+
+								<audio ref={notificationRef}>
+									<source src={values.notificationSound.value.url} type="audio/mpeg" />
+								</audio>
+
+							</Grid>
+
+							<Grid item sm={7}>
 								<TextField
 									select
+									label='Pronto, Entregue fica responsável para entregas?'
 									disabled={!deliveryGlobalActive}
 									value={deliveryGlobalActive ? values.deliveryType.value : 'delivery'}
 									onChange={(e)=>{
@@ -91,6 +139,7 @@ function Page () {
 									<MenuItem value='peDelivery'>Sim</MenuItem>
 								</TextField>
 
+								
 								{!deliveryGlobalActive &&
 									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 7 }}>
 										<Icon path={mdiAlertCircle} size={.8} color='#fb0' style={{ marginRight: 5 }} />

@@ -5,3 +5,9 @@ export const DELIVERY_GLOBAL_ACTIVE = gql`
 		deliveryGlobalActive
 	}
 `;
+
+export const AVAILABLE_SOUNDS = gql`
+	query AvailableSounds {
+		availableSounds
+	}
+`;

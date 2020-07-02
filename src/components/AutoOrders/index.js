@@ -1,14 +1,12 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
 
 import { useQuery } from '@apollo/react-hooks';
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
-import { mdiVolumeHigh } from '@mdi/js';
-import Icon from '@mdi/react';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
 
-import notificationAudio from '../../assets/audio/notification.ogg';
 import { useSelectedCompany } from '../../controller/hooks';
 import OrderRollItem from './OrderRollItem';
 
+import { GET_NOTIFICATION_SOUND } from '../../graphql/companies';
 import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_UPDATED } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
@@ -16,6 +14,8 @@ export default function AutoOrders() {
 	const selectedCompany = useSelectedCompany();
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'waitingDelivery', 'preparing', 'delivering'] } } });
 	const notificationRef = useRef();
+
+	const { data: { company: { sound = null } = {} } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { id: selectedCompany } });
 
 	function handleCloseOrdersRoll() {
 		setOpen(false);
@@ -57,20 +57,21 @@ export default function AutoOrders() {
 
 	function playNotification() {
 		if (!notificationRef.current) return;
+		notificationRef.current.load()
 		notificationRef.current.play()
 	}
+
+	if (loadingSound) return false;
+
+	const notification = JSON.parse(sound[0].value);
 
 	return (
 		<Fragment>
 			<audio ref={notificationRef}>
-				<source src={notificationAudio} type="audio/ogg" />
+				<source src={notification.url} type="audio/ogg" />
 			</audio>
 			
 			<Button variant='contained' onClick={()=>setOpen(!open)}>Mostrar pedidos</Button>
-			
-			<IconButton variant='contained' onClick={playNotification} title='Testar áudio'>
-				<Icon path={mdiVolumeHigh} size={.9} color='#ccc' />
-			</IconButton>
 
 			<Dialog
 				fullWidth
