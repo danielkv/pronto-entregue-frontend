@@ -59,7 +59,10 @@ export default function DashboardPages() {
 
 	useEffect(()=>{
 		NotificationsController.addHandler('enqueueSnack', (payload)=>{
-			let options = { variant: 'default' };
+			let options = { variant: 'default', sound: false };
+			
+			if (payload.data && payload.data.sound) options.sound = payload.data.sound;
+
 			if (payload.data && payload.data.action && payload.data.action === 'statusChange' && payload.data.newStatus) {
 				options.variant = statusVariant(payload.data.newStatus);
 			} else {
@@ -67,7 +70,7 @@ export default function DashboardPages() {
 			}
 			enqueueSnackbar(payload.notification.body, options);
 
-			playNotification();
+			if (options.sound) playNotification();
 		})
 
 		return ()=>{
