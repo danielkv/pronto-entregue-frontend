@@ -15,7 +15,7 @@ export default function AutoOrders() {
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'waitingDelivery', 'preparing', 'delivering'] } } });
 	const notificationRef = useRef();
 
-	const { data: { company: { sound = null } = {} } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { id: selectedCompany } });
+	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });
 
 	function handleCloseOrdersRoll() {
 		setOpen(false);
@@ -61,15 +61,13 @@ export default function AutoOrders() {
 		notificationRef.current.play()
 	}
 
-	if (loadingSound) return false;
-
-	const notification = JSON.parse(sound[0].value);
+	console.log(companySound);
 
 	return (
 		<Fragment>
-			<audio ref={notificationRef}>
-				<source src={notification.url} type="audio/ogg" />
-			</audio>
+			{!loadingSound && <audio ref={notificationRef}>
+				<source src={companySound.url} />
+			</audio>}
 			
 			<Button variant='contained' onClick={()=>setOpen(!open)}>Mostrar pedidos</Button>
 

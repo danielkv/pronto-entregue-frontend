@@ -55,7 +55,7 @@ export default function DashboardPages() {
 		notificationRef.current.play()
 	}
 
-	const { data: { company: { sound = null } = {} } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { id: selectedCompany } });
+	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });
 
 	useEffect(()=>{
 		NotificationsController.addHandler('enqueueSnack', (payload)=>{
@@ -74,16 +74,12 @@ export default function DashboardPages() {
 			NotificationsController.removeHandler('enqueueSnack')
 		}
 	})
-
-	if (loadingSound) return false;
-
-	const notification = JSON.parse(sound[0].value);
 	
 	return (
 		<Container>
-			<audio ref={notificationRef}>
-				<source src={notification.url} />
-			</audio>
+			{!loadingSound && <audio ref={notificationRef}>
+				<source src={companySound.url} />
+			</audio>}
 			<HeaderArea>
 				<Header />
 			</HeaderArea>

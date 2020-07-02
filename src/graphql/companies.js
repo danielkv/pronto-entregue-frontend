@@ -43,15 +43,8 @@ export const GET_COMPANY_PAYMENT_METHODS = gql`
 `;
 
 export const GET_NOTIFICATION_SOUND = gql`
-	query GetNotificationSound ($id: ID!) {
-		company(id: $id) {
-			id
-			sound: metas(keys: ["notificationSound"]) {
-				id
-				key
-				value
-			}
-		}
+	query GetNotificationSound ($companyId: ID!) {
+		companySound(companyId: $companyId)
 	}
 `;
 
