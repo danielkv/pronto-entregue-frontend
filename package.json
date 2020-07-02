@@ -1,6 +1,6 @@
 {
   "name": "pronto-entregue-frontend",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "engines": {
     "yarn": "1.22.0",
