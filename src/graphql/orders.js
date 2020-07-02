@@ -197,6 +197,23 @@ export const CHANGE_ORDER_STATUS = gql`
 	}
 `;
 
+export const LOAD_PRINT_ORDER = gql`
+	query LoadPrintOrder ($id:ID!, $filter:Filter) {
+		order (id:$id) {
+			...OrderFields
+			company {
+				id
+				displayName
+			}
+			paymentMethod {
+				id
+				displayName
+			}
+		}
+	}
+	${ORDER_FRAGMENT}
+`;
+
 export const LOAD_ORDER = gql`
 	query LoadOrder ($id:ID!, $filter:Filter) {
 		order (id:$id) {
