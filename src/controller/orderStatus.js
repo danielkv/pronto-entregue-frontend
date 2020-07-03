@@ -57,11 +57,11 @@ export function canChangeStatus(availableStatus, oldStatus, newStatus) {
 	return false;
 }
 
-export function availableStatus(order) {
+export function availableStatus(order, userRole) {
 	
 	let status = ['waiting', 'preparing', 'delivering', 'delivered', 'canceled'];
 
-	if (order.status !== 'waiting') {
+	if (order.status !== 'waiting' || userRole === 'master') {
 		if (order.type === 'peDelivery') {
 			status = ['waiting', 'preparing', 'waitingDelivery', 'delivering', 'delivered', 'canceled'];
 		} else if (order.type === 'takeout') {

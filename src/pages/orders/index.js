@@ -101,22 +101,6 @@ function Page ({ match: { url } }) {
 				onClick={handleUpdateStatus}
 				selected={menuOrder.status}
 			/>
-			{/* <Menu
-				id="simple-menu"
-				anchorEl={anchorEl}
-				keepMounted
-				open={Boolean(anchorEl)}
-				onClose={handleCloseMenu}
-			>
-				{availableStatus(menuOrder).map(status => {
-					return (
-						<MenuItem key={status.slug} onClick={handleUpdateStatus(status)} selected={menuOrder.status===status.slug} dense>
-							<ListItemIcon>{status.Icon}</ListItemIcon>
-							<ListItemText>{status.label}</ListItemText>
-						</MenuItem>
-					)
-				})}
-			</Menu> */}
 			<Content>
 				{loadingOrders ? <LoadingBlock /> :
 					<Block>

@@ -30,7 +30,7 @@ export default function StatusRow({ order }) {
 			.finally(()=>setLoadingStatus(null))
 	}
 
-	const availableOrderStatus = availableStatus(order);
+	const availableOrderStatus = availableStatus(order, loggedUserRole);
 
 	return (
 		<div>
