@@ -39,7 +39,6 @@ export const getOrderStatusIcon = (order, size=.8) => {
 		case 'waitingPickUp':
 			return <Icon path={mdiBagChecked} size={size} color='#363E5E' alt={label} title={label} />
 		case 'delivering':
-			if (order.type === 'takeout') return <Icon path={mdiBagChecked} size={size} color='#363E5E' alt={label} title={label} />
 			return <Icon path={mdiMoped} size={size} color='#363E5E' alt={label} title={label} />
 		case 'delivered':
 			return <Icon path={mdiCheckCircle} size={size} color='#058F0A' alt={label} title={label} />
@@ -71,13 +70,13 @@ export function availableStatus(order, userRole) {
 		status = ['accepted', 'canceled'];
 	}
 
-	return status.map(stat => ({ slug: stat === 'accepted' ? 'preparing' : stat, label: getOrderStatusLabel(order, stat), Icon: getOrderStatusIcon({ ...order, status: stat }) }))
+	return status.map(stat => ({ slug: stat === 'accepted' ? 'preparing' : stat, label: getOrderStatusLabel(stat), Icon: getOrderStatusIcon({ ...order, status: stat }) }))
 }
 
-export function getOrderStatusLabel(order, status) {
+export function getOrderStatusLabel(status) {
 	// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
 		
-	switch(status || order.status) {
+	switch(status) {
 		case 'accepted':
 			return 'Abrir';
 		case 'waiting':
@@ -89,7 +88,7 @@ export function getOrderStatusLabel(order, status) {
 		case 'waitingPickUp':
 			return 'Aguardando retirada';
 		case 'delivering':
-			return order.type === 'takeout' ? 'Aguardando retirada' : 'A caminho';
+			return 'A caminho';
 		case 'delivered':
 			return 'Entregue';
 		case 'canceled':

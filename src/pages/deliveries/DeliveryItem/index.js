@@ -10,7 +10,7 @@ import numeral from 'numeral';
 
 import DeliveryAddress from '../../../components/DeliveryAddress';
 
-import { getOrderStatusLabel } from '../../../controller/orderStatus';
+import DeliveryController from '../../../controller/delivery';
 import StatusRow from './StatusRow';
 
 
@@ -23,7 +23,7 @@ export default function DeliveryItem({ item: delivery }) {
 			<CardContent>
 				<div style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
 					<Chip style={{ height: 28 }} label={`#${delivery.id}`} color='secondary' />
-					<Chip style={{ height: 28, marginLeft: 8 }} label={getOrderStatusLabel(delivery)} variant='outlined' />
+					<Chip style={{ height: 28, marginLeft: 8 }} label={DeliveryController.statusLabel(delivery.status)} variant='outlined' />
 					<Typography style={{ marginLeft: 'auto' }} variant='caption'>{moment(delivery.createdAt).format('DD/MM/YY HH:mm')}</Typography>
 				</div>
 

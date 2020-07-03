@@ -23,7 +23,7 @@ export default function OrderRollItem({ item: order }) {
 		>
 			<div style={{ marginBottom: 10 }}>
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
-				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order)} style={{ marginLeft: 6 }} variant='outlined' />
+				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order.status)} style={{ marginLeft: 6 }} variant='outlined' />
 				<Typography style={{ marginLeft: 6 }} variant='caption'>{moment(order.createdAt).format('DD/MM HH:mm')}</Typography>
 
 				{order.status !== 'waiting' &&

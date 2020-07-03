@@ -4,7 +4,7 @@ import { Typography } from '@material-ui/core'
 import { mdiRacingHelmet } from '@mdi/js'
 import Icon from '@mdi/react'
 
-import { getOrderStatusLabel } from '../../../../controller/orderStatus'
+import DeliveryController from '../../../../controller/delivery'
 
 export default function OrderType({ order }) {
 	return (
@@ -31,7 +31,7 @@ export default function OrderType({ order }) {
 								{Boolean(order.delivery && order.delivery.deliveryMan) && (
 									<div>
 										<Typography variant='subtitle2'><b>Entregador:</b> {order.delivery.deliveryMan.user.fullName}</Typography>
-										<Typography variant='subtitle2' style={{ fontSize: 12 }}><b>Status da entrega:</b> {getOrderStatusLabel(order, order.delivery.status)}</Typography>
+										<Typography variant='subtitle2' style={{ fontSize: 12 }}><b>Status da entrega:</b> {DeliveryController.statusLabel(order.delivery.status)}</Typography>
 										{Boolean(order.delivery.deliveryMan.user.phones.length) && <Typography variant='caption'>{order.delivery.deliveryMan.user.phones[0].value}</Typography>}
 									</div>
 								)}
