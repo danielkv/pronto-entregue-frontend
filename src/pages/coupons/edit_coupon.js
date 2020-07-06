@@ -44,8 +44,6 @@ function Page () {
 	function onSubmit(data) {
 		const saveData = sanitizeCoupon(data);
 
-		console.log(saveData);
-
 		return updateCoupon({ variables: { data: saveData } })
 			.then(()=>{
 				enqueueSnackbar('A campanha foi alterada com sucesso', { variant: 'success' });

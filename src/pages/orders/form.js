@@ -12,7 +12,6 @@ import numeral from 'numeral';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, SidebarContainer, Sidebar, FormRow, FieldControl, tField } from '../../layout/components';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
-import { availableStatus } from '../../controller/orderStatus'
 import { errorObjectsToArray } from '../../utils/error';
 import { calculateOrderPrice } from '../../utils/orders';
 import { filterProductSelectedOptions } from '../../utils/products';
@@ -22,9 +21,11 @@ import Products from './products';
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { SEARCH_USERS } from '../../graphql/users';
 
+let timeoutSearh = null;
+
 export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
 	// carregamento inicial
-	const { user, price, products, status, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory, coupon } = values;
+	const { user, price, products, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory, coupon } = values;
 	const loggedUserRole = useLoggedUserRole();
 	const canChangeStatus = loggedUserRole === 'master' || !['delivered', 'canceled'].includes(initialValues.status)
 	const inputDisabled = !canChangeStatus || isSubmitting;
@@ -56,7 +57,12 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 	} = useQuery(GET_COMPANY_PAYMENT_METHODS, { variables: { id: selectedCompany } });
 
 	const handleSearchCustomer = (value) => {
-		searchUsers({ variables: { search: value } });
+		if (timeoutSearh) clearTimeout(timeoutSearh);
+		if (!value) return;
+		
+		setTimeout(()=>{
+			searchUsers({ variables: { search: value } });
+		}, 1000)
 	}
 
 	useEffect(()=>{
@@ -174,7 +180,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 					</BlockHeader>
 					<Sidebar>
 						<BlockSeparator>
-							<FormRow>
+							{/* <FormRow>
 								<FieldControl>
 									<TextField
 										select
@@ -186,7 +192,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 										{availableStatus(values).map(status => <MenuItem key={status.slug} value={status.slug}>{status.label}</MenuItem>)}
 									</TextField>
 								</FieldControl>
-							</FormRow>
+							</FormRow> */}
 							<FormRow>
 								<FieldControl>
 									<Button fullWidth type='submit' variant="contained" disabled={inputDisabled} color='primary'>Salvar</Button>

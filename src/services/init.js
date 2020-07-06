@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import gql from "graphql-tag";
 
+import NotificationsController from '../controller/notifications';
 import client from './apolloClient';
 
 import { IS_USER_LOGGED_IN, AUTHENTICATE, LOGGED_USER_ID } from '../graphql/authentication';
 import { SET_SELECTED_COMPANY, GET_USER_COMPANIES, GET_SELECTED_COMPANY } from '../graphql/companies';
-
 
 export function useInitialize() {
 	const [error, setError] = useState(null);
@@ -70,6 +70,7 @@ async function init() {
 export function logUserIn (user, token) {
 	localStorage.setItem('@prontoentregue/userToken', token);
 	client.writeData({ data: { loadingInit: true, isUserLoggedIn: true, userToken: token, loggedUserId: user.id } });
+	NotificationsController.getToken();
 }
 
 export function logUserOut () {

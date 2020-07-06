@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
+
+import { useQuery } from '@apollo/react-hooks';
+import { useSnackbar } from 'notistack';
 
 import ProtectedRoute from '../components/ProtectedRoute';
 import { Container, HeaderArea, NavigationArea, Main } from '../layout/components';
 
+import { useSelectedCompany } from '../controller/hooks';
+import NotificationsController from '../controller/notifications';
+import { statusVariant } from '../controller/orderStatus';
 import Header from '../layout/header';
 import Navigation from '../layout/navigation';
 import AllOrders from '../pages/allOrders';
@@ -20,6 +26,7 @@ import Coupons from '../pages/coupons';
 import EditCoupon from '../pages/coupons/edit_coupon';
 import NewCoupon from '../pages/coupons/new_coupon';
 import Dashboard from '../pages/dashboard';
+import Deliveries from '../pages/deliveries';
 import Orders from '../pages/orders';
 import EditOrder from '../pages/orders/edit_order';
 import NewOrder from '../pages/orders/new_order';
@@ -34,11 +41,48 @@ import Ratings from '../pages/ratings';
 import Reports from '../pages/reports';
 import Settings from '../pages/settings';
 
+import { GET_NOTIFICATION_SOUND } from '../graphql/companies';
+
 export default function DashboardPages() {
 	const { path } = useRouteMatch();
+	const { enqueueSnackbar } = useSnackbar();
+	const selectedCompany = useSelectedCompany();
+	const notificationRef = useRef();
+	
+	function playNotification() {
+		if (!notificationRef.current) return;
+		notificationRef.current.load()
+		notificationRef.current.play()
+	}
+
+	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });
+
+	useEffect(()=>{
+		NotificationsController.addHandler('enqueueSnack', (payload)=>{
+			let options = { variant: 'default', sound: false };
+			
+			if (payload.data && payload.data.sound) options.sound = payload.data.sound;
+
+			if (payload.data && payload.data.action && payload.data.action === 'statusChange' && payload.data.newStatus) {
+				options.variant = statusVariant(payload.data.newStatus);
+			} else {
+				if (payload.data && payload.data.options) options = payload.data.options;
+			}
+			enqueueSnackbar(payload.notification.body, options);
+
+			if (options.sound) playNotification();
+		})
+
+		return ()=>{
+			NotificationsController.removeHandler('enqueueSnack')
+		}
+	})
 	
 	return (
 		<Container>
+			{!loadingSound && <audio ref={notificationRef}>
+				<source src={companySound.url} />
+			</audio>}
 			<HeaderArea>
 				<Header />
 			</HeaderArea>
@@ -74,6 +118,7 @@ export default function DashboardPages() {
 						
 					<Route path={`${path}/configuracoes`} component={Settings} />
 
+					<ProtectedRoute exact role='master' path={`${path}/entregas`} component={Deliveries} />
 					<ProtectedRoute exact role='master' path={`${path}/todos-pedidos`} component={AllOrders} />
 					<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
 					<ProtectedRoute role='master' path={`${path}/relatorios`} component={Reports} />

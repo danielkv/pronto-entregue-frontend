@@ -29,7 +29,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 	const { data: { roles = [] } = {} } = useQuery(GET_ROLES);
 
 	useEffect(() => {
-		if (!assignCompany && (role !== 'master' && role !== 'customer')) setFieldValue('role', 'customer');
+		if (!assignCompany && (!['master', 'adm', 'deliveryMan'].includes(role))) setFieldValue('role', 'customer');
 	}, [setFieldValue, assignCompany, role])
 
 	function handleCloseDialog() {
@@ -222,6 +222,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 								<FieldControl>
 									<TextField disabled={loggedUserId === editId} name='role' value={role} onChange={handleChange} select label='Função'>
 										{loggedUserRole === 'master' && <MenuItem key='master' value='master'>ADM (Master)</MenuItem>}
+										{loggedUserRole === 'master' && <MenuItem key='deliveryMan' value='deliveryMan'>Entregador</MenuItem>}
 										<MenuItem key='customer' value='customer'>Cliente</MenuItem>
 										{assignCompany && <ListSubheader>Permissões</ListSubheader>}
 										{assignCompany &&

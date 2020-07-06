@@ -106,7 +106,7 @@ export const SEARCH_USERS = gql`
 `;
 
 export const GET_USERS = gql`
-	query GetUsers ($filter: Filter, $pagination: Pagination) {
+	query GetUsers ($filter: JSON, $pagination: Pagination) {
 		countUsers (filter: $filter)
 		users (filter: $filter, pagination: $pagination) {
 			id
@@ -141,5 +141,17 @@ export const UPDATE_USER = gql`
 				value
 			}
 		}
+	}
+`;
+
+export const PUSH_NOTIFICATION_TOKEN = gql`
+	mutation PushNotificationToken ($userId: ID!, $token: String!) {
+		pushNotificationToken (userId: $userId, token: $token, type: "desktop")
+	}
+`;
+
+export const REMOVE_NOTIFICATION_TOKEN = gql`
+	mutation RemoveNotificationToken ($token: String!) {
+		removeNotificationToken (token: $token, type: "desktop")
 	}
 `;

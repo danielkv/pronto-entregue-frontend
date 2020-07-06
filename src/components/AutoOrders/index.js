@@ -1,37 +1,24 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
 
 import { useQuery } from '@apollo/react-hooks';
-import { Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@material-ui/core'
-import { mdiVolumeHigh } from '@mdi/js';
-import Icon from '@mdi/react';
-import { useSnackbar } from 'notistack';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core'
 
-import notificationAudio from '../../assets/audio/notification.ogg';
 import { useSelectedCompany } from '../../controller/hooks';
-import { getOrderStatusLabel } from '../../controller/orderStatus';
 import OrderRollItem from './OrderRollItem';
 
-import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_STATUS_UPDATED } from '../../graphql/ordersRoll';
-
+import { GET_NOTIFICATION_SOUND } from '../../graphql/companies';
+import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_UPDATED } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
 	const [open, setOpen] = useState(false);
 	const selectedCompany = useSelectedCompany();
-	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'preparing', 'delivering'] } } });
+	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'waitingDelivery', 'preparing', 'delivering'] } } });
 	const notificationRef = useRef();
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });
 
 	function handleCloseOrdersRoll() {
 		setOpen(false);
-	}
-
-	const handleOpen = (key) => () => {
-		closeSnackbar(key);
-		setOpen(true);
-	}
-
-	const handleClose = (key) => () => {
-		closeSnackbar(key);
 	}
 
 	useEffect(()=>{
@@ -44,18 +31,8 @@ export default function AutoOrders() {
 				if (!orderCreated) return prev;
 
 				playNotification();
-				
-				enqueueSnackbar(`Novo pedido de ${orderCreated.user.fullName}`, {
-					persist: true,
-					variant: 'warning',
-					iconVariant: { warning: 'X' },
-					action: (key) => (
-						<div>
-							<Button onClick={handleOpen(key, orderCreated.id)}>Abrir</Button>
-							<Button onClick={handleClose(key)}>Ok</Button>
-						</div>
-					)
-				})
+
+				setOpen(true)
 
 				return Object.assign({}, prev, {
 					company: {
@@ -67,25 +44,8 @@ export default function AutoOrders() {
 		})
 
 		const unsubscribeUpdatedOrder = subscribeToMore({
-			document: ORDER_STATUS_UPDATED,
+			document: ORDER_UPDATED,
 			variables: { companyId: selectedCompany },
-			updateQuery(prev, { subscriptionData: { data: { updateOrderStatus = null } } }) {
-				if (!updateOrderStatus) return;
-				const options = {
-					persist: true,
-					variant: 'warning',
-					action: (key) => (
-						<div>
-							<Button onClick={handleOpen(key, updateOrderStatus.id)}>Abrir</Button>
-							<Button onClick={handleClose(key)}>Ok</Button>
-						</div>
-					)
-				}
-				if (updateOrderStatus.status === 'canceled') {
-					enqueueSnackbar(`Pedido #${updateOrderStatus.id} foi cancelado`, { ...options, variant: 'error' })
-				} else
-					enqueueSnackbar(`Pedido #${updateOrderStatus.id} alterado para ${getOrderStatusLabel(updateOrderStatus)}`, options)
-			}
 		})
 
 		return ()=>{
@@ -97,20 +57,17 @@ export default function AutoOrders() {
 
 	function playNotification() {
 		if (!notificationRef.current) return;
+		notificationRef.current.load()
 		notificationRef.current.play()
 	}
 
 	return (
 		<Fragment>
-			<audio ref={notificationRef}>
-				<source src={notificationAudio} type="audio/ogg" />
-			</audio>
+			{!loadingSound && <audio ref={notificationRef}>
+				<source src={companySound.url} />
+			</audio>}
 			
 			<Button variant='contained' onClick={()=>setOpen(!open)}>Mostrar pedidos</Button>
-			
-			<IconButton variant='contained' onClick={playNotification} title='Testar áudio'>
-				<Icon path={mdiVolumeHigh} size={.9} color='#ccc' />
-			</IconButton>
 
 			<Dialog
 				fullWidth

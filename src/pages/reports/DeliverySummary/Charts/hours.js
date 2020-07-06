@@ -6,18 +6,15 @@ import { VictoryChart, VictoryAxis, VictoryBar } from 'victory';
 
 import chartTheme from '../../../../layout/chartTheme';
 
-function arrangeData(report) {
+function arrangeData(deliveries) {
 	return new Promise((resolve, reject)=>{
 		try {
-			// get orders only
-			const orders = report.companies.reduce((allOrders, company)=>[...allOrders, ...company.orders], []);
-
 			// rearrenga data
 			const data = [];
 
 			for (let hour=0; hour <= 23; hour++) {
 				const dateString = hour < 10 ? '0' + hour : `${hour}`;
-				const ordersInDate = orders.filter(order => moment(order.createdAt).format('H') === hour.toString());
+				const ordersInDate = deliveries.filter(order => moment(order.createdAt).format('H') === hour.toString());
 				const countOrders = ordersInDate.length;
 				data.push({ x: dateString, y: countOrders, label: countOrders });
 			}
@@ -29,15 +26,15 @@ function arrangeData(report) {
 	})
 }
 
-export default function ChartHours({ report }) {
+export default function ChartHours({ deliveries }) {
 	const [chartData, setChartData] = useState();
 
 	useEffect(()=>{
-		arrangeData(report)
+		arrangeData(deliveries)
 			.then((data)=>{
 				setChartData(data);
 			});
-	}, [report])
+	}, [deliveries])
 
 	return (
 		<Card>

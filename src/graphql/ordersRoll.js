@@ -68,6 +68,18 @@ export const ORDER_CRATED_FRAGMENT = gql`
 			id
 			value
 		}
+		delivery {
+			id
+			status
+			deliveryMan {
+				user {
+					fullName
+					phones: metas(type: "phone") {
+						value
+					}
+				}
+			}
+		}
 		deliveryPrice
 		deliveryTime
 		price
@@ -117,6 +129,16 @@ export const SUBSCRIBE_ORDER_CREATED = gql`
 export const ORDER_STATUS_UPDATED = gql`
 	subscription ($companyId: ID!) {
 		updateOrderStatus(companyId: $companyId) {
+			...OrderCratedFragment
+		}
+	}
+
+	${ORDER_CRATED_FRAGMENT}
+`;
+
+export const ORDER_UPDATED = gql`
+	subscription ($companyId: ID!) {
+		orderUpdated(companyId: $companyId) {
 			...OrderCratedFragment
 		}
 	}

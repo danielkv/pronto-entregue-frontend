@@ -13,6 +13,12 @@
 			"type":"image/png"
 		}
 	],
+	"serviceworker": {
+		"src": "./firebase-messaging-sw.js",
+		"scope": "/src",
+		"type": "",
+		"update_via_cache": "none"
+	},
 	"theme_color":"#ffffff",
 	"background_color":"#ffffff",
 	"display":"standalone",

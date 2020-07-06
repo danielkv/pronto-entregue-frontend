@@ -1,5 +1,5 @@
 import { createUploadLink } from 'apollo-upload-client';
 
-const host = process.env.NODE_ENV === 'production' ? 'https://api.prontoentregue.com.br/graphql' : 'http://localhost:4000/graphql';
+import serverConfig from '../../config/server';
 
-export default createUploadLink({ uri: host });
+export default createUploadLink({ uri: serverConfig.host });

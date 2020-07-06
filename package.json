@@ -1,6 +1,6 @@
 {
   "name": "pronto-entregue-frontend",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "engines": {
     "yarn": "1.22.0",
@@ -29,7 +29,9 @@
     "downshift": "^3.3.4",
     "express": "^4.17.1",
     "express-favicon": "^2.0.1",
+    "firebase": "^7.15.3",
     "formik": "^2.0.6",
+    "framer-motion": "^1.11.1",
     "graphql": "^14.5.4",
     "graphql-tag": "^2.10.1",
     "lodash": "^4.17.15",

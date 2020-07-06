@@ -143,7 +143,7 @@ function Page ({ match: { url } }) {
 								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
 							/>
 						</Paper>
-						<NumberOfRows>{companies.length} empresas</NumberOfRows>
+						<NumberOfRows>{countCompanies} empresas</NumberOfRows>
 					</Block>}
 			</Content>
 			<SidebarContainer>

@@ -42,6 +42,12 @@ export const GET_COMPANY_PAYMENT_METHODS = gql`
 	}
 `;
 
+export const GET_NOTIFICATION_SOUND = gql`
+	query GetNotificationSound ($companyId: ID!) {
+		companySound(companyId: $companyId)
+	}
+`;
+
 export const GET_COMPANY_GENERAL_SETTINGS = gql`
 	query GetCompanyGeneralSettings ($id: ID!, $keys: [String]) {
 		company(id: $id) {

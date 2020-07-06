@@ -2,12 +2,14 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, Menu, MenuItem, CircularProgress, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Typography } from '@material-ui/core';
 import { mdiPencil, mdiFilter, mdiDotsVertical, mdiEye } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 import numeral from 'numeral'
 
+import OrderStatusMenu from '../../components/OrderStatusMenu';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -16,13 +18,13 @@ import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
 
-import { UPDATE_ORDER, GET_ORDERS } from '../../graphql/orders';
+import { GET_ORDERS, CHANGE_ORDER_STATUS } from '../../graphql/orders';
 
 const initialFilter = {
 	search: '',
 }
 
-export default function AllOrders ({ match: { url } }) {
+export default function AllOrders () {
 	setPageTitle('Todos pedidos');
 	
 	const loggedUserRole = useLoggedUserRole();
@@ -31,6 +33,8 @@ export default function AllOrders ({ match: { url } }) {
 	const [menuOrder, setMenuOrder] = useState([]);
 	const searchRef = useRef(null);
 	const [filter, setFilter] = useState(initialFilter);
+	const [loadingUpdateOrder, setLoadingUpdateOrder] = useState(null);
+	const { enqueueSnackbar } = useSnackbar();
 	const [pagination, setPagination] = useState({
 		page: 0,
 		rowsPerPage: 10,
@@ -61,7 +65,8 @@ export default function AllOrders ({ match: { url } }) {
 			pagination,
 		}
 	});
-	const [updateOrder, { loading: loadingUpdateOrder, error: updateOrderError }] = useMutation(UPDATE_ORDER)
+	//const [updateOrder, { loading: loadingUpdateOrder, error: updateOrderError }] = useMutation(UPDATE_ORDER)
+	const [changeOrderStatus] = useMutation(CHANGE_ORDER_STATUS)
 
 	function handleCloseMenu() {
 		setAnchorEl(null);
@@ -72,38 +77,34 @@ export default function AllOrders ({ match: { url } }) {
 		const orderId = e.currentTarget.getAttribute('data-order-id')
 		setMenuOrder(orders.find(row => row.id === orderId));
 	}
-	const handleUpdateStatus = (newStatus) => () => {
-		updateOrder({ variables: { id: menuOrder.id, data: { status: newStatus.slug } } });
+
+	const handleUpdateStatus = (newStatus) => {
+		setLoadingUpdateOrder(menuOrder.id)
+		changeOrderStatus({ variables: { id: menuOrder.id, newStatus: newStatus.slug } })
+			.then(()=>enqueueSnackbar(`Status do pedido #${menuOrder.id} foi alterado para ${newStatus.label}`, { variant: 'success' }))
+			.catch((err)=>enqueueSnackbar(getErrors(err), { variant: 'error' }))
+			.finally(()=>setLoadingUpdateOrder(null))
 		handleCloseMenu();
 	}
 
-	if (error || updateOrderError) return <ErrorBlock error={getErrors(error || updateOrderError)} />
+	if (error) return <ErrorBlock error={getErrors(error)} />
 	if (!called && loadingOrders) return (<LoadingBlock />);
 
 	return (
 		<Fragment>
-			<Menu
-				id="simple-menu"
-				anchorEl={anchorEl}
-				keepMounted
+			<OrderStatusMenu
 				open={Boolean(anchorEl)}
 				onClose={handleCloseMenu}
-			>
-				{availableStatus(menuOrder).map(status => {
-					return (
-						<MenuItem key={status.slug} onClick={handleUpdateStatus(status)} selected={menuOrder.status===status.slug} dense>
-							<ListItemIcon>{status.Icon}</ListItemIcon>
-							<ListItemText>{status.label}</ListItemText>
-						</MenuItem>
-					)
-				})}
-			</Menu>
+				availableStatus={availableStatus(menuOrder, loggedUserRole)}
+				anchorEl={anchorEl}
+				onClick={handleUpdateStatus}
+				selected={menuOrder.status}
+			/>
 			<Content>
 				{loadingOrders ? <LoadingBlock /> :
 					<Block>
 						<BlockHeader>
 							<BlockTitle>Todos pedidos</BlockTitle>
-							{loadingUpdateOrder && <CircularProgress />}
 							<NumberOfRows>{countOrders} pedidos</NumberOfRows>
 						</BlockHeader>
 						<Paper>
@@ -134,12 +135,16 @@ export default function AllOrders ({ match: { url } }) {
 												<TableCell><Typography variant='body2'>{numeral(row.price).format('$0,0.00')}</Typography></TableCell>
 												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row)}</TableCell>
 												<TableCell style={{ width: 100 }}>
-													<IconButton disabled={loadingUpdateOrder} component={Link} to={`pedidos/alterar/${row.id}`}>
+													<IconButton disabled={loadingUpdateOrder === row.id} component={Link} to={`pedidos/alterar/${row.id}`}>
 														<Icon path={canChangeStatus ? mdiPencil : mdiEye} size={1} color='#363E5E' />
 													</IconButton>
-													{canChangeStatus && <IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id}>
-														<Icon path={mdiDotsVertical} size={1} color='#363E5E' />
-													</IconButton>}
+													{canChangeStatus &&
+														loadingUpdateOrder === row.id
+														? <CircularProgress />
+														: <IconButton disabled={loadingUpdateOrder} onClick={handleOpenMenu} data-order-id={row.id}>
+															<Icon path={mdiDotsVertical} size={1} color='#363E5E' />
+														</IconButton>
+													}
 												</TableCell>
 											</TableRow>
 										)})}

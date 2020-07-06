@@ -130,6 +130,7 @@ export const ORDER_FRAGMENT = gql`
 			price
 			message
 			quantity
+			message
 			productRelated {
 				...ProductRelatedFields
 			}
@@ -160,8 +161,8 @@ export const ORDER_FRAGMENT = gql`
 `;
 
 export const CHECK_DELIVERY_LOCATION = gql`
-	mutation CheckDeliveryLocation ($companyId: ID!, $location: GeoPoint!) {
-		checkDeliveryLocation(companyId: $companyId, location: $location) {
+	mutation CheckDeliveryLocation ($companyId: ID!, $location: GeoPoint!, $type: String!) {
+		checkDeliveryLocation(companyId: $companyId, location: $location, type: $type) {
 			id
 			name
 			center
@@ -183,6 +184,32 @@ export const UPDATE_ORDER = gql`
 	mutation UpdateOrder ($id:ID!, $data:OrderInput!, $filter:Filter) {
 		updateOrder(id:$id, data:$data) {
 			...OrderFields
+		}
+	}
+	${ORDER_FRAGMENT}
+`;
+
+export const CHANGE_ORDER_STATUS = gql`
+	mutation ChangeOrderStatus ($id:ID!, $newStatus: String!) {
+		changeOrderStatus(id: $id, newStatus: $newStatus) {
+			id
+			status
+		}
+	}
+`;
+
+export const LOAD_PRINT_ORDER = gql`
+	query LoadPrintOrder ($id:ID!, $filter:Filter) {
+		order (id:$id) {
+			...OrderFields
+			company {
+				id
+				displayName
+			}
+			paymentMethod {
+				id
+				displayName
+			}
 		}
 	}
 	${ORDER_FRAGMENT}
