@@ -1,14 +1,8 @@
 import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 
-<<<<<<< HEAD
-import { useMutation } from '@apollo/react-hooks'
-import { Chip, Typography, Paper, IconButton, useTheme, Menu, MenuItem, ListItemIcon, ListItemText, CircularProgress, Divider } from '@material-ui/core'
-import { mdiDotsVertical, mdiPrinter } from '@mdi/js'
-=======
 import { Chip, Typography, Paper, Divider, IconButton } from '@material-ui/core'
 import { mdiPrinter, mdiPencil } from '@mdi/js'
->>>>>>> jobs
 import Icon from '@mdi/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import moment from 'moment'
@@ -109,29 +103,11 @@ export default function OrderRollItem({ item: order }) {
 									</div>
 								)}
 							</div>
-<<<<<<< HEAD
-						)}
-					</div>
-				</div>
-			</div>
-			<div style={{ position: 'absolute', right: 10, top: 10 }}>
-				<IconButton onClick={()=>window.open(`/imprimir/${order.id}`)}>
-					<Icon path={mdiPrinter} size={.8} color='#999' />
-				</IconButton>
-				{loadingUpdate
-					? <CircularProgress color='primary' />
-					: (
-						<IconButton innerRef={anchorEl} onClick={()=>setMenuOpen(true)}>
-							<Icon path={mdiDotsVertical} size={.8} color={palette.primary.main} />
-						</IconButton>
-					)}
-=======
 						</div>
 					</motion.div>}
 			</AnimatePresence>
 			<div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
 				<StatusRow order={order} />
->>>>>>> jobs
 			</div>
 		</Paper>
 	)

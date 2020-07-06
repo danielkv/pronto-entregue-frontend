@@ -7,7 +7,6 @@ import numeral from 'numeral';
 
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { getErrors } from '../../utils/error';
-import { extractOrder } from '../../utils/orders';
 import { calculateProductPrice } from '../../utils/products';
 
 import { LOAD_PRINT_ORDER } from '../../graphql/orders';
