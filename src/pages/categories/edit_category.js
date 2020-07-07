@@ -6,6 +6,7 @@ import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
+import { MAX_UPLOAD_SIZE } from '../../config';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { sanitizeCategory, extractCategory } from '../../utils/categories';
@@ -13,7 +14,6 @@ import { getErrors } from '../../utils/error';
 import PageForm from './form';
 
 import { UPDATE_CATEGORY, LOAD_CATEGORY } from '../../graphql/categories';
-import { MAX_UPLOAD_SIZE } from '../../config';
 
 const validationSchema = Yup.object().shape({
 	name: Yup.string().required('O nome é obrigatório'),

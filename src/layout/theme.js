@@ -116,12 +116,14 @@ const theme = responsiveFontSizes(createMuiTheme({
 			}
 		},
 		MuiTextField: {
+			
 			root: {
 				'& .MuiInputAdornment-root': {
 					marginLeft: 8,
 				},
+				
 				'& .MuiInputBase-root': {
-					backgroundColor: '#ddd',
+					backgroundColor: "#F0F0F0",
 					borderRadius: 4,
 					overflow: 'hidden',
 
@@ -131,15 +133,12 @@ const theme = responsiveFontSizes(createMuiTheme({
 				},
 				'& .MuiInput-input': {
 					borderRadius: 4,
-					backgroundColor: "#F0F0F0",
+					//backgroundColor: "#F0F0F0",
 					
 					padding: '9px 18px',
 					'& input': {
 						padding: 0,
 					},
-					
-					//background: "none !important",
-					//padding: 0
 				},
 			},
 		},

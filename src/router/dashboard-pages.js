@@ -37,8 +37,9 @@ import Users from '../pages/people/users';
 import Products from '../pages/products';
 import EditProduct from '../pages/products/edit_product';
 import NewProduct from '../pages/products/new_product';
-import Ratings from '../pages/ratings';
 import Reports from '../pages/reports';
+import SendNotification from '../pages/sendNotification';
+//import Ratings from '../pages/ratings';
 import Settings from '../pages/settings';
 
 import { GET_NOTIFICATION_SOUND } from '../graphql/companies';
@@ -111,10 +112,13 @@ export default function DashboardPages() {
 						
 					<Route exact path={`${path}/usuarios`} component={Users} />
 					<Route path={`${path}/pessoas/alterar/:id`} component={EditPeople} />
+
 					<ProtectedRoute role='master' exact path={`${path}/pessoas`} component={People} />
 					<ProtectedRoute role='master' path={`${path}/pessoas/nova`} component={NewPeople} />
 
-					<Route path={`${path}/pontuacao`} component={Ratings} />
+					<ProtectedRoute role='master' path={`${path}/enviar-notificacoes`} component={SendNotification} />
+
+					{/* <Route path={`${path}/pontuacao`} component={Ratings} /> */}
 						
 					<Route path={`${path}/configuracoes`} component={Settings} />
 

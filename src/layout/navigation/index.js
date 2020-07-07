@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart, mdiTicketPercent, mdiRacingHelmet } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart, mdiTicketPercent, mdiRacingHelmet, mdiBell } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -112,6 +112,13 @@ function Navigation() {
 								<Icon path={mdiFileChart} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Relatórios
+							</ListItemText>
+						</NavItem>
+						<NavItem to={`${url}/enviar-notificacoes`} selected={isSelected('enviar-notificacoes')} alt='Enviar Notificacoes'>
+							<ListItemIcon>
+								<Icon path={mdiBell} size={1} color='#707070' /></ListItemIcon>
+							<ListItemText>
+								Enviar Notificações
 							</ListItemText>
 						</NavItem>
 						<NavItem to={`${url}/ramos`} selected={isSelected('ramos')} alt='Ramos de atividade'>
