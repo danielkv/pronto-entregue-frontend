@@ -26,6 +26,9 @@ export const LOAD_USER = gql`
 				id
 				userRelation {
 					active
+					role {
+						name
+					}
 				}
 			}
 			addresses {

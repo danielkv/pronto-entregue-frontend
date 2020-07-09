@@ -28,7 +28,7 @@ export function extractPeople(user) {
 		lastName: user.lastName,
 		email: user.email,
 		active: user.active,
-		role: user.role,
+		role: user.company && user.company.userRelation ? user.company.userRelation.role.name : user.role,
 		password: '',
 		assignCompany: !!(user.company && user.company.userRelation),
 		addresses: user.addresses.map(address => extractAddress(address)),
