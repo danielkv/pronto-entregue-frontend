@@ -222,7 +222,7 @@ export default function PageForm ({ edit, pageTitle, errors, isValidating, value
 								<FieldControl>
 									<TextField disabled={loggedUserId === editId} name='role' value={role} onChange={handleChange} select label='Função'>
 										{loggedUserRole === 'master' && <MenuItem key='master' value='master'>ADM (Master)</MenuItem>}
-										{loggedUserRole === 'deliveryMan' && <MenuItem key='deliveryMan' value='deliveryMan'>Entregador</MenuItem>}
+										{loggedUserRole === 'master' && <MenuItem key='deliveryMan' value='deliveryMan'>Entregador</MenuItem>}
 										<MenuItem key='customer' value='customer'>Cliente</MenuItem>
 										{assignCompany && <ListSubheader>Permissões</ListSubheader>}
 										{assignCompany &&
