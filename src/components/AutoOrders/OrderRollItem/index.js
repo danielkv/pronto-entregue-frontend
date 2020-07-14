@@ -39,11 +39,11 @@ export default function OrderRollItem({ item: order }) {
 			<AnimatePresence>
 				{order.status !== 'waiting' &&
 					<motion.div
-						initial={{ maxHeight: 0 }}
-						animate={{ maxHeight: 500 }}
-						exit={{ maxHeight: 0 }}
+						initial={{ height: 0 }}
+						animate={{ height: 'auto' }}
+						exit={{ height: 0 }}
 						style={{ marginLeft: 20, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}
-						transition={{ duration: .7 }}
+						transition={{ duration: .7, ease: 'easeInOut' }}
 					>
 						<div style={{ width: '55%', marginRight: 30 }}>
 							{order.products.map((product, index) => (
