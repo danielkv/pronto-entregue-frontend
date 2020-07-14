@@ -43,7 +43,7 @@ export default function OrderRollItem({ item: order }) {
 						animate={{ height: 'auto' }}
 						exit={{ height: 0 }}
 						style={{ marginLeft: 20, display: 'flex', flexDirection: 'row', overflow: 'hidden' }}
-						transition={{ duration: .7, ease: 'easeInOut' }}
+						//transition={{ duration: .7, ease: 'easeInOut' }}
 					>
 						<div style={{ width: '55%', marginRight: 30 }}>
 							{order.products.map((product, index) => (
