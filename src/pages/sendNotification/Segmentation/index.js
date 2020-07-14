@@ -8,6 +8,8 @@ import Icon from '@mdi/react'
 import brLocale from 'date-fns/locale/pt-BR';
 import moment from 'moment';
 
+import UserAutoComplete from './userAutoComplete';
+
 const ExpansionPanelDetailsStyled = withStyles({
 	root: {
 		backgroundColor: '#fafafa'
@@ -37,11 +39,17 @@ const initialCompanies = {
 	companies: []
 }
 
+const initialTo = {
+	selected: false,
+	to: []
+}
+
 export default function Segmentation({ setFilter, countTokensUsers, companies, loading }) {
 	const [subscriptionPeriod, setSubscriptionPeriod] = useState(()=>initialSubscriptionPeriod)
 	const [orderPeriod, setOrderPeriod] = useState(()=>initialOrderPeriod)
 	const [companiesFilter, setCompaniesFilter] = useState(()=>initialCompanies)
 	const [types, setTypes] = useState(()=>initialTypes)
+	const [to, setTo] = useState(()=>initialTo);
 
 	const handleSelectCompany = (companyId) => (e, newValue) => {
 		if (newValue) {
@@ -85,10 +93,15 @@ export default function Segmentation({ setFilter, countTokensUsers, companies, l
 		} else {
 			filter.types = ['device', 'desktop']
 		}
+		
+		if (to.selected) {
+			filter.to = to.to
+		}
 
 		setFilter(filter);
 		return filter;
 	}
+
 
 	return (
 		<div>
@@ -191,6 +204,20 @@ export default function Segmentation({ setFilter, countTokensUsers, companies, l
 							</Grid>
 						</Grid>
 					</MuiPickersUtilsProvider>
+				</ExpansionPanelDetailsStyled>
+			</ExpansionPanel>
+			<ExpansionPanel expanded={to.selected}>
+				<ExpansionPanelSummary>
+					<div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+						<FormControlLabel
+							control={<Checkbox checked={to.selected} onChange={()=>setTo(v=>({ ...v, selected: !v.selected }))} />}
+							label="Filtrar Usuários"
+						/>
+						<Icon path={mdiChevronDown} size={.8} color='#333' />
+					</div>
+				</ExpansionPanelSummary>
+				<ExpansionPanelDetailsStyled>
+					<UserAutoComplete setTo={setTo} />
 				</ExpansionPanelDetailsStyled>
 			</ExpansionPanel>
 			<ExpansionPanel expanded={types.selected}>

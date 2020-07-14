@@ -36,7 +36,7 @@ function Page () {
 
 		return updateOrder({ variables: {  data } })
 			.then(()=>{
-				enqueueSnackbar('O pedodo foi alterado com sucesso', { variant: 'success' });
+				enqueueSnackbar('O pedido foi alterado com sucesso', { variant: 'success' });
 			})
 			.catch((err)=>{
 				enqueueSnackbar(getErrors(err), { variant: 'error' });

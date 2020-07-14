@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { Grid,  } from '@material-ui/core'
@@ -14,7 +14,7 @@ import { COUNT_USERS_TOKENS, SEND_NOTIFICATION } from '../../graphql/notificatio
 
 export default function Deliveries() {
 	const [filter, setFilter] = useState({});
-	
+		
 	setPageTitle('Enviar notificação')
 
 	const { data: { countTokensUsers = null } = {}, loading: loadingCount } = useQuery(COUNT_USERS_TOKENS, { variables: { filter } })
@@ -31,10 +31,6 @@ export default function Deliveries() {
 			}
 		})
 	}
-
-	useEffect(()=>{
-		console.log(filter);
-	}, [filter])
 
 	if (loadingCompanies || (loadingCount && !countTokensUsers)) return <LoadingBlock />
 
