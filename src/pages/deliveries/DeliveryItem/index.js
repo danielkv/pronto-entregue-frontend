@@ -70,9 +70,9 @@ export default function DeliveryItem({ item: delivery }) {
 				<AnimatePresence>
 					{displayAddresses && (
 						<motion.div
-							initial={{ maxHeight: 0 }}
-							animate={{ maxHeight: 300 }}
-							exit={{ maxHeight: 0 }}
+							initial={{ height: 0 }}
+							animate={{ height: 'auto' }}
+							exit={{ height: 0 }}
 							style={{ marginTop: 10, overflow: 'hidden' }}
 						>
 							<div style={{ padding: '15px 20px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 15, marginBottom: 10 }}>
