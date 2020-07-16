@@ -23,7 +23,7 @@ export const FRAGMENT_DELIVERY = gql`
 		receiverName
 		receiverContact
 		senderContact
-		createdAt
+		#createdAt
 		deliveryMan {
 			id
 			user {
