@@ -25,6 +25,7 @@
     "apollo-link-http": "^1.5.16",
     "apollo-link-ws": "^1.0.20",
     "apollo-upload-client": "^11.0.0",
+    "customize-cra": "^1.0.0",
     "date-fns": "^2.9.0",
     "downshift": "^3.3.4",
     "express": "^4.17.1",
@@ -78,12 +79,14 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.10.4",
+    "babel-eslint": "^10.1.0",
     "babel-plugin-styled-components": "^1.10.6",
     "eslint": "^6.8.0",
     "eslint-plugin-import-helpers": "^1.0.2",
     "eslint-plugin-react": "^7.18.0"
   },
   "plugins": [
-    "babel-plugin-styled-components"
-  ]
+	"babel-plugin-styled-components"
+ ]
 }
