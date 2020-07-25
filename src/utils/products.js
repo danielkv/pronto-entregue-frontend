@@ -15,6 +15,8 @@ export function createEmptyProduct(overwrite={}) {
 		optionsGroups: [],
 		campaigns: [],
 		sale: createEmptySale(),
+		minDeliveryTime: '0',
+		scheduleEnabled: false,
 
 		...overwrite,
 	};
@@ -97,6 +99,8 @@ export function extractProduct(product) {
 		file: '',
 		preview: product.image,
 		sale: extractSale(product.sale),
+		minDeliveryTime: product.minDeliveryTime,
+		scheduleEnabled: product.scheduleEnabled,
 		
 		optionsGroups: product.optionsGroups.map(optionsGroup => ({
 			action: 'editable',
@@ -122,6 +126,8 @@ export function sanitizeProduct(data) {
 		active: data.active,
 		categoryId: data.category.id,
 		sale: sanitizeSale(data.sale),
+		minDeliveryTime: data.minDeliveryTime,
+		scheduleEnabled: data.scheduleEnabled,
 
 		optionsGroups: data.optionsGroups.filter(g => g.action !== 'remove_new').map(group => {
 			let g = {

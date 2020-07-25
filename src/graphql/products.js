@@ -57,6 +57,8 @@ export const LOAD_PRODUCT = gql`
 				expiresAt
 				startsAt
 			}
+			minDeliveryTime
+			scheduleEnabled
 			#campaigns {
 			#	id
 			#	name
@@ -169,6 +171,8 @@ export const UPDATE_PRODUCT = gql`
 				expiresAt
 				startsAt
 			}
+			minDeliveryTime
+			scheduleEnabled
 			image
 			active
 			optionsGroups (filter:$filter) {

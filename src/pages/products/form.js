@@ -25,7 +25,7 @@ import Sale from './sale';
 import { GET_COMPANY_CATEGORIES } from '../../graphql/categories';
 import { REMOVE_SALE } from '../../graphql/products';
 
-export default function PageForm ({ values: { sale, active, campaigns, price, fromPrice, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
+export default function PageForm ({ values: { sale, active, campaigns, price, fromPrice, minDeliveryTime, scheduleEnabled, type, preview, category }, setFieldValue, handleChange, isValidating, isSubmitting, errors }) {
 	const history = useHistory();
 	const [errorDialog, setErrorDialog] = useState(false);
 	const loggedUserRole = useLoggedUserRole();
@@ -213,6 +213,33 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 								)}
 						</BlockSeparator>
 						<BlockSeparator>
+							<FormRow>
+								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
+									<FormControlLabel
+										labelPlacement='start'
+										control={
+											<Switch size='small' color='primary' checked={scheduleEnabled} onChange={()=>{setFieldValue('scheduleEnabled', !scheduleEnabled)}} value="includeDisabled" />
+										}
+										label="Habilitar encomendas"
+									/>
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl>
+									<FormControl>
+										<TextField
+											type='number'
+											value={minDeliveryTime}
+											label='Tempo mínimo para entrega'
+											name='minDeliveryTime'
+											onChange={handleChange}
+											disabled={isSubmitting || !scheduleEnabled}
+											error={!!errors.minDeliveryTime}
+											helperText={errors.minDeliveryTime ? errors.minDeliveryTime : 'Em horas'}
+										/>
+									</FormControl>
+								</FieldControl>
+							</FormRow>
 							<FormRow>
 								<FieldControl>
 									<FormControl>
