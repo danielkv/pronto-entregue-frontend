@@ -4,6 +4,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { Button, CircularProgress } from '@material-ui/core';
 
 import { availableStatus } from '../../../controller/orderStatus';
+import { getErrors } from '../../../utils/error';
 
 import { CHANGE_DELIVERY_STATUS } from '../../../graphql/deliveries';
 
@@ -18,7 +19,7 @@ function ActionItems ({ delivery }) {
 		setUpdatingLoading(status.slug);
 		changeDelvieryStatus({ variables: { newStatus: status.slug } })
 			.catch((err)=>{
-				Alert.alert('Ops, ocorreu um erro!', getErrorMessage(err))
+				Alert.alert('Ops, ocorreu um erro!', getErrors(err))
 			})
 			.finally(()=>setUpdatingLoading(null))
 	}

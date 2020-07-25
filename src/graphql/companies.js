@@ -152,6 +152,18 @@ export const GET_COMPANIES = gql`
 	}
 `;
 
+export const GET_COMPANY_CONFIG = gql`
+	query getCompanyConfig ($companyId: ID!, $keys: [String!]!) {
+		getCompanyConfig(companyId: $companyId, keys: $keys)
+	}
+`;
+
+export const SET_COMPANY_CONFIG = gql`
+	mutation setCompanyConfig ($companyId: ID!, $key: String!, $value: JSON!, $type: String) {
+		setCompanyConfig(companyId: $companyId, key: $key, value: $value, type: $type)
+	}
+`;
+
 export const GET_USER_COMPANIES = gql`
 	query GetUserCompanies ($id: ID!, $filter: JSON, $pagination: Pagination) {
 		user (id: $id) {
