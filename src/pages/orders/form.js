@@ -16,10 +16,12 @@ import { errorObjectsToArray } from '../../utils/error';
 import { calculateOrderPrice } from '../../utils/orders';
 import { filterProductSelectedOptions } from '../../utils/products';
 import Delivery from './delivery';
+import OrderScheduler from './orderScheduler';
 import Products from './products';
 
 import { GET_COMPANY_PAYMENT_METHODS } from '../../graphql/companies';
 import { SEARCH_USERS } from '../../graphql/users';
+
 
 let timeoutSearh = null;
 
@@ -180,22 +182,17 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 					</BlockHeader>
 					<Sidebar>
 						<BlockSeparator>
-							{/* <FormRow>
-								<FieldControl>
-									<TextField
-										select
-										label='Status'
-										value={status}
-										onChange={(e)=>{setFieldValue('status', e.target.value)}}
-										disabled={loggedUserRole !== 'master' && ['delivered', 'canceled'].includes(status)}
-									>
-										{availableStatus(values).map(status => <MenuItem key={status.slug} value={status.slug}>{status.label}</MenuItem>)}
-									</TextField>
-								</FieldControl>
-							</FormRow> */}
 							<FormRow>
 								<FieldControl>
 									<Button fullWidth type='submit' variant="contained" disabled={inputDisabled} color='primary'>Salvar</Button>
+								</FieldControl>
+							</FormRow>
+						</BlockSeparator>
+						<BlockSeparator>
+							<FormRow>
+								<FieldControl>
+									<OrderScheduler />
+									
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>

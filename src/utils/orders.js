@@ -3,6 +3,7 @@ import React from 'react';
 import { mdiRacingHelmet } from '@mdi/js';
 import Icon from '@mdi/react';
 import { uniqueId } from 'lodash';
+import moment from 'moment';
 
 import { createEmptyAddress, sanitizeAddress, extractAddress } from './address';
 import { calculateProductPrice, filterProductSelectedOptions } from './products';
@@ -33,6 +34,9 @@ export function createEmptyOrder(overwrite={}) {
 		status: 'waiting',
 		message: '',
 
+		scheduledTo: moment(),
+		scheduledToEnabled: false,
+
 		address: createEmptyAddress(),
 
 		products: [],
@@ -57,6 +61,10 @@ export function extractOrder(order, overwrite={}) {
 		paymentMethod: order.paymentMethod,
 		creditHistory: order.creditHistory,
 		coupon: order.coupon,
+
+		scheduledTo: moment(order.scheduledTo),
+		scheduledToEnabled: Boolean(order.scheduledTo),
+
 		products: order.products.map(product=>{
 			return {
 				...product.productRelated,
@@ -108,6 +116,8 @@ export const sanitizeOrder = (data) => {
 		status: data.status,
 		paymentMethodId: data.paymentMethod && data.paymentMethod.id ? data.paymentMethod.id : '',
 		companyId: data.companyId,
+
+		scheduledTo: data.scheduledToEnabled ? moment(order.scheduledTo).valueOf() : null,
 
 		paymentFee: data.paymentFee,
 		deliveryPrice: data.deliveryPrice,

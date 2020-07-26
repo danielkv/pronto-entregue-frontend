@@ -50,6 +50,7 @@ function Page () {
 	const initialValues = extractProduct(data.product);
 
 	function onSubmit(data, { setFieldValue }) {
+		console.log(data);
 		const saveData = sanitizeProduct(data);
 
 		return updateProduct({ variables: { data: saveData } })

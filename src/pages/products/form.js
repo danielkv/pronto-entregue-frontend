@@ -227,15 +227,15 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 							<FormRow>
 								<FieldControl>
 									<FormControl>
+										<FormLabel>Tempo mínimo para entrega</FormLabel>
 										<TextField
-											type='number'
+											type='time'
 											value={minDeliveryTime}
-											label='Tempo mínimo para entrega'
 											name='minDeliveryTime'
 											onChange={handleChange}
-											disabled={isSubmitting || !scheduleEnabled}
+											disabled={isSubmitting}
 											error={!!errors.minDeliveryTime}
-											helperText={errors.minDeliveryTime ? errors.minDeliveryTime : 'Em horas'}
+											helperText={!!errors.minDeliveryTime && errors.minDeliveryTime}
 										/>
 									</FormControl>
 								</FieldControl>
