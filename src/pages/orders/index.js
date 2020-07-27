@@ -13,7 +13,7 @@ import OrderStatusMenu from '../../components/OrderStatusMenu';
 import { Content, Block, BlockSeparator, BlockHeader, BlockTitle, FormRow, FieldControl, NumberOfRows, SidebarContainer, Sidebar } from '../../layout/components';
 
 import { useSelectedCompany, useLoggedUserRole } from '../../controller/hooks';
-import { getOrderStatusIcon, availableStatus } from '../../controller/orderStatus';
+import OrderController from '../../controller/order';
 import { ErrorBlock, LoadingBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
@@ -96,7 +96,7 @@ function Page ({ match: { url } }) {
 			<OrderStatusMenu
 				open={Boolean(anchorEl)}
 				onClose={handleCloseMenu}
-				availableStatus={availableStatus(menuOrder)}
+				availableStatus={OrderController.availableStatus(menuOrder)}
 				anchorEl={anchorEl}
 				onClick={handleUpdateStatus}
 				selected={menuOrder.status}
@@ -146,7 +146,7 @@ function Page ({ match: { url } }) {
 												<TableCell>{getDeliveryTypeText(row)}</TableCell>
 												<TableCell><Typography variant='body2'>{numeral(row.price).format('$0,0.00')}</Typography></TableCell>
 												<TableCell><Chip variant='outlined' label={row.countProducts} /></TableCell>
-												<TableCell style={{ width: 30, textAlign: 'center' }}>{getOrderStatusIcon(row)}</TableCell>
+												<TableCell style={{ width: 30, textAlign: 'center' }}>{OrderController.statusIconComponent(row.status)}</TableCell>
 												<TableCell style={{ width: 100 }}>
 													<IconButton disabled={loadingUpdateOrder === row.id} component={Link} to={`${url}/alterar/${row.id}`}>
 														<Icon path={canChangeStatus ? mdiPencil : mdiEye} size={1} color='#363E5E' />

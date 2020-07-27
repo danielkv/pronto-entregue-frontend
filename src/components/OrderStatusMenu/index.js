@@ -3,7 +3,7 @@ import React from 'react'
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core'
 
 import { useLoggedUserRole } from '../../controller/hooks'
-import { canChangeStatus } from '../../controller/orderStatus';
+import OrderController from '../../controller/order';
 
 export default function OrderStatusMenu({ availableStatus, anchorEl, open, onClose, onClick, selected }) {
 	const loggedUserRole = useLoggedUserRole();
@@ -21,10 +21,10 @@ export default function OrderStatusMenu({ availableStatus, anchorEl, open, onClo
 			onClose={onClose}
 		>
 			{availableStatus.map(status => {
-				const canChangeOrderStatus = loggedUserRole === 'master' ||  canChangeStatus(availableStatus, selected, status.slug);
+				const canChangeOrderStatus = loggedUserRole === 'master' ||  OrderController.canChangeStatus(availableStatus, selected, status.slug);
 				return (
 					<MenuItem disabled={!canChangeOrderStatus} key={status.slug} onClick={handleOnClick(status)} selected={selected===status.slug} dense>
-						<ListItemIcon>{status.Icon}</ListItemIcon>
+						<ListItemIcon>{status.IconComponent}</ListItemIcon>
 						<ListItemText>{status.label}</ListItemText>
 					</MenuItem>
 				)

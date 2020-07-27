@@ -9,7 +9,7 @@ import { Container, HeaderArea, NavigationArea, Main } from '../layout/component
 
 import { useSelectedCompany } from '../controller/hooks';
 import NotificationsController from '../controller/notifications';
-import { statusVariant } from '../controller/orderStatus';
+import OrderController from '../controller/order';
 import Header from '../layout/header';
 import Navigation from '../layout/navigation';
 import AllOrders from '../pages/allOrders';
@@ -65,7 +65,7 @@ export default function DashboardPages() {
 			if (payload.data && payload.data.sound) options.sound = payload.data.sound;
 
 			if (payload.data && payload.data.action && payload.data.action === 'statusChange' && payload.data.newStatus) {
-				options.variant = statusVariant(payload.data.newStatus);
+				options.variant = OrderController.statusVariant(payload.data.newStatus);
 			} else {
 				if (payload.data && payload.data.options) options = payload.data.options;
 			}

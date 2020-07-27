@@ -12,7 +12,7 @@ import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_UPDATED } from '../../gr
 export default function AutoOrders() {
 	const [open, setOpen] = useState(false);
 	const selectedCompany = useSelectedCompany();
-	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: ['waiting', 'waitingDelivery', 'preparing', 'delivering'] } } });
+	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: { '$not': ['delivered', 'canceled'] } } } });
 	const notificationRef = useRef();
 
 	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });

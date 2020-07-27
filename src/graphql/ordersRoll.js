@@ -80,6 +80,7 @@ export const ORDER_CRATED_FRAGMENT = gql`
 				}
 			}
 		}
+		scheduledTo
 		deliveryPrice
 		deliveryTime
 		price

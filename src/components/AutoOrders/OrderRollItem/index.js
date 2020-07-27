@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import moment from 'moment'
 import numeral from 'numeral'
 
-import { getOrderStatusIcon, getOrderStatusLabel } from '../../../controller/orderStatus'
+import OrderController from '../../../controller/order'
 import OrderRollProduct from './OrderRollProduct'
 import OrderType from './OrderType'
 import StatusRow from './StatusRow'
@@ -23,7 +23,7 @@ export default function OrderRollItem({ item: order }) {
 		>
 			<div style={{ marginBottom: 10 }}>
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
-				<Chip avatar={getOrderStatusIcon(order, .8)} size='small' label={getOrderStatusLabel(order.status)} style={{ marginLeft: 6 }} variant='outlined' />
+				<Chip avatar={OrderController.statusIconComponent(order.status)} size='small' label={OrderController.statusLabel(order.status)} style={{ marginLeft: 6 }} variant='outlined' />
 				<Typography style={{ marginLeft: 6 }} variant='caption'>{moment(order.createdAt).format('DD/MM HH:mm')}</Typography>
 
 				{order.status !== 'waiting' &&

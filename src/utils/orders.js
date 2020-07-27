@@ -117,7 +117,7 @@ export const sanitizeOrder = (data) => {
 		paymentMethodId: data.paymentMethod && data.paymentMethod.id ? data.paymentMethod.id : '',
 		companyId: data.companyId,
 
-		scheduledTo: data.scheduledToEnabled ? moment(order.scheduledTo).valueOf() : null,
+		scheduledTo: data.scheduledToEnabled ? moment(data.scheduledTo).valueOf() : null,
 
 		paymentFee: data.paymentFee,
 		deliveryPrice: data.deliveryPrice,

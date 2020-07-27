@@ -31,7 +31,7 @@ export default function StatusRow({ delivery }) {
 			.finally(()=>setLoadingStatus(null))
 	}
 
-	const availableOrderStatus = DeliveryController.availableStatus(delivery);
+	const availableOrderStatus = DeliveryController.availableStatus();
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center' }}>

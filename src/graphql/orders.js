@@ -74,6 +74,9 @@ export const ORDER_FRAGMENT = gql`
 		deliveryPrice
 		discount
 		paymentFee
+
+		scheduledTo
+		
 		paymentMethod {
 			id
 		}

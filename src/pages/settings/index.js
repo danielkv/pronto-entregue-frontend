@@ -39,8 +39,8 @@ export default function Settings(props) {
 						<ListItem button component={Link} selected={isSelected('locais-de-entrega')} to={`${url}/locais-de-entrega`}>
 							<ListItemText primary="Locais de entrega" secondary='Preços e áreas de entrega' />
 						</ListItem>
-						<ListItem button component={Link} selected={isSelected('locais-de-vizualizacao')} to={`${url}/locais-de-vizualizacao`}>
-							<ListItemText primary="Locais de vizualização" secondary='Retirada no balcão' />
+						<ListItem button component={Link} selected={isSelected('locais-de-visualizacao')} to={`${url}/locais-de-visualizacao`}>
+							<ListItemText primary="Locais de visualização" secondary='Retirada no balcão' />
 						</ListItem>
 						<ListItem button component={Link} selected={isSelected('pagamentos')} to={`${url}/pagamentos`}>
 							<ListItemText primary="Formas de pagamento" />
@@ -53,7 +53,7 @@ export default function Settings(props) {
 					<Route path={`${path}/horarios`} component={BusinessHours} />
 					<Route path={`${path}/horarios-de-entrega`} component={DeliveryHours} />
 					<Route path={`${path}/locais-de-entrega`} component={DeliveryAreas} />
-					<Route path={`${path}/locais-de-vizualizacao`} component={ViewAreas} />
+					<Route path={`${path}/locais-de-visualizacao`} component={ViewAreas} />
 					<Route path={`${path}/pagamentos`} component={PaymentMethods} />
 				</Grid>
 			</Grid>

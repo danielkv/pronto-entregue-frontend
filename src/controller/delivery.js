@@ -1,13 +1,13 @@
 import { mdiPlaylistCheck, mdiClock, mdiAccountClock, mdiMoped, mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 
-class DeliveryControl {
-	availableStatus(delivery) {
+class DeliveryController {
+	static availableStatus() {
 		let status = ['waiting', 'waitingDelivery', 'delivering', 'delivered', 'canceled'];
 	
-		return status.map(stat => ({ slug: stat, label: this.statusLabel(stat), icon: this.statusIcon(stat) }))
+		return status.map(stat => ({ slug: stat, label: DeliveryController.statusLabel(stat), icon: DeliveryController.statusIcon(stat) }))
 	}
 
-	statusIcon(status) {
+	static statusIcon(status) {
 		// isIn: [['waiting', 'preparing', 'delivery', 'delivered', 'canceled']],
 		switch(status) {
 			case 'accepted':
@@ -26,7 +26,7 @@ class DeliveryControl {
 		}
 	}
 
-	statusLabel(status) {
+	static statusLabel(status) {
 		// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
 			
 		switch(status) {
@@ -47,7 +47,7 @@ class DeliveryControl {
 		
 	}
 	
-	statusColors(status) {
+	static statusColors(status) {
 		switch (status) {
 			case 'delivered':
 				return {
@@ -73,7 +73,5 @@ class DeliveryControl {
 		}
 	}
 }
-
-const DeliveryController = new DeliveryControl();
 
 export default DeliveryController;
