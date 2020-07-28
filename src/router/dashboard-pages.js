@@ -42,7 +42,7 @@ import SendNotification from '../pages/sendNotification';
 //import Ratings from '../pages/ratings';
 import Settings from '../pages/settings';
 
-import { GET_NOTIFICATION_SOUND } from '../graphql/companies';
+import { GET_COMPANY_CONFIG } from '../graphql/companies';
 
 export default function DashboardPages() {
 	const { path } = useRouteMatch();
@@ -56,7 +56,7 @@ export default function DashboardPages() {
 		notificationRef.current.play()
 	}
 
-	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });
+	const { data: { companyConfig: { notificationSound = null } = {} } = {}, loading: loadingSound } = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: ['notificationSound'] }, fetchPolicy: 'cache-first' });
 
 	useEffect(()=>{
 		NotificationsController.addHandler('enqueueSnack', (payload)=>{
@@ -82,7 +82,7 @@ export default function DashboardPages() {
 	return (
 		<Container>
 			{!loadingSound && <audio ref={notificationRef}>
-				<source src={companySound.url} />
+				<source src={notificationSound.url} />
 			</audio>}
 			<HeaderArea>
 				<Header />

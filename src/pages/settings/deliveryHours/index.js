@@ -31,7 +31,7 @@ function Page () {
 	//Carrega horas de trabalho
 	const selectedCompany = useSelectedCompany();
 	const {
-		data: { getCompanyConfig: { deliveryHours=[], deliveryHoursEnabled=false } = {} } = {},
+		data: { companyConfig: { deliveryHours=[], deliveryHoursEnabled=false } = {} } = {},
 		loading: loadingDeliveryHours,
 		error
 	} = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: ['deliveryHours', 'deliveryHoursEnabled'] } });

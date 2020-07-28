@@ -1,26 +1,36 @@
 import gql from "graphql-tag";
 
+export const COMPANY_MIN_FRAGMENT = gql`
+	fragment CompanyMinFields on Company {
+		id
+		name
+		displayName
+		published
+		image
+		createdAt
+		type {
+			id
+			name
+		}
+		lastMonthRevenue
+		active
+	}
+`;
+
 export const CREATE_COMPANY = gql`
 	mutation ($data:CompanyInput!) {
 		createCompany (data:$data) {
-			id
-			name
-			displayName
-			lastMonthRevenue
-			createdAt
-			active
+			...CompanyMinFields
 		}
 	}
+
+	${COMPANY_MIN_FRAGMENT}
 `;
 
 export const UPDATE_COMPANY = gql`
 	mutation UpdateCompany ($id: ID!, $data:CompanyInput!) {
 		updateCompany (id: $id, data:$data) {
-			id
-			name
-			displayName
-			createdAt
-			active
+			...CompanyMinFields
 			metas {
 				id
 				key
@@ -28,6 +38,8 @@ export const UPDATE_COMPANY = gql`
 			}
 		}
 	}
+
+	${COMPANY_MIN_FRAGMENT}
 `;
 
 export const GET_COMPANY_PAYMENT_METHODS = gql`
@@ -37,26 +49,6 @@ export const GET_COMPANY_PAYMENT_METHODS = gql`
 			paymentMethods(filter: { showInactive: true }) {
 				id
 				displayName
-			}
-		}
-	}
-`;
-
-export const GET_NOTIFICATION_SOUND = gql`
-	query GetNotificationSound ($companyId: ID!) {
-		companySound(companyId: $companyId)
-	}
-`;
-
-export const GET_COMPANY_GENERAL_SETTINGS = gql`
-	query GetCompanyGeneralSettings ($id: ID!, $keys: [String]) {
-		company(id: $id) {
-			id
-			published
-			metas(keys: $keys) {
-				id
-				key
-				value
 			}
 		}
 	}
@@ -133,28 +125,29 @@ export const SEARCH_COMPANIES = gql`
 	}
 `;
 
+export const GET_COMPANY = gql`
+	query GetCompany ($id: ID!) {
+		company (id: $id) {
+			...CompanyMinFields
+		}
+	}
+	${COMPANY_MIN_FRAGMENT}
+`;
+
 export const GET_COMPANIES = gql`
 	query GetCompanies ($filter: JSON, $pagination: Pagination) {
 		countCompanies(filter: $filter)
 		companies (filter: $filter, pagination: $pagination) {
-			id
-			name
-			displayName
-			image
-			createdAt
-			type {
-				id
-				name
-			}
-			lastMonthRevenue
-			active
+			...CompanyMinFields
 		}
 	}
+
+	${COMPANY_MIN_FRAGMENT}
 `;
 
 export const GET_COMPANY_CONFIG = gql`
-	query getCompanyConfig ($companyId: ID!, $keys: [String!]!) {
-		getCompanyConfig(companyId: $companyId, keys: $keys)
+	query companyConfig ($companyId: ID!, $keys: [String!]!) {
+		companyConfig(companyId: $companyId, keys: $keys)
 	}
 `;
 
@@ -164,22 +157,24 @@ export const SET_COMPANY_CONFIG = gql`
 	}
 `;
 
+export const SET_COMPANY_CONFIGS = gql`
+	mutation setCompanyConfigs ($companyId: ID!, $data: [JSON!]!) {
+		setCompanyConfigs(companyId: $companyId, data: $data)
+	}
+`;
+
 export const GET_USER_COMPANIES = gql`
 	query GetUserCompanies ($id: ID!, $filter: JSON, $pagination: Pagination) {
 		user (id: $id) {
 			id
 			countCompanies(filter: $filter)
 			companies (filter: $filter, pagination: $pagination) {
-				id
-				name
-				displayName
-				createdAt
-				
-				lastMonthRevenue
-				active
+				...CompanyMinFields
 			}
 		}
 	}
+
+	${COMPANY_MIN_FRAGMENT}
 `;
 
 export const SEND_NEW_COMPANY_NOTIFICATION = gql`

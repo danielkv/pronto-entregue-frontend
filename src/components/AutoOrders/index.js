@@ -6,7 +6,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mate
 import { useSelectedCompany } from '../../controller/hooks';
 import OrderRollItem from './OrderRollItem';
 
-import { GET_NOTIFICATION_SOUND } from '../../graphql/companies';
+import { GET_COMPANY_CONFIG } from '../../graphql/companies';
 import { SUBSCRIBE_ORDER_CREATED, GET_ORDER_ROLL, ORDER_UPDATED } from '../../graphql/ordersRoll';
 
 export default function AutoOrders() {
@@ -15,7 +15,7 @@ export default function AutoOrders() {
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: { '$not': ['delivered', 'canceled'] } } } });
 	const notificationRef = useRef();
 
-	const { data: { companySound = null } = {}, loading: loadingSound } = useQuery(GET_NOTIFICATION_SOUND, { variables: { companyId: selectedCompany }, fetchPolicy: 'cache-first' });
+	const { data: { companyConfig: { notificationSound = null }={} } = {}, loading: loadingSound } = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: ['notificationSound'] }, fetchPolicy: 'cache-first' });
 
 	function handleCloseOrdersRoll() {
 		setOpen(false);
@@ -64,7 +64,7 @@ export default function AutoOrders() {
 	return (
 		<Fragment>
 			{!loadingSound && <audio ref={notificationRef}>
-				<source src={companySound.url} />
+				<source src={notificationSound.url} />
 			</audio>}
 			
 			<Button variant='contained' onClick={()=>setOpen(!open)}>Mostrar pedidos</Button>

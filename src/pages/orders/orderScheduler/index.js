@@ -21,7 +21,7 @@ export default function OrderScheduler() {
 
 	const selectedCompany = useSelectedCompany();
 	const {
-		data: { getCompanyConfig: { deliveryHours=null, deliveryHoursEnabled=false, businessHours=[] } = {} } = {},
+		data: { companyConfig: { deliveryHours=null, deliveryHoursEnabled=false, businessHours=[] } = {} } = {},
 		loading: loadingDeliveryHours
 	} = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: ['deliveryHours', 'deliveryHoursEnabled', 'businessHours'] } });
 

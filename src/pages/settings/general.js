@@ -13,16 +13,13 @@ import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
 import { getErrors } from '../../utils/error';
-import { extractMetas, sanitizeMetas } from '../../utils/metas';
 
-import { GET_COMPANY_GENERAL_SETTINGS, UPDATE_COMPANY } from '../../graphql/companies';
+import { UPDATE_COMPANY, GET_COMPANY_CONFIG, SET_COMPANY_CONFIGS, GET_COMPANY } from '../../graphql/companies';
 import { DELIVERY_GLOBAL_ACTIVE, AVAILABLE_SOUNDS } from '../../graphql/config';
 
 const validationSchema = Yup.object().shape({
 	//metas: Yup.array().of()
-	deliveryTime: Yup.object().shape({
-		value: Yup.number().required('Campo Obrigatório')
-	})
+	deliveryTime: Yup.number().required('Campo Obrigatório')
 })
 
 function Page () {
@@ -30,44 +27,45 @@ function Page () {
 
 	const notificationRef = useRef(null);
 
-	const metaTypes = ['deliveryTime', 'deliveryType', 'notificationSound'];
+	const metaTypes = [
+		{ key: 'deliveryTime', type: 'json' },
+		{ key: 'deliveryType', type: 'string' },
+		{ key: 'notificationSound', type: 'json' },
+		{ key: 'allowBuyClosed', type: 'boolean' },
+	];
 
-	//carrega métodos pagamento ativos na filial
+	// load company settings
 	const selectedCompany = useSelectedCompany();
 	const {
-		data: { company = {} } = {},
-		loading: loadingCompanySettings
-	} = useQuery(GET_COMPANY_GENERAL_SETTINGS, { variables: { id: selectedCompany, keys: metaTypes } });
+		data: { companyConfig = {} } = {},
+		loading: loadingCompanySettings,
+		error: loadConfigError,
+	} = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: metaTypes.map(type=>type.key) } });
+
+	// load company data
+	const { data: { company=null }, loading: loadingCompany } = useQuery(GET_COMPANY, { variables: { id: selectedCompany } })
 	
+	// load available sounds
 	const { data: { availableSounds = [] } ={}, loading: loadingSounds } = useQuery(AVAILABLE_SOUNDS);
 
-	const { data: { deliveryGlobalActive = false } = {} } = useQuery(DELIVERY_GLOBAL_ACTIVE, { variables: { id: selectedCompany, keys: metaTypes } });
+	// load deliveryGlobalActive
+	const { data: { deliveryGlobalActive = false } = {} } = useQuery(DELIVERY_GLOBAL_ACTIVE);
 
-	const [updateSettings, { loading: loadingUpdateSettings, error: updatingError }] = useMutation(UPDATE_COMPANY, { variables: { id: selectedCompany }, refetchQueries: [{ query: GET_COMPANY_GENERAL_SETTINGS, variables: { id: selectedCompany, keys: metaTypes } }] } );
+	// create update settings fn
+	const [updateCofigs, { loading: loadingUpdateSettings }] = useMutation(SET_COMPANY_CONFIGS, { variables: { companyId: selectedCompany } } );
+
+	// create update company fn
+	const [updateCompany, { loading: loadingUpdateCompany }] = useMutation(UPDATE_COMPANY, { variables: { id: selectedCompany } })
 
 	function onSubmit(result) {
-		const data = { published: result.published, metas: sanitizeMetas(metaTypes, result) };
-		return updateSettings({ variables: { data } });
+		const data = metaTypes.map(meta => ({ ...meta, value: result[meta.key] }));
+		return updateCofigs({ variables: { data } });
 	}
 
-	if (updatingError) return <ErrorBlock error={getErrors(updatingError)} />;
 	if (loadingCompanySettings) return <LoadingBlock />;
+	if (loadConfigError) return <ErrorBlock error={getErrors(loadConfigError)} />;
 
-	const initialValues = {
-		published: company.published,
-		...extractMetas(metaTypes, company.metas)
-	}
-
-	if (initialValues.deliveryType.action === 'new_empty') {
-		initialValues.deliveryType.action = 'create'
-		initialValues.deliveryType.value = 'delivery'
-	}
-	
-	if (initialValues.notificationSound.action === 'new_empty') {
-		initialValues.notificationSound.action = 'create'
-		const sound = availableSounds.find(s=>s.slug === 'default')
-		initialValues.notificationSound.value = { ...sound, volume: 1 }
-	}
+	const initialValues = companyConfig;
 
 	function playNotification () {
 		if (!notificationRef.current) return;
@@ -89,7 +87,7 @@ function Page () {
 						<Grid container spacing={4}>
 							<Grid item sm={7}>
 								<Typography>Configurações gerais</Typography>
-								<Field type='number' component={tField} action='deliveryTime.action' label='Prazo de entrega' name='deliveryTime.value' />
+								<Field type='number' component={tField} label='Prazo de entrega' name='deliveryTime' />
 								<FormHelperText>Tempo em minutos, incluindo a entrega.</FormHelperText>
 							</Grid>
 
@@ -99,15 +97,14 @@ function Page () {
 									<TextField
 										select
 										label='Som de notificação'
-										disabled={loadingSounds}
-										value={values.notificationSound.value.slug}
+										disabled={isSubmitting || loadingSounds}
+										value={values.notificationSound.slug}
 										onChange={(e)=>{
 											const value = e.target.value;
 											let sound = availableSounds.find(s=>s.slug === value)
 											if (!sound) sound = { slug: 'none', name: 'Nenhum', url: '', volume: 0 }
 
-											setFieldValue('notificationSound.value', { ...values.notificationSound.value,  ...sound })
-											if (values.notificationSound.action === 'editable') setFieldValue('notificationSound.action', 'update')
+											setFieldValue('notificationSound', sound)
 										}}>
 										<MenuItem key='none' value='none'>Nenhum</MenuItem>
 										{availableSounds.map(sound=>(<MenuItem key={sound.slug} value={sound.slug}>{sound.name}</MenuItem>))}
@@ -120,7 +117,7 @@ function Page () {
 								</div>
 
 								<audio ref={notificationRef}>
-									<source src={values.notificationSound.value.url} type="audio/mpeg" />
+									<source src={values.notificationSound.url} type="audio/mpeg" />
 								</audio>
 
 							</Grid>
@@ -129,16 +126,14 @@ function Page () {
 								<TextField
 									select
 									label='Pronto, Entregue fica responsável para entregas?'
-									disabled={!deliveryGlobalActive}
-									value={deliveryGlobalActive ? values.deliveryType.value : 'delivery'}
+									disabled={isSubmitting || !deliveryGlobalActive}
+									value={deliveryGlobalActive ? values.deliveryType : 'delivery'}
 									onChange={(e)=>{
-										setFieldValue('deliveryType.value', e.target.value)
-										if (values.deliveryType.action === 'editable') setFieldValue('deliveryType.action', 'update')
+										setFieldValue('deliveryType', e.target.value)
 									}}>
 									<MenuItem value='delivery'>Não</MenuItem>
 									<MenuItem value='peDelivery'>Sim</MenuItem>
 								</TextField>
-
 								
 								{!deliveryGlobalActive &&
 									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 7 }}>
@@ -147,17 +142,35 @@ function Page () {
 									</div>
 								}
 							</Grid>
+
+							<Grid item sm={7}>
+								<TextField
+									select
+									label='Permitir comprar com estabelecimento fechado'
+									disabled={isSubmitting || !deliveryGlobalActive}
+									helperText='O cliente vai recebe uma alerta que irá receber conforme o horário de atendimento ou horário de entrega'
+									value={values.allowBuyClosed}
+									onChange={(e)=>{
+										setFieldValue('allowBuyClosed', e.target.value)
+									}}>
+									<MenuItem value='false'>Não</MenuItem>
+									<MenuItem value='true'>Sim</MenuItem>
+								</TextField>
+							</Grid>
 						
 							<Grid item sm={12}>
 								<Divider style={{ margin: '20px 0' }} />
 
 								<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-									<div style={{ display: 'flex', alignItems: 'center' }}>
-										<Button variant='contained' color={values.published ? 'default' : 'secondary'} onClick={()=>setFieldValue('published', !values.published)}>
-											{values.published ? 'Esconder' : 'Publicar'}
-										</Button>
-										<Typography style={{ marginLeft: 15 }} variant='caption'>Status: {company.published ? 'Publicada' : 'Rascunho'}</Typography>
-									</div>
+									{loadingCompany || loadingUpdateCompany
+										? <CircularProgress />
+										: <div style={{ display: 'flex', alignItems: 'center' }}>
+											<Button
+												variant='contained' color={company.published ? 'default' : 'secondary'}
+												onClick={()=>updateCompany({ variables: { data: { published: !company.published } } })}>
+												{company.published ? 'Esconder' : 'Publicar'}
+											</Button>
+										</div>}
 									<Button variant='contained' color='primary' type='submit' disabled={isSubmitting}>
 										{loadingUpdateSettings
 											? <CircularProgress />
