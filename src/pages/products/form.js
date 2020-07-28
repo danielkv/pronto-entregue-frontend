@@ -214,33 +214,6 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 						</BlockSeparator>
 						<BlockSeparator>
 							<FormRow>
-								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
-									<FormControlLabel
-										labelPlacement='start'
-										control={
-											<Switch size='small' color='primary' checked={scheduleEnabled} onChange={()=>{setFieldValue('scheduleEnabled', !scheduleEnabled)}} value="includeDisabled" />
-										}
-										label="Habilitar encomendas"
-									/>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
-								<FieldControl>
-									<FormControl>
-										<FormLabel>Tempo mínimo para entrega</FormLabel>
-										<TextField
-											type='time'
-											value={minDeliveryTime}
-											name='minDeliveryTime'
-											onChange={handleChange}
-											disabled={isSubmitting}
-											error={!!errors.minDeliveryTime}
-											helperText={!!errors.minDeliveryTime && errors.minDeliveryTime}
-										/>
-									</FormControl>
-								</FieldControl>
-							</FormRow>
-							<FormRow>
 								<FieldControl>
 									<FormControl>
 										<FormLabel>Tipo de seleção</FormLabel>
@@ -264,6 +237,36 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
+						<BlockSeparator>
+							<FormRow>
+								<FieldControl>
+									<FormControl>
+										<FormLabel>Tempo mínimo para entrega</FormLabel>
+										<TextField
+											type='time'
+											value={minDeliveryTime}
+											name='minDeliveryTime'
+											onChange={handleChange}
+											disabled={isSubmitting}
+											error={!!errors.minDeliveryTime}
+											helperText={!!errors.minDeliveryTime && errors.minDeliveryTime}
+										/>
+									</FormControl>
+								</FieldControl>
+							</FormRow>
+							<FormRow>
+								<FieldControl style={{ justifyContent: 'flex-end', paddingRight: 7 }}>
+									<FormControlLabel
+										labelPlacement='start'
+										control={
+											<Switch size='small' color='primary' checked={scheduleEnabled} onChange={()=>{setFieldValue('scheduleEnabled', !scheduleEnabled)}} value="includeDisabled" />
+										}
+										label="Habilitar encomendas"
+									/>
+								</FieldControl>
+							</FormRow>
+						</BlockSeparator>
+						
 						<BlockSeparator>
 							<FormRow>
 								<FieldControl>

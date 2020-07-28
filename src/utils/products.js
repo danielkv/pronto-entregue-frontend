@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { extractSale, sanitizeSale, createEmptySale } from "./sale";
 
 export function createEmptyProduct(overwrite={}) {
@@ -15,7 +17,7 @@ export function createEmptyProduct(overwrite={}) {
 		optionsGroups: [],
 		campaigns: [],
 		sale: createEmptySale(),
-		minDeliveryTime: '0',
+		minDeliveryTime: null,
 		scheduleEnabled: false,
 
 		...overwrite,
@@ -86,6 +88,10 @@ export function filterProductSelectedOptions(product) {
 }
 
 export function extractProduct(product) {
+	const minDeliveryTime = product.minDeliveryTime;
+	const hours = Math.floor(minDeliveryTime / 60);
+	const minutes = minDeliveryTime - (hours * 60);
+
 	return {
 		name: product.name,
 		description: product.description,
@@ -99,7 +105,7 @@ export function extractProduct(product) {
 		file: '',
 		preview: product.image,
 		sale: extractSale(product.sale),
-		minDeliveryTime: product.minDeliveryTime,
+		minDeliveryTime: `${hours}:${minutes}`,
 		scheduleEnabled: product.scheduleEnabled,
 		
 		optionsGroups: product.optionsGroups.map(optionsGroup => ({
@@ -115,6 +121,9 @@ export function extractProduct(product) {
 }
 
 export function sanitizeProduct(data) {
+	const splittedTime = data.minDeliveryTime.split(':');
+	const minDeliveryTime = _.toInteger(splittedTime[0]) * 60 + _.toInteger(splittedTime[1]);
+
 	return {
 		name: data.name,
 		file: data.file,
@@ -126,7 +135,7 @@ export function sanitizeProduct(data) {
 		active: data.active,
 		categoryId: data.category.id,
 		sale: sanitizeSale(data.sale),
-		minDeliveryTime: data.minDeliveryTime,
+		minDeliveryTime,
 		scheduleEnabled: data.scheduleEnabled,
 
 		optionsGroups: data.optionsGroups.filter(g => g.action !== 'remove_new').map(group => {
