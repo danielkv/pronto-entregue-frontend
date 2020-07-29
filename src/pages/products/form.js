@@ -242,15 +242,29 @@ export default function PageForm ({ values: { sale, active, campaigns, price, fr
 								<FieldControl>
 									<FormControl>
 										<FormLabel>Tempo mínimo para entrega</FormLabel>
-										<TextField
-											type='time'
-											value={minDeliveryTime}
-											name='minDeliveryTime'
-											onChange={handleChange}
-											disabled={isSubmitting}
-											error={!!errors.minDeliveryTime}
-											helperText={!!errors.minDeliveryTime && errors.minDeliveryTime}
-										/>
+										<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0f0f0', borderRadius: 4 }}>
+											<TextField
+												type='number'
+												value={minDeliveryTime.hours}
+												name='minDeliveryTime.hours'
+												onChange={handleChange}
+												disabled={isSubmitting}
+												error={!!errors?.minDeliveryTime?.hours}
+												helperText={!!errors?.minDeliveryTime?.hours && errors?.minDeliveryTime?.hours}
+												fullWidth={false}
+											/>
+											<div>:</div>
+											<TextField
+												type='number'
+												value={minDeliveryTime.minutes}
+												name='minDeliveryTime.minutes'
+												onChange={handleChange}
+												disabled={isSubmitting}
+												error={!!errors?.minDeliveryTime?.minutes}
+												helperText={!!errors?.minDeliveryTime?.minutes && errors.minDeliveryTime.minutes}
+												fullWidth={false}
+											/>
+										</div>
 									</FormControl>
 								</FieldControl>
 							</FormRow>

@@ -148,7 +148,7 @@ function Page () {
 									select
 									label='Permitir comprar com estabelecimento fechado'
 									disabled={isSubmitting || !deliveryGlobalActive}
-									helperText='O cliente vai recebe uma alerta que irá receber conforme o horário de atendimento ou horário de entrega'
+									helperText='O cliente irá receber uma alerta que irá receber conforme o horário de atendimento ou horário de entrega'
 									value={values.allowBuyClosed}
 									onChange={(e)=>{
 										setFieldValue('allowBuyClosed', e.target.value)

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, FormControlLabel, Switch, Typography, Divider } from '@material-ui/core';
+import { Paper, FormControlLabel, Switch, Typography, Divider, FormHelperText } from '@material-ui/core';
 import { Formik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSnackbar } from 'notistack';
@@ -74,7 +74,9 @@ function Page () {
 						<Switch size='small' color='primary' checked={deliveryHoursEnabled} onChange={handleUpdateDeliveryHours} value="includeDisabled" />
 					}
 					label="Horários de entregas habilitado?"
+					style={{ marginLeft: 0 }}
 				/>
+				<FormHelperText>Caso desabilitada, será utilizado o horário de atendimento padrão</FormHelperText>
 			</div>
 			<AnimatePresence>
 				{deliveryHoursEnabled && <motion.div

@@ -34,7 +34,7 @@ export default function Settings(props) {
 							<ListItemText primary="Horário de atendimeto" />
 						</ListItem>
 						<ListItem button component={Link} selected={isSelected('horarios-de-entrega')} to={`${url}/horarios-de-entrega`}>
-							<ListItemText primary="Horários de entrega" />
+							<ListItemText primary="Horários de entrega" secondary='Pedidos por encomenda' />
 						</ListItem>
 						<ListItem button component={Link} selected={isSelected('locais-de-entrega')} to={`${url}/locais-de-entrega`}>
 							<ListItemText primary="Locais de entrega" secondary='Preços e áreas de entrega' />

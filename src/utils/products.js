@@ -17,7 +17,7 @@ export function createEmptyProduct(overwrite={}) {
 		optionsGroups: [],
 		campaigns: [],
 		sale: createEmptySale(),
-		minDeliveryTime: null,
+		minDeliveryTime: { hours: '00', minutes: '00' },
 		scheduleEnabled: false,
 
 		...overwrite,
@@ -105,7 +105,7 @@ export function extractProduct(product) {
 		file: '',
 		preview: product.image,
 		sale: extractSale(product.sale),
-		minDeliveryTime: `${hours}:${minutes}`,
+		minDeliveryTime: { hours, minutes },
 		scheduleEnabled: product.scheduleEnabled,
 		
 		optionsGroups: product.optionsGroups.map(optionsGroup => ({
@@ -121,8 +121,7 @@ export function extractProduct(product) {
 }
 
 export function sanitizeProduct(data) {
-	const splittedTime = data.minDeliveryTime.split(':');
-	const minDeliveryTime = _.toInteger(splittedTime[0]) * 60 + _.toInteger(splittedTime[1]);
+	const minDeliveryTime = _.toInteger(data.minDeliveryTime.hours) * 60 + _.toInteger(data.minDeliveryTime.minutes);
 
 	return {
 		name: data.name,
