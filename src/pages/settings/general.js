@@ -22,8 +22,9 @@ const validationSchema = Yup.object().shape({
 		message: 'O tempo da primeira caixa deve ser menor que o tempo da segunda',
 		test: (value) =>{
 			if (value.length > 1) {
-				const values = ConfigUtils.convertInputTimeToMinutes(value);
-				if (values[0] >= values[1]) return false;
+				const value1 = ConfigUtils.convertInputTimeToMinutes(value[0]);
+				const value2 = ConfigUtils.convertInputTimeToMinutes(value[1]);
+				if (value1 >= value2) return false;
 			}
 			
 			return true
@@ -62,7 +63,7 @@ function Page () {
 	const { data: { deliveryGlobalActive = false } = {} } = useQuery(DELIVERY_GLOBAL_ACTIVE);
 
 	// create update settings fn
-	const [updateCofigs, { loading: loadingUpdateSettings }] = useMutation(SET_COMPANY_CONFIGS, { variables: { companyId: selectedCompany } } );
+	const [updateCofigs, { loading: loadingUpdateSettings, error }] = useMutation(SET_COMPANY_CONFIGS, { variables: { companyId: selectedCompany } } );
 
 	// create update company fn
 	const [updateCompany, { loading: loadingUpdateCompany }] = useMutation(UPDATE_COMPANY, { variables: { id: selectedCompany } })
@@ -83,6 +84,8 @@ function Page () {
 		notificationRef.current.load();
 		notificationRef.current.play();
 	}
+
+	if (error) console.log(error);
 	
 	return (
 		<Paper style={{ padding: 20 }}>
