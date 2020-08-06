@@ -1,25 +1,34 @@
 import React, { useRef } from 'react';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Typography, Divider, Button, FormHelperText, CircularProgress, Grid, TextField, MenuItem, IconButton } from '@material-ui/core';
-import { mdiAlertCircle, mdiVolumeHigh } from '@mdi/js';
+import { Paper, Typography, Divider, Button, FormHelperText, CircularProgress, Grid, TextField, MenuItem, IconButton, FormLabel } from '@material-ui/core';
+import { mdiAlertCircle, mdiVolumeHigh, mdiPlusCircle, mdiMinusCircle } from '@mdi/js';
 import Icon from '@mdi/react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
-
-import { tField } from '../../layout/components';
 
 import { useSelectedCompany } from '../../controller/hooks';
 import { LoadingBlock, ErrorBlock } from '../../layout/blocks';
 import { setPageTitle } from '../../utils';
+import * as ConfigUtils from '../../utils/config';
 import { getErrors } from '../../utils/error';
 
 import { UPDATE_COMPANY, GET_COMPANY_CONFIG, SET_COMPANY_CONFIGS, GET_COMPANY } from '../../graphql/companies';
 import { DELIVERY_GLOBAL_ACTIVE, AVAILABLE_SOUNDS } from '../../graphql/config';
 
 const validationSchema = Yup.object().shape({
-	//metas: Yup.array().of()
-	deliveryTime: Yup.number().required('Campo Obrigatório')
+	deliveryTime: Yup.array().of(Yup.string().required('Campo Obrigatório')).min(1).test({
+		name: 'testDeliveryTime',
+		message: 'O tempo da primeira caixa deve ser menor que o tempo da segunda',
+		test: (value) =>{
+			if (value.length > 1) {
+				const values = ConfigUtils.convertInputTimeToMinutes(value);
+				if (values[0] >= values[1]) return false;
+			}
+			
+			return true
+		}
+	})
 })
 
 function Page () {
@@ -28,10 +37,11 @@ function Page () {
 	const notificationRef = useRef(null);
 
 	const metaTypes = [
-		{ key: 'deliveryTime', type: 'json' },
+		{ key: 'deliveryTime', type: 'string' },
 		{ key: 'deliveryType', type: 'string' },
 		{ key: 'notificationSound', type: 'json' },
 		{ key: 'allowBuyClosed', type: 'boolean' },
+		{ key: 'allowBuyClosedTimeBefore', type: 'integer' },
 	];
 
 	// load company settings
@@ -58,20 +68,20 @@ function Page () {
 	const [updateCompany, { loading: loadingUpdateCompany }] = useMutation(UPDATE_COMPANY, { variables: { id: selectedCompany } })
 
 	function onSubmit(result) {
-		const data = metaTypes.map(meta => ({ ...meta, value: result[meta.key] }));
+		const data = ConfigUtils.serialize(metaTypes, result);
 		return updateCofigs({ variables: { data } });
 	}
 
 	if (loadingCompanySettings) return <LoadingBlock />;
 	if (loadConfigError) return <ErrorBlock error={getErrors(loadConfigError)} />;
 
-	const initialValues = companyConfig;
+	const initialValues = ConfigUtils.deserealize(companyConfig)
 
 	function playNotification () {
 		if (!notificationRef.current) return;
 
 		notificationRef.current.load();
-		notificationRef.current.play()
+		notificationRef.current.play();
 	}
 	
 	return (
@@ -82,13 +92,43 @@ function Page () {
 				validationSchema={validationSchema}
 				onSubmit={onSubmit}
 			>
-				{({ isSubmitting, values, setFieldValue }) => (
+				{({ isSubmitting, values, setFieldValue, handleChange, errors }) => (
 					<Form>
+						<div style={{ marginBottom: 25 }}>
+							<Typography>Configurações gerais</Typography>
+						</div>
 						<Grid container spacing={4}>
-							<Grid item sm={7}>
-								<Typography>Configurações gerais</Typography>
-								<Field type='number' component={tField} label='Prazo de entrega' name='deliveryTime' />
-								<FormHelperText>Tempo em minutos, incluindo a entrega.</FormHelperText>
+							<Grid item sm={9}>
+								
+								<FormLabel>Tempo de entrega</FormLabel>
+								<FieldArray name='deliveryTime'>
+									{({ insert, remove }) =>(
+										<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+											{values.deliveryTime.map((value, index) =>
+												<TextField
+													key={index}
+													disabled={isSubmitting}
+													style={{ marginRight: 3, width: 150 }}
+													name={`deliveryTime.${index}`}
+													value={values.deliveryTime[index]}
+													type='time'
+													onChange={handleChange}
+												/>
+											)}
+											{values.deliveryTime.length === 1
+												?<IconButton onClick={()=>insert(1, '00:00')}>
+													<Icon path={mdiPlusCircle} size={.8} />
+												</IconButton>
+												:<IconButton onClick={()=>remove(1)}>
+													<Icon path={mdiMinusCircle} size={.8} color='red' />
+												</IconButton>}
+										</div>
+									)}
+								</FieldArray>
+								<FormHelperText error={!!errors?.deliveryTime}>
+									{errors?.deliveryTime || 'Intervalo ou tempo aproximado para entrega do pedido. Essa é mostrada no app.'}
+								</FormHelperText>
+								
 							</Grid>
 
 							<Grid item sm={7}>
@@ -99,6 +139,7 @@ function Page () {
 										label='Som de notificação'
 										disabled={isSubmitting || loadingSounds}
 										value={values.notificationSound.slug}
+										style={{ width: 200 }}
 										onChange={(e)=>{
 											const value = e.target.value;
 											let sound = availableSounds.find(s=>s.slug === value)
@@ -128,6 +169,7 @@ function Page () {
 									label='Pronto, Entregue fica responsável para entregas?'
 									disabled={isSubmitting || !deliveryGlobalActive}
 									value={deliveryGlobalActive ? values.deliveryType : 'delivery'}
+									style={{ width: 380 }}
 									onChange={(e)=>{
 										setFieldValue('deliveryType', e.target.value)
 									}}>
@@ -143,19 +185,32 @@ function Page () {
 								}
 							</Grid>
 
-							<Grid item sm={7}>
-								<TextField
-									select
-									label='Permitir comprar com estabelecimento fechado'
-									disabled={isSubmitting || !deliveryGlobalActive}
-									helperText='O cliente irá receber uma alerta que irá receber conforme o horário de atendimento ou horário de entrega'
-									value={values.allowBuyClosed}
-									onChange={(e)=>{
-										setFieldValue('allowBuyClosed', e.target.value)
-									}}>
-									<MenuItem value='false'>Não</MenuItem>
-									<MenuItem value='true'>Sim</MenuItem>
-								</TextField>
+							<Grid item sm={9}>
+								<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end' }}>
+									<TextField
+										select
+										label='Permitir comprar com estabelecimento fechado'
+										disabled={isSubmitting || !deliveryGlobalActive}
+										value={values.allowBuyClosed}
+										style={{ width: 350, marginRight: 20 }}
+										onChange={(e)=>{
+											setFieldValue('allowBuyClosed', e.target.value)
+										}}>
+										<MenuItem value='false'>Não</MenuItem>
+										<MenuItem value='true'>Sim</MenuItem>
+									</TextField>
+									{<TextField
+										disabled={isSubmitting || values.allowBuyClosed === 'false'}
+										label='Permitir quanto tempo antes de abrir'
+										style={{ marginRight: 3, width: 270 }}
+										name={'allowBuyClosedTimeBefore'}
+										value={values.allowBuyClosedTimeBefore}
+										type='time'
+										onChange={handleChange}
+									/>}
+								</div>
+								<FormHelperText>O cliente irá ser avisado que o pedido será entregue conforme o horário de atendimento ou horário de entrega</FormHelperText>
+
 							</Grid>
 						
 							<Grid item sm={12}>

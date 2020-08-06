@@ -20,8 +20,8 @@ const productSchema = Yup.object().shape({
 	fromPrice: Yup.number().moreThan(0, 'O campo "A partir de" será mostrado no app. Deve ser maior que 0').required('O campo "A partir de" é obrigatório'),
 	description: Yup.string().required('A descrição é obrigatória'),
 	minDeliveryTime: Yup.object().shape({
-		hours: Yup.number.notRequired(),
-		minutes: Yup.number.notRequired(),
+		hours: Yup.number().notRequired(),
+		minutes: Yup.number().notRequired(),
 	}),
 	file: Yup.mixed().required('Selecione uma imagem')
 		.test('fileSize', 'A imagem é muito grande. Máximo 5MB', value => value && value.size <= MAX_UPLOAD_SIZE),
