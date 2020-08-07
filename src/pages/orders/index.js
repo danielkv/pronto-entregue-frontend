@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Chip, Typography } from '@material-ui/core';
-import { mdiPencil, mdiFilter, mdiDotsVertical, mdiEye } from '@mdi/js';
+import { mdiPencil, mdiFilter, mdiDotsVertical, mdiEye, mdiCalendar } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -58,12 +58,12 @@ function Page ({ match: { url } }) {
 
 	const selectedCompany = useSelectedCompany();
 	const {
-		data: { company: { countOrders = 0, orders = [] } = {} } = {},
+		data: { countOrders = 0, orders = [] } = {},
 		loading: loadingOrders, error, called
 	} = useQuery(GET_COMPANY_ORDERS, {
 		variables: {
-			id: selectedCompany,
-			filter,
+			//id: selectedCompany,
+			filter: { ...filter, companyId: selectedCompany },
 			pagination,
 		}
 	});
@@ -140,7 +140,19 @@ function Page ({ match: { url } }) {
 
 										return (
 											<TableRow key={row.id}>
-												<TableCell><Typography variant='body2'>{displayDate}</Typography></TableCell>
+												<TableCell>
+													<div style={{ display: 'flex', alignItems: 'center' }}>
+														<Typography variant='body2'>{displayDate}</Typography>
+														{row.scheduledTo
+															&& <Icon
+																title={`Agendado para ${moment(row.scheduledTo).format('DD/MM/YYYY [~]HH:mm')}`}
+																style={{ marginLeft: 5 }}
+																size={.8}
+																path={mdiCalendar}
+																color={moment(row.scheduledTo).isAfter() ? '#A4D82B' : '#999'}
+															/>}
+													</div>
+												</TableCell>
 												<TableCell><Typography variant='caption'>{`#${row.id}`}</Typography></TableCell>
 												<TableCell><Typography variant='body2'>{row.user.fullName}</Typography></TableCell>
 												<TableCell>{getDeliveryTypeText(row)}</TableCell>

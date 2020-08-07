@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Chip, Typography, Paper, Divider, IconButton } from '@material-ui/core'
-import { mdiPrinter, mdiPencil } from '@mdi/js'
+import { mdiPrinter, mdiPencil, mdiCalendar } from '@mdi/js'
 import Icon from '@mdi/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import moment from 'moment'
@@ -25,6 +25,14 @@ export default function OrderRollItem({ item: order }) {
 				<Chip size='small' label={`#${order.id}`} color='secondary' />
 				<Chip avatar={OrderController.statusIconComponent(order.status)} size='small' label={OrderController.statusLabel(order.status)} style={{ marginLeft: 6 }} variant='outlined' />
 				<Typography style={{ marginLeft: 6 }} variant='caption'>{moment(order.createdAt).format('DD/MM HH:mm')}</Typography>
+				{Boolean(order.scheduledTo) && <Chip
+					avatar={<Icon style={{ backgroundColor: 'transparent' }} path={mdiCalendar} size={.8} color='#333' />}
+					size='small'
+					variant='default'
+					color={moment(order.scheduledTo).isAfter() ? 'secondary' : 'default'}
+					label={`Agendado para ${moment(order.scheduledTo).format('DD/MM/YYYY [~]HH:mm')}`}
+					style={{ marginLeft: 6 }}
+				/>}
 
 				{order.status !== 'waiting' &&
 					<div style={{ position: 'absolute', right: 10, top: 10 }}>
