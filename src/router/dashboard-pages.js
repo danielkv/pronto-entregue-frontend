@@ -27,6 +27,7 @@ import EditCoupon from '../pages/coupons/edit_coupon';
 import NewCoupon from '../pages/coupons/new_coupon';
 import Dashboard from '../pages/dashboard';
 import Deliveries from '../pages/deliveries';
+import DeliveryMen from '../pages/deliveryMen';
 import Orders from '../pages/orders';
 import EditOrder from '../pages/orders/edit_order';
 import NewOrder from '../pages/orders/new_order';
@@ -123,6 +124,7 @@ export default function DashboardPages() {
 					<Route path={`${path}/configuracoes`} component={Settings} />
 
 					<ProtectedRoute exact role='master' path={`${path}/entregas`} component={Deliveries} />
+					<ProtectedRoute exact role='master' path={`${path}/entregadores`} component={DeliveryMen} />
 					<ProtectedRoute exact role='master' path={`${path}/todos-pedidos`} component={AllOrders} />
 					<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
 					<ProtectedRoute role='master' path={`${path}/relatorios`} component={Reports} />

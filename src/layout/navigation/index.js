@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
-import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart, mdiTicketPercent, mdiRacingHelmet, mdiBell } from '@mdi/js';
+import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart, mdiTicketPercent, mdiRacingHelmet, mdiBell, mdiReceipt } from '@mdi/js';
 import Icon from '@mdi/react';
 
 import { useLoggedUserRole } from '../../controller/hooks';
@@ -95,9 +95,16 @@ function Navigation() {
 						</NavItem>
 						<NavItem to={`${url}/entregas`} selected={isSelected('entregas')} alt='Entregas'>
 							<ListItemIcon>
-								<Icon path={mdiRacingHelmet} size={1} color='#707070' /></ListItemIcon>
+								<Icon path={mdiReceipt} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Entregas
+							</ListItemText>
+						</NavItem>
+						<NavItem to={`${url}/entregadores`} selected={isSelected('entregadores')} alt='Entregadores'>
+							<ListItemIcon>
+								<Icon path={mdiRacingHelmet} size={1} color='#707070' /></ListItemIcon>
+							<ListItemText>
+								Entregadores
 							</ListItemText>
 						</NavItem>
 						<NavItem to={`${url}/empresas`} selected={isSelected('empresas')} alt='Empresas'>
