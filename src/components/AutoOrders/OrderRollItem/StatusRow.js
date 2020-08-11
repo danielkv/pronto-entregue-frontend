@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import { useMutation } from '@apollo/react-hooks'
-import { Button, CircularProgress, ButtonGroup } from '@material-ui/core';
+import { Button, CircularProgress, ButtonGroup, Typography } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 
 import { useLoggedUserRole } from '../../../controller/hooks';
@@ -56,6 +56,7 @@ export default function StatusRow({ order }) {
 					)
 				})}
 			</ButtonGroup>
+			{order.status !== 'waiting' && <Typography style={{ textAlign: 'center', fontSize: 11, marginTop: 5 }}>Para cancelar esse pedido entre em contato com o suporte</Typography>}
 		</div>
 	)
 }

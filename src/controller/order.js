@@ -84,6 +84,8 @@ class OrderController {
 
 		const acceptChangeStatusTo = order.scheduledTo ? 'scheduled' : 'preparing';
 
+		if (userRole === 'master') status = [...status, 'canceled']
+
 		return status.map(stat => ({
 			slug: stat === 'accepted' ? acceptChangeStatusTo : stat,
 			label: OrderController.statusLabel(stat),
@@ -95,12 +97,12 @@ class OrderController {
 	static getOrderTypesStatus(type) {
 		switch (type) {
 			case 'peDelivery':
-				return ['waitingDelivery', 'delivering', 'delivered', 'canceled']
+				return ['waitingDelivery', 'delivering', 'delivered']
 			case 'takeout':
-				return ['waitingPickUp', 'delivered', 'canceled']
+				return ['waitingPickUp', 'delivered']
 			case 'delivery':
 			default:
-				return ['delivering', 'delivered', 'canceled']
+				return ['delivering', 'delivered']
 		}
 	}
 
@@ -125,7 +127,7 @@ class OrderController {
 			case 'delivered':
 				return 'Entregue';
 			case 'canceled':
-				return 'Cancelar';
+				return 'Cancelado';
 			default: return '';
 		}
 	
