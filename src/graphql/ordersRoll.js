@@ -19,6 +19,11 @@ export const ORDER_CREATED_PRODUCT = gql`
 			id
 			sku
 			description
+
+			category {
+				id
+				name
+			}
 		}
 		
 		optionsGroups {
@@ -50,6 +55,7 @@ export const ORDER_CRATED_FRAGMENT = gql`
 				value
 			}
 		}
+
 		products {
 			...OrderCreatedProduct
 		}
