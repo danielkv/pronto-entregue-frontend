@@ -120,7 +120,7 @@ function Page () {
 													disabled={isSubmitting}
 													style={{ marginRight: 3, width: 150 }}
 													name={`deliveryTime.${index}`}
-													value={values.deliveryTime[index]}
+													value={value}
 													type='time'
 													onChange={handleChange}
 												/>
