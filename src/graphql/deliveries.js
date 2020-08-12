@@ -120,6 +120,16 @@ export const SET_DELIVERY_MAN = gql`
 	${FRAGMENT_DELIVERY}
 `;
 
+export const REMOVE_DELIVERY_MAN = gql`
+	mutation RemoveDeliveryMan ($deliveryId: ID!) {
+		removeDeliveryMan(deliveryId: $deliveryId) {
+			...DeliveryFields
+		}
+	}
+
+	${FRAGMENT_DELIVERY}
+`;
+
 export const CHANGE_DELIVERY_STATUS = gql`
 	mutation ChangeDeliveryStatus ($deliveryId: ID!, $newStatus: String!) {
 		changeDeliveryStatus(deliveryId: $deliveryId, newStatus: $newStatus) {
