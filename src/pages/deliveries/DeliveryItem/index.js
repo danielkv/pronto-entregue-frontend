@@ -71,7 +71,7 @@ export default function DeliveryItem({ item: delivery }) {
 				</AnimatePresence>
 
 				{(loadingSetDeliveryMan || delivery.deliveryMan) && <div style={{ marginBottom: 10 }}>
-					<Alert severity='info'>
+					<Alert onClose={()=>removeDeliveryMan()} severity='info'>
 						{loadingSetDeliveryMan
 							? <CircularProgress />
 							: <>
