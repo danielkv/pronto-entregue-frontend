@@ -96,7 +96,7 @@ function Page ({ match: { url } }) {
 			<OrderStatusMenu
 				open={Boolean(anchorEl)}
 				onClose={handleCloseMenu}
-				availableStatus={OrderController.availableStatus(menuOrder)}
+				availableStatus={OrderController.availableStatus(menuOrder, loggedUserRole)}
 				anchorEl={anchorEl}
 				onClick={handleUpdateStatus}
 				selected={menuOrder.status}
