@@ -113,6 +113,7 @@ export default function DashboardPages() {
 						
 					<Route exact path={`${path}/usuarios`} component={Users} />
 					<Route path={`${path}/pessoas/alterar/:id`} component={EditPeople} />
+					<Route role='adm' path={`${path}/relatorios`} component={Reports} />
 
 					<ProtectedRoute role='master' exact path={`${path}/pessoas`} component={People} />
 					<ProtectedRoute role='master' path={`${path}/pessoas/nova`} component={NewPeople} />
@@ -127,7 +128,6 @@ export default function DashboardPages() {
 					<ProtectedRoute exact role='master' path={`${path}/entregadores`} component={DeliveryMen} />
 					<ProtectedRoute exact role='master' path={`${path}/todos-pedidos`} component={AllOrders} />
 					<ProtectedRoute exact role='master' path={`${path}/empresas`} component={Companies} />
-					<ProtectedRoute role='master' path={`${path}/relatorios`} component={Reports} />
 					<ProtectedRoute role='master' path={`${path}/empresas/novo`} component={NewCompany} />
 					<ProtectedRoute role='master' path={`${path}/empresas/alterar/:id`} component={EditCompany} />
 

@@ -6,20 +6,23 @@ query GetCompaniesReport ($companiesIds: [ID], $filter: JSON) {
 		credits
 		coupons
 		taxableCoupon
-		companyDiscount
 		totalDiscount
+		refund
 		tax
 		revenue
 		taxable
 		countOrders
+		deliveryPaymentValue
+		countPeDelivery
+		payment
 		companies {
 			id
-			
+			image
+			refund
 			displayName
 			credits
 			coupons
 			taxableCoupon
-			companyDiscount
 			totalDiscount
 			tax
 			revenue
@@ -28,29 +31,39 @@ query GetCompaniesReport ($companiesIds: [ID], $filter: JSON) {
 				type
 				value
 			}
+			payment
 			countOrders
+			deliveryPaymentValue
+			countPeDelivery
 			orders {
 				id
-				datetime
 				createdAt
+				type
 				subtotal
+				deliveryPrice
 				price
+				refund
 				discount
-				
+				deliveryPaymentValue
 				tax
 				taxable
+				payment
 				creditHistory {
 					id
 					value
+					
 				}
 				coupon {
 					id
 					value
+					taxable
 					valueType
 					freeDelivery
+					
 				}
 				couponValue
 				taxableCoupon
+				
 			}
 		}
 	}

@@ -11,6 +11,9 @@ export default function ListOrders({ report }) {
 	})
 
 	const orders = report.companies.reduce((allOrders, company)=>[...allOrders, ...company.orders], []);
+	orders.sort((a, b)=>{
+		return a.createdAt > b.createdAt ? -1 : 1
+	})
 
 	const offset = pagination.page * pagination.rowsPerPage;
 	const limit = offset + pagination.rowsPerPage
@@ -35,13 +38,15 @@ export default function ListOrders({ report }) {
 				<Table>
 					<TableHead>
 						<TableRow>
+							<TableCell></TableCell>
 							<TableCell><Typography variant='caption'>Data / Hora</Typography></TableCell>
 							<TableCell><Typography variant='caption'>Faturamento</Typography></TableCell>
-							<TableCell><Typography variant='caption'>Descontos</Typography></TableCell>
-							<TableCell><Typography variant='caption'>Créditos</Typography></TableCell>
 							<TableCell><Typography variant='caption'>Cupons</Typography></TableCell>
-							<TableCell><Typography variant='caption'>Valor taxável</Typography></TableCell>
-							<TableCell><Typography variant='caption'>Taxa cobrada</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Descontos</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Entregas</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Taxa</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Repasse</Typography></TableCell>
+							<TableCell><Typography variant='caption'>Remuneração</Typography></TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -49,13 +54,15 @@ export default function ListOrders({ report }) {
 							.slice(offset, limit)
 							.map(row => (
 								<TableRow key={row.id}>
+									<TableCell><Typography variant='overline'>{`#${row.id}`}</Typography></TableCell>
 									<TableCell>{moment(row.createdAt).format('DD/MM/YYYY HH:mm')}</TableCell>
 									<TableCell>{numeral(row.price).format('$0,0.00')}</TableCell>
+									<TableCell>{row.coupon ? `${numeral(row.couponValue).format('$0,0.00')}` : '--'}</TableCell>
 									<TableCell>{numeral(row.discount).format('$0,0.00')}</TableCell>
-									<TableCell>{row.creditHistory ? numeral(Math.abs(row.creditHistory.value)).format('$0,0.00') : '--'}</TableCell>
-									<TableCell>{row.coupon ? `${numeral(row.couponValue).format('$0,0.00')} (${numeral(row.taxableCoupon).format('$0,0.00')})` : '--'}</TableCell>
-									<TableCell>{numeral(row.taxable).format('$0,0.00')}</TableCell>
+									<TableCell>{numeral(row.deliveryPaymentValue).format('$0,0.00')}</TableCell>
 									<TableCell>{numeral(row.tax).format('$0,0.00')}</TableCell>
+									<TableCell>{numeral(row.refund).format('$0,0.00')}</TableCell>
+									<TableCell>{numeral(row.payment).format('$0,0.00')}</TableCell>
 								</TableRow>
 							))}
 					</TableBody>

@@ -6,7 +6,9 @@ import { useLoggedUserRole } from '../../controller/hooks';
 export default function ProtectedRoute(props) {
 	const loggedUserRole = useLoggedUserRole();
 
-	if (props.role !== loggedUserRole) return false;
+	const permissions = ['master', props.role];
+
+	if (!permissions.includes(loggedUserRole)) return false;
 
 	return <Route {...props} />
 }

@@ -1,35 +1,45 @@
 import React from 'react'
 
-import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Avatar, TableFooter } from '@material-ui/core';
+import { Paper, Table, TableHead, TableRow, TableCell, TableBody, Avatar, TableFooter, Typography } from '@material-ui/core';
 import numeral from 'numeral';
 
 export default function ListCompanies({ report }) {
+	const companies = report.companies;
+	
+	companies.sort((a, b) => {
+		return a.orders.length > b.orders.length ? -1 : 1;
+	});
+
 	return (
 		<Paper>
 			<Table>
 				<TableHead>
 					<TableRow>
 						<TableCell style={{ width: 30, paddingRight: 10 }}></TableCell>
-						<TableCell>Estabelecimento</TableCell>
-						<TableCell>Faturamento último mês</TableCell>
-						<TableCell>Descontos</TableCell>
-						<TableCell>Créditos</TableCell>
-						<TableCell>Cupons</TableCell>
-						<TableCell>Valor taxável</TableCell>
-						<TableCell>Taxa cobrada</TableCell>
+						<TableCell><Typography variant='caption'>Estabelecimento</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Pedidos</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Faturamento</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Cupons</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Descontos</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Entregas</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Taxa</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Repasse</Typography></TableCell>
+						<TableCell><Typography variant='caption'>Remuneração</Typography></TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{report.companies.map(row => (
+					{companies.map(row => (
 						<TableRow key={row.id}>
 							<TableCell style={{ width: 30, paddingLeft: 40, paddingRight: 10 }}><Avatar alt={row.displayName} src={row.image} /></TableCell>
 							<TableCell>{row.displayName}</TableCell>
+							<TableCell>{row.orders.length}</TableCell>
 							<TableCell>{numeral(row.revenue).format('$0,0.00')}</TableCell>
-							<TableCell>{numeral(row.companyDiscount).format('$0,0.00')}</TableCell>
-							<TableCell>{row.credits ? numeral(row.credits).format('$0,0.00')  : '--'}</TableCell>
-							<TableCell>{row.coupons ? `${numeral(row.coupons).format('$0,0.00')} (${numeral(row.taxableCoupon).format('$0,0.00')})` : '--'}</TableCell>
-							<TableCell>{numeral(row.taxable).format('$0,0.00')}</TableCell>
+							<TableCell>{numeral(row.coupons).format('$0,0.00')}</TableCell>
+							<TableCell>{numeral(row.totalDiscount).format('$0,0.00')}</TableCell>
+							<TableCell>{`${numeral(row.deliveryPaymentValue).format('$0,0.00')} (${row.countPeDelivery})`}</TableCell>
 							<TableCell>{numeral(row.tax).format('$0,0.00')}</TableCell>
+							<TableCell>{numeral(row.refund).format('$0,0.00')}</TableCell>
+							<TableCell>{numeral(row.payment).format('$0,0.00')}</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
@@ -37,11 +47,14 @@ export default function ListCompanies({ report }) {
 					<TableRow>
 						<TableCell></TableCell>
 						<TableCell></TableCell>
+						<TableCell>{report.countOrders}</TableCell>
 						<TableCell>{numeral(report.revenue).format('$0,0.00')}</TableCell>
-						<TableCell>{numeral(report.companyDiscount).format('$0,0.00')}</TableCell>
-						<TableCell>{numeral(report.credits).format('$0,0.00')}</TableCell>
-						<TableCell>{numeral(report.taxable).format('$0,0.00')}</TableCell>
+						<TableCell>{numeral(report.coupons).format('$0,0.00')}</TableCell>
+						<TableCell>{numeral(report.totalDiscount).format('$0,0.00')}</TableCell>
+						<TableCell>{numeral(report.deliveryPaymentValue).format('$0,0.00')}</TableCell>
 						<TableCell>{numeral(report.tax).format('$0,0.00')}</TableCell>
+						<TableCell>{numeral(report.refund).format('$0,0.00')}</TableCell>
+						<TableCell>{numeral(report.payment).format('$0,0.00')}</TableCell>
 					</TableRow>
 				</TableFooter>
 			</Table>

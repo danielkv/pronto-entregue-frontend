@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useRouteMatch } from 'react-router-dom';
+import { useLocation, useRouteMatch, matchPath } from 'react-router-dom';
 
 import { ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 import { mdiViewDashboard, mdiStore, mdiViewList,  mdiShape, mdiBasket, mdiAccountTie , mdiSettings, mdiAccountMultiple, mdiGroup, mdiFormatListText, mdiFileChart, mdiTicketPercent, mdiRacingHelmet, mdiBell, mdiReceipt } from '@mdi/js';
@@ -14,7 +14,10 @@ function Navigation() {
 	const { path, url } = useRouteMatch();
 	
 	function isSelected(match) {
-		return location.pathname === `${path}/${match}`
+		return matchPath(location.pathname, {
+			path: `${path}/${match}`,
+			exact: false
+		})
 	}
 
 	return (
@@ -62,6 +65,13 @@ function Navigation() {
 					</ListItemIcon>
 					<ListItemText>
 						Cupons
+					</ListItemText>
+				</NavItem>
+				<NavItem to={`${url}/relatorios`} selected={isSelected('relatorios')} alt='Relatórios'>
+					<ListItemIcon>
+						<Icon path={mdiFileChart} size={1} color='#707070' /></ListItemIcon>
+					<ListItemText>
+								Relatórios
 					</ListItemText>
 				</NavItem>
 				{/* <NavItem to={`${url}/pontuacao`} selected={isSelected('pontuacao')} alt='pontuacao'>
@@ -112,13 +122,6 @@ function Navigation() {
 								<Icon path={mdiStore} size={1} color='#707070' /></ListItemIcon>
 							<ListItemText>
 								Empresas
-							</ListItemText>
-						</NavItem>
-						<NavItem to={`${url}/relatorios`} selected={isSelected('relatorios')} alt='Relatórios'>
-							<ListItemIcon>
-								<Icon path={mdiFileChart} size={1} color='#707070' /></ListItemIcon>
-							<ListItemText>
-								Relatórios
 							</ListItemText>
 						</NavItem>
 						<NavItem to={`${url}/enviar-notificacoes`} selected={isSelected('enviar-notificacoes')} alt='Enviar Notificacoes'>
