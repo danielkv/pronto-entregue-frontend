@@ -23,16 +23,16 @@ const validationSchema = Yup.object().shape({
 	value: Yup.number().required('O valor é obrigatório'),
 });
 
-function Page () {
+function Page() {
 	setPageTitle('Alterar campanha');
 
 	const { id: editId } = useParams();
 	const { enqueueSnackbar } = useSnackbar();
-	
-	const { data, loading: loadingGetData, error } = useQuery(LOAD_COUPON, { variables: { id: editId, filter: { showInactive: true } } });
+
+	const { data, loading: loadingGetData, error } = useQuery(LOAD_COUPON, { variables: { id: editId } });
 	const [updateCoupon] = useMutation(UPDATE_COUPON, {
 		variables: { id: editId },
-		refetchQueries: [{ query: LOAD_COUPON, variables: { id: editId } }]
+		//refetchQueries: [{ query: LOAD_COUPON, variables: { id: editId } }]
 	});
 
 	if (error) return <ErrorBlock error={getErrors(error)} />
@@ -40,15 +40,15 @@ function Page () {
 
 	const initialValues = extractCoupon(data.coupon);
 
-	
+
 	function onSubmit(data) {
 		const saveData = sanitizeCoupon(data);
 
 		return updateCoupon({ variables: { data: saveData } })
-			.then(()=>{
-				enqueueSnackbar('A campanha foi alterada com sucesso', { variant: 'success' });
+			.then(() => {
+				enqueueSnackbar('O cupom foi alterado com sucesso', { variant: 'success' });
 			})
-			.catch((err)=>{
+			.catch((err) => {
 				enqueueSnackbar(getErrors(err), { variant: 'error' });
 			})
 	}

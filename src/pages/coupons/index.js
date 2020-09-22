@@ -2,8 +2,8 @@ import React, { useState, Fragment, useRef, useEffect } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Avatar } from '@material-ui/core';
-import { mdiPencil, mdiFilter } from '@mdi/js';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, IconButton, FormControlLabel, Switch, TablePagination, TextField, ButtonGroup, Button, CircularProgress, Avatar, Typography } from '@material-ui/core';
+import { mdiPencil, mdiFilter, mdiInformation } from '@mdi/js';
 import Icon from '@mdi/react';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -20,33 +20,40 @@ import { GET_COUPONS, UPDATE_COUPON } from '../../graphql/coupons';
 const initialFilter = {
 	showInactive: false,
 	search: '',
+	expiresAt: { '$gt': moment().valueOf() }
 }
 
-function Page () {
+function Page() {
 	setPageTitle('Produtos');
 	const { url } = useRouteMatch();
 	const selectedCompany = useSelectedCompany();
 
 	const searchRef = useRef(null);
-	const [filter, setFilter] = useState(initialFilter);
+	const [filter, setFilter] = useState(() => initialFilter);
+	const [expiresAt, setExpiresAt] = useState(() => initialFilter.expiresAt);
 	const [pagination, setPagination] = useState({
 		page: 0,
 		rowsPerPage: 10,
 	});
 
-	useEffect(()=>{
+	useEffect(() => {
 		setPagination((pagination) => ({ ...pagination, page: 0 }));
 	}, [filter]);
 
 	const submitFilterForm = (e) => {
 		e.preventDefault();
 
-		setFilter({
+		const newFilter = {
 			...filter,
 			search: searchRef.current.value
-		})
+		}
+		if (expiresAt) newFilter.expiresAt = expiresAt;
+		else delete newFilter.expiresAt;
+
+		setFilter(newFilter)
 	}
 	const clearFilterForm = () => {
+		setExpiresAt(initialFilter.expiresAt)
 		setFilter(initialFilter);
 	}
 
@@ -94,9 +101,14 @@ function Page () {
 									{coupons.map(row => (
 										<TableRow key={row.id}>
 											<TableCell style={{ width: 30, paddingLeft: 30, paddingRight: 10 }}><Avatar alt={row.name} src={row.image} /></TableCell>
-											<TableCell>{row.name}</TableCell>
+											<TableCell>
+												<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+													<Typography>{row.name}</Typography>
+													{Boolean(row.countCompanies) && <Icon title='Esse cupom restringe um ou mais estabelecimentos' path={mdiInformation} size={.7} color='#aaa' />}
+												</div>
+											</TableCell>
 											<TableCell>{row.valueType === 'percentage'
-												? numeral(row.value/100).format('0,0.00%')
+												? numeral(row.value / 100).format('0,0.00%')
 												: numeral(row.value).format('$0,0.00')
 											}</TableCell>
 											<TableCell>{moment(row.startsAt).format('DD/MM/YYYY HH:mm')}</TableCell>
@@ -111,7 +123,7 @@ function Page () {
 														<Switch
 															disabled={loadingUpdating}
 															checked={row.active}
-															onChange={()=>updateCompany({ variables: { id: row.id, data: { active: !row.active } } }) }
+															onChange={() => updateCompany({ variables: { id: row.id, data: { active: !row.active } } })}
 															value="checkedB"
 															size='small'
 															color='primary'
@@ -135,8 +147,8 @@ function Page () {
 								count={countCoupons}
 								rowsPerPage={pagination.rowsPerPage}
 								page={pagination.page}
-								onChangePage={(e, newPage)=>{setPagination({ ...pagination, page: newPage })}}
-								onChangeRowsPerPage={(e)=>{setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value });}}
+								onChangePage={(e, newPage) => { setPagination({ ...pagination, page: newPage }) }}
+								onChangeRowsPerPage={(e) => { setPagination({ ...pagination, page: 0, rowsPerPage: e.target.value }); }}
 							/>
 						</Paper>
 						<NumberOfRows>{countCoupons} cupons</NumberOfRows>
@@ -152,7 +164,7 @@ function Page () {
 									size='small'
 									color='primary'
 									checked={filter.showInactive}
-									onChange={()=>setFilter({ ...filter, showInactive: !filter.showInactive })}
+									onChange={() => setFilter({ ...filter, showInactive: !filter.showInactive })}
 									value={filter.showInactive}
 								/>
 							}
@@ -167,6 +179,30 @@ function Page () {
 										<TextField
 											label='Buscar'
 											inputRef={searchRef}
+										/>
+									</FieldControl>
+								</FormRow>
+							</BlockSeparator>
+							<BlockSeparator>
+								<FormRow>
+									<FieldControl>
+										<FormControlLabel
+											control={
+												<Switch
+													size='small'
+													color='primary'
+													checked={!expiresAt}
+													onChange={() => {
+
+														if (expiresAt)
+															setExpiresAt(null)
+														else
+															setExpiresAt({ '$gt': moment().valueOf() })
+													}}
+												//value={filter.showInactive}
+												/>
+											}
+											label="Incluir expirados"
 										/>
 									</FieldControl>
 								</FormRow>

@@ -75,7 +75,7 @@ export const UPDATE_COUPON = gql`
 `;
 
 export const GET_COUPONS = gql`
-	query GetCoupons ($filter: Filter, $pagination: Pagination) {
+	query GetCoupons ($filter: JSON, $pagination: Pagination) {
 		countCoupons(filter: $filter)
 		coupons (filter: $filter, pagination: $pagination) {
 			id
@@ -88,6 +88,7 @@ export const GET_COUPONS = gql`
 			value
 			createdAt
 			active
+			countCompanies
 		}
 	}
 `;

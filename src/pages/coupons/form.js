@@ -18,7 +18,7 @@ import RestrictCompaniesBlock from './restrictCompaniesBlock';
 import RestrictProductsBlock from './restrictProductsBlock';
 import RestrictUsersBlock from './restrictUsersBlock';
 
-export default function PageForm ({ values, setFieldValue, errors, isValidating, isSubmitting }) {
+export default function PageForm({ values, setFieldValue, errors, isValidating, isSubmitting }) {
 	const loggedUserRole = useLoggedUserRole();
 	const [errorDialog, setErrorDialog] = useState(false);
 
@@ -28,7 +28,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 		valueType,
 		featured,
 		freeDelivery,
-		
+
 		onlyFirstPurchases,
 
 		startsAt,
@@ -47,10 +47,10 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 	function handleCloseDialog() {
 		setErrorDialog(false)
 	}
-	useEffect(()=>{
+	useEffect(() => {
 		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
 	}, [isValidating, errors])
-	
+
 	return (
 		<Form>
 			<Content>
@@ -86,7 +86,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 									<FormControlLabel
 										labelPlacement='end'
 										control={
-											<Switch size='small' color='primary' checked={onlyFirstPurchases} onChange={()=>{setFieldValue('onlyFirstPurchases', !onlyFirstPurchases)}} value="includeDisabled" />
+											<Switch size='small' color='primary' checked={onlyFirstPurchases} onChange={() => { setFieldValue('onlyFirstPurchases', !onlyFirstPurchases) }} value="includeDisabled" />
 										}
 										label="Apenas primeira compra"
 									/>
@@ -99,7 +99,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 								</FormControl>
 							</Grid>
 							<Grid item sm={6} xl={3}>
-							
+
 								<FormControl>
 									<Field type='number' component={tField} name='maxPerUser' label='Máximo por usuário' />
 									<FormHelperText>Limite de vezes que cada usuário pode aplicar esse cupom</FormHelperText>
@@ -120,7 +120,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 						</Grid>
 					</Paper>
 				</Block>
-				
+
 				{loggedUserRole === 'master' && <RestrictCompaniesBlock />}
 				<RestrictProductsBlock />
 				{loggedUserRole === 'master' && <RestrictUsersBlock />}
@@ -137,13 +137,13 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' checked={active} onChange={()=>{setFieldValue('active', !active)}} value="includeDisabled" />
+											<Switch size='small' checked={active} onChange={() => { setFieldValue('active', !active) }} value="includeDisabled" />
 										}
 										label="Ativo"
 									/>
 								</FieldControl>
 							</FormRow>
-							
+
 							<FormRow>
 								<FieldControl>
 									<Button fullWidth type='submit' variant="contained" disabled={isSubmitting} color='primary'>Salvar</Button>
@@ -158,7 +158,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 											<FormControlLabel
 												labelPlacement='start'
 												control={
-													<Switch size='small' color='primary' checked={featured} onChange={()=>{setFieldValue('featured', !featured)}} value="includeDisabled" />
+													<Switch size='small' color='primary' checked={featured} onChange={() => { setFieldValue('featured', !featured) }} value="includeDisabled" />
 												}
 												label="Cupom em destaque"
 											/>
@@ -184,7 +184,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 											format='dd/MM/yyyy HH:mm'
 											label="Inicia em"
 											value={startsAt}
-											onChange={(date)=>setFieldValue('startsAt', date)}
+											onChange={(date) => setFieldValue('startsAt', date)}
 											error={!!errors.startsAt}
 											helperText={!!errors.startsAt && errors.startsAt}
 										/>
@@ -199,7 +199,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 											format='dd/MM/yyyy HH:mm'
 											label="Expira em"
 											value={expiresAt}
-											onChange={(date)=>setFieldValue('expiresAt', date)}
+											onChange={(date) => setFieldValue('expiresAt', date)}
 											error={!!errors.expiresAt}
 											helperText={!!errors.expiresAt && errors.expiresAt}
 										/>
@@ -212,7 +212,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 								<FieldControl>
 									<FormControl>
 										<FormLabel>Tipo de valor</FormLabel>
-										<ToggleButtonGroup exclusive value={valueType} onChange={(_, newValue)=>{setFieldValue('valueType', newValue)}}>
+										<ToggleButtonGroup exclusive value={valueType} onChange={(_, newValue) => { setFieldValue('valueType', newValue) }}>
 											<ToggleButton value='percentage'>
 												<Typography>Porcentagem</Typography>
 											</ToggleButton>
@@ -233,7 +233,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 									<FormControlLabel
 										labelPlacement='start'
 										control={
-											<Switch size='small' color='primary' checked={freeDelivery} onChange={()=>{setFieldValue('freeDelivery', !freeDelivery)}} value="includeDisabled" />
+											<Switch size='small' color='primary' checked={freeDelivery} onChange={() => { setFieldValue('freeDelivery', !freeDelivery) }} value="includeDisabled" />
 										}
 										label="Entrega grátis"
 									/>
@@ -269,7 +269,7 @@ export default function PageForm ({ values, setFieldValue, errors, isValidating,
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+					<Button onClick={handleCloseDialog} color="primary" autoFocus>Ok</Button>
 				</DialogActions>
 			</Dialog>
 		</Form>

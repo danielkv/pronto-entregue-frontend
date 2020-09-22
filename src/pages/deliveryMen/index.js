@@ -18,30 +18,9 @@ export default function Deliveries() {
 		rowsPerPage: 8
 	})
 	const [firstLoaded, setFirstLoaded] = useState(false);
-	const { data: { deliveryMen = [], countDeliveryMen = 0 } = {}, loading: loadingDeliveryMen, subscribeToMore = null } = useQuery(GET_DELIVERY_MEN, { notifyOnNetworkStatusChange: true, fetchPolicy: 'cache-and-network', variables: { pagination } });
+	const { data: { deliveryMen = [], countDeliveryMen = 0 } = {}, loading: loadingDeliveryMen } = useQuery(GET_DELIVERY_MEN, { notifyOnNetworkStatusChange: true, fetchPolicy: 'cache-and-network', variables: { pagination } });
 
-	/* useEffect(()=>{
-		if (!subscribeToMore) return;
-		
-		const unsubscribe = subscribeToMore({
-			document: UPDATE_DELIVERY_SUBSCRIPTION,
-			updateQuery(prev, data) {
-				const { subscriptionData: { data: { delivery = null } } } = data;
-				if (!delivery) return prev;
-
-				const deliveryFoundIndex = prev.deliveries.findIndex(d => d.id === delivery.id)
-
-				if (deliveryFoundIndex < 0) {
-					const newDelivery = { ...delivery }
-					return { ...prev, deliveries: [newDelivery, ...prev.deliveries] }
-				}
-			}
-		})
-
-		return unsubscribe;
-	}, [subscribeToMore]) */
-
-	useEffect(()=>{
+	useEffect(() => {
 		if (loadingDeliveryMen && firstLoaded) setFirstLoaded(false);
 		if (!loadingDeliveryMen && deliveryMen.length && !firstLoaded) setFirstLoaded(true);
 	}, [deliveryMen, firstLoaded, loadingDeliveryMen])
@@ -53,9 +32,9 @@ export default function Deliveries() {
 			<Block>
 				<BlockHeader>
 					<BlockTitle>Entregadores</BlockTitle>
-					<Pagination count={Math.ceil(countDeliveryMen/pagination.rowsPerPage)} page={pagination.page+1} onChange={(e, page)=>setPagination({ ...pagination, page: page-1 })} />
+					<Pagination count={Math.ceil(countDeliveryMen / pagination.rowsPerPage)} page={pagination.page + 1} onChange={(e, page) => setPagination({ ...pagination, page: page - 1 })} />
 				</BlockHeader>
-				
+
 				<Grid container spacing={6}>
 					{deliveryMen.map((delivery, index) => {
 						return (<Grid
@@ -70,12 +49,12 @@ export default function Deliveries() {
 						>
 							<DeliveryManItem orderIndex={index} item={delivery} />
 						</Grid>)
-						
+
 					})}
 				</Grid>
-				
+
 				<div style={{ marginTop: 15 }}>
-					<Pagination count={Math.ceil(countDeliveryMen/pagination.rowsPerPage)} page={pagination.page+1} onChange={(e, page)=>setPagination({ ...pagination, page: page-1 })} />
+					<Pagination count={Math.ceil(countDeliveryMen / pagination.rowsPerPage)} page={pagination.page + 1} onChange={(e, page) => setPagination({ ...pagination, page: page - 1 })} />
 				</div>
 			</Block>
 		</div>
