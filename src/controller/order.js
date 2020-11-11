@@ -1,13 +1,14 @@
 import React from 'react';
 
-import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle, mdiBagChecked, mdiAccountClock, mdiPlaylistCheck, mdiCalendarCheck } from '@mdi/js';
+import { mdiClock, mdiSilverwareSpoon, mdiMoped, mdiCheckCircle, mdiCloseCircle, mdiBagChecked, mdiAccountClock, mdiPlaylistCheck, mdiCalendarCheck, mdiExclamationThick } from '@mdi/js';
 import Icon from '@mdi/react';
 
 class OrderController {
 	static statusVariant(status) {
 		// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
-			
-		switch(status) {
+
+		switch (status) {
+			case 'paymentPending':
 			case 'waiting':
 			case 'preparing':
 			case 'waitingDelivery':
@@ -22,11 +23,13 @@ class OrderController {
 			default:
 				return 'default';
 		}
-		
+
 	}
 
-	static statusIcon (status) {
-		switch(status) {
+	static statusIcon(status) {
+		switch (status) {
+			case 'paymentPending':
+				return { path: mdiExclamationThick, color: '#363E5E' };
 			case 'accepted':
 				return { path: mdiPlaylistCheck, color: '#363E5E' };
 			case 'waiting':
@@ -49,7 +52,7 @@ class OrderController {
 		}
 	}
 
-	static statusIconComponent(status, size=.8) {
+	static statusIconComponent(status, size = .8) {
 		const label = OrderController.statusLabel(status);
 		const icon = OrderController.statusIcon(status);
 
@@ -72,19 +75,19 @@ class OrderController {
 
 		if (order.status !== 'waiting' || userRole === 'master') {
 			status = ['waiting'];
-			
+
 			if (order.scheduledTo) {
 				status.push('scheduled')
 			} else {
 				status.push('preparing')
 			}
-			
+
 			status = [...status, ...OrderController.getOrderTypesStatus(order.type)]
 		}
 
 		const acceptChangeStatusTo = order.scheduledTo ? 'scheduled' : 'preparing';
 
-		if (userRole === 'master') status = [...status, 'canceled']
+		if (userRole === 'master') status = ['paymentPending', ...status, 'canceled']
 
 		return status.map(stat => ({
 			slug: stat === 'accepted' ? acceptChangeStatusTo : stat,
@@ -107,11 +110,13 @@ class OrderController {
 	}
 
 	static statusLabel(status) {
-	// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
-		
-		switch(status) {
+		// isIn: [['waiting', 'preparing', 'delivering', 'delivered', 'canceled']],
+
+		switch (status) {
 			case 'accepted':
 				return 'Abrir';
+			case 'paymentPending':
+				return 'Pagamento pendente';
 			case 'waiting':
 				return 'Aguardando';
 			case 'scheduled':
@@ -130,7 +135,7 @@ class OrderController {
 				return 'Cancelado';
 			default: return '';
 		}
-	
+
 	}
 }
 

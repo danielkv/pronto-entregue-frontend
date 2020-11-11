@@ -15,14 +15,37 @@ export default function AutoOrders() {
 	const { data: { company: { orders = [] } = {} } = {}, subscribeToMore } = useQuery(GET_ORDER_ROLL, { variables: { companyId: selectedCompany, filter: { status: { '$not': ['delivered', 'canceled'] } } } });
 	const notificationRef = useRef();
 
-	const { data: { companyConfig: { notificationSound = null }={} } = {}, loading: loadingSound } = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: ['notificationSound'] }, fetchPolicy: 'cache-first' });
+	const { data: { companyConfig: { notificationSound = null } = {} } = {}, loading: loadingSound } = useQuery(GET_COMPANY_CONFIG, { variables: { companyId: selectedCompany, keys: ['notificationSound'] }, fetchPolicy: 'cache-first' });
 
 	function handleCloseOrdersRoll() {
 		setOpen(false);
 	}
 
-	useEffect(()=>{
-		if (!selectedCompany) return ;
+	function addOrderToList(prev, order) {
+		const excludeStatus = ['paymentPending', 'delivered', 'canceled'];
+		if (excludeStatus.includes(order.status)) return prev;
+
+		if (order.status === 'waiting') {
+			playNotification();
+			setOpen(true)
+		}
+
+		// should push new order to orders list
+		const ordersInList = prev.company.orders;
+		if (!ordersInList.find(o => o.id === order.id))
+			return Object.assign({}, prev, {
+				company: {
+					...prev.company,
+					orders: [order, ...prev.company.orders],
+				}
+			})
+
+		return prev;
+	}
+
+	useEffect(() => {
+		if (!selectedCompany) return;
+
 
 		const unsubscribeNewOrder = subscribeToMore({
 			document: SUBSCRIBE_ORDER_CREATED,
@@ -30,29 +53,25 @@ export default function AutoOrders() {
 			updateQuery(prev, { subscriptionData: { data: { orderCreated = null } } }) {
 				if (!orderCreated) return prev;
 
-				playNotification();
-
-				setOpen(true)
-
-				return Object.assign({}, prev, {
-					company: {
-						...prev.company,
-						orders: [orderCreated, ...prev.company.orders],
-					}
-				})
+				return addOrderToList(prev, orderCreated)
 			}
 		})
 
 		const unsubscribeUpdatedOrder = subscribeToMore({
 			document: ORDER_UPDATED,
 			variables: { companyId: selectedCompany },
+			updateQuery(prev, { subscriptionData: { data: { orderUpdated = null } } }) {
+				if (!orderUpdated) return prev;
+
+				return addOrderToList(prev, orderUpdated);
+			}
 		})
 
-		return ()=>{
+		return () => {
 			unsubscribeNewOrder()
 			unsubscribeUpdatedOrder()
 		};
-	// eslint-disable-next-line
+		// eslint-disable-next-line
 	}, [selectedCompany])
 
 	function playNotification() {
@@ -66,8 +85,8 @@ export default function AutoOrders() {
 			{!loadingSound && <audio ref={notificationRef}>
 				<source src={notificationSound.url} />
 			</audio>}
-			
-			<Button variant='contained' onClick={()=>setOpen(!open)}>Mostrar pedidos</Button>
+
+			<Button variant='contained' onClick={() => setOpen(!open)}>Mostrar pedidos</Button>
 
 			<Dialog
 				fullWidth
@@ -76,7 +95,7 @@ export default function AutoOrders() {
 				onClose={handleCloseOrdersRoll}
 				aria-labelledby="max-width-dialog-title"
 				scroll='body'
-				PaperProps={{ style: { backgroundColor: '#EFE8DA' } } }
+				PaperProps={{ style: { backgroundColor: '#EFE8DA' } }}
 			>
 				<DialogTitle id="max-width-dialog-title">Pedidos em tempo real</DialogTitle>
 				<DialogContent>

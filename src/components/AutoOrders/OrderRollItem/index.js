@@ -15,10 +15,12 @@ import StatusRow from './StatusRow'
 
 export default function OrderRollItem({ item: order }) {
 	const orderTotal = order.price + order.discount;
-	
+	const hiddenStatus = ['paymentPending', 'waiting', 'canceled']
+	const isHidden = hiddenStatus.includes(order.status);
+
 	return (
 		<Paper
-			style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative', backgroundColor: order.status === 'waiting' ? 'rgba(0,0,0,.1)' : 'rgba(255,255,255,1)' }}
+			style={{ marginTop: 10, marginBottom: 10, padding: 15, position: 'relative', backgroundColor: isHidden ? 'rgba(0,0,0,.1)' : 'rgba(255,255,255,1)' }}
 			elevation={0}
 		>
 			<div style={{ marginBottom: 10 }}>
@@ -34,18 +36,18 @@ export default function OrderRollItem({ item: order }) {
 					style={{ marginLeft: 6 }}
 				/>}
 
-				{order.status !== 'waiting' &&
+				{!isHidden &&
 					<div style={{ position: 'absolute', right: 10, top: 10 }}>
 						<IconButton component={Link} to={`/dashboard/pedidos/alterar/${order.id}`}>
 							<Icon path={mdiPencil} size={.8} color='#999' />
 						</IconButton>
-						<IconButton onClick={()=>window.open(`/imprimir/${order.id}`)}>
+						<IconButton onClick={() => window.open(`/imprimir/${order.id}`)}>
 							<Icon path={mdiPrinter} size={.8} color='#999' />
 						</IconButton>
 					</div>}
 			</div>
 			<AnimatePresence>
-				{order.status !== 'waiting' &&
+				{!isHidden &&
 					<motion.div
 						initial={{ height: 0 }}
 						animate={{ height: 'auto' }}
@@ -77,22 +79,22 @@ export default function OrderRollItem({ item: order }) {
 												<Typography variant='caption'>{`${order.paymentMethod.displayName}`}</Typography>
 											</div>}
 										</div>
-												
+
 									</div>
 									<div style={{ marginLeft: 20 }}>
 										<table style={{ width: '100%' }}>
 											<tbody>
 												{!!order.discount &&
-												<>
-													<tr>
-														<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Subtotal</Typography></td>
-														<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(orderTotal).format('$0,0.00')}</Typography></td>
-													</tr>
-													<tr>
-														<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'} {order.coupon && '(Cupom)'}</Typography></td>
-														<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(order.discount).format('$0,0.00')}</Typography></td>
-													</tr>
-												</>
+													<>
+														<tr>
+															<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Subtotal</Typography></td>
+															<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(orderTotal).format('$0,0.00')}</Typography></td>
+														</tr>
+														<tr>
+															<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Descontos {order.creditHistory && '(Créditos)'} {order.coupon && '(Cupom)'}</Typography></td>
+															<td style={{ textAlign: 'right' }}><Typography variant='caption'>{numeral(order.discount).format('$0,0.00')}</Typography></td>
+														</tr>
+													</>
 												}
 												<tr>
 													<td><Typography variant='caption' style={{ fontWeight: 'bold' }}>Total (cobrado do cliente)</Typography></td>
