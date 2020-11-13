@@ -25,7 +25,7 @@ import { SEARCH_USERS } from '../../graphql/users';
 
 let timeoutSearh = null;
 
-export default function PageForm ({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
+export default function PageForm({ editId, values, setFieldValue, isSubmitting, errors, isValidating, initialValues }) {
 	// carregamento inicial
 	const { user, price, products, paymentMethod, paymentFee, discount, deliveryPrice, creditHistory, coupon } = values;
 	const loggedUserRole = useLoggedUserRole();
@@ -37,13 +37,13 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 	function handleCloseUserDialog() {
 		setUserDialog(false)
 	}
-	
+
 	// errors
 	const [errorDialog, setErrorDialog] = useState(false);
 	function handleCloseDialog() {
 		setErrorDialog(false)
 	}
-	useEffect(()=>{
+	useEffect(() => {
 		if (isValidating && !isEmpty(errors)) setErrorDialog(true);
 	}, [isValidating, errors])
 
@@ -52,7 +52,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 
 	//Query de busca de usuário
 	const [searchUsers, { data: { searchUsers: usersFound = [] } = {}, loading: loadingUsers }] = useMutation(SEARCH_USERS, { fetchPolicy: 'no-cache' })
-	
+
 	//Query formas de pagamento
 	const {
 		data: { company: { paymentMethods = [] } = {} } = {},
@@ -61,14 +61,14 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 	const handleSearchCustomer = (value) => {
 		if (timeoutSearh) clearTimeout(timeoutSearh);
 		if (!value) return;
-		
-		setTimeout(()=>{
+
+		setTimeout(() => {
 			searchUsers({ variables: { search: value } });
 		}, 1000)
 	}
 
-	useEffect(()=>{
-		setFieldValue('price', calculateOrderPrice(products.map(prod=>filterProductSelectedOptions(prod)), deliveryPrice + paymentFee - discount))
+	useEffect(() => {
+		setFieldValue('price', calculateOrderPrice(products.map(prod => filterProductSelectedOptions(prod)), deliveryPrice + paymentFee - discount))
 	}, [products, deliveryPrice, paymentFee, discount, setFieldValue]);
 
 	return (
@@ -97,7 +97,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 						</Grid>
 						{Boolean(user.phones.length) && <Grid item xs={12}>
 							<Typography style={{ color: '#bbb' }} variant='caption'>Telefones</Typography>
-							{user.phones.map((phone, index)=><Typography key={index}>{phone.value}</Typography>)}
+							{user.phones.map((phone, index) => <Typography key={index}>{phone.value}</Typography>)}
 						</Grid>}
 					</Grid>}
 				</DialogContent>
@@ -115,9 +115,9 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FieldControl>
 								<FormControl>
 									<Downshift
-										onChange={(item)=>{setFieldValue('user', item)}}
+										onChange={(item) => { setFieldValue('user', item) }}
 										itemToString={(item => item ? item.fullName : '')}
-										onInputValueChange={(value)=>{handleSearchCustomer(value)}}
+										onInputValueChange={(value) => { handleSearchCustomer(value) }}
 										initialSelectedItem={user && user.id ? user : null}
 									>
 										{({
@@ -126,7 +126,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 											getMenuProps,
 											isOpen,
 											highlightedIndex,
-										})=>{
+										}) => {
 											return (
 												<div>
 													<TextField disabled={inputDisabled} {...getInputProps({ error: !!errors.user, label: 'Cliente' })} />
@@ -156,7 +156,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 								</FormControl>
 							</FieldControl>
 							<FieldControl style={{ flex: .05 }}>
-								<IconButton disabled={!user} onClick={()=>setUserDialog(true)}>
+								<IconButton disabled={!user} onClick={() => setUserDialog(true)}>
 									<Icon path={mdiInformation} color='#333' size={.9} />
 								</IconButton>
 							</FieldControl>
@@ -192,7 +192,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									<OrderScheduler />
-									
+
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
@@ -246,11 +246,11 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 							<FormRow>
 								<FieldControl>
 									{!!paymentMethods.length &&
-									<TextField disabled={Boolean((paymentMethod && paymentMethod.id && editId) || inputDisabled)} helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e)=>setFieldValue('paymentMethod.id', e.target.value)}>
-										{paymentMethods.map(row=>(
-											<MenuItem key={row.id} value={row.id}>{row.displayName}</MenuItem>
-										))}
-									</TextField>}
+										<TextField disabled={Boolean(inputDisabled)} helperText={errors.paymentMethod} error={!!errors.paymentMethod} select label='Forma de pagamento' value={paymentMethod && paymentMethod.id ? paymentMethod.id : ''} onChange={(e) => setFieldValue('paymentMethod.id', e.target.value)}>
+											{paymentMethods.map(row => (
+												<MenuItem key={row.id} value={row.id}>{row.displayName}</MenuItem>
+											))}
+										</TextField>}
 								</FieldControl>
 							</FormRow>
 						</BlockSeparator>
@@ -270,7 +270,7 @@ export default function PageForm ({ editId, values, setFieldValue, isSubmitting,
 					</ul>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleCloseDialog} color="primary"autoFocus>Ok</Button>
+					<Button onClick={handleCloseDialog} color="primary" autoFocus>Ok</Button>
 				</DialogActions>
 			</Dialog>
 		</Form>
