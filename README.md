@@ -1,68 +1,49 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Pronto, Entregue! (app)
+Esse repositório faz parte de um projeto de um sistema de delivery que esteve em produção na cidade de Sombrio SC durante quase 1 ano (março/2020 - janeiro/2021). O projeto foi descontinuado por conta de uma falha no modelo de negócio e da falta de mão de obra no setor de entrega.
 
-## Available Scripts
+### Repositórios do projeto
+- [App React Native](https://github.com/danielkv/pronto-entregue-app)
+- [Dashboard ADM React](https://github.com/danielkv/pronto-entregue-frontend)
+- [Backend ExpressJS](https://github.com/danielkv/pronto-entregue-backend)
+- [Backend NestJS](https://github.com/danielkv/pronto-entregue-nest)
 
-In the project directory, you can run:
+## Screenshots Mobile App
+<a href="https://ibb.co/kKCnq2h"><img src="https://i.ibb.co/kKCnq2h/splash.png" alt="splash" border="0"></a>
+<a href="https://ibb.co/kJ44vJx"><img src="https://i.ibb.co/kJ44vJx/home.png" alt="home" border="0"></a>
+<a href="https://ibb.co/Msh3cd1"><img src="https://i.ibb.co/Msh3cd1/cesta.png" alt="cesta" border="0"></a>
+<a href="https://ibb.co/9GcDXNG"><img src="https://i.ibb.co/9GcDXNG/pedido.png" alt="pedido" border="0"></a>
+<a href="https://ibb.co/zNL6Xgg"><img src="https://i.ibb.co/zNL6Xgg/produto.png" alt="produto" border="0"></a>
 
-### `npm start`
+## Screenshots Dashboard ADM
+<a href="https://ibb.co/2h1VZ3h"><img src="https://i.ibb.co/2h1VZ3h/pedidos.jpg" alt="pedidos" border="0"></a>
+<a href="https://ibb.co/yfSSp84"><img src="https://i.ibb.co/yfSSp84/pedidos1.jpg" alt="pedidos1" border="0"></a>
+<a href="https://ibb.co/0GfbbnQ"><img src="https://i.ibb.co/0GfbbnQ/notificacao.jpg" alt="notificacao" border="0"></a>
+<a href="https://ibb.co/VQb6qKK"><img src="https://i.ibb.co/VQb6qKK/entregas.jpg" alt="entregas" border="0"></a>
+<a href="https://ibb.co/ygNZm7x"><img src="https://i.ibb.co/ygNZm7x/map.jpg" alt="map" border="0"></a>
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## O sistema
+Desde o início desenvolvido com a stack NodeJS, utilizado de frameworks e libs como React e React Native para o lançamento. Ao fim do projeto foi iniciado a refatoração do código BACKEND utilizando a lib NestJS. Apesar de estar praticamente finalizada, não foi colocada em produção.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+A base do sistema girava em torno de localização (coordenadas). O estabelecimento apareceria para o usuário somente se estiver dentro da área de entrega configurada pelo estabelecimento.
 
-### `npm test`
+Desde o início foi adotado o GraphQL como comunicação principal entre frontend e backend. A equipe acreditou ser o melhor caminho devido a variedade de endpoints.
+No final do desenvolvimento o schema GraphQL desenvolvido com NestJS já tinha **46 queries**, **159 mutations** e 238 objetos.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Para as próximas mudanças no Dashboard o objetivo era utilizar o Framework **NextJS** para ter um melhor controle de rotas. Para o App Mobile estávamos considerando ejetar do Expo para conseguir agregar algumas libs que necessitam de acesso ao código nativo.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## Tecnologias
+- **Dashboard ADM**
+  - Apollo Client
+  - React
+- **Mobile App**
+  - React Native
+  - Apollo Client
+  - Expo
+- **Backend**
+  - Apollo Server
+  - ExpressJS
+  - NestJS
+  - Apollo Studio
+- **Database MYSQL**
+- GraphQL
+- e outras libs auxiliares
